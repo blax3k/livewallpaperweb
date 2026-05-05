@@ -1,0 +1,149 @@
+/* src/styles/main.scss */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+.main-content {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  height: 100%;
+}
+#canvas-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 300px;
+  background: #111;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+#canvas-container canvas {
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
+}
+.controls {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 280px;
+  height: fit-content;
+  border: 1px solid #444;
+  overflow-y: auto;
+}
+.controls h2 {
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+.control-group {
+  margin-bottom: 12px;
+}
+.control-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 12px;
+}
+.control-group select,
+.control-group input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #444;
+  background: #333;
+  color: white;
+  border-radius: 4px;
+  font-size: 12px;
+}
+.control-group input[type=range] {
+  padding: 0;
+  cursor: pointer;
+}
+.info-text {
+  font-size: 12px;
+  color: #aaa;
+  margin-top: 10px;
+  border-top: 1px solid #444;
+  padding-top: 10px;
+}
+
+/* src/renderers/SpriteListPanel.scss */
+#sprite-list-panel .sprite-list-title {
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #ccc;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+#sprite-list-panel .sprite-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+#sprite-list-panel .sprite-list-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 4px 5px;
+  border-radius: 4px;
+  user-select: none;
+  transition: background-color 0.15s;
+  font-size: 12px;
+}
+#sprite-list-panel .sprite-list-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+#sprite-list-panel .sprite-list-item.sprite-list-item--selected {
+  background-color: rgba(255, 255, 255, 0.15);
+  outline: 1px solid rgba(255, 255, 255, 0.3);
+}
+#sprite-list-panel .sprite-eye-icon {
+  font-size: 14px;
+  min-width: 20px;
+  text-align: center;
+}
+#sprite-list-panel .sprite-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* src/controls/XFocusControl.scss */
+.control-group .xfocus-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.control-group #xfocus-slider {
+  flex: 1;
+}
+
+/* src/controls/PhoneGuideControl.scss */
+.control-group .guide-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  margin-bottom: 0;
+}
+.control-group .guide-label .guide-checkbox {
+  cursor: pointer;
+  width: auto;
+  padding: 0;
+  flex: none;
+}

@@ -1,10 +1,13 @@
 import * as PIXI from 'pixi.js';
 import { Scene, Sprite } from '../interfaces/Scene';
 import { PhoneGuide } from './PhoneGuide';
+import type { SpriteEntry } from './SpriteListPanel';
 
 interface SpriteMetadata {
   x: number;
   parallaxMultiplier: number;
+  name: string;
+  visible: boolean;
 }
 
 /**
@@ -93,6 +96,8 @@ export class SceneRenderer {
         this.spriteMetadata.set(sprite, {
           x: sprite.x,
           parallaxMultiplier: spriteData.parallaxMultiplier,
+          name: spriteData.name,
+          visible: true,
         });
         this.app.stage.addChild(sprite);
       }
@@ -118,13 +123,16 @@ export class SceneRenderer {
   private fitSceneToView(): void {
     if (!this.app || this.sprites.length === 0) return;
 
-    // Calculate scene bounds
+    // Calculate scene bounds (only for visible sprites)
     let minX = Infinity;
     let minY = Infinity;
     let maxX = -Infinity;
     let maxY = -Infinity;
 
     for (const sprite of this.sprites) {
+      const metadata = this.spriteMetadata.get(sprite);
+      if (!metadata || !metadata.visible) continue;
+
       const halfWidth = sprite.width / 2;
       const halfHeight = sprite.height / 2;
 
@@ -132,6 +140,19 @@ export class SceneRenderer {
       minY = Math.min(minY, sprite.y - halfHeight);
       maxX = Math.max(maxX, sprite.x + halfWidth);
       maxY = Math.max(maxY, sprite.y + halfHeight);
+    }
+
+    // Fallback to all sprites if none are visible
+    if (minX === Infinity) {
+      for (const sprite of this.sprites) {
+        const halfWidth = sprite.width / 2;
+        const halfHeight = sprite.height / 2;
+
+        minX = Math.min(minX, sprite.x - halfWidth);
+        minY = Math.min(minY, sprite.y - halfHeight);
+        maxX = Math.max(maxX, sprite.x + halfWidth);
+        maxY = Math.max(maxY, sprite.y + halfHeight);
+      }
     }
 
     // Add padding
@@ -276,6 +297,49 @@ export class SceneRenderer {
     return this.showPhoneGuideFlag;
   }
 
+  getSpriteEntries(): SpriteEntry[] {
+    return this.sprites.map((sprite, index) => {
+      const metadata = this.spriteMetadata.get(sprite);
+      return { name: metadata?.name || `Sprite ${index}`, visible: metadata?.visible ?? true };
+    });
+  }
+
+  toggleSpriteByIndex(index: number): void {
+    if (index >= 0 && index < this.sprites.length) {
+      this.toggleSpriteVisibility(this.sprites[index]);
+    }
+  }
+
+  private toggleSpriteVisibility(sprite: PIXI.Sprite): void {
+    const metadata = this.spriteMetadata.get(sprite);
+    if (metadata) {
+      metadata.visible = !metadata.visible;
+      sprite.visible = metadata.visible;
+    }
+  }
+
+  /**
+   * Set visibility of a sprite by index
+   */
+  setSpriteVisibility(index: number, visible: boolean): void {
+    if (index >= 0 && index < this.sprites.length) {
+      const metadata = this.spriteMetadata.get(this.sprites[index]);
+      if (metadata && metadata.visible !== visible) {
+        this.toggleSpriteVisibility(this.sprites[index]);
+      }
+    }
+  }
+
+  /**
+   * Get visibility state of all sprites
+   */
+  getSpriteVisibilityStates(): boolean[] {
+    return this.sprites.map(sprite => {
+      const metadata = this.spriteMetadata.get(sprite);
+      return metadata?.visible ?? true;
+    });
+  }
+
   /**
    * Handle window resize
    */
@@ -290,6 +354,8 @@ export class SceneRenderer {
     const canvas = this.app.canvas as HTMLCanvasElement;
     canvas.style.width = `${size}px`;
     canvas.style.height = `${size}px`;
+
+    this.fitSceneToView();
   }
 
   /**
@@ -298,7 +364,7 @@ export class SceneRenderer {
   destroy(): void {
     try {
       window.removeEventListener('resize', this.resizeHandler);
-      
+
       if (this.app) {
         this.app.stage.removeChildren();
         this.sprites = [];

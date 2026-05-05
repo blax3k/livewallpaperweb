@@ -5,8 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc && npm run build:client",
-    "build:client": "esbuild src/client.ts --bundle --outfile=public/bundle.js --platform=browser",
-    "dev": "tsc --watch & esbuild src/client.ts --bundle --outfile=public/bundle.js --platform=browser --watch",
+    "build:client": "node scripts/build-client.mjs",
+    "dev": "tsc --watch & node scripts/build-client.mjs --watch",
     "start": "node dist/index.js",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -21,15 +21,21 @@
     "@testing-library/dom": "^9.3.4",
     "@types/express": "^5.0.6",
     "@types/jest": "^29.5.8",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "esbuild": "^0.28.0",
+    "esbuild-sass-plugin": "^3.7.0",
     "jest": "^29.7.0",
     "jest-canvas-mock": "^2.5.0",
     "jest-environment-jsdom": "^29.7.0",
+    "sass": "^1.99.0",
     "ts-jest": "^29.1.1",
     "typescript": "^5.3.3"
   },
   "dependencies": {
     "express": "^5.2.1",
-    "pixi.js": "^8.18.1"
+    "pixi.js": "^8.18.1",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
   }
 }
