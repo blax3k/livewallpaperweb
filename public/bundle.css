@@ -79,7 +79,7 @@ body {
   padding-top: 10px;
 }
 
-/* src/renderers/SpriteListPanel.scss */
+/* src/controls/SpriteListPanel.scss */
 #sprite-list-panel .sprite-list-title {
   font-size: 12px;
   font-weight: bold;

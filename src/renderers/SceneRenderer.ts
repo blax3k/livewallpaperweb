@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { Scene, Sprite } from '../interfaces/Scene';
 import { PhoneGuide } from './PhoneGuide';
-import type { SpriteEntry } from './SpriteListPanel';
+import type { SpriteEntry } from '../controls/SpriteListPanel';
 
 interface SpriteMetadata {
   x: number;

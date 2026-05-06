@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { SceneRenderer } from './renderers/SceneRenderer';
 import { SceneEditorPanel, SceneOption } from './SceneEditorPanel';
-import type { SpriteEntry } from './renderers/SpriteListPanel';
+import type { SpriteEntry } from './controls/SpriteListPanel';
 import type { Scene } from './interfaces/Scene';
 
 interface ScenePageProps {

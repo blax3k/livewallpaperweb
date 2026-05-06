@@ -67238,7 +67238,7 @@ ${e2}`);
     }
   };
 
-  // src/renderers/SpriteListPanel.tsx
+  // src/controls/SpriteListPanel.tsx
   var import_jsx_runtime = __toESM(require_jsx_runtime());
   function SpriteListPanel({ entries, selectedIndex, onToggle, onSelect }) {
     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { id: "sprite-list-panel", children: [

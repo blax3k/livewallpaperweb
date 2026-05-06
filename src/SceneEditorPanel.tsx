@@ -1,5 +1,5 @@
 import React from 'react';
-import { SpriteListPanel, SpriteEntry } from './renderers/SpriteListPanel';
+import { SpriteListPanel, SpriteEntry } from './controls/SpriteListPanel';
 import { SceneSelectorControl, SceneOption } from './controls/SceneSelectorControl';
 import { XFocusControl } from './controls/XFocusControl';
 import { PhoneGuideControl } from './controls/PhoneGuideControl';
