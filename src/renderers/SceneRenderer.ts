@@ -23,7 +23,10 @@ export class SceneRenderer {
   private resizeHandler: () => void;
   private phoneGuide: PhoneGuide | null = null;
   private showPhoneGuideFlag: boolean = false;
-  private readonly ZOOM_SCALE = 1.6; // Zoom multiplier (1.5 = 50% bigger, adjust as needed)
+  private currentXFocus: number = 0.5;
+  private selectionHighlight: PIXI.Graphics | null = null;
+  private selectedHighlightIndex: number | null = null;
+  private readonly ZOOM_SCALE = 1.6;
 
   constructor(container: HTMLElement) {
     this.container = container;
@@ -84,6 +87,8 @@ export class SceneRenderer {
     this.sprites.forEach(sprite => sprite.destroy());
     this.sprites = [];
     this.spriteMetadata.clear();
+    this.selectionHighlight = null;
+    this.selectedHighlightIndex = null;
     this.app.stage.removeChildren();
 
     // Load textures and create sprites
@@ -240,6 +245,7 @@ export class SceneRenderer {
    * @param xFocus Camera focus in [0..1] where 0.5 is center
    */
   setScrollOffset(xFocus: number): void {
+    this.currentXFocus = xFocus;
     const SCROLL_SCALE = 5.0;
     const scrollOffset = (0.5 - xFocus) * SCROLL_SCALE;
 
@@ -249,6 +255,66 @@ export class SceneRenderer {
         sprite.x = metadata.x + scrollOffset * metadata.parallaxMultiplier;
       }
     }
+
+    this.updateSelectionHighlight();
+  }
+
+  getSpritePosition(index: number): { x: number; y: number } | null {
+    if (index >= 0 && index < this.sprites.length) {
+      const sprite = this.sprites[index];
+      const metadata = this.spriteMetadata.get(sprite);
+      if (metadata) {
+        return { x: metadata.x, y: sprite.y };
+      }
+    }
+    return null;
+  }
+
+  setSpritePosition(index: number, x: number, y: number): void {
+    if (index >= 0 && index < this.sprites.length) {
+      const sprite = this.sprites[index];
+      const metadata = this.spriteMetadata.get(sprite);
+      if (metadata) {
+        metadata.x = x;
+        sprite.y = y;
+        const SCROLL_SCALE = 5.0;
+        const scrollOffset = (0.5 - this.currentXFocus) * SCROLL_SCALE;
+        sprite.x = x + scrollOffset * metadata.parallaxMultiplier;
+        this.updateSelectionHighlight();
+      }
+    }
+  }
+
+  setSelectedSpriteHighlight(index: number | null): void {
+    this.selectedHighlightIndex = index;
+    this.updateSelectionHighlight();
+  }
+
+  private updateSelectionHighlight(): void {
+    if (!this.app) return;
+
+    if (!this.selectionHighlight) {
+      this.selectionHighlight = new PIXI.Graphics();
+      this.app.stage.addChild(this.selectionHighlight);
+    }
+
+    this.selectionHighlight.clear();
+
+    const index = this.selectedHighlightIndex;
+    if (index === null || index < 0 || index >= this.sprites.length) return;
+
+    const sprite = this.sprites[index];
+    const lineWidth = 0.01;
+    const left = sprite.x - sprite.width / 2;
+    const top = sprite.y - sprite.height / 2;
+
+    this.selectionHighlight
+      .moveTo(left, top)
+      .lineTo(left + sprite.width, top)
+      .lineTo(left + sprite.width, top + sprite.height)
+      .lineTo(left, top + sprite.height)
+      .lineTo(left, top)
+      .stroke({ color: 0x00ff00, width: lineWidth, alpha: 1.0 });
   }
 
   /**

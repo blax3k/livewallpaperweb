@@ -147,3 +147,61 @@ body {
   padding: 0;
   flex: none;
 }
+
+/* src/controls/SpritePanelControl.scss */
+#sprite-panel-control.sprite-panel-control--disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+#sprite-panel-control .sprite-panel-name {
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #ccc;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#sprite-panel-control .sprite-panel-coord {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+#sprite-panel-control .sprite-panel-coord label {
+  font-size: 11px;
+  color: #aaa;
+  width: 12px;
+  flex-shrink: 0;
+}
+#sprite-panel-control .sprite-panel-coord input[type=range] {
+  flex: 1;
+  min-width: 0;
+}
+#sprite-panel-control .sprite-panel-coord input[type=number] {
+  width: 58px;
+  flex-shrink: 0;
+  background: #222;
+  border: 1px solid #555;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 11px;
+  padding: 3px 5px;
+  text-align: right;
+}
+#sprite-panel-control .sprite-panel-coord input[type=number]:focus {
+  outline: none;
+  border-color: #888;
+}
+#sprite-panel-control .sprite-panel-coord input[type=number] {
+}
+#sprite-panel-control .sprite-panel-coord input[type=number]::-webkit-outer-spin-button,
+#sprite-panel-control .sprite-panel-coord input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+#sprite-panel-control .sprite-panel-coord input[type=number] {
+  -moz-appearance: textfield;
+}

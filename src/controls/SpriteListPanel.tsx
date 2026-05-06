@@ -8,12 +8,12 @@ export interface SpriteEntry {
 
 interface SpriteListPanelProps {
   entries: SpriteEntry[];
-  selectedIndex: number | null;
+  selectedName: string | null;
   onToggle: (index: number) => void;
   onSelect: (index: number) => void;
 }
 
-export function SpriteListPanel({ entries, selectedIndex, onToggle, onSelect }: SpriteListPanelProps) {
+export function SpriteListPanel({ entries, selectedName, onToggle, onSelect }: SpriteListPanelProps) {
   return (
     <div id="sprite-list-panel">
       <div className="sprite-list-title">Sprites ({entries.length})</div>
@@ -21,7 +21,7 @@ export function SpriteListPanel({ entries, selectedIndex, onToggle, onSelect }: 
         {entries.map((entry, index) => (
           <div
             key={index}
-            className={`sprite-list-item${index === selectedIndex ? ' sprite-list-item--selected' : ''}`}
+            className={`sprite-list-item${entry.name === selectedName ? ' sprite-list-item--selected' : ''}`}
             onClick={() => onSelect(index)}
           >
             <span

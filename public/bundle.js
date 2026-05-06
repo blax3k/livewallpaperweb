@@ -66936,7 +66936,6 @@ ${e2}`);
 
   // src/renderers/SceneRenderer.ts
   var SceneRenderer = class {
-    // Zoom multiplier (1.5 = 50% bigger, adjust as needed)
     constructor(container) {
       this.app = null;
       this.sprites = [];
@@ -66944,6 +66943,9 @@ ${e2}`);
       this.textures = /* @__PURE__ */ new Map();
       this.phoneGuide = null;
       this.showPhoneGuideFlag = false;
+      this.currentXFocus = 0.5;
+      this.selectionHighlight = null;
+      this.selectedHighlightIndex = null;
       this.ZOOM_SCALE = 1.6;
       this.container = container;
       this.resizeHandler = () => this.onWindowResize();
@@ -66992,6 +66994,8 @@ ${e2}`);
       this.sprites.forEach((sprite) => sprite.destroy());
       this.sprites = [];
       this.spriteMetadata.clear();
+      this.selectionHighlight = null;
+      this.selectedHighlightIndex = null;
       this.app.stage.removeChildren();
       for (const spriteData of sceneData.sprites) {
         await this.loadTexture(spriteData.textureResource);
@@ -67114,6 +67118,7 @@ ${e2}`);
      * @param xFocus Camera focus in [0..1] where 0.5 is center
      */
     setScrollOffset(xFocus) {
+      this.currentXFocus = xFocus;
       const SCROLL_SCALE = 5;
       const scrollOffset = (0.5 - xFocus) * SCROLL_SCALE;
       for (const sprite of this.sprites) {
@@ -67122,6 +67127,50 @@ ${e2}`);
           sprite.x = metadata.x + scrollOffset * metadata.parallaxMultiplier;
         }
       }
+      this.updateSelectionHighlight();
+    }
+    getSpritePosition(index) {
+      if (index >= 0 && index < this.sprites.length) {
+        const sprite = this.sprites[index];
+        const metadata = this.spriteMetadata.get(sprite);
+        if (metadata) {
+          return { x: metadata.x, y: sprite.y };
+        }
+      }
+      return null;
+    }
+    setSpritePosition(index, x2, y2) {
+      if (index >= 0 && index < this.sprites.length) {
+        const sprite = this.sprites[index];
+        const metadata = this.spriteMetadata.get(sprite);
+        if (metadata) {
+          metadata.x = x2;
+          sprite.y = y2;
+          const SCROLL_SCALE = 5;
+          const scrollOffset = (0.5 - this.currentXFocus) * SCROLL_SCALE;
+          sprite.x = x2 + scrollOffset * metadata.parallaxMultiplier;
+          this.updateSelectionHighlight();
+        }
+      }
+    }
+    setSelectedSpriteHighlight(index) {
+      this.selectedHighlightIndex = index;
+      this.updateSelectionHighlight();
+    }
+    updateSelectionHighlight() {
+      if (!this.app) return;
+      if (!this.selectionHighlight) {
+        this.selectionHighlight = new Graphics();
+        this.app.stage.addChild(this.selectionHighlight);
+      }
+      this.selectionHighlight.clear();
+      const index = this.selectedHighlightIndex;
+      if (index === null || index < 0 || index >= this.sprites.length) return;
+      const sprite = this.sprites[index];
+      const lineWidth = 0.01;
+      const left = sprite.x - sprite.width / 2;
+      const top = sprite.y - sprite.height / 2;
+      this.selectionHighlight.moveTo(left, top).lineTo(left + sprite.width, top).lineTo(left + sprite.width, top + sprite.height).lineTo(left, top + sprite.height).lineTo(left, top).stroke({ color: 65280, width: lineWidth, alpha: 1 });
     }
     /**
      * Toggle phone guide visibility
@@ -67240,7 +67289,7 @@ ${e2}`);
 
   // src/controls/SpriteListPanel.tsx
   var import_jsx_runtime = __toESM(require_jsx_runtime());
-  function SpriteListPanel({ entries, selectedIndex, onToggle, onSelect }) {
+  function SpriteListPanel({ entries, selectedName, onToggle, onSelect }) {
     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { id: "sprite-list-panel", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "sprite-list-title", children: [
         "Sprites (",
@@ -67250,7 +67299,7 @@ ${e2}`);
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "sprite-list", children: entries.map((entry, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
         "div",
         {
-          className: `sprite-list-item${index === selectedIndex ? " sprite-list-item--selected" : ""}`,
+          className: `sprite-list-item${entry.name === selectedName ? " sprite-list-item--selected" : ""}`,
           onClick: () => onSelect(index),
           children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
@@ -67335,45 +67384,130 @@ ${e2}`);
     ] }) });
   }
 
-  // src/SceneEditorPanel.tsx
+  // src/controls/SpritePanelControl.tsx
   var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+  var COORD_MIN = -10;
+  var COORD_MAX = 10;
+  var COORD_STEP = 0.01;
+  function SpritePanelControl({ spriteName, x: x2, y: y2, disabled, onChange }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { id: "sprite-panel-control", className: disabled ? "sprite-panel-control--disabled" : void 0, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "sprite-panel-name", children: disabled ? "No sprite selected" : spriteName }),
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "sprite-panel-coord", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { children: "X" }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+          "input",
+          {
+            type: "range",
+            min: COORD_MIN,
+            max: COORD_MAX,
+            step: COORD_STEP,
+            value: x2,
+            disabled,
+            onChange: (e2) => onChange(parseFloat(e2.target.value), y2)
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+          "input",
+          {
+            type: "number",
+            min: COORD_MIN,
+            max: COORD_MAX,
+            step: COORD_STEP,
+            value: parseFloat(x2.toFixed(2)),
+            disabled,
+            onChange: (e2) => {
+              const val = parseFloat(e2.target.value);
+              if (!isNaN(val)) onChange(val, y2);
+            }
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "sprite-panel-coord", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { children: "Y" }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+          "input",
+          {
+            type: "range",
+            min: COORD_MIN,
+            max: COORD_MAX,
+            step: COORD_STEP,
+            value: y2,
+            disabled,
+            onChange: (e2) => onChange(x2, parseFloat(e2.target.value))
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+          "input",
+          {
+            type: "number",
+            min: COORD_MIN,
+            max: COORD_MAX,
+            step: COORD_STEP,
+            value: parseFloat(y2.toFixed(2)),
+            disabled,
+            onChange: (e2) => {
+              const val = parseFloat(e2.target.value);
+              if (!isNaN(val)) onChange(x2, val);
+            }
+          }
+        )
+      ] })
+    ] });
+  }
+
+  // src/SceneEditorPanel.tsx
+  var import_jsx_runtime6 = __toESM(require_jsx_runtime());
   function SceneEditorPanel({
     scenes,
     showSceneControls,
     xFocus,
     spriteEntries,
-    selectedSpriteIndex,
+    selectedSprite,
     onSceneSelect,
     onXFocusChange,
     onPhoneGuideToggle,
     onSpriteToggle,
-    onSpriteSelect
+    onSpriteSelect,
+    onSpritePositionChange
   }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "controls", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { children: "Scene Viewer" }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(SceneSelectorControl, { scenes, onSelect: onSceneSelect }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(XFocusControl, { visible: showSceneControls, value: xFocus, onChange: onXFocusChange }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(PhoneGuideControl, { visible: showSceneControls, onToggle: onPhoneGuideToggle }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "info-text", children: "Select a scene to view. Adjust the camera focus slider to parallax scroll." }),
-      showSceneControls && spriteEntries.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "controls", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { children: "Scene Viewer" }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(SceneSelectorControl, { scenes, onSelect: onSceneSelect }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(XFocusControl, { visible: showSceneControls, value: xFocus, onChange: onXFocusChange }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(PhoneGuideControl, { visible: showSceneControls, onToggle: onPhoneGuideToggle }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "info-text", children: "Select a scene to view. Adjust the camera focus slider to parallax scroll." }),
+      showSceneControls && spriteEntries.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
         SpriteListPanel,
         {
           entries: spriteEntries,
-          selectedIndex: selectedSpriteIndex,
+          selectedName: selectedSprite?.name ?? null,
           onToggle: onSpriteToggle,
           onSelect: onSpriteSelect
         }
-      ) })
+      ) }),
+      showSceneControls && /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(import_jsx_runtime6.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { children: "Sprite" }),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+          SpritePanelControl,
+          {
+            spriteName: selectedSprite?.name ?? "",
+            x: selectedSprite?.x ?? 0,
+            y: selectedSprite?.y ?? 0,
+            disabled: selectedSprite === null,
+            onChange: onSpritePositionChange
+          }
+        ) })
+      ] })
     ] });
   }
 
   // src/ScenePage.tsx
-  var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
   function ScenePage({ scenes }) {
     const [showSceneControls, setShowSceneControls] = (0, import_react.useState)(false);
     const [xFocus, setXFocus] = (0, import_react.useState)(0.5);
     const [spriteEntries, setSpriteEntries] = (0, import_react.useState)([]);
-    const [selectedSpriteIndex, setSelectedSpriteIndex] = (0, import_react.useState)(null);
+    const [selectedSprite, setSelectedSprite] = (0, import_react.useState)(null);
     const canvasRef = (0, import_react.useRef)(null);
     const rendererRef = (0, import_react.useRef)(null);
     const refreshSpriteList = (0, import_react.useCallback)((r2) => {
@@ -67385,14 +67519,22 @@ ${e2}`);
         const sceneData = await response.json();
         rendererRef.current?.destroy();
         if (!canvasRef.current) return;
-        const r2 = new SceneRenderer(canvasRef.current);
-        await r2.loadScene(sceneData);
-        rendererRef.current = r2;
+        const renderer = new SceneRenderer(canvasRef.current);
+        await renderer.loadScene(sceneData);
+        rendererRef.current = renderer;
         const focus = sceneData.xFocus ?? 0.5;
         setXFocus(focus);
         setShowSceneControls(true);
-        setSelectedSpriteIndex(null);
-        refreshSpriteList(r2);
+        refreshSpriteList(renderer);
+        const firstPos = renderer.getSpritePosition(0);
+        const entries = renderer.getSpriteEntries();
+        if (firstPos && entries.length > 0) {
+          setSelectedSprite({ index: 0, name: entries[0].name || "Sprite 0", x: firstPos.x, y: firstPos.y });
+          renderer.setSelectedSpriteHighlight(0);
+        } else {
+          setSelectedSprite(null);
+          renderer.setSelectedSpriteHighlight(null);
+        }
       } catch (error) {
         console.error("Failed to load scene:", error);
       }
@@ -67410,36 +67552,47 @@ ${e2}`);
       if (rendererRef.current) refreshSpriteList(rendererRef.current);
     }, [refreshSpriteList]);
     const handleSpriteSelect = (0, import_react.useCallback)((index) => {
-      setSelectedSpriteIndex(index);
-    }, []);
-    return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(import_jsx_runtime6.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+      const pos = rendererRef.current?.getSpritePosition(index);
+      const name = spriteEntries[index]?.name || `Sprite ${index}`;
+      if (pos) {
+        setSelectedSprite({ index, name, x: pos.x, y: pos.y });
+        rendererRef.current?.setSelectedSpriteHighlight(index);
+      }
+    }, [spriteEntries]);
+    const handleSpritePositionChange = (0, import_react.useCallback)((x2, y2) => {
+      if (selectedSprite === null) return;
+      rendererRef.current?.setSpritePosition(selectedSprite.index, x2, y2);
+      setSelectedSprite((prev) => prev ? { ...prev, x: x2, y: y2 } : null);
+    }, [selectedSprite]);
+    return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(import_jsx_runtime7.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
         SceneEditorPanel,
         {
           scenes,
           showSceneControls,
           xFocus,
           spriteEntries,
-          selectedSpriteIndex,
+          selectedSprite,
           onSceneSelect: loadScene,
           onXFocusChange: handleXFocusChange,
           onPhoneGuideToggle: handlePhoneGuideToggle,
           onSpriteToggle: handleSpriteToggle,
-          onSpriteSelect: handleSpriteSelect
+          onSpriteSelect: handleSpriteSelect,
+          onSpritePositionChange: handleSpritePositionChange
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "main-content", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { id: "canvas-container", ref: canvasRef }) })
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "main-content", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { id: "canvas-container", ref: canvasRef }) })
     ] });
   }
 
   // src/client.tsx
-  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
   window.addEventListener("DOMContentLoaded", async () => {
     try {
       const response = await fetch("/api/scenes");
       const scenes = await response.json();
       const root = (0, import_client.createRoot)(document.body);
-      root.render(/* @__PURE__ */ (0, import_jsx_runtime7.jsx)(ScenePage, { scenes }));
+      root.render(/* @__PURE__ */ (0, import_jsx_runtime8.jsx)(ScenePage, { scenes }));
     } catch (error) {
       console.error("Failed to initialize app:", error);
     }
