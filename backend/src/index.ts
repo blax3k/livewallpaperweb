@@ -45,21 +45,17 @@ server.post<{ Body: { name: string; label: string; data: unknown } }>('/api/scen
   return reply.status(201).send(result.rows[0]);
 });
 
-// Update an existing scene
-server.put<{ Params: { name: string }; Body: { label?: string; data?: unknown } }>('/api/scenes/:name', async (req, reply) => {
+// Upsert a scene — updates if name exists, creates if not
+server.put<{ Params: { name: string }; Body: { label: string; data: unknown } }>('/api/scenes/:name', async (req, reply) => {
   const { name } = req.params;
   const { label, data } = req.body;
   const result = await pool.query(
-    `UPDATE scenes
-     SET label = COALESCE($1, label),
-         data  = COALESCE($2, data)
-     WHERE name = $3
+    `INSERT INTO scenes (name, label, data)
+     VALUES ($1, $2, $3)
+     ON CONFLICT (name) DO UPDATE SET label = EXCLUDED.label, data = EXCLUDED.data
      RETURNING *`,
-    [label ?? null, data ?? null, name]
+    [name, label, data]
   );
-  if (result.rows.length === 0) {
-    return reply.status(404).send({ error: 'Scene not found' });
-  }
   return result.rows[0];
 });
 

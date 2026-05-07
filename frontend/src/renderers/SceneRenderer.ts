@@ -27,6 +27,7 @@ export class SceneRenderer {
   private selectionHighlight: PIXI.Graphics | null = null;
   private selectedHighlightIndex: number | null = null;
   private readonly ZOOM_SCALE = 1.6;
+  private originalSceneData: Scene | null = null;
 
   constructor(container: HTMLElement) {
     this.container = container;
@@ -115,6 +116,9 @@ export class SceneRenderer {
       this.app.stage.addChild(guideGraphics);
       guideGraphics.visible = this.showPhoneGuideFlag;
     }
+
+    // Store original scene data for later serialization
+    this.originalSceneData = sceneData;
 
     // Fit scene to view and apply initial xFocus
     this.fitSceneToView();
@@ -368,6 +372,23 @@ export class SceneRenderer {
       const metadata = this.spriteMetadata.get(sprite);
       return { name: metadata?.name || `Sprite ${index}`, visible: metadata?.visible ?? true };
     });
+  }
+
+  getSceneData(): Scene | null {
+    if (!this.originalSceneData) return null;
+    return {
+      ...this.originalSceneData,
+      xFocus: this.currentXFocus,
+      sprites: this.sprites.map((sprite, index) => {
+        const metadata = this.spriteMetadata.get(sprite);
+        const original = this.originalSceneData!.sprites[index];
+        return {
+          ...original,
+          positionX: metadata?.x ?? original.positionX,
+          positionY: sprite.y,
+        };
+      }),
+    };
   }
 
   toggleSpriteByIndex(index: number): void {

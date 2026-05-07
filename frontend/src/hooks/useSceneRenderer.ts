@@ -10,13 +10,21 @@ export interface SelectedSprite {
   y: number;
 }
 
-export function useSceneRenderer() {
+export function useSceneRenderer(onNotify?: (message: string) => void) {
   const [showSceneControls, setShowSceneControls] = useState(false);
   const [xFocus, setXFocus] = useState(0.5);
   const [spriteEntries, setSpriteEntries] = useState<SpriteEntry[]>([]);
   const [selectedSprite, setSelectedSprite] = useState<SelectedSprite | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [phoneGuideVisible, setPhoneGuideVisible] = useState(true);
+  const onNotifyRef = useRef(onNotify);
+  onNotifyRef.current = onNotify;
+  const phoneGuideVisibleRef = useRef(true);
   const canvasRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<SceneRenderer | null>(null);
+  const sceneIdRef = useRef<string | null>(null);
+  const sceneNameRef = useRef<string | null>(null);
+  const sceneLabelRef = useRef<string | null>(null);
 
   const refreshSpriteList = useCallback((r: SceneRenderer) => {
     setSpriteEntries([...r.getSpriteEntries()]);
@@ -25,8 +33,12 @@ export function useSceneRenderer() {
   const loadScene = useCallback(async (sceneName: string) => {
     try {
       const response = await fetch(`/api/scenes/${sceneName}`);
-      const row: { data: Scene } = await response.json();
+      const row: { id: string; name: string; label: string; data: Scene } = await response.json();
       const sceneData: Scene = row.data;
+
+      sceneIdRef.current = row.id;
+      sceneNameRef.current = row.name;
+      sceneLabelRef.current = row.label;
 
       rendererRef.current?.destroy();
 
@@ -35,6 +47,7 @@ export function useSceneRenderer() {
       const renderer = new SceneRenderer(canvasRef.current);
       await renderer.loadScene(sceneData);
       rendererRef.current = renderer;
+      if (phoneGuideVisibleRef.current) renderer.showGuide();
 
       const focus = sceneData.xFocus ?? 0.5;
       setXFocus(focus);
@@ -55,12 +68,35 @@ export function useSceneRenderer() {
     }
   }, [refreshSpriteList]);
 
+  const saveScene = useCallback(async () => {
+    const name = sceneNameRef.current;
+    const label = sceneLabelRef.current;
+    const data = rendererRef.current?.getSceneData();
+    if (!name || !label || !data) return;
+
+    setIsSaving(true);
+    try {
+      await fetch(`/api/scenes/${name}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ label, data }),
+      });
+      onNotifyRef.current?.('Scene saved!');
+    } catch (error) {
+      console.error('Failed to save scene:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  }, []);
+
   const handleXFocusChange = useCallback((value: number) => {
     setXFocus(value);
     rendererRef.current?.setScrollOffset(value);
   }, []);
 
   const handlePhoneGuideToggle = useCallback((visible: boolean) => {
+    phoneGuideVisibleRef.current = visible;
+    setPhoneGuideVisible(visible);
     if (visible) rendererRef.current?.showGuide();
     else rendererRef.current?.hideGuide();
   }, []);
@@ -96,7 +132,10 @@ export function useSceneRenderer() {
     spriteEntries,
     selectedSprite,
     setSelectedSprite,
+    isSaving,
+    phoneGuideVisible,
     loadScene,
+    saveScene,
     handleXFocusChange,
     handlePhoneGuideToggle,
     handleSpriteToggle,
@@ -104,3 +143,4 @@ export function useSceneRenderer() {
     handleSpritePositionChange,
   };
 }
+

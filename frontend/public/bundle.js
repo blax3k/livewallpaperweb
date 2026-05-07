@@ -64179,7 +64179,7 @@ ${parts.join("\n")}
   var import_client = __toESM(require_client());
 
   // src/ScenePage.tsx
-  var import_react5 = __toESM(require_react());
+  var import_react6 = __toESM(require_react());
 
   // src/controls/SpriteListPanel.tsx
   var import_jsx_runtime = __toESM(require_jsx_runtime());
@@ -64215,35 +64215,13 @@ ${parts.join("\n")}
     ] });
   }
 
-  // src/controls/SceneSelectorControl.tsx
-  var import_jsx_runtime2 = __toESM(require_jsx_runtime());
-  function SceneSelectorControl({ scenes, onSelect }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "control-group", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("label", { htmlFor: "scene-select", children: "Select Scene:" }),
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
-        "select",
-        {
-          id: "scene-select",
-          onChange: (e2) => {
-            if (e2.target.value) onSelect(e2.target.value);
-          },
-          children: [
-            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("option", { value: "", children: "-- Choose a scene --" }),
-            scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("option", { value: scene.value, children: scene.label }, scene.value))
-          ]
-        }
-      )
-    ] });
-  }
-
   // src/controls/XFocusControl.tsx
-  var import_jsx_runtime3 = __toESM(require_jsx_runtime());
-  function XFocusControl({ visible, value, onChange }) {
-    if (!visible) return null;
-    return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "control-group", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("label", { htmlFor: "xfocus-slider", children: "Camera Focus (xFocus):" }),
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "xfocus-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+  var import_jsx_runtime2 = __toESM(require_jsx_runtime());
+  function XFocusControl({ disabled, value, onChange }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "control-group", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("label", { htmlFor: "xfocus-slider", children: "Camera Focus:" }),
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "xfocus-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
           "input",
           {
             type: "range",
@@ -64252,43 +64230,26 @@ ${parts.join("\n")}
             max: "1",
             step: "0.01",
             value,
+            disabled,
             onChange: (e2) => onChange(parseFloat(e2.target.value))
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: value.toFixed(2) })
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { children: value.toFixed(2) })
       ] })
     ] });
   }
 
-  // src/controls/PhoneGuideControl.tsx
-  var import_jsx_runtime4 = __toESM(require_jsx_runtime());
-  function PhoneGuideControl({ visible, onToggle }) {
-    if (!visible) return null;
-    return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("label", { className: "guide-label", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-        "input",
-        {
-          type: "checkbox",
-          id: "phone-guide-toggle",
-          className: "guide-checkbox",
-          onChange: (e2) => onToggle(e2.target.checked)
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: "Show Phone Guide" })
-    ] }) });
-  }
-
   // src/controls/SpritePanelControl.tsx
-  var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime3 = __toESM(require_jsx_runtime());
   var COORD_MIN = -10;
   var COORD_MAX = 10;
   var COORD_STEP = 0.01;
   function SpritePanelControl({ spriteName, x: x2, y: y2, disabled, onChange, onChangeStart, onChangeCommit }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { id: "sprite-panel-control", className: disabled ? "sprite-panel-control--disabled" : void 0, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "sprite-panel-name", children: disabled ? "No sprite selected" : spriteName }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "sprite-panel-coord", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { children: "X" }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { id: "sprite-panel-control", className: disabled ? "sprite-panel-control--disabled" : void 0, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "sprite-panel-name", children: disabled ? "No sprite selected" : spriteName }),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "sprite-panel-coord", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("label", { children: "X" }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
           "input",
           {
             type: "range",
@@ -64302,7 +64263,7 @@ ${parts.join("\n")}
             onPointerUp: (e2) => onChangeCommit?.(parseFloat(e2.target.value), y2)
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
           "input",
           {
             type: "number",
@@ -64322,9 +64283,9 @@ ${parts.join("\n")}
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "sprite-panel-coord", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { children: "Y" }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "sprite-panel-coord", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("label", { children: "Y" }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
           "input",
           {
             type: "range",
@@ -64338,7 +64299,7 @@ ${parts.join("\n")}
             onPointerUp: (e2) => onChangeCommit?.(x2, parseFloat(e2.target.value))
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
           "input",
           {
             type: "number",
@@ -64362,29 +64323,24 @@ ${parts.join("\n")}
   }
 
   // src/SceneEditorPanel.tsx
-  var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime4 = __toESM(require_jsx_runtime());
   function SceneEditorPanel({
-    scenes,
-    showSceneControls,
+    sceneLoaded,
     xFocus,
     spriteEntries,
     selectedSprite,
-    onSceneSelect,
     onXFocusChange,
-    onPhoneGuideToggle,
     onSpriteToggle,
     onSpriteSelect,
     onSpritePositionChange,
     onSpritePositionChangeStart,
     onSpritePositionCommit
   }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "controls", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { children: "Scene Viewer" }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(SceneSelectorControl, { scenes, onSelect: onSceneSelect }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(XFocusControl, { visible: showSceneControls, value: xFocus, onChange: onXFocusChange }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(PhoneGuideControl, { visible: showSceneControls, onToggle: onPhoneGuideToggle }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "info-text", children: "Select a scene to view. Adjust the camera focus slider to parallax scroll." }),
-      showSceneControls && spriteEntries.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "controls", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { children: "Scene" }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(XFocusControl, { disabled: !sceneLoaded, value: xFocus, onChange: onXFocusChange }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { children: "Sprites" }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
         SpriteListPanel,
         {
           entries: spriteEntries,
@@ -64393,22 +64349,84 @@ ${parts.join("\n")}
           onSelect: onSpriteSelect
         }
       ) }),
-      showSceneControls && /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(import_jsx_runtime6.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { children: "Sprite" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-          SpritePanelControl,
-          {
-            spriteName: selectedSprite?.name ?? "",
-            x: selectedSprite?.x ?? 0,
-            y: selectedSprite?.y ?? 0,
-            disabled: selectedSprite === null,
-            onChange: onSpritePositionChange,
-            onChangeStart: onSpritePositionChangeStart,
-            onChangeCommit: onSpritePositionCommit
-          }
-        ) })
-      ] })
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { children: "Sprite" }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        SpritePanelControl,
+        {
+          spriteName: selectedSprite?.name ?? "",
+          x: selectedSprite?.x ?? 0,
+          y: selectedSprite?.y ?? 0,
+          disabled: selectedSprite === null,
+          onChange: onSpritePositionChange,
+          onChangeStart: onSpritePositionChangeStart,
+          onChangeCommit: onSpritePositionCommit
+        }
+      ) })
     ] });
+  }
+
+  // src/controls/SceneSelectorControl.tsx
+  var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+  function SceneSelectorControl({ scenes, disabled, onSelect }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "control-group", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { htmlFor: "scene-select", children: "Scene:" }),
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
+        "select",
+        {
+          id: "scene-select",
+          disabled,
+          onChange: (e2) => {
+            if (e2.target.value) onSelect(e2.target.value);
+          },
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("option", { value: "", children: "-- Choose a scene --" }),
+            scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("option", { value: scene.value, children: scene.label }, scene.value))
+          ]
+        }
+      )
+    ] });
+  }
+
+  // src/controls/PhoneGuideControl.tsx
+  var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+  function PhoneGuideControl({ checked, disabled, onChange }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("label", { className: "guide-label", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+        "input",
+        {
+          type: "checkbox",
+          className: "guide-checkbox",
+          checked,
+          disabled,
+          onChange: (e2) => onChange(e2.target.checked)
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: "Phone Guide" })
+    ] });
+  }
+
+  // src/TopBar.tsx
+  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+  function TopBar({ scenes, sceneLoaded, isSaving, phoneGuideVisible, onSceneSelect, onPhoneGuideToggle, onSave }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "top-bar", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(SceneSelectorControl, { scenes, onSelect: onSceneSelect }),
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+        PhoneGuideControl,
+        {
+          checked: phoneGuideVisible,
+          disabled: !sceneLoaded,
+          onChange: onPhoneGuideToggle
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: onSave, disabled: isSaving || !sceneLoaded, children: isSaving ? "Saving..." : "Save Scene" })
+    ] });
+  }
+
+  // src/NotificationStack.tsx
+  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
+  function NotificationStack({ notifications }) {
+    if (notifications.length === 0) return null;
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "notification-stack", children: notifications.map((n2) => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "notification-card", children: n2.message }, n2.id)) });
   }
 
   // src/hooks/useUndoHistory.ts
@@ -64441,8 +64459,22 @@ ${parts.join("\n")}
     return { push, undo, redo, clear };
   }
 
-  // src/hooks/useSceneRenderer.ts
+  // src/hooks/useNotifications.ts
   var import_react2 = __toESM(require_react());
+  function useNotifications() {
+    const [notifications, setNotifications] = (0, import_react2.useState)([]);
+    const notify = (0, import_react2.useCallback)((message) => {
+      const id = Date.now();
+      setNotifications((prev) => [...prev, { id, message }]);
+      setTimeout(() => {
+        setNotifications((prev) => prev.filter((n2) => n2.id !== id));
+      }, 5e3);
+    }, []);
+    return { notifications, notify };
+  }
+
+  // src/hooks/useSceneRenderer.ts
+  var import_react3 = __toESM(require_react());
 
   // ../node_modules/pixi.js/lib/environment-browser/browserExt.mjs
   init_Extensions();
@@ -67210,6 +67242,7 @@ ${e2}`);
       this.selectionHighlight = null;
       this.selectedHighlightIndex = null;
       this.ZOOM_SCALE = 1.6;
+      this.originalSceneData = null;
       this.container = container;
       this.resizeHandler = () => this.onWindowResize();
       this.initializeApp();
@@ -67280,6 +67313,7 @@ ${e2}`);
         this.app.stage.addChild(guideGraphics);
         guideGraphics.visible = this.showPhoneGuideFlag;
       }
+      this.originalSceneData = sceneData;
       this.fitSceneToView();
       this.setScrollOffset(sceneData.xFocus);
     }
@@ -67483,6 +67517,22 @@ ${e2}`);
         return { name: metadata?.name || `Sprite ${index}`, visible: metadata?.visible ?? true };
       });
     }
+    getSceneData() {
+      if (!this.originalSceneData) return null;
+      return {
+        ...this.originalSceneData,
+        xFocus: this.currentXFocus,
+        sprites: this.sprites.map((sprite, index) => {
+          const metadata = this.spriteMetadata.get(sprite);
+          const original = this.originalSceneData.sprites[index];
+          return {
+            ...original,
+            positionX: metadata?.x ?? original.positionX,
+            positionY: sprite.y
+          };
+        })
+      };
+    }
     toggleSpriteByIndex(index) {
       if (index >= 0 && index < this.sprites.length) {
         this.toggleSpriteVisibility(this.sprites[index]);
@@ -67576,26 +67626,38 @@ ${e2}`);
   };
 
   // src/hooks/useSceneRenderer.ts
-  function useSceneRenderer() {
-    const [showSceneControls, setShowSceneControls] = (0, import_react2.useState)(false);
-    const [xFocus, setXFocus] = (0, import_react2.useState)(0.5);
-    const [spriteEntries, setSpriteEntries] = (0, import_react2.useState)([]);
-    const [selectedSprite, setSelectedSprite] = (0, import_react2.useState)(null);
-    const canvasRef = (0, import_react2.useRef)(null);
-    const rendererRef = (0, import_react2.useRef)(null);
-    const refreshSpriteList = (0, import_react2.useCallback)((r2) => {
+  function useSceneRenderer(onNotify) {
+    const [showSceneControls, setShowSceneControls] = (0, import_react3.useState)(false);
+    const [xFocus, setXFocus] = (0, import_react3.useState)(0.5);
+    const [spriteEntries, setSpriteEntries] = (0, import_react3.useState)([]);
+    const [selectedSprite, setSelectedSprite] = (0, import_react3.useState)(null);
+    const [isSaving, setIsSaving] = (0, import_react3.useState)(false);
+    const [phoneGuideVisible, setPhoneGuideVisible] = (0, import_react3.useState)(true);
+    const onNotifyRef = (0, import_react3.useRef)(onNotify);
+    onNotifyRef.current = onNotify;
+    const phoneGuideVisibleRef = (0, import_react3.useRef)(true);
+    const canvasRef = (0, import_react3.useRef)(null);
+    const rendererRef = (0, import_react3.useRef)(null);
+    const sceneIdRef = (0, import_react3.useRef)(null);
+    const sceneNameRef = (0, import_react3.useRef)(null);
+    const sceneLabelRef = (0, import_react3.useRef)(null);
+    const refreshSpriteList = (0, import_react3.useCallback)((r2) => {
       setSpriteEntries([...r2.getSpriteEntries()]);
     }, []);
-    const loadScene = (0, import_react2.useCallback)(async (sceneName) => {
+    const loadScene = (0, import_react3.useCallback)(async (sceneName) => {
       try {
         const response = await fetch(`/api/scenes/${sceneName}`);
         const row = await response.json();
         const sceneData = row.data;
+        sceneIdRef.current = row.id;
+        sceneNameRef.current = row.name;
+        sceneLabelRef.current = row.label;
         rendererRef.current?.destroy();
         if (!canvasRef.current) return;
         const renderer = new SceneRenderer(canvasRef.current);
         await renderer.loadScene(sceneData);
         rendererRef.current = renderer;
+        if (phoneGuideVisibleRef.current) renderer.showGuide();
         const focus = sceneData.xFocus ?? 0.5;
         setXFocus(focus);
         setShowSceneControls(true);
@@ -67613,19 +67675,40 @@ ${e2}`);
         console.error("Failed to load scene:", error);
       }
     }, [refreshSpriteList]);
-    const handleXFocusChange = (0, import_react2.useCallback)((value) => {
+    const saveScene = (0, import_react3.useCallback)(async () => {
+      const name = sceneNameRef.current;
+      const label = sceneLabelRef.current;
+      const data = rendererRef.current?.getSceneData();
+      if (!name || !label || !data) return;
+      setIsSaving(true);
+      try {
+        await fetch(`/api/scenes/${name}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ label, data })
+        });
+        onNotifyRef.current?.("Scene saved!");
+      } catch (error) {
+        console.error("Failed to save scene:", error);
+      } finally {
+        setIsSaving(false);
+      }
+    }, []);
+    const handleXFocusChange = (0, import_react3.useCallback)((value) => {
       setXFocus(value);
       rendererRef.current?.setScrollOffset(value);
     }, []);
-    const handlePhoneGuideToggle = (0, import_react2.useCallback)((visible) => {
+    const handlePhoneGuideToggle = (0, import_react3.useCallback)((visible) => {
+      phoneGuideVisibleRef.current = visible;
+      setPhoneGuideVisible(visible);
       if (visible) rendererRef.current?.showGuide();
       else rendererRef.current?.hideGuide();
     }, []);
-    const handleSpriteToggle = (0, import_react2.useCallback)((index) => {
+    const handleSpriteToggle = (0, import_react3.useCallback)((index) => {
       rendererRef.current?.toggleSpriteByIndex(index);
       if (rendererRef.current) refreshSpriteList(rendererRef.current);
     }, [refreshSpriteList]);
-    const handleSpriteSelect = (0, import_react2.useCallback)((index) => {
+    const handleSpriteSelect = (0, import_react3.useCallback)((index) => {
       const pos = rendererRef.current?.getSpritePosition(index);
       const name = spriteEntries[index]?.name || `Sprite ${index}`;
       if (pos) {
@@ -67633,7 +67716,7 @@ ${e2}`);
         rendererRef.current?.setSelectedSpriteHighlight(index);
       }
     }, [spriteEntries]);
-    const handleSpritePositionChange = (0, import_react2.useCallback)((x2, y2) => {
+    const handleSpritePositionChange = (0, import_react3.useCallback)((x2, y2) => {
       if (!rendererRef.current) return;
       setSelectedSprite((prev) => {
         if (!prev) return null;
@@ -67649,7 +67732,10 @@ ${e2}`);
       spriteEntries,
       selectedSprite,
       setSelectedSprite,
+      isSaving,
+      phoneGuideVisible,
       loadScene,
+      saveScene,
       handleXFocusChange,
       handlePhoneGuideToggle,
       handleSpriteToggle,
@@ -67659,15 +67745,15 @@ ${e2}`);
   }
 
   // src/hooks/useSpriteDrag.ts
-  var import_react3 = __toESM(require_react());
+  var import_react4 = __toESM(require_react());
   function useSpriteDrag({
     selectedSprite,
     rendererRef,
     onSpriteMove,
     onDragCommit
   }) {
-    const canvasDragState = (0, import_react3.useRef)(null);
-    const handleCanvasMouseDown = (0, import_react3.useCallback)((event) => {
+    const canvasDragState = (0, import_react4.useRef)(null);
+    const handleCanvasMouseDown = (0, import_react4.useCallback)((event) => {
       if (!selectedSprite || !rendererRef.current) return;
       const canvas = rendererRef.current.getCanvas();
       if (!canvas) return;
@@ -67685,9 +67771,9 @@ ${e2}`);
         startSpriteY: selectedSprite.y
       };
     }, [selectedSprite, rendererRef]);
-    const dragCallbacksRef = (0, import_react3.useRef)({ onSpriteMove, onDragCommit });
+    const dragCallbacksRef = (0, import_react4.useRef)({ onSpriteMove, onDragCommit });
     dragCallbacksRef.current = { onSpriteMove, onDragCommit };
-    (0, import_react3.useEffect)(() => {
+    (0, import_react4.useEffect)(() => {
       const handleMouseMove = (event) => {
         const drag = canvasDragState.current;
         if (!drag || !rendererRef.current) return;
@@ -67729,7 +67815,7 @@ ${e2}`);
   }
 
   // src/hooks/useKeyboardControls.ts
-  var import_react4 = __toESM(require_react());
+  var import_react5 = __toESM(require_react());
   var ARROW_STEP = 0.05;
   function useKeyboardControls({
     selectedSprite,
@@ -67739,7 +67825,7 @@ ${e2}`);
     onRedoApply,
     onSpriteMove
   }) {
-    (0, import_react4.useEffect)(() => {
+    (0, import_react5.useEffect)(() => {
       const handleKeyDown = (e2) => {
         if ((e2.ctrlKey || e2.metaKey) && e2.key === "z" && !e2.shiftKey) {
           e2.preventDefault();
@@ -67781,10 +67867,11 @@ ${e2}`);
   }
 
   // src/ScenePage.tsx
-  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
   function ScenePage({ scenes }) {
     const history = useUndoHistory();
-    const dragStartPos = (0, import_react5.useRef)(null);
+    const { notifications, notify } = useNotifications();
+    const dragStartPos = (0, import_react6.useRef)(null);
     const {
       canvasRef,
       rendererRef,
@@ -67793,14 +67880,17 @@ ${e2}`);
       spriteEntries,
       selectedSprite,
       setSelectedSprite,
+      isSaving,
+      phoneGuideVisible,
       loadScene,
+      saveScene,
       handleXFocusChange,
       handlePhoneGuideToggle,
       handleSpriteToggle,
       handleSpriteSelect,
       handleSpritePositionChange
-    } = useSceneRenderer();
-    const applySelectedSpriteMove = (0, import_react5.useCallback)((x2, y2) => {
+    } = useSceneRenderer(notify);
+    const applySelectedSpriteMove = (0, import_react6.useCallback)((x2, y2) => {
       setSelectedSprite((prev) => prev ? { ...prev, x: x2, y: y2 } : null);
     }, [setSelectedSprite]);
     const { handleCanvasMouseDown } = useSpriteDrag({
@@ -67817,10 +67907,10 @@ ${e2}`);
       onRedoApply: applySelectedSpriteMove,
       onSpriteMove: applySelectedSpriteMove
     });
-    const handleSpritePositionChangeStart = (0, import_react5.useCallback)((x2, y2) => {
+    const handleSpritePositionChangeStart = (0, import_react6.useCallback)((x2, y2) => {
       dragStartPos.current = { x: x2, y: y2 };
     }, []);
-    const handleSpritePositionCommit = (0, import_react5.useCallback)((x2, y2) => {
+    const handleSpritePositionCommit = (0, import_react6.useCallback)((x2, y2) => {
       if (!selectedSprite || !dragStartPos.current) return;
       const before = dragStartPos.current;
       dragStartPos.current = null;
@@ -67828,38 +67918,50 @@ ${e2}`);
         history.push({ spriteIndex: selectedSprite.index, before, after: { x: x2, y: y2 } });
       }
     }, [selectedSprite, history]);
-    return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(import_jsx_runtime7.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
-        SceneEditorPanel,
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+        TopBar,
         {
           scenes,
-          showSceneControls,
-          xFocus,
-          spriteEntries,
-          selectedSprite,
+          sceneLoaded: showSceneControls,
+          isSaving,
+          phoneGuideVisible,
           onSceneSelect: loadScene,
-          onXFocusChange: handleXFocusChange,
           onPhoneGuideToggle: handlePhoneGuideToggle,
-          onSpriteToggle: handleSpriteToggle,
-          onSpriteSelect: handleSpriteSelect,
-          onSpritePositionChange: handleSpritePositionChange,
-          onSpritePositionChangeStart: handleSpritePositionChangeStart,
-          onSpritePositionCommit: handleSpritePositionCommit
+          onSave: saveScene
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "main-content", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { id: "canvas-container", ref: canvasRef, onMouseDown: handleCanvasMouseDown }) })
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "app-content", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+          SceneEditorPanel,
+          {
+            sceneLoaded: showSceneControls,
+            xFocus,
+            spriteEntries,
+            selectedSprite,
+            onXFocusChange: handleXFocusChange,
+            onSpriteToggle: handleSpriteToggle,
+            onSpriteSelect: handleSpriteSelect,
+            onSpritePositionChange: handleSpritePositionChange,
+            onSpritePositionChangeStart: handleSpritePositionChangeStart,
+            onSpritePositionCommit: handleSpritePositionCommit
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "main-content", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { id: "canvas-container", ref: canvasRef, onMouseDown: handleCanvasMouseDown }) })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(NotificationStack, { notifications })
     ] });
   }
 
   // src/client.tsx
-  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
   window.addEventListener("DOMContentLoaded", async () => {
     try {
       const response = await fetch("/api/scenes");
       const data = await response.json();
       const scenes = data.map((s2) => ({ value: s2.name, label: s2.label }));
       const root = (0, import_client.createRoot)(document.body);
-      root.render(/* @__PURE__ */ (0, import_jsx_runtime8.jsx)(ScenePage, { scenes }));
+      root.render(/* @__PURE__ */ (0, import_jsx_runtime10.jsx)(ScenePage, { scenes }));
     } catch (error) {
       console.error("Failed to initialize app:", error);
     }

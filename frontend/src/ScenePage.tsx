@@ -1,6 +1,9 @@
 import React, { useRef, useCallback } from 'react';
 import { SceneEditorPanel, SceneOption } from './SceneEditorPanel';
+import { TopBar } from './TopBar';
+import { NotificationStack } from './NotificationStack';
 import { useUndoHistory } from './hooks/useUndoHistory';
+import { useNotifications } from './hooks/useNotifications';
 import { useSceneRenderer } from './hooks/useSceneRenderer';
 import { useSpriteDrag } from './hooks/useSpriteDrag';
 import { useKeyboardControls } from './hooks/useKeyboardControls';
@@ -11,6 +14,7 @@ interface ScenePageProps {
 
 export function ScenePage({ scenes }: ScenePageProps) {
   const history = useUndoHistory();
+  const { notifications, notify } = useNotifications();
   const dragStartPos = useRef<{ x: number; y: number } | null>(null);
 
   const {
@@ -21,13 +25,16 @@ export function ScenePage({ scenes }: ScenePageProps) {
     spriteEntries,
     selectedSprite,
     setSelectedSprite,
+    isSaving,
+    phoneGuideVisible,
     loadScene,
+    saveScene,
     handleXFocusChange,
     handlePhoneGuideToggle,
     handleSpriteToggle,
     handleSpriteSelect,
     handleSpritePositionChange,
-  } = useSceneRenderer();
+  } = useSceneRenderer(notify);
 
   const applySelectedSpriteMove = useCallback((x: number, y: number) => {
     setSelectedSprite(prev => prev ? { ...prev, x, y } : null);
@@ -64,24 +71,33 @@ export function ScenePage({ scenes }: ScenePageProps) {
 
   return (
     <>
-      <SceneEditorPanel
+      <TopBar
         scenes={scenes}
-        showSceneControls={showSceneControls}
-        xFocus={xFocus}
-        spriteEntries={spriteEntries}
-        selectedSprite={selectedSprite}
+        sceneLoaded={showSceneControls}
+        isSaving={isSaving}
+        phoneGuideVisible={phoneGuideVisible}
         onSceneSelect={loadScene}
-        onXFocusChange={handleXFocusChange}
         onPhoneGuideToggle={handlePhoneGuideToggle}
-        onSpriteToggle={handleSpriteToggle}
-        onSpriteSelect={handleSpriteSelect}
-        onSpritePositionChange={handleSpritePositionChange}
-        onSpritePositionChangeStart={handleSpritePositionChangeStart}
-        onSpritePositionCommit={handleSpritePositionCommit}
+        onSave={saveScene}
       />
-      <div className="main-content">
-        <div id="canvas-container" ref={canvasRef} onMouseDown={handleCanvasMouseDown} />
+      <div className="app-content">
+        <SceneEditorPanel
+          sceneLoaded={showSceneControls}
+          xFocus={xFocus}
+          spriteEntries={spriteEntries}
+          selectedSprite={selectedSprite}
+          onXFocusChange={handleXFocusChange}
+          onSpriteToggle={handleSpriteToggle}
+          onSpriteSelect={handleSpriteSelect}
+          onSpritePositionChange={handleSpritePositionChange}
+          onSpritePositionChangeStart={handleSpritePositionChangeStart}
+          onSpritePositionCommit={handleSpritePositionCommit}
+        />
+        <div className="main-content">
+          <div id="canvas-container" ref={canvasRef} onMouseDown={handleCanvasMouseDown} />
+        </div>
       </div>
+      <NotificationStack notifications={notifications} />
     </>
   );
 }
