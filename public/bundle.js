@@ -67564,6 +67564,29 @@ ${e2}`);
       rendererRef.current?.setSpritePosition(selectedSprite.index, x2, y2);
       setSelectedSprite((prev) => prev ? { ...prev, x: x2, y: y2 } : null);
     }, [selectedSprite]);
+    const ARROW_STEP = 0.05;
+    (0, import_react.useEffect)(() => {
+      const handleKeyDown = (e2) => {
+        if (!selectedSprite) return;
+        if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e2.key)) return;
+        if (document.activeElement instanceof HTMLInputElement) return;
+        e2.preventDefault();
+        setSelectedSprite((prev) => {
+          if (!prev) return null;
+          let { x: x2, y: y2 } = prev;
+          if (e2.key === "ArrowLeft") x2 -= ARROW_STEP;
+          if (e2.key === "ArrowRight") x2 += ARROW_STEP;
+          if (e2.key === "ArrowUp") y2 -= ARROW_STEP;
+          if (e2.key === "ArrowDown") y2 += ARROW_STEP;
+          x2 = Math.round(x2 / ARROW_STEP) * ARROW_STEP;
+          y2 = Math.round(y2 / ARROW_STEP) * ARROW_STEP;
+          rendererRef.current?.setSpritePosition(prev.index, x2, y2);
+          return { ...prev, x: x2, y: y2 };
+        });
+      };
+      window.addEventListener("keydown", handleKeyDown);
+      return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [selectedSprite]);
     return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(import_jsx_runtime7.Fragment, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
         SceneEditorPanel,

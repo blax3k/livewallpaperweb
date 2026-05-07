@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { SceneRenderer } from './renderers/SceneRenderer';
 import { SceneEditorPanel, SceneOption } from './SceneEditorPanel';
 import type { SpriteEntry } from './controls/SpriteListPanel';
@@ -80,6 +80,34 @@ export function ScenePage({ scenes }: ScenePageProps) {
     if (selectedSprite === null) return;
     rendererRef.current?.setSpritePosition(selectedSprite.index, x, y);
     setSelectedSprite(prev => prev ? { ...prev, x, y } : null);
+  }, [selectedSprite]);
+
+  const ARROW_STEP = 0.05;
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!selectedSprite) return;
+      if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) return;
+      // Don't hijack arrow keys when focused on an input
+      if (document.activeElement instanceof HTMLInputElement) return;
+
+      e.preventDefault();
+      setSelectedSprite(prev => {
+        if (!prev) return null;
+        let { x, y } = prev;
+        if (e.key === 'ArrowLeft')  x -= ARROW_STEP;
+        if (e.key === 'ArrowRight') x += ARROW_STEP;
+        if (e.key === 'ArrowUp')    y -= ARROW_STEP;
+        if (e.key === 'ArrowDown')  y += ARROW_STEP;
+        x = Math.round(x / ARROW_STEP) * ARROW_STEP;
+        y = Math.round(y / ARROW_STEP) * ARROW_STEP;
+        rendererRef.current?.setSpritePosition(prev.index, x, y);
+        return { ...prev, x, y };
+      });
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedSprite]);
 
   return (
