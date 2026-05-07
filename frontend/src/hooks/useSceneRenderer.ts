@@ -24,8 +24,9 @@ export function useSceneRenderer() {
 
   const loadScene = useCallback(async (sceneName: string) => {
     try {
-      const response = await fetch(`/scenes/${sceneName}.json`);
-      const sceneData: Scene = await response.json();
+      const response = await fetch(`/api/scenes/${sceneName}`);
+      const row: { data: Scene } = await response.json();
+      const sceneData: Scene = row.data;
 
       rendererRef.current?.destroy();
 

@@ -67588,8 +67588,9 @@ ${e2}`);
     }, []);
     const loadScene = (0, import_react2.useCallback)(async (sceneName) => {
       try {
-        const response = await fetch(`/scenes/${sceneName}.json`);
-        const sceneData = await response.json();
+        const response = await fetch(`/api/scenes/${sceneName}`);
+        const row = await response.json();
+        const sceneData = row.data;
         rendererRef.current?.destroy();
         if (!canvasRef.current) return;
         const renderer = new SceneRenderer(canvasRef.current);
@@ -67855,7 +67856,8 @@ ${e2}`);
   window.addEventListener("DOMContentLoaded", async () => {
     try {
       const response = await fetch("/api/scenes");
-      const scenes = await response.json();
+      const data = await response.json();
+      const scenes = data.map((s2) => ({ value: s2.name, label: s2.label }));
       const root = (0, import_client.createRoot)(document.body);
       root.render(/* @__PURE__ */ (0, import_jsx_runtime8.jsx)(ScenePage, { scenes }));
     } catch (error) {
