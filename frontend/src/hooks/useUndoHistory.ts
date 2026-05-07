@@ -1,21 +1,31 @@
 import { useRef } from 'react';
 
 export interface PositionAction {
+  type: 'position';
   spriteIndex: number;
   before: { x: number; y: number };
   after: { x: number; y: number };
 }
 
-export function useUndoHistory() {
-  const past = useRef<PositionAction[]>([]);
-  const future = useRef<PositionAction[]>([]);
+export interface ScaleAction {
+  type: 'scale';
+  spriteIndex: number;
+  before: { width: number; height: number };
+  after: { width: number; height: number };
+}
 
-  function push(action: PositionAction) {
+export type HistoryAction = PositionAction | ScaleAction;
+
+export function useUndoHistory() {
+  const past = useRef<HistoryAction[]>([]);
+  const future = useRef<HistoryAction[]>([]);
+
+  function push(action: HistoryAction) {
     past.current = [...past.current, action];
     future.current = [];
   }
 
-  function undo(): PositionAction | null {
+  function undo(): HistoryAction | null {
     const action = past.current[past.current.length - 1];
     if (!action) return null;
     past.current = past.current.slice(0, -1);
@@ -23,7 +33,7 @@ export function useUndoHistory() {
     return action;
   }
 
-  function redo(): PositionAction | null {
+  function redo(): HistoryAction | null {
     const action = future.current[future.current.length - 1];
     if (!action) return null;
     future.current = future.current.slice(0, -1);

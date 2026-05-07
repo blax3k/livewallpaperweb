@@ -12,6 +12,7 @@ interface UseKeyboardControlsOptions {
   onUndoApply: (x: number, y: number) => void;
   onRedoApply: (x: number, y: number) => void;
   onSpriteMove: (x: number, y: number) => void;
+  onScaleApply?: (width: number, height: number) => void;
 }
 
 export function useKeyboardControls({
@@ -21,6 +22,7 @@ export function useKeyboardControls({
   onUndoApply,
   onRedoApply,
   onSpriteMove,
+  onScaleApply,
 }: UseKeyboardControlsOptions) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -29,8 +31,13 @@ export function useKeyboardControls({
         e.preventDefault();
         const action = history.undo();
         if (action) {
-          rendererRef.current?.setSpritePosition(action.spriteIndex, action.before.x, action.before.y);
-          onUndoApply(action.before.x, action.before.y);
+          if (action.type === 'position') {
+            rendererRef.current?.setSpritePosition(action.spriteIndex, action.before.x, action.before.y);
+            onUndoApply(action.before.x, action.before.y);
+          } else {
+            rendererRef.current?.setSpriteSize(action.spriteIndex, action.before.width, action.before.height);
+            onScaleApply?.(action.before.width, action.before.height);
+          }
         }
         return;
       }
@@ -39,8 +46,13 @@ export function useKeyboardControls({
         e.preventDefault();
         const action = history.redo();
         if (action) {
-          rendererRef.current?.setSpritePosition(action.spriteIndex, action.after.x, action.after.y);
-          onRedoApply(action.after.x, action.after.y);
+          if (action.type === 'position') {
+            rendererRef.current?.setSpritePosition(action.spriteIndex, action.after.x, action.after.y);
+            onRedoApply(action.after.x, action.after.y);
+          } else {
+            rendererRef.current?.setSpriteSize(action.spriteIndex, action.after.width, action.after.height);
+            onScaleApply?.(action.after.width, action.after.height);
+          }
         }
         return;
       }
@@ -60,7 +72,7 @@ export function useKeyboardControls({
       x = Math.round(x / ARROW_STEP) * ARROW_STEP;
       y = Math.round(y / ARROW_STEP) * ARROW_STEP;
       rendererRef.current?.setSpritePosition(selectedSprite.index, x, y);
-      history.push({ spriteIndex: selectedSprite.index, before, after: { x, y } });
+      history.push({ type: 'position', spriteIndex: selectedSprite.index, before, after: { x, y } });
       onSpriteMove(x, y);
     };
 

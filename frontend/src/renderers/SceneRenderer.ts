@@ -8,6 +8,8 @@ interface SpriteMetadata {
   parallaxMultiplier: number;
   name: string;
   visible: boolean;
+  originalWidth: number;
+  originalHeight: number;
 }
 
 /**
@@ -104,6 +106,8 @@ export class SceneRenderer {
           parallaxMultiplier: spriteData.parallaxMultiplier,
           name: spriteData.name,
           visible: true,
+          originalWidth: spriteData.width,
+          originalHeight: spriteData.height,
         });
         this.app.stage.addChild(sprite);
       }
@@ -263,6 +267,28 @@ export class SceneRenderer {
     this.updateSelectionHighlight();
   }
 
+  setSpriteSize(index: number, width: number, height: number): void {
+    if (index >= 0 && index < this.sprites.length) {
+      const sprite = this.sprites[index];
+      sprite.width = width;
+      sprite.height = height;
+      this.setScrollOffset(this.currentXFocus);
+      this.updateSelectionHighlight();
+    }
+  }
+
+  getSpriteScale(index: number): { scale: number; width: number; height: number } | null {
+    if (index >= 0 && index < this.sprites.length) {
+      const sprite = this.sprites[index];
+      const metadata = this.spriteMetadata.get(sprite);
+      if (metadata) {
+        const scale = metadata.originalWidth > 0 ? sprite.width / metadata.originalWidth : 1;
+        return { scale, width: sprite.width, height: sprite.height };
+      }
+    }
+    return null;
+  }
+
   getSpritePosition(index: number): { x: number; y: number } | null {
     if (index >= 0 && index < this.sprites.length) {
       const sprite = this.sprites[index];
@@ -386,6 +412,8 @@ export class SceneRenderer {
           ...original,
           positionX: metadata?.x ?? original.positionX,
           positionY: sprite.y,
+          width: sprite.width,
+          height: sprite.height,
         };
       }),
     };

@@ -16,6 +16,7 @@ export function ScenePage({ scenes }: ScenePageProps) {
   const history = useUndoHistory();
   const { notifications, notify } = useNotifications();
   const dragStartPos = useRef<{ x: number; y: number } | null>(null);
+  const dragStartSize = useRef<{ width: number; height: number } | null>(null);
 
   const {
     canvasRef,
@@ -34,10 +35,15 @@ export function ScenePage({ scenes }: ScenePageProps) {
     handleSpriteToggle,
     handleSpriteSelect,
     handleSpritePositionChange,
+    handleSpriteSizeChange,
   } = useSceneRenderer(notify);
 
   const applySelectedSpriteMove = useCallback((x: number, y: number) => {
     setSelectedSprite(prev => prev ? { ...prev, x, y } : null);
+  }, [setSelectedSprite]);
+
+  const applySelectedSpriteSize = useCallback((width: number, height: number) => {
+    setSelectedSprite(prev => prev ? { ...prev, width, height } : null);
   }, [setSelectedSprite]);
 
   const { handleCanvasMouseDown } = useSpriteDrag({
@@ -54,6 +60,7 @@ export function ScenePage({ scenes }: ScenePageProps) {
     onUndoApply: applySelectedSpriteMove,
     onRedoApply: applySelectedSpriteMove,
     onSpriteMove: applySelectedSpriteMove,
+    onScaleApply: applySelectedSpriteSize,
   });
 
   const handleSpritePositionChangeStart = useCallback((x: number, y: number) => {
@@ -65,7 +72,20 @@ export function ScenePage({ scenes }: ScenePageProps) {
     const before = dragStartPos.current;
     dragStartPos.current = null;
     if (before.x !== x || before.y !== y) {
-      history.push({ spriteIndex: selectedSprite.index, before, after: { x, y } });
+      history.push({ type: 'position', spriteIndex: selectedSprite.index, before, after: { x, y } });
+    }
+  }, [selectedSprite, history]);
+
+  const handleSpriteSizeChangeStart = useCallback(() => {
+    if (selectedSprite) dragStartSize.current = { width: selectedSprite.width, height: selectedSprite.height };
+  }, [selectedSprite]);
+
+  const handleSpriteSizeCommit = useCallback((width: number, height: number) => {
+    if (!selectedSprite || !dragStartSize.current) return;
+    const before = dragStartSize.current;
+    dragStartSize.current = null;
+    if (before.width !== width || before.height !== height) {
+      history.push({ type: 'scale', spriteIndex: selectedSprite.index, before, after: { width, height } });
     }
   }, [selectedSprite, history]);
 
@@ -92,6 +112,9 @@ export function ScenePage({ scenes }: ScenePageProps) {
           onSpritePositionChange={handleSpritePositionChange}
           onSpritePositionChangeStart={handleSpritePositionChangeStart}
           onSpritePositionCommit={handleSpritePositionCommit}
+          onSpriteSizeChange={handleSpriteSizeChange}
+          onSpriteSizeChangeStart={handleSpriteSizeChangeStart}
+          onSpriteSizeCommit={handleSpriteSizeCommit}
         />
         <div className="main-content">
           <div id="canvas-container" ref={canvasRef} onMouseDown={handleCanvasMouseDown} />

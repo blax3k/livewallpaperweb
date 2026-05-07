@@ -8,6 +8,8 @@ export interface SelectedSprite {
   name: string;
   x: number;
   y: number;
+  width: number;
+  height: number;
 }
 
 export function useSceneRenderer(onNotify?: (message: string) => void) {
@@ -55,9 +57,10 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
       refreshSpriteList(renderer);
 
       const firstPos = renderer.getSpritePosition(0);
+      const firstScale = renderer.getSpriteScale(0);
       const entries = renderer.getSpriteEntries();
       if (firstPos && entries.length > 0) {
-        setSelectedSprite({ index: 0, name: entries[0].name || 'Sprite 0', x: firstPos.x, y: firstPos.y });
+        setSelectedSprite({ index: 0, name: entries[0].name || 'Sprite 0', x: firstPos.x, y: firstPos.y, width: firstScale?.width ?? 0, height: firstScale?.height ?? 0 });
         renderer.setSelectedSpriteHighlight(0);
       } else {
         setSelectedSprite(null);
@@ -108,9 +111,10 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
 
   const handleSpriteSelect = useCallback((index: number) => {
     const pos = rendererRef.current?.getSpritePosition(index);
+    const scaleInfo = rendererRef.current?.getSpriteScale(index);
     const name = spriteEntries[index]?.name || `Sprite ${index}`;
     if (pos) {
-      setSelectedSprite({ index, name, x: pos.x, y: pos.y });
+      setSelectedSprite({ index, name, x: pos.x, y: pos.y, width: scaleInfo?.width ?? 0, height: scaleInfo?.height ?? 0 });
       rendererRef.current?.setSelectedSpriteHighlight(index);
     }
   }, [spriteEntries]);
@@ -121,6 +125,14 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
       if (!prev) return null;
       rendererRef.current!.setSpritePosition(prev.index, x, y);
       return { ...prev, x, y };
+    });
+  }, []);
+
+  const handleSpriteSizeChange = useCallback((width: number, height: number) => {
+    setSelectedSprite(prev => {
+      if (!prev) return null;
+      rendererRef.current?.setSpriteSize(prev.index, width, height);
+      return { ...prev, width, height };
     });
   }, []);
 
@@ -141,6 +153,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
     handleSpriteToggle,
     handleSpriteSelect,
     handleSpritePositionChange,
+    handleSpriteSizeChange,
   };
 }
 

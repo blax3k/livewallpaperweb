@@ -10,6 +10,8 @@ interface SelectedSprite {
   name: string;
   x: number;
   y: number;
+  width: number;
+  height: number;
 }
 
 interface SceneEditorPanelProps {
@@ -23,6 +25,9 @@ interface SceneEditorPanelProps {
   onSpritePositionChange: (x: number, y: number) => void;
   onSpritePositionChangeStart?: (x: number, y: number) => void;
   onSpritePositionCommit?: (x: number, y: number) => void;
+  onSpriteSizeChange: (width: number, height: number) => void;
+  onSpriteSizeChangeStart?: () => void;
+  onSpriteSizeCommit?: (width: number, height: number) => void;
 }
 
 export function SceneEditorPanel({
@@ -36,6 +41,9 @@ export function SceneEditorPanel({
   onSpritePositionChange,
   onSpritePositionChangeStart,
   onSpritePositionCommit,
+  onSpriteSizeChange,
+  onSpriteSizeChangeStart,
+  onSpriteSizeCommit,
 }: SceneEditorPanelProps) {
   return (
     <div className="controls">
@@ -56,10 +64,15 @@ export function SceneEditorPanel({
           spriteName={selectedSprite?.name ?? ''}
           x={selectedSprite?.x ?? 0}
           y={selectedSprite?.y ?? 0}
+          width={selectedSprite?.width ?? 0}
+          height={selectedSprite?.height ?? 0}
           disabled={selectedSprite === null}
           onChange={onSpritePositionChange}
           onChangeStart={onSpritePositionChangeStart}
           onChangeCommit={onSpritePositionCommit}
+          onSizeChange={onSpriteSizeChange}
+          onSizeChangeStart={onSpriteSizeChangeStart}
+          onSizeCommit={onSpriteSizeCommit}
         />
       </div>
     </div>

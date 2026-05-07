@@ -73,6 +73,7 @@ export function useSpriteDrag({
       canvasDragState.current = null;
       if (newX !== drag.startSpriteX || newY !== drag.startSpriteY) {
         dragCallbacksRef.current.onDragCommit({
+          type: 'position',
           spriteIndex: drag.spriteIndex,
           before: { x: drag.startSpriteX, y: drag.startSpriteY },
           after: { x: newX, y: newY },
