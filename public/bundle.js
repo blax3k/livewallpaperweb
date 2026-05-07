@@ -1337,7 +1337,7 @@
           return dispatcher;
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var React2 = require_react(), Internals = {
+        var React4 = require_react(), Internals = {
           d: {
             f: noop,
             r: function() {
@@ -1355,7 +1355,7 @@
           },
           p: 0,
           findDOMNode: null
-        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React2.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React4.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
         "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
           "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
         );
@@ -2890,7 +2890,7 @@
           "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
         }
         function validateOptionProps(element, props) {
-          null == props.value && ("object" === typeof props.children && null !== props.children ? React2.Children.forEach(props.children, function(child) {
+          null == props.value && ("object" === typeof props.children && null !== props.children ? React4.Children.forEach(props.children, function(child) {
             null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
               "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
             ));
@@ -18522,14 +18522,14 @@
           ));
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var Scheduler = require_scheduler(), React2 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+        var Scheduler = require_scheduler(), React4 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
         /* @__PURE__ */ Symbol.for("react.scope");
         var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity");
         /* @__PURE__ */ Symbol.for("react.legacy_hidden");
         /* @__PURE__ */ Symbol.for("react.tracing_marker");
         var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel");
         /* @__PURE__ */ Symbol.for("react.view_transition");
-        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React2.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React4.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
           pending: false,
           data: null,
           method: null,
@@ -21317,7 +21317,7 @@
           }
         };
         (function() {
-          var isomorphicReactPackageVersion = React2.version;
+          var isomorphicReactPackageVersion = React4.version;
           if ("19.2.5" !== isomorphicReactPackageVersion)
             throw Error(
               'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.5\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21453,6 +21453,275 @@
         module.exports = null;
       } else {
         module.exports = require_react_dom_client_development();
+      }
+    }
+  });
+
+  // node_modules/react/cjs/react-jsx-runtime.development.js
+  var require_react_jsx_runtime_development = __commonJS({
+    "node_modules/react/cjs/react-jsx-runtime.development.js"(exports) {
+      "use strict";
+      (function() {
+        function getComponentNameFromType(type) {
+          if (null == type) return null;
+          if ("function" === typeof type)
+            return type.$$typeof === REACT_CLIENT_REFERENCE ? null : type.displayName || type.name || null;
+          if ("string" === typeof type) return type;
+          switch (type) {
+            case REACT_FRAGMENT_TYPE:
+              return "Fragment";
+            case REACT_PROFILER_TYPE:
+              return "Profiler";
+            case REACT_STRICT_MODE_TYPE:
+              return "StrictMode";
+            case REACT_SUSPENSE_TYPE:
+              return "Suspense";
+            case REACT_SUSPENSE_LIST_TYPE:
+              return "SuspenseList";
+            case REACT_ACTIVITY_TYPE:
+              return "Activity";
+          }
+          if ("object" === typeof type)
+            switch ("number" === typeof type.tag && console.error(
+              "Received an unexpected object in getComponentNameFromType(). This is likely a bug in React. Please file an issue."
+            ), type.$$typeof) {
+              case REACT_PORTAL_TYPE:
+                return "Portal";
+              case REACT_CONTEXT_TYPE:
+                return type.displayName || "Context";
+              case REACT_CONSUMER_TYPE:
+                return (type._context.displayName || "Context") + ".Consumer";
+              case REACT_FORWARD_REF_TYPE:
+                var innerType = type.render;
+                type = type.displayName;
+                type || (type = innerType.displayName || innerType.name || "", type = "" !== type ? "ForwardRef(" + type + ")" : "ForwardRef");
+                return type;
+              case REACT_MEMO_TYPE:
+                return innerType = type.displayName || null, null !== innerType ? innerType : getComponentNameFromType(type.type) || "Memo";
+              case REACT_LAZY_TYPE:
+                innerType = type._payload;
+                type = type._init;
+                try {
+                  return getComponentNameFromType(type(innerType));
+                } catch (x2) {
+                }
+            }
+          return null;
+        }
+        function testStringCoercion(value) {
+          return "" + value;
+        }
+        function checkKeyStringCoercion(value) {
+          try {
+            testStringCoercion(value);
+            var JSCompiler_inline_result = false;
+          } catch (e2) {
+            JSCompiler_inline_result = true;
+          }
+          if (JSCompiler_inline_result) {
+            JSCompiler_inline_result = console;
+            var JSCompiler_temp_const = JSCompiler_inline_result.error;
+            var JSCompiler_inline_result$jscomp$0 = "function" === typeof Symbol && Symbol.toStringTag && value[Symbol.toStringTag] || value.constructor.name || "Object";
+            JSCompiler_temp_const.call(
+              JSCompiler_inline_result,
+              "The provided key is an unsupported type %s. This value must be coerced to a string before using it here.",
+              JSCompiler_inline_result$jscomp$0
+            );
+            return testStringCoercion(value);
+          }
+        }
+        function getTaskName(type) {
+          if (type === REACT_FRAGMENT_TYPE) return "<>";
+          if ("object" === typeof type && null !== type && type.$$typeof === REACT_LAZY_TYPE)
+            return "<...>";
+          try {
+            var name = getComponentNameFromType(type);
+            return name ? "<" + name + ">" : "<...>";
+          } catch (x2) {
+            return "<...>";
+          }
+        }
+        function getOwner() {
+          var dispatcher = ReactSharedInternals.A;
+          return null === dispatcher ? null : dispatcher.getOwner();
+        }
+        function UnknownOwner() {
+          return Error("react-stack-top-frame");
+        }
+        function hasValidKey(config) {
+          if (hasOwnProperty.call(config, "key")) {
+            var getter = Object.getOwnPropertyDescriptor(config, "key").get;
+            if (getter && getter.isReactWarning) return false;
+          }
+          return void 0 !== config.key;
+        }
+        function defineKeyPropWarningGetter(props, displayName) {
+          function warnAboutAccessingKey() {
+            specialPropKeyWarningShown || (specialPropKeyWarningShown = true, console.error(
+              "%s: `key` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://react.dev/link/special-props)",
+              displayName
+            ));
+          }
+          warnAboutAccessingKey.isReactWarning = true;
+          Object.defineProperty(props, "key", {
+            get: warnAboutAccessingKey,
+            configurable: true
+          });
+        }
+        function elementRefGetterWithDeprecationWarning() {
+          var componentName = getComponentNameFromType(this.type);
+          didWarnAboutElementRef[componentName] || (didWarnAboutElementRef[componentName] = true, console.error(
+            "Accessing element.ref was removed in React 19. ref is now a regular prop. It will be removed from the JSX Element type in a future release."
+          ));
+          componentName = this.props.ref;
+          return void 0 !== componentName ? componentName : null;
+        }
+        function ReactElement(type, key, props, owner, debugStack, debugTask) {
+          var refProp = props.ref;
+          type = {
+            $$typeof: REACT_ELEMENT_TYPE,
+            type,
+            key,
+            props,
+            _owner: owner
+          };
+          null !== (void 0 !== refProp ? refProp : null) ? Object.defineProperty(type, "ref", {
+            enumerable: false,
+            get: elementRefGetterWithDeprecationWarning
+          }) : Object.defineProperty(type, "ref", { enumerable: false, value: null });
+          type._store = {};
+          Object.defineProperty(type._store, "validated", {
+            configurable: false,
+            enumerable: false,
+            writable: true,
+            value: 0
+          });
+          Object.defineProperty(type, "_debugInfo", {
+            configurable: false,
+            enumerable: false,
+            writable: true,
+            value: null
+          });
+          Object.defineProperty(type, "_debugStack", {
+            configurable: false,
+            enumerable: false,
+            writable: true,
+            value: debugStack
+          });
+          Object.defineProperty(type, "_debugTask", {
+            configurable: false,
+            enumerable: false,
+            writable: true,
+            value: debugTask
+          });
+          Object.freeze && (Object.freeze(type.props), Object.freeze(type));
+          return type;
+        }
+        function jsxDEVImpl(type, config, maybeKey, isStaticChildren, debugStack, debugTask) {
+          var children = config.children;
+          if (void 0 !== children)
+            if (isStaticChildren)
+              if (isArrayImpl(children)) {
+                for (isStaticChildren = 0; isStaticChildren < children.length; isStaticChildren++)
+                  validateChildKeys(children[isStaticChildren]);
+                Object.freeze && Object.freeze(children);
+              } else
+                console.error(
+                  "React.jsx: Static children should always be an array. You are likely explicitly calling React.jsxs or React.jsxDEV. Use the Babel transform instead."
+                );
+            else validateChildKeys(children);
+          if (hasOwnProperty.call(config, "key")) {
+            children = getComponentNameFromType(type);
+            var keys = Object.keys(config).filter(function(k2) {
+              return "key" !== k2;
+            });
+            isStaticChildren = 0 < keys.length ? "{key: someKey, " + keys.join(": ..., ") + ": ...}" : "{key: someKey}";
+            didWarnAboutKeySpread[children + isStaticChildren] || (keys = 0 < keys.length ? "{" + keys.join(": ..., ") + ": ...}" : "{}", console.error(
+              'A props object containing a "key" prop is being spread into JSX:\n  let props = %s;\n  <%s {...props} />\nReact keys must be passed directly to JSX without using spread:\n  let props = %s;\n  <%s key={someKey} {...props} />',
+              isStaticChildren,
+              children,
+              keys,
+              children
+            ), didWarnAboutKeySpread[children + isStaticChildren] = true);
+          }
+          children = null;
+          void 0 !== maybeKey && (checkKeyStringCoercion(maybeKey), children = "" + maybeKey);
+          hasValidKey(config) && (checkKeyStringCoercion(config.key), children = "" + config.key);
+          if ("key" in config) {
+            maybeKey = {};
+            for (var propName in config)
+              "key" !== propName && (maybeKey[propName] = config[propName]);
+          } else maybeKey = config;
+          children && defineKeyPropWarningGetter(
+            maybeKey,
+            "function" === typeof type ? type.displayName || type.name || "Unknown" : type
+          );
+          return ReactElement(
+            type,
+            children,
+            maybeKey,
+            getOwner(),
+            debugStack,
+            debugTask
+          );
+        }
+        function validateChildKeys(node) {
+          isValidElement(node) ? node._store && (node._store.validated = 1) : "object" === typeof node && null !== node && node.$$typeof === REACT_LAZY_TYPE && ("fulfilled" === node._payload.status ? isValidElement(node._payload.value) && node._payload.value._store && (node._payload.value._store.validated = 1) : node._store && (node._store.validated = 1));
+        }
+        function isValidElement(object) {
+          return "object" === typeof object && null !== object && object.$$typeof === REACT_ELEMENT_TYPE;
+        }
+        var React4 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React4.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
+          return null;
+        };
+        React4 = {
+          react_stack_bottom_frame: function(callStackForError) {
+            return callStackForError();
+          }
+        };
+        var specialPropKeyWarningShown;
+        var didWarnAboutElementRef = {};
+        var unknownOwnerDebugStack = React4.react_stack_bottom_frame.bind(
+          React4,
+          UnknownOwner
+        )();
+        var unknownOwnerDebugTask = createTask(getTaskName(UnknownOwner));
+        var didWarnAboutKeySpread = {};
+        exports.Fragment = REACT_FRAGMENT_TYPE;
+        exports.jsx = function(type, config, maybeKey) {
+          var trackActualOwner = 1e4 > ReactSharedInternals.recentlyCreatedOwnerStacks++;
+          return jsxDEVImpl(
+            type,
+            config,
+            maybeKey,
+            false,
+            trackActualOwner ? Error("react-stack-top-frame") : unknownOwnerDebugStack,
+            trackActualOwner ? createTask(getTaskName(type)) : unknownOwnerDebugTask
+          );
+        };
+        exports.jsxs = function(type, config, maybeKey) {
+          var trackActualOwner = 1e4 > ReactSharedInternals.recentlyCreatedOwnerStacks++;
+          return jsxDEVImpl(
+            type,
+            config,
+            maybeKey,
+            true,
+            trackActualOwner ? Error("react-stack-top-frame") : unknownOwnerDebugStack,
+            trackActualOwner ? createTask(getTaskName(type)) : unknownOwnerDebugTask
+          );
+        };
+      })();
+    }
+  });
+
+  // node_modules/react/jsx-runtime.js
+  var require_jsx_runtime = __commonJS({
+    "node_modules/react/jsx-runtime.js"(exports, module) {
+      "use strict";
+      if (false) {
+        module.exports = null;
+      } else {
+        module.exports = require_react_jsx_runtime_development();
       }
     }
   });
@@ -63906,280 +64175,274 @@ ${parts.join("\n")}
     }
   });
 
-  // node_modules/react/cjs/react-jsx-runtime.development.js
-  var require_react_jsx_runtime_development = __commonJS({
-    "node_modules/react/cjs/react-jsx-runtime.development.js"(exports) {
-      "use strict";
-      (function() {
-        function getComponentNameFromType(type) {
-          if (null == type) return null;
-          if ("function" === typeof type)
-            return type.$$typeof === REACT_CLIENT_REFERENCE ? null : type.displayName || type.name || null;
-          if ("string" === typeof type) return type;
-          switch (type) {
-            case REACT_FRAGMENT_TYPE:
-              return "Fragment";
-            case REACT_PROFILER_TYPE:
-              return "Profiler";
-            case REACT_STRICT_MODE_TYPE:
-              return "StrictMode";
-            case REACT_SUSPENSE_TYPE:
-              return "Suspense";
-            case REACT_SUSPENSE_LIST_TYPE:
-              return "SuspenseList";
-            case REACT_ACTIVITY_TYPE:
-              return "Activity";
-          }
-          if ("object" === typeof type)
-            switch ("number" === typeof type.tag && console.error(
-              "Received an unexpected object in getComponentNameFromType(). This is likely a bug in React. Please file an issue."
-            ), type.$$typeof) {
-              case REACT_PORTAL_TYPE:
-                return "Portal";
-              case REACT_CONTEXT_TYPE:
-                return type.displayName || "Context";
-              case REACT_CONSUMER_TYPE:
-                return (type._context.displayName || "Context") + ".Consumer";
-              case REACT_FORWARD_REF_TYPE:
-                var innerType = type.render;
-                type = type.displayName;
-                type || (type = innerType.displayName || innerType.name || "", type = "" !== type ? "ForwardRef(" + type + ")" : "ForwardRef");
-                return type;
-              case REACT_MEMO_TYPE:
-                return innerType = type.displayName || null, null !== innerType ? innerType : getComponentNameFromType(type.type) || "Memo";
-              case REACT_LAZY_TYPE:
-                innerType = type._payload;
-                type = type._init;
-                try {
-                  return getComponentNameFromType(type(innerType));
-                } catch (x2) {
-                }
-            }
-          return null;
-        }
-        function testStringCoercion(value) {
-          return "" + value;
-        }
-        function checkKeyStringCoercion(value) {
-          try {
-            testStringCoercion(value);
-            var JSCompiler_inline_result = false;
-          } catch (e2) {
-            JSCompiler_inline_result = true;
-          }
-          if (JSCompiler_inline_result) {
-            JSCompiler_inline_result = console;
-            var JSCompiler_temp_const = JSCompiler_inline_result.error;
-            var JSCompiler_inline_result$jscomp$0 = "function" === typeof Symbol && Symbol.toStringTag && value[Symbol.toStringTag] || value.constructor.name || "Object";
-            JSCompiler_temp_const.call(
-              JSCompiler_inline_result,
-              "The provided key is an unsupported type %s. This value must be coerced to a string before using it here.",
-              JSCompiler_inline_result$jscomp$0
-            );
-            return testStringCoercion(value);
-          }
-        }
-        function getTaskName(type) {
-          if (type === REACT_FRAGMENT_TYPE) return "<>";
-          if ("object" === typeof type && null !== type && type.$$typeof === REACT_LAZY_TYPE)
-            return "<...>";
-          try {
-            var name = getComponentNameFromType(type);
-            return name ? "<" + name + ">" : "<...>";
-          } catch (x2) {
-            return "<...>";
-          }
-        }
-        function getOwner() {
-          var dispatcher = ReactSharedInternals.A;
-          return null === dispatcher ? null : dispatcher.getOwner();
-        }
-        function UnknownOwner() {
-          return Error("react-stack-top-frame");
-        }
-        function hasValidKey(config) {
-          if (hasOwnProperty.call(config, "key")) {
-            var getter = Object.getOwnPropertyDescriptor(config, "key").get;
-            if (getter && getter.isReactWarning) return false;
-          }
-          return void 0 !== config.key;
-        }
-        function defineKeyPropWarningGetter(props, displayName) {
-          function warnAboutAccessingKey() {
-            specialPropKeyWarningShown || (specialPropKeyWarningShown = true, console.error(
-              "%s: `key` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://react.dev/link/special-props)",
-              displayName
-            ));
-          }
-          warnAboutAccessingKey.isReactWarning = true;
-          Object.defineProperty(props, "key", {
-            get: warnAboutAccessingKey,
-            configurable: true
-          });
-        }
-        function elementRefGetterWithDeprecationWarning() {
-          var componentName = getComponentNameFromType(this.type);
-          didWarnAboutElementRef[componentName] || (didWarnAboutElementRef[componentName] = true, console.error(
-            "Accessing element.ref was removed in React 19. ref is now a regular prop. It will be removed from the JSX Element type in a future release."
-          ));
-          componentName = this.props.ref;
-          return void 0 !== componentName ? componentName : null;
-        }
-        function ReactElement(type, key, props, owner, debugStack, debugTask) {
-          var refProp = props.ref;
-          type = {
-            $$typeof: REACT_ELEMENT_TYPE,
-            type,
-            key,
-            props,
-            _owner: owner
-          };
-          null !== (void 0 !== refProp ? refProp : null) ? Object.defineProperty(type, "ref", {
-            enumerable: false,
-            get: elementRefGetterWithDeprecationWarning
-          }) : Object.defineProperty(type, "ref", { enumerable: false, value: null });
-          type._store = {};
-          Object.defineProperty(type._store, "validated", {
-            configurable: false,
-            enumerable: false,
-            writable: true,
-            value: 0
-          });
-          Object.defineProperty(type, "_debugInfo", {
-            configurable: false,
-            enumerable: false,
-            writable: true,
-            value: null
-          });
-          Object.defineProperty(type, "_debugStack", {
-            configurable: false,
-            enumerable: false,
-            writable: true,
-            value: debugStack
-          });
-          Object.defineProperty(type, "_debugTask", {
-            configurable: false,
-            enumerable: false,
-            writable: true,
-            value: debugTask
-          });
-          Object.freeze && (Object.freeze(type.props), Object.freeze(type));
-          return type;
-        }
-        function jsxDEVImpl(type, config, maybeKey, isStaticChildren, debugStack, debugTask) {
-          var children = config.children;
-          if (void 0 !== children)
-            if (isStaticChildren)
-              if (isArrayImpl(children)) {
-                for (isStaticChildren = 0; isStaticChildren < children.length; isStaticChildren++)
-                  validateChildKeys(children[isStaticChildren]);
-                Object.freeze && Object.freeze(children);
-              } else
-                console.error(
-                  "React.jsx: Static children should always be an array. You are likely explicitly calling React.jsxs or React.jsxDEV. Use the Babel transform instead."
-                );
-            else validateChildKeys(children);
-          if (hasOwnProperty.call(config, "key")) {
-            children = getComponentNameFromType(type);
-            var keys = Object.keys(config).filter(function(k2) {
-              return "key" !== k2;
-            });
-            isStaticChildren = 0 < keys.length ? "{key: someKey, " + keys.join(": ..., ") + ": ...}" : "{key: someKey}";
-            didWarnAboutKeySpread[children + isStaticChildren] || (keys = 0 < keys.length ? "{" + keys.join(": ..., ") + ": ...}" : "{}", console.error(
-              'A props object containing a "key" prop is being spread into JSX:\n  let props = %s;\n  <%s {...props} />\nReact keys must be passed directly to JSX without using spread:\n  let props = %s;\n  <%s key={someKey} {...props} />',
-              isStaticChildren,
-              children,
-              keys,
-              children
-            ), didWarnAboutKeySpread[children + isStaticChildren] = true);
-          }
-          children = null;
-          void 0 !== maybeKey && (checkKeyStringCoercion(maybeKey), children = "" + maybeKey);
-          hasValidKey(config) && (checkKeyStringCoercion(config.key), children = "" + config.key);
-          if ("key" in config) {
-            maybeKey = {};
-            for (var propName in config)
-              "key" !== propName && (maybeKey[propName] = config[propName]);
-          } else maybeKey = config;
-          children && defineKeyPropWarningGetter(
-            maybeKey,
-            "function" === typeof type ? type.displayName || type.name || "Unknown" : type
-          );
-          return ReactElement(
-            type,
-            children,
-            maybeKey,
-            getOwner(),
-            debugStack,
-            debugTask
-          );
-        }
-        function validateChildKeys(node) {
-          isValidElement(node) ? node._store && (node._store.validated = 1) : "object" === typeof node && null !== node && node.$$typeof === REACT_LAZY_TYPE && ("fulfilled" === node._payload.status ? isValidElement(node._payload.value) && node._payload.value._store && (node._payload.value._store.validated = 1) : node._store && (node._store.validated = 1));
-        }
-        function isValidElement(object) {
-          return "object" === typeof object && null !== object && object.$$typeof === REACT_ELEMENT_TYPE;
-        }
-        var React2 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React2.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
-          return null;
-        };
-        React2 = {
-          react_stack_bottom_frame: function(callStackForError) {
-            return callStackForError();
-          }
-        };
-        var specialPropKeyWarningShown;
-        var didWarnAboutElementRef = {};
-        var unknownOwnerDebugStack = React2.react_stack_bottom_frame.bind(
-          React2,
-          UnknownOwner
-        )();
-        var unknownOwnerDebugTask = createTask(getTaskName(UnknownOwner));
-        var didWarnAboutKeySpread = {};
-        exports.Fragment = REACT_FRAGMENT_TYPE;
-        exports.jsx = function(type, config, maybeKey) {
-          var trackActualOwner = 1e4 > ReactSharedInternals.recentlyCreatedOwnerStacks++;
-          return jsxDEVImpl(
-            type,
-            config,
-            maybeKey,
-            false,
-            trackActualOwner ? Error("react-stack-top-frame") : unknownOwnerDebugStack,
-            trackActualOwner ? createTask(getTaskName(type)) : unknownOwnerDebugTask
-          );
-        };
-        exports.jsxs = function(type, config, maybeKey) {
-          var trackActualOwner = 1e4 > ReactSharedInternals.recentlyCreatedOwnerStacks++;
-          return jsxDEVImpl(
-            type,
-            config,
-            maybeKey,
-            true,
-            trackActualOwner ? Error("react-stack-top-frame") : unknownOwnerDebugStack,
-            trackActualOwner ? createTask(getTaskName(type)) : unknownOwnerDebugTask
-          );
-        };
-      })();
-    }
-  });
-
-  // node_modules/react/jsx-runtime.js
-  var require_jsx_runtime = __commonJS({
-    "node_modules/react/jsx-runtime.js"(exports, module) {
-      "use strict";
-      if (false) {
-        module.exports = null;
-      } else {
-        module.exports = require_react_jsx_runtime_development();
-      }
-    }
-  });
-
   // src/client.tsx
   var import_client = __toESM(require_client());
 
   // src/ScenePage.tsx
+  var import_react5 = __toESM(require_react());
+
+  // src/controls/SpriteListPanel.tsx
+  var import_jsx_runtime = __toESM(require_jsx_runtime());
+  function SpriteListPanel({ entries, selectedName, onToggle, onSelect }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { id: "sprite-list-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "sprite-list-title", children: [
+        "Sprites (",
+        entries.length,
+        ")"
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "sprite-list", children: entries.map((entry, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+        "div",
+        {
+          className: `sprite-list-item${entry.name === selectedName ? " sprite-list-item--selected" : ""}`,
+          onClick: () => onSelect(index),
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+              "span",
+              {
+                className: "sprite-eye-icon",
+                onClick: (e2) => {
+                  e2.stopPropagation();
+                  onToggle(index);
+                },
+                children: entry.visible ? "\u{1F441}\uFE0F" : "\u{1F6AB}"
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "sprite-label", children: entry.name || `Sprite ${index}` })
+          ]
+        },
+        index
+      )) })
+    ] });
+  }
+
+  // src/controls/SceneSelectorControl.tsx
+  var import_jsx_runtime2 = __toESM(require_jsx_runtime());
+  function SceneSelectorControl({ scenes, onSelect }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "control-group", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("label", { htmlFor: "scene-select", children: "Select Scene:" }),
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
+        "select",
+        {
+          id: "scene-select",
+          onChange: (e2) => {
+            if (e2.target.value) onSelect(e2.target.value);
+          },
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("option", { value: "", children: "-- Choose a scene --" }),
+            scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("option", { value: scene.value, children: scene.label }, scene.value))
+          ]
+        }
+      )
+    ] });
+  }
+
+  // src/controls/XFocusControl.tsx
+  var import_jsx_runtime3 = __toESM(require_jsx_runtime());
+  function XFocusControl({ visible, value, onChange }) {
+    if (!visible) return null;
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "control-group", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("label", { htmlFor: "xfocus-slider", children: "Camera Focus (xFocus):" }),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "xfocus-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+          "input",
+          {
+            type: "range",
+            id: "xfocus-slider",
+            min: "0",
+            max: "1",
+            step: "0.01",
+            value,
+            onChange: (e2) => onChange(parseFloat(e2.target.value))
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: value.toFixed(2) })
+      ] })
+    ] });
+  }
+
+  // src/controls/PhoneGuideControl.tsx
+  var import_jsx_runtime4 = __toESM(require_jsx_runtime());
+  function PhoneGuideControl({ visible, onToggle }) {
+    if (!visible) return null;
+    return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("label", { className: "guide-label", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        "input",
+        {
+          type: "checkbox",
+          id: "phone-guide-toggle",
+          className: "guide-checkbox",
+          onChange: (e2) => onToggle(e2.target.checked)
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: "Show Phone Guide" })
+    ] }) });
+  }
+
+  // src/controls/SpritePanelControl.tsx
+  var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+  var COORD_MIN = -10;
+  var COORD_MAX = 10;
+  var COORD_STEP = 0.01;
+  function SpritePanelControl({ spriteName, x: x2, y: y2, disabled, onChange, onChangeStart, onChangeCommit }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { id: "sprite-panel-control", className: disabled ? "sprite-panel-control--disabled" : void 0, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "sprite-panel-name", children: disabled ? "No sprite selected" : spriteName }),
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "sprite-panel-coord", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { children: "X" }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+          "input",
+          {
+            type: "range",
+            min: COORD_MIN,
+            max: COORD_MAX,
+            step: COORD_STEP,
+            value: x2,
+            disabled,
+            onPointerDown: () => onChangeStart?.(x2, y2),
+            onChange: (e2) => onChange(parseFloat(e2.target.value), y2),
+            onPointerUp: (e2) => onChangeCommit?.(parseFloat(e2.target.value), y2)
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+          "input",
+          {
+            type: "number",
+            min: COORD_MIN,
+            max: COORD_MAX,
+            step: COORD_STEP,
+            value: parseFloat(x2.toFixed(2)),
+            disabled,
+            onFocus: () => onChangeStart?.(x2, y2),
+            onChange: (e2) => {
+              const val = parseFloat(e2.target.value);
+              if (!isNaN(val)) {
+                onChange(val, y2);
+                onChangeCommit?.(val, y2);
+              }
+            }
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "sprite-panel-coord", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { children: "Y" }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+          "input",
+          {
+            type: "range",
+            min: COORD_MIN,
+            max: COORD_MAX,
+            step: COORD_STEP,
+            value: y2,
+            disabled,
+            onPointerDown: () => onChangeStart?.(x2, y2),
+            onChange: (e2) => onChange(x2, parseFloat(e2.target.value)),
+            onPointerUp: (e2) => onChangeCommit?.(x2, parseFloat(e2.target.value))
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+          "input",
+          {
+            type: "number",
+            min: COORD_MIN,
+            max: COORD_MAX,
+            step: COORD_STEP,
+            value: parseFloat(y2.toFixed(2)),
+            disabled,
+            onFocus: () => onChangeStart?.(x2, y2),
+            onChange: (e2) => {
+              const val = parseFloat(e2.target.value);
+              if (!isNaN(val)) {
+                onChange(x2, val);
+                onChangeCommit?.(x2, val);
+              }
+            }
+          }
+        )
+      ] })
+    ] });
+  }
+
+  // src/SceneEditorPanel.tsx
+  var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+  function SceneEditorPanel({
+    scenes,
+    showSceneControls,
+    xFocus,
+    spriteEntries,
+    selectedSprite,
+    onSceneSelect,
+    onXFocusChange,
+    onPhoneGuideToggle,
+    onSpriteToggle,
+    onSpriteSelect,
+    onSpritePositionChange,
+    onSpritePositionChangeStart,
+    onSpritePositionCommit
+  }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "controls", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { children: "Scene Viewer" }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(SceneSelectorControl, { scenes, onSelect: onSceneSelect }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(XFocusControl, { visible: showSceneControls, value: xFocus, onChange: onXFocusChange }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(PhoneGuideControl, { visible: showSceneControls, onToggle: onPhoneGuideToggle }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "info-text", children: "Select a scene to view. Adjust the camera focus slider to parallax scroll." }),
+      showSceneControls && spriteEntries.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+        SpriteListPanel,
+        {
+          entries: spriteEntries,
+          selectedName: selectedSprite?.name ?? null,
+          onToggle: onSpriteToggle,
+          onSelect: onSpriteSelect
+        }
+      ) }),
+      showSceneControls && /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(import_jsx_runtime6.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { children: "Sprite" }),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+          SpritePanelControl,
+          {
+            spriteName: selectedSprite?.name ?? "",
+            x: selectedSprite?.x ?? 0,
+            y: selectedSprite?.y ?? 0,
+            disabled: selectedSprite === null,
+            onChange: onSpritePositionChange,
+            onChangeStart: onSpritePositionChangeStart,
+            onChangeCommit: onSpritePositionCommit
+          }
+        ) })
+      ] })
+    ] });
+  }
+
+  // src/hooks/useUndoHistory.ts
   var import_react = __toESM(require_react());
+  function useUndoHistory() {
+    const past = (0, import_react.useRef)([]);
+    const future = (0, import_react.useRef)([]);
+    function push(action) {
+      past.current = [...past.current, action];
+      future.current = [];
+    }
+    function undo() {
+      const action = past.current[past.current.length - 1];
+      if (!action) return null;
+      past.current = past.current.slice(0, -1);
+      future.current = [...future.current, action];
+      return action;
+    }
+    function redo() {
+      const action = future.current[future.current.length - 1];
+      if (!action) return null;
+      future.current = future.current.slice(0, -1);
+      past.current = [...past.current, action];
+      return action;
+    }
+    function clear() {
+      past.current = [];
+      future.current = [];
+    }
+    return { push, undo, redo, clear };
+  }
+
+  // src/hooks/useSceneRenderer.ts
+  var import_react2 = __toESM(require_react());
 
   // node_modules/pixi.js/lib/environment-browser/browserExt.mjs
   init_Extensions();
@@ -67243,6 +67506,31 @@ ${e2}`);
         }
       }
     }
+    getCanvas() {
+      return this.app ? this.app.canvas : null;
+    }
+    /**
+     * Convert CSS-pixel coordinates (relative to the canvas element) to world coordinates.
+     * With autoDensity + resolution:dpr, canvas.width is physical pixels, so we multiply by dpr.
+     */
+    canvasToWorld(cssX, cssY) {
+      if (!this.app) return { x: 0, y: 0 };
+      const dpr = window.devicePixelRatio || 1;
+      return {
+        x: (cssX * dpr - this.app.stage.x) / this.app.stage.scale.x,
+        y: (cssY * dpr - this.app.stage.y) / this.app.stage.scale.y
+      };
+    }
+    /**
+     * Returns true if the CSS-pixel point (relative to the canvas element) is within the
+     * rendered bounds of the sprite at the given index.
+     */
+    hitTestSprite(index, cssX, cssY) {
+      if (!this.app || index < 0 || index >= this.sprites.length) return false;
+      const world = this.canvasToWorld(cssX, cssY);
+      const sprite = this.sprites[index];
+      return world.x >= sprite.x - sprite.width / 2 && world.x <= sprite.x + sprite.width / 2 && world.y >= sprite.y - sprite.height / 2 && world.y <= sprite.y + sprite.height / 2;
+    }
     /**
      * Get visibility state of all sprites
      */
@@ -67287,233 +67575,18 @@ ${e2}`);
     }
   };
 
-  // src/controls/SpriteListPanel.tsx
-  var import_jsx_runtime = __toESM(require_jsx_runtime());
-  function SpriteListPanel({ entries, selectedName, onToggle, onSelect }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { id: "sprite-list-panel", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "sprite-list-title", children: [
-        "Sprites (",
-        entries.length,
-        ")"
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "sprite-list", children: entries.map((entry, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-        "div",
-        {
-          className: `sprite-list-item${entry.name === selectedName ? " sprite-list-item--selected" : ""}`,
-          onClick: () => onSelect(index),
-          children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-              "span",
-              {
-                className: "sprite-eye-icon",
-                onClick: (e2) => {
-                  e2.stopPropagation();
-                  onToggle(index);
-                },
-                children: entry.visible ? "\u{1F441}\uFE0F" : "\u{1F6AB}"
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "sprite-label", children: entry.name || `Sprite ${index}` })
-          ]
-        },
-        index
-      )) })
-    ] });
-  }
-
-  // src/controls/SceneSelectorControl.tsx
-  var import_jsx_runtime2 = __toESM(require_jsx_runtime());
-  function SceneSelectorControl({ scenes, onSelect }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "control-group", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("label", { htmlFor: "scene-select", children: "Select Scene:" }),
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
-        "select",
-        {
-          id: "scene-select",
-          onChange: (e2) => {
-            if (e2.target.value) onSelect(e2.target.value);
-          },
-          children: [
-            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("option", { value: "", children: "-- Choose a scene --" }),
-            scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("option", { value: scene.value, children: scene.label }, scene.value))
-          ]
-        }
-      )
-    ] });
-  }
-
-  // src/controls/XFocusControl.tsx
-  var import_jsx_runtime3 = __toESM(require_jsx_runtime());
-  function XFocusControl({ visible, value, onChange }) {
-    if (!visible) return null;
-    return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "control-group", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("label", { htmlFor: "xfocus-slider", children: "Camera Focus (xFocus):" }),
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "xfocus-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-          "input",
-          {
-            type: "range",
-            id: "xfocus-slider",
-            min: "0",
-            max: "1",
-            step: "0.01",
-            value,
-            onChange: (e2) => onChange(parseFloat(e2.target.value))
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: value.toFixed(2) })
-      ] })
-    ] });
-  }
-
-  // src/controls/PhoneGuideControl.tsx
-  var import_jsx_runtime4 = __toESM(require_jsx_runtime());
-  function PhoneGuideControl({ visible, onToggle }) {
-    if (!visible) return null;
-    return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("label", { className: "guide-label", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-        "input",
-        {
-          type: "checkbox",
-          id: "phone-guide-toggle",
-          className: "guide-checkbox",
-          onChange: (e2) => onToggle(e2.target.checked)
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: "Show Phone Guide" })
-    ] }) });
-  }
-
-  // src/controls/SpritePanelControl.tsx
-  var import_jsx_runtime5 = __toESM(require_jsx_runtime());
-  var COORD_MIN = -10;
-  var COORD_MAX = 10;
-  var COORD_STEP = 0.01;
-  function SpritePanelControl({ spriteName, x: x2, y: y2, disabled, onChange }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { id: "sprite-panel-control", className: disabled ? "sprite-panel-control--disabled" : void 0, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "sprite-panel-name", children: disabled ? "No sprite selected" : spriteName }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "sprite-panel-coord", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { children: "X" }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-          "input",
-          {
-            type: "range",
-            min: COORD_MIN,
-            max: COORD_MAX,
-            step: COORD_STEP,
-            value: x2,
-            disabled,
-            onChange: (e2) => onChange(parseFloat(e2.target.value), y2)
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-          "input",
-          {
-            type: "number",
-            min: COORD_MIN,
-            max: COORD_MAX,
-            step: COORD_STEP,
-            value: parseFloat(x2.toFixed(2)),
-            disabled,
-            onChange: (e2) => {
-              const val = parseFloat(e2.target.value);
-              if (!isNaN(val)) onChange(val, y2);
-            }
-          }
-        )
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "sprite-panel-coord", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { children: "Y" }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-          "input",
-          {
-            type: "range",
-            min: COORD_MIN,
-            max: COORD_MAX,
-            step: COORD_STEP,
-            value: y2,
-            disabled,
-            onChange: (e2) => onChange(x2, parseFloat(e2.target.value))
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-          "input",
-          {
-            type: "number",
-            min: COORD_MIN,
-            max: COORD_MAX,
-            step: COORD_STEP,
-            value: parseFloat(y2.toFixed(2)),
-            disabled,
-            onChange: (e2) => {
-              const val = parseFloat(e2.target.value);
-              if (!isNaN(val)) onChange(x2, val);
-            }
-          }
-        )
-      ] })
-    ] });
-  }
-
-  // src/SceneEditorPanel.tsx
-  var import_jsx_runtime6 = __toESM(require_jsx_runtime());
-  function SceneEditorPanel({
-    scenes,
-    showSceneControls,
-    xFocus,
-    spriteEntries,
-    selectedSprite,
-    onSceneSelect,
-    onXFocusChange,
-    onPhoneGuideToggle,
-    onSpriteToggle,
-    onSpriteSelect,
-    onSpritePositionChange
-  }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "controls", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { children: "Scene Viewer" }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(SceneSelectorControl, { scenes, onSelect: onSceneSelect }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(XFocusControl, { visible: showSceneControls, value: xFocus, onChange: onXFocusChange }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(PhoneGuideControl, { visible: showSceneControls, onToggle: onPhoneGuideToggle }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "info-text", children: "Select a scene to view. Adjust the camera focus slider to parallax scroll." }),
-      showSceneControls && spriteEntries.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-        SpriteListPanel,
-        {
-          entries: spriteEntries,
-          selectedName: selectedSprite?.name ?? null,
-          onToggle: onSpriteToggle,
-          onSelect: onSpriteSelect
-        }
-      ) }),
-      showSceneControls && /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(import_jsx_runtime6.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { children: "Sprite" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-          SpritePanelControl,
-          {
-            spriteName: selectedSprite?.name ?? "",
-            x: selectedSprite?.x ?? 0,
-            y: selectedSprite?.y ?? 0,
-            disabled: selectedSprite === null,
-            onChange: onSpritePositionChange
-          }
-        ) })
-      ] })
-    ] });
-  }
-
-  // src/ScenePage.tsx
-  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
-  function ScenePage({ scenes }) {
-    const [showSceneControls, setShowSceneControls] = (0, import_react.useState)(false);
-    const [xFocus, setXFocus] = (0, import_react.useState)(0.5);
-    const [spriteEntries, setSpriteEntries] = (0, import_react.useState)([]);
-    const [selectedSprite, setSelectedSprite] = (0, import_react.useState)(null);
-    const canvasRef = (0, import_react.useRef)(null);
-    const rendererRef = (0, import_react.useRef)(null);
-    const refreshSpriteList = (0, import_react.useCallback)((r2) => {
+  // src/hooks/useSceneRenderer.ts
+  function useSceneRenderer() {
+    const [showSceneControls, setShowSceneControls] = (0, import_react2.useState)(false);
+    const [xFocus, setXFocus] = (0, import_react2.useState)(0.5);
+    const [spriteEntries, setSpriteEntries] = (0, import_react2.useState)([]);
+    const [selectedSprite, setSelectedSprite] = (0, import_react2.useState)(null);
+    const canvasRef = (0, import_react2.useRef)(null);
+    const rendererRef = (0, import_react2.useRef)(null);
+    const refreshSpriteList = (0, import_react2.useCallback)((r2) => {
       setSpriteEntries([...r2.getSpriteEntries()]);
     }, []);
-    const loadScene = (0, import_react.useCallback)(async (sceneName) => {
+    const loadScene = (0, import_react2.useCallback)(async (sceneName) => {
       try {
         const response = await fetch(`/scenes/${sceneName}.json`);
         const sceneData = await response.json();
@@ -67539,19 +67612,19 @@ ${e2}`);
         console.error("Failed to load scene:", error);
       }
     }, [refreshSpriteList]);
-    const handleXFocusChange = (0, import_react.useCallback)((value) => {
+    const handleXFocusChange = (0, import_react2.useCallback)((value) => {
       setXFocus(value);
       rendererRef.current?.setScrollOffset(value);
     }, []);
-    const handlePhoneGuideToggle = (0, import_react.useCallback)((visible) => {
+    const handlePhoneGuideToggle = (0, import_react2.useCallback)((visible) => {
       if (visible) rendererRef.current?.showGuide();
       else rendererRef.current?.hideGuide();
     }, []);
-    const handleSpriteToggle = (0, import_react.useCallback)((index) => {
+    const handleSpriteToggle = (0, import_react2.useCallback)((index) => {
       rendererRef.current?.toggleSpriteByIndex(index);
       if (rendererRef.current) refreshSpriteList(rendererRef.current);
     }, [refreshSpriteList]);
-    const handleSpriteSelect = (0, import_react.useCallback)((index) => {
+    const handleSpriteSelect = (0, import_react2.useCallback)((index) => {
       const pos = rendererRef.current?.getSpritePosition(index);
       const name = spriteEntries[index]?.name || `Sprite ${index}`;
       if (pos) {
@@ -67559,34 +67632,201 @@ ${e2}`);
         rendererRef.current?.setSelectedSpriteHighlight(index);
       }
     }, [spriteEntries]);
-    const handleSpritePositionChange = (0, import_react.useCallback)((x2, y2) => {
-      if (selectedSprite === null) return;
-      rendererRef.current?.setSpritePosition(selectedSprite.index, x2, y2);
-      setSelectedSprite((prev) => prev ? { ...prev, x: x2, y: y2 } : null);
-    }, [selectedSprite]);
-    const ARROW_STEP = 0.05;
-    (0, import_react.useEffect)(() => {
+    const handleSpritePositionChange = (0, import_react2.useCallback)((x2, y2) => {
+      if (!rendererRef.current) return;
+      setSelectedSprite((prev) => {
+        if (!prev) return null;
+        rendererRef.current.setSpritePosition(prev.index, x2, y2);
+        return { ...prev, x: x2, y: y2 };
+      });
+    }, []);
+    return {
+      canvasRef,
+      rendererRef,
+      showSceneControls,
+      xFocus,
+      spriteEntries,
+      selectedSprite,
+      setSelectedSprite,
+      loadScene,
+      handleXFocusChange,
+      handlePhoneGuideToggle,
+      handleSpriteToggle,
+      handleSpriteSelect,
+      handleSpritePositionChange
+    };
+  }
+
+  // src/hooks/useSpriteDrag.ts
+  var import_react3 = __toESM(require_react());
+  function useSpriteDrag({
+    selectedSprite,
+    rendererRef,
+    onSpriteMove,
+    onDragCommit
+  }) {
+    const canvasDragState = (0, import_react3.useRef)(null);
+    const handleCanvasMouseDown = (0, import_react3.useCallback)((event) => {
+      if (!selectedSprite || !rendererRef.current) return;
+      const canvas = rendererRef.current.getCanvas();
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const cssX = event.clientX - rect.left;
+      const cssY = event.clientY - rect.top;
+      if (!rendererRef.current.hitTestSprite(selectedSprite.index, cssX, cssY)) return;
+      event.preventDefault();
+      const world = rendererRef.current.canvasToWorld(cssX, cssY);
+      canvasDragState.current = {
+        spriteIndex: selectedSprite.index,
+        startMouseWorldX: world.x,
+        startMouseWorldY: world.y,
+        startSpriteX: selectedSprite.x,
+        startSpriteY: selectedSprite.y
+      };
+    }, [selectedSprite, rendererRef]);
+    const dragCallbacksRef = (0, import_react3.useRef)({ onSpriteMove, onDragCommit });
+    dragCallbacksRef.current = { onSpriteMove, onDragCommit };
+    (0, import_react3.useEffect)(() => {
+      const handleMouseMove = (event) => {
+        const drag = canvasDragState.current;
+        if (!drag || !rendererRef.current) return;
+        const canvas = rendererRef.current.getCanvas();
+        if (!canvas) return;
+        const rect = canvas.getBoundingClientRect();
+        const world = rendererRef.current.canvasToWorld(event.clientX - rect.left, event.clientY - rect.top);
+        const newX = drag.startSpriteX + (world.x - drag.startMouseWorldX);
+        const newY = drag.startSpriteY + (world.y - drag.startMouseWorldY);
+        rendererRef.current.setSpritePosition(drag.spriteIndex, newX, newY);
+        dragCallbacksRef.current.onSpriteMove(newX, newY);
+      };
+      const handleMouseUp = (event) => {
+        const drag = canvasDragState.current;
+        if (!drag || !rendererRef.current) return;
+        const canvas = rendererRef.current.getCanvas();
+        if (!canvas) return;
+        const rect = canvas.getBoundingClientRect();
+        const world = rendererRef.current.canvasToWorld(event.clientX - rect.left, event.clientY - rect.top);
+        const newX = drag.startSpriteX + (world.x - drag.startMouseWorldX);
+        const newY = drag.startSpriteY + (world.y - drag.startMouseWorldY);
+        canvasDragState.current = null;
+        if (newX !== drag.startSpriteX || newY !== drag.startSpriteY) {
+          dragCallbacksRef.current.onDragCommit({
+            spriteIndex: drag.spriteIndex,
+            before: { x: drag.startSpriteX, y: drag.startSpriteY },
+            after: { x: newX, y: newY }
+          });
+        }
+      };
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+      return () => {
+        window.removeEventListener("mousemove", handleMouseMove);
+        window.removeEventListener("mouseup", handleMouseUp);
+      };
+    }, [rendererRef]);
+    return { handleCanvasMouseDown };
+  }
+
+  // src/hooks/useKeyboardControls.ts
+  var import_react4 = __toESM(require_react());
+  var ARROW_STEP = 0.05;
+  function useKeyboardControls({
+    selectedSprite,
+    rendererRef,
+    history,
+    onUndoApply,
+    onRedoApply,
+    onSpriteMove
+  }) {
+    (0, import_react4.useEffect)(() => {
       const handleKeyDown = (e2) => {
+        if ((e2.ctrlKey || e2.metaKey) && e2.key === "z" && !e2.shiftKey) {
+          e2.preventDefault();
+          const action = history.undo();
+          if (action) {
+            rendererRef.current?.setSpritePosition(action.spriteIndex, action.before.x, action.before.y);
+            onUndoApply(action.before.x, action.before.y);
+          }
+          return;
+        }
+        if ((e2.ctrlKey || e2.metaKey) && (e2.key === "y" || e2.key === "z" && e2.shiftKey)) {
+          e2.preventDefault();
+          const action = history.redo();
+          if (action) {
+            rendererRef.current?.setSpritePosition(action.spriteIndex, action.after.x, action.after.y);
+            onRedoApply(action.after.x, action.after.y);
+          }
+          return;
+        }
         if (!selectedSprite) return;
         if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e2.key)) return;
         if (document.activeElement instanceof HTMLInputElement) return;
         e2.preventDefault();
-        setSelectedSprite((prev) => {
-          if (!prev) return null;
-          let { x: x2, y: y2 } = prev;
-          if (e2.key === "ArrowLeft") x2 -= ARROW_STEP;
-          if (e2.key === "ArrowRight") x2 += ARROW_STEP;
-          if (e2.key === "ArrowUp") y2 -= ARROW_STEP;
-          if (e2.key === "ArrowDown") y2 += ARROW_STEP;
-          x2 = Math.round(x2 / ARROW_STEP) * ARROW_STEP;
-          y2 = Math.round(y2 / ARROW_STEP) * ARROW_STEP;
-          rendererRef.current?.setSpritePosition(prev.index, x2, y2);
-          return { ...prev, x: x2, y: y2 };
-        });
+        const before = { x: selectedSprite.x, y: selectedSprite.y };
+        let { x: x2, y: y2 } = selectedSprite;
+        if (e2.key === "ArrowLeft") x2 -= ARROW_STEP;
+        if (e2.key === "ArrowRight") x2 += ARROW_STEP;
+        if (e2.key === "ArrowUp") y2 -= ARROW_STEP;
+        if (e2.key === "ArrowDown") y2 += ARROW_STEP;
+        x2 = Math.round(x2 / ARROW_STEP) * ARROW_STEP;
+        y2 = Math.round(y2 / ARROW_STEP) * ARROW_STEP;
+        rendererRef.current?.setSpritePosition(selectedSprite.index, x2, y2);
+        history.push({ spriteIndex: selectedSprite.index, before, after: { x: x2, y: y2 } });
+        onSpriteMove(x2, y2);
       };
       window.addEventListener("keydown", handleKeyDown);
       return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [selectedSprite]);
+    }, [selectedSprite, rendererRef, history, onUndoApply, onRedoApply, onSpriteMove]);
+  }
+
+  // src/ScenePage.tsx
+  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+  function ScenePage({ scenes }) {
+    const history = useUndoHistory();
+    const dragStartPos = (0, import_react5.useRef)(null);
+    const {
+      canvasRef,
+      rendererRef,
+      showSceneControls,
+      xFocus,
+      spriteEntries,
+      selectedSprite,
+      setSelectedSprite,
+      loadScene,
+      handleXFocusChange,
+      handlePhoneGuideToggle,
+      handleSpriteToggle,
+      handleSpriteSelect,
+      handleSpritePositionChange
+    } = useSceneRenderer();
+    const applySelectedSpriteMove = (0, import_react5.useCallback)((x2, y2) => {
+      setSelectedSprite((prev) => prev ? { ...prev, x: x2, y: y2 } : null);
+    }, [setSelectedSprite]);
+    const { handleCanvasMouseDown } = useSpriteDrag({
+      selectedSprite,
+      rendererRef,
+      onSpriteMove: applySelectedSpriteMove,
+      onDragCommit: (action) => history.push(action)
+    });
+    useKeyboardControls({
+      selectedSprite,
+      rendererRef,
+      history,
+      onUndoApply: applySelectedSpriteMove,
+      onRedoApply: applySelectedSpriteMove,
+      onSpriteMove: applySelectedSpriteMove
+    });
+    const handleSpritePositionChangeStart = (0, import_react5.useCallback)((x2, y2) => {
+      dragStartPos.current = { x: x2, y: y2 };
+    }, []);
+    const handleSpritePositionCommit = (0, import_react5.useCallback)((x2, y2) => {
+      if (!selectedSprite || !dragStartPos.current) return;
+      const before = dragStartPos.current;
+      dragStartPos.current = null;
+      if (before.x !== x2 || before.y !== y2) {
+        history.push({ spriteIndex: selectedSprite.index, before, after: { x: x2, y: y2 } });
+      }
+    }, [selectedSprite, history]);
     return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(import_jsx_runtime7.Fragment, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
         SceneEditorPanel,
@@ -67601,10 +67841,12 @@ ${e2}`);
           onPhoneGuideToggle: handlePhoneGuideToggle,
           onSpriteToggle: handleSpriteToggle,
           onSpriteSelect: handleSpriteSelect,
-          onSpritePositionChange: handleSpritePositionChange
+          onSpritePositionChange: handleSpritePositionChange,
+          onSpritePositionChangeStart: handleSpritePositionChangeStart,
+          onSpritePositionCommit: handleSpritePositionCommit
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "main-content", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { id: "canvas-container", ref: canvasRef }) })
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "main-content", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { id: "canvas-container", ref: canvasRef, onMouseDown: handleCanvasMouseDown }) })
     ] });
   }
 
@@ -67667,15 +67909,6 @@ react-dom/cjs/react-dom-client.development.js:
    * LICENSE file in the root directory of this source tree.
    *)
 
-tiny-lru/dist/tiny-lru.js:
-  (**
-   * tiny-lru
-   *
-   * @copyright 2026 Jason Mulligan <jason.mulligan@avoidwork.com>
-   * @license BSD-3-Clause
-   * @version 11.4.7
-   *)
-
 react/cjs/react-jsx-runtime.development.js:
   (**
    * @license React
@@ -67685,5 +67918,14 @@ react/cjs/react-jsx-runtime.development.js:
    *
    * This source code is licensed under the MIT license found in the
    * LICENSE file in the root directory of this source tree.
+   *)
+
+tiny-lru/dist/tiny-lru.js:
+  (**
+   * tiny-lru
+   *
+   * @copyright 2026 Jason Mulligan <jason.mulligan@avoidwork.com>
+   * @license BSD-3-Clause
+   * @version 11.4.7
    *)
 */

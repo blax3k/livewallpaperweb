@@ -26,6 +26,8 @@ interface SceneEditorPanelProps {
   onSpriteToggle: (index: number) => void;
   onSpriteSelect: (index: number) => void;
   onSpritePositionChange: (x: number, y: number) => void;
+  onSpritePositionChangeStart?: (x: number, y: number) => void;
+  onSpritePositionCommit?: (x: number, y: number) => void;
 }
 
 export function SceneEditorPanel({
@@ -40,6 +42,8 @@ export function SceneEditorPanel({
   onSpriteToggle,
   onSpriteSelect,
   onSpritePositionChange,
+  onSpritePositionChangeStart,
+  onSpritePositionCommit,
 }: SceneEditorPanelProps) {
   return (
     <div className="controls">
@@ -70,6 +74,8 @@ export function SceneEditorPanel({
               y={selectedSprite?.y ?? 0}
               disabled={selectedSprite === null}
               onChange={onSpritePositionChange}
+              onChangeStart={onSpritePositionChangeStart}
+              onChangeCommit={onSpritePositionCommit}
             />
           </div>
         </>

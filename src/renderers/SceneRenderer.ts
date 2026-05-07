@@ -396,6 +396,39 @@ export class SceneRenderer {
     }
   }
 
+  getCanvas(): HTMLCanvasElement | null {
+    return this.app ? (this.app.canvas as HTMLCanvasElement) : null;
+  }
+
+  /**
+   * Convert CSS-pixel coordinates (relative to the canvas element) to world coordinates.
+   * With autoDensity + resolution:dpr, canvas.width is physical pixels, so we multiply by dpr.
+   */
+  canvasToWorld(cssX: number, cssY: number): { x: number; y: number } {
+    if (!this.app) return { x: 0, y: 0 };
+    const dpr = window.devicePixelRatio || 1;
+    return {
+      x: (cssX * dpr - this.app.stage.x) / this.app.stage.scale.x,
+      y: (cssY * dpr - this.app.stage.y) / this.app.stage.scale.y,
+    };
+  }
+
+  /**
+   * Returns true if the CSS-pixel point (relative to the canvas element) is within the
+   * rendered bounds of the sprite at the given index.
+   */
+  hitTestSprite(index: number, cssX: number, cssY: number): boolean {
+    if (!this.app || index < 0 || index >= this.sprites.length) return false;
+    const world = this.canvasToWorld(cssX, cssY);
+    const sprite = this.sprites[index];
+    return (
+      world.x >= sprite.x - sprite.width / 2 &&
+      world.x <= sprite.x + sprite.width / 2 &&
+      world.y >= sprite.y - sprite.height / 2 &&
+      world.y <= sprite.y + sprite.height / 2
+    );
+  }
+
   /**
    * Get visibility state of all sprites
    */
