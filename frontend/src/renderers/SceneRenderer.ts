@@ -124,6 +124,9 @@ export class SceneRenderer {
     // Store original scene data for later serialization
     this.originalSceneData = sceneData;
 
+    // Sort sprites by parallax so list and draw order are consistent
+    this.sortSpritesByParallax();
+
     // Fit scene to view and apply initial xFocus
     this.fitSceneToView();
     this.setScrollOffset(sceneData.xFocus);
@@ -396,24 +399,88 @@ export class SceneRenderer {
   getSpriteEntries(): SpriteEntry[] {
     return this.sprites.map((sprite, index) => {
       const metadata = this.spriteMetadata.get(sprite);
-      return { name: metadata?.name || `Sprite ${index}`, visible: metadata?.visible ?? true };
+      return { name: metadata?.name || `Sprite ${index}`, visible: metadata?.visible ?? true, parallaxMultiplier: metadata?.parallaxMultiplier ?? 1.0 };
     });
+  }
+
+  getSpriteParallax(index: number): number | null {
+    if (index >= 0 && index < this.sprites.length) {
+      const metadata = this.spriteMetadata.get(this.sprites[index]);
+      if (metadata) return metadata.parallaxMultiplier;
+    }
+    return null;
+  }
+
+  setSpriteParallax(index: number, value: number): void {
+    if (index >= 0 && index < this.sprites.length) {
+      const metadata = this.spriteMetadata.get(this.sprites[index]);
+      if (metadata) {
+        metadata.parallaxMultiplier = value;
+        this.setScrollOffset(this.currentXFocus);
+      }
+    }
+  }
+
+  /**
+   * Sort sprites by parallaxMultiplier ascending (furthest back first),
+   * with alphabetical name as tiebreaker.
+   * Updates the selection highlight index to track the selected sprite.
+   * @param trackedIndex optional index to track through the sort; returns its new index
+   */
+  sortSpritesByParallax(trackedIndex?: number): number {
+    const trackedSprite = trackedIndex !== undefined && trackedIndex >= 0 && trackedIndex < this.sprites.length
+      ? this.sprites[trackedIndex]
+      : null;
+    const selectedSprite = this.selectedHighlightIndex !== null && this.selectedHighlightIndex < this.sprites.length
+      ? this.sprites[this.selectedHighlightIndex]
+      : null;
+
+    this.sprites.sort((a, b) => {
+      const ma = this.spriteMetadata.get(a)!;
+      const mb = this.spriteMetadata.get(b)!;
+      if (ma.parallaxMultiplier !== mb.parallaxMultiplier) {
+        return ma.parallaxMultiplier - mb.parallaxMultiplier;
+      }
+      return ma.name.localeCompare(mb.name);
+    });
+
+    // Re-add children in new order so draw order matches
+    if (this.app) {
+      for (const sprite of this.sprites) {
+        this.app.stage.addChild(sprite);
+      }
+      // Keep phone guide and selection highlight on top
+      if (this.phoneGuide) {
+        const g = this.phoneGuide.getGraphics();
+        if (g) this.app.stage.addChild(g);
+      }
+      if (this.selectionHighlight) this.app.stage.addChild(this.selectionHighlight);
+    }
+
+    if (selectedSprite) {
+      this.selectedHighlightIndex = this.sprites.indexOf(selectedSprite);
+      this.updateSelectionHighlight();
+    }
+
+    return trackedSprite ? this.sprites.indexOf(trackedSprite) : 0;
   }
 
   getSceneData(): Scene | null {
     if (!this.originalSceneData) return null;
+    const originalByName = new Map(this.originalSceneData.sprites.map(s => [s.name, s]));
     return {
       ...this.originalSceneData,
       xFocus: this.currentXFocus,
-      sprites: this.sprites.map((sprite, index) => {
+      sprites: this.sprites.map((sprite) => {
         const metadata = this.spriteMetadata.get(sprite);
-        const original = this.originalSceneData!.sprites[index];
+        const original = originalByName.get(metadata?.name ?? '') ?? this.originalSceneData!.sprites[0];
         return {
           ...original,
           positionX: metadata?.x ?? original.positionX,
           positionY: sprite.y,
           width: sprite.width,
           height: sprite.height,
+          parallaxMultiplier: metadata?.parallaxMultiplier ?? original.parallaxMultiplier,
         };
       }),
     };

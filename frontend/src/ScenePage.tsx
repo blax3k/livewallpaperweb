@@ -17,6 +17,7 @@ export function ScenePage({ scenes }: ScenePageProps) {
   const { notifications, notify } = useNotifications();
   const dragStartPos = useRef<{ x: number; y: number } | null>(null);
   const dragStartSize = useRef<{ width: number; height: number } | null>(null);
+  const dragStartDepth = useRef<number | null>(null);
 
   const {
     canvasRef,
@@ -36,6 +37,8 @@ export function ScenePage({ scenes }: ScenePageProps) {
     handleSpriteSelect,
     handleSpritePositionChange,
     handleSpriteSizeChange,
+    handleSpriteDepthChange,
+    handleSpriteDepthApply,
   } = useSceneRenderer(notify);
 
   const applySelectedSpriteMove = useCallback((x: number, y: number) => {
@@ -61,6 +64,7 @@ export function ScenePage({ scenes }: ScenePageProps) {
     onRedoApply: applySelectedSpriteMove,
     onSpriteMove: applySelectedSpriteMove,
     onScaleApply: applySelectedSpriteSize,
+    onDepthApply: handleSpriteDepthApply,
   });
 
   const handleSpritePositionChangeStart = useCallback((x: number, y: number) => {
@@ -89,6 +93,19 @@ export function ScenePage({ scenes }: ScenePageProps) {
     }
   }, [selectedSprite, history]);
 
+  const handleSpriteDepthChangeStart = useCallback((depth: number) => {
+    dragStartDepth.current = depth;
+  }, []);
+
+  const handleSpriteDepthCommit = useCallback((depth: number) => {
+    if (!selectedSprite || dragStartDepth.current === null) return;
+    const before = dragStartDepth.current;
+    dragStartDepth.current = null;
+    if (before !== depth) {
+      history.push({ type: 'depth', spriteIndex: selectedSprite.index, before, after: depth });
+    }
+  }, [selectedSprite, history]);
+
   return (
     <>
       <TopBar
@@ -112,6 +129,9 @@ export function ScenePage({ scenes }: ScenePageProps) {
           onSpritePositionChange={handleSpritePositionChange}
           onSpritePositionChangeStart={handleSpritePositionChangeStart}
           onSpritePositionCommit={handleSpritePositionCommit}
+          onSpriteDepthChange={handleSpriteDepthChange}
+          onSpriteDepthChangeStart={handleSpriteDepthChangeStart}
+          onSpriteDepthCommit={handleSpriteDepthCommit}
           onSpriteSizeChange={handleSpriteSizeChange}
           onSpriteSizeChangeStart={handleSpriteSizeChangeStart}
           onSpriteSizeCommit={handleSpriteSizeCommit}

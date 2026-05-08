@@ -8,6 +8,7 @@ export interface SelectedSprite {
   name: string;
   x: number;
   y: number;
+  depth: number;
   width: number;
   height: number;
 }
@@ -60,7 +61,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
       const firstScale = renderer.getSpriteScale(0);
       const entries = renderer.getSpriteEntries();
       if (firstPos && entries.length > 0) {
-        setSelectedSprite({ index: 0, name: entries[0].name || 'Sprite 0', x: firstPos.x, y: firstPos.y, width: firstScale?.width ?? 0, height: firstScale?.height ?? 0 });
+        setSelectedSprite({ index: 0, name: entries[0].name || 'Sprite 0', x: firstPos.x, y: firstPos.y, depth: entries[0].parallaxMultiplier ?? 1.0, width: firstScale?.width ?? 0, height: firstScale?.height ?? 0 });
         renderer.setSelectedSpriteHighlight(0);
       } else {
         setSelectedSprite(null);
@@ -114,7 +115,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
     const scaleInfo = rendererRef.current?.getSpriteScale(index);
     const name = spriteEntries[index]?.name || `Sprite ${index}`;
     if (pos) {
-      setSelectedSprite({ index, name, x: pos.x, y: pos.y, width: scaleInfo?.width ?? 0, height: scaleInfo?.height ?? 0 });
+      setSelectedSprite({ index, name, x: pos.x, y: pos.y, depth: rendererRef.current?.getSpriteParallax(index) ?? 1.0, width: scaleInfo?.width ?? 0, height: scaleInfo?.height ?? 0 });
       rendererRef.current?.setSelectedSpriteHighlight(index);
     }
   }, [spriteEntries]);
@@ -136,6 +137,24 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
     });
   }, []);
 
+  const handleSpriteDepthChange = useCallback((depth: number) => {
+    setSelectedSprite(prev => {
+      if (!prev) return null;
+      rendererRef.current?.setSpriteParallax(prev.index, depth);
+      const newIndex = rendererRef.current?.sortSpritesByParallax(prev.index) ?? prev.index;
+      if (rendererRef.current) refreshSpriteList(rendererRef.current);
+      return { ...prev, index: newIndex, depth };
+    });
+  }, [refreshSpriteList]);
+
+  const handleSpriteDepthApply = useCallback((depth: number, spriteIndex: number) => {
+    if (!rendererRef.current) return;
+    rendererRef.current.setSpriteParallax(spriteIndex, depth);
+    const newIndex = rendererRef.current.sortSpritesByParallax(spriteIndex);
+    refreshSpriteList(rendererRef.current);
+    setSelectedSprite(prev => prev ? { ...prev, index: newIndex, depth } : null);
+  }, [refreshSpriteList]);
+
   return {
     canvasRef,
     rendererRef,
@@ -154,6 +173,8 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
     handleSpriteSelect,
     handleSpritePositionChange,
     handleSpriteSizeChange,
+    handleSpriteDepthChange,
+    handleSpriteDepthApply,
   };
 }
 

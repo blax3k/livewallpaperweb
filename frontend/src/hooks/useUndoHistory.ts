@@ -14,7 +14,14 @@ export interface ScaleAction {
   after: { width: number; height: number };
 }
 
-export type HistoryAction = PositionAction | ScaleAction;
+export interface DepthAction {
+  type: 'depth';
+  spriteIndex: number;
+  before: number;
+  after: number;
+}
+
+export type HistoryAction = PositionAction | ScaleAction | DepthAction;
 
 export function useUndoHistory() {
   const past = useRef<HistoryAction[]>([]);

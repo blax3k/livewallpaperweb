@@ -13,6 +13,7 @@ interface UseKeyboardControlsOptions {
   onRedoApply: (x: number, y: number) => void;
   onSpriteMove: (x: number, y: number) => void;
   onScaleApply?: (width: number, height: number) => void;
+  onDepthApply?: (depth: number, spriteIndex: number) => void;
 }
 
 export function useKeyboardControls({
@@ -23,6 +24,7 @@ export function useKeyboardControls({
   onRedoApply,
   onSpriteMove,
   onScaleApply,
+  onDepthApply,
 }: UseKeyboardControlsOptions) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -34,9 +36,11 @@ export function useKeyboardControls({
           if (action.type === 'position') {
             rendererRef.current?.setSpritePosition(action.spriteIndex, action.before.x, action.before.y);
             onUndoApply(action.before.x, action.before.y);
-          } else {
+          } else if (action.type === 'scale') {
             rendererRef.current?.setSpriteSize(action.spriteIndex, action.before.width, action.before.height);
             onScaleApply?.(action.before.width, action.before.height);
+          } else if (action.type === 'depth') {
+            onDepthApply?.(action.before, action.spriteIndex);
           }
         }
         return;
@@ -49,9 +53,11 @@ export function useKeyboardControls({
           if (action.type === 'position') {
             rendererRef.current?.setSpritePosition(action.spriteIndex, action.after.x, action.after.y);
             onRedoApply(action.after.x, action.after.y);
-          } else {
+          } else if (action.type === 'scale') {
             rendererRef.current?.setSpriteSize(action.spriteIndex, action.after.width, action.after.height);
             onScaleApply?.(action.after.width, action.after.height);
+          } else if (action.type === 'depth') {
+            onDepthApply?.(action.after, action.spriteIndex);
           }
         }
         return;

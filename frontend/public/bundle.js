@@ -64207,7 +64207,8 @@ ${parts.join("\n")}
                 children: entry.visible ? "\u{1F441}\uFE0F" : "\u{1F6AB}"
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "sprite-label", children: entry.name || `Sprite ${index}` })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "sprite-label", children: entry.name || `Sprite ${index}` }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "sprite-parallax", children: entry.parallaxMultiplier.toFixed(2) })
           ]
         },
         index
@@ -64244,10 +64245,13 @@ ${parts.join("\n")}
   var COORD_MIN = -10;
   var COORD_MAX = 10;
   var COORD_STEP = 0.01;
+  var DEPTH_MIN = 0.1;
+  var DEPTH_MAX = 2;
+  var DEPTH_STEP = 0.01;
   var SIZE_MIN = 0.1;
   var SIZE_MAX = 20;
   var SIZE_STEP = 0.01;
-  function SpritePanelControl({ spriteName, x: x2, y: y2, width, height, disabled, onChange, onChangeStart, onChangeCommit, onSizeChange, onSizeChangeStart, onSizeCommit }) {
+  function SpritePanelControl({ spriteName, x: x2, y: y2, depth, width, height, disabled, onChange, onChangeStart, onChangeCommit, onDepthChange, onDepthChangeStart, onDepthCommit, onSizeChange, onSizeChangeStart, onSizeCommit }) {
     const aspectRatio = width > 0 && height > 0 ? height / width : 1;
     const handleWidthChange = (newW) => {
       const newH = Math.max(SIZE_MIN, newW * aspectRatio);
@@ -64326,6 +64330,42 @@ ${parts.join("\n")}
               if (!isNaN(val)) {
                 onChange(x2, val);
                 onChangeCommit?.(x2, val);
+              }
+            }
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "sprite-panel-coord", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("label", { children: "Z" }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+          "input",
+          {
+            type: "range",
+            min: DEPTH_MIN,
+            max: DEPTH_MAX,
+            step: DEPTH_STEP,
+            value: Math.min(DEPTH_MAX, Math.max(DEPTH_MIN, depth)),
+            disabled,
+            onPointerDown: () => onDepthChangeStart?.(depth),
+            onChange: (e2) => onDepthChange(parseFloat(e2.target.value)),
+            onPointerUp: (e2) => onDepthCommit?.(parseFloat(e2.target.value))
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+          "input",
+          {
+            type: "number",
+            min: DEPTH_MIN,
+            max: DEPTH_MAX,
+            step: DEPTH_STEP,
+            value: parseFloat(depth.toFixed(2)),
+            disabled,
+            onFocus: () => onDepthChangeStart?.(depth),
+            onChange: (e2) => {
+              const val = parseFloat(e2.target.value);
+              if (!isNaN(val) && val >= DEPTH_MIN) {
+                onDepthChange(val);
+                onDepthCommit?.(val);
               }
             }
           }
@@ -64424,6 +64464,9 @@ ${parts.join("\n")}
     onSpritePositionChange,
     onSpritePositionChangeStart,
     onSpritePositionCommit,
+    onSpriteDepthChange,
+    onSpriteDepthChangeStart,
+    onSpriteDepthCommit,
     onSpriteSizeChange,
     onSpriteSizeChangeStart,
     onSpriteSizeCommit
@@ -64448,12 +64491,16 @@ ${parts.join("\n")}
           spriteName: selectedSprite?.name ?? "",
           x: selectedSprite?.x ?? 0,
           y: selectedSprite?.y ?? 0,
+          depth: selectedSprite?.depth ?? 1,
           width: selectedSprite?.width ?? 0,
           height: selectedSprite?.height ?? 0,
           disabled: selectedSprite === null,
           onChange: onSpritePositionChange,
           onChangeStart: onSpritePositionChangeStart,
           onChangeCommit: onSpritePositionCommit,
+          onDepthChange: onSpriteDepthChange,
+          onDepthChangeStart: onSpriteDepthChangeStart,
+          onDepthCommit: onSpriteDepthCommit,
           onSizeChange: onSpriteSizeChange,
           onSizeChangeStart: onSpriteSizeChangeStart,
           onSizeCommit: onSpriteSizeCommit
@@ -67413,6 +67460,7 @@ ${e2}`);
         guideGraphics.visible = this.showPhoneGuideFlag;
       }
       this.originalSceneData = sceneData;
+      this.sortSpritesByParallax();
       this.fitSceneToView();
       this.setScrollOffset(sceneData.xFocus);
     }
@@ -67633,23 +67681,74 @@ ${e2}`);
     getSpriteEntries() {
       return this.sprites.map((sprite, index) => {
         const metadata = this.spriteMetadata.get(sprite);
-        return { name: metadata?.name || `Sprite ${index}`, visible: metadata?.visible ?? true };
+        return { name: metadata?.name || `Sprite ${index}`, visible: metadata?.visible ?? true, parallaxMultiplier: metadata?.parallaxMultiplier ?? 1 };
       });
+    }
+    getSpriteParallax(index) {
+      if (index >= 0 && index < this.sprites.length) {
+        const metadata = this.spriteMetadata.get(this.sprites[index]);
+        if (metadata) return metadata.parallaxMultiplier;
+      }
+      return null;
+    }
+    setSpriteParallax(index, value) {
+      if (index >= 0 && index < this.sprites.length) {
+        const metadata = this.spriteMetadata.get(this.sprites[index]);
+        if (metadata) {
+          metadata.parallaxMultiplier = value;
+          this.setScrollOffset(this.currentXFocus);
+        }
+      }
+    }
+    /**
+     * Sort sprites by parallaxMultiplier ascending (furthest back first),
+     * with alphabetical name as tiebreaker.
+     * Updates the selection highlight index to track the selected sprite.
+     * @param trackedIndex optional index to track through the sort; returns its new index
+     */
+    sortSpritesByParallax(trackedIndex) {
+      const trackedSprite = trackedIndex !== void 0 && trackedIndex >= 0 && trackedIndex < this.sprites.length ? this.sprites[trackedIndex] : null;
+      const selectedSprite = this.selectedHighlightIndex !== null && this.selectedHighlightIndex < this.sprites.length ? this.sprites[this.selectedHighlightIndex] : null;
+      this.sprites.sort((a2, b2) => {
+        const ma = this.spriteMetadata.get(a2);
+        const mb = this.spriteMetadata.get(b2);
+        if (ma.parallaxMultiplier !== mb.parallaxMultiplier) {
+          return ma.parallaxMultiplier - mb.parallaxMultiplier;
+        }
+        return ma.name.localeCompare(mb.name);
+      });
+      if (this.app) {
+        for (const sprite of this.sprites) {
+          this.app.stage.addChild(sprite);
+        }
+        if (this.phoneGuide) {
+          const g2 = this.phoneGuide.getGraphics();
+          if (g2) this.app.stage.addChild(g2);
+        }
+        if (this.selectionHighlight) this.app.stage.addChild(this.selectionHighlight);
+      }
+      if (selectedSprite) {
+        this.selectedHighlightIndex = this.sprites.indexOf(selectedSprite);
+        this.updateSelectionHighlight();
+      }
+      return trackedSprite ? this.sprites.indexOf(trackedSprite) : 0;
     }
     getSceneData() {
       if (!this.originalSceneData) return null;
+      const originalByName = new Map(this.originalSceneData.sprites.map((s2) => [s2.name, s2]));
       return {
         ...this.originalSceneData,
         xFocus: this.currentXFocus,
-        sprites: this.sprites.map((sprite, index) => {
+        sprites: this.sprites.map((sprite) => {
           const metadata = this.spriteMetadata.get(sprite);
-          const original = this.originalSceneData.sprites[index];
+          const original = originalByName.get(metadata?.name ?? "") ?? this.originalSceneData.sprites[0];
           return {
             ...original,
             positionX: metadata?.x ?? original.positionX,
             positionY: sprite.y,
             width: sprite.width,
-            height: sprite.height
+            height: sprite.height,
+            parallaxMultiplier: metadata?.parallaxMultiplier ?? original.parallaxMultiplier
           };
         })
       };
@@ -67787,7 +67886,7 @@ ${e2}`);
         const firstScale = renderer.getSpriteScale(0);
         const entries = renderer.getSpriteEntries();
         if (firstPos && entries.length > 0) {
-          setSelectedSprite({ index: 0, name: entries[0].name || "Sprite 0", x: firstPos.x, y: firstPos.y, width: firstScale?.width ?? 0, height: firstScale?.height ?? 0 });
+          setSelectedSprite({ index: 0, name: entries[0].name || "Sprite 0", x: firstPos.x, y: firstPos.y, depth: entries[0].parallaxMultiplier ?? 1, width: firstScale?.width ?? 0, height: firstScale?.height ?? 0 });
           renderer.setSelectedSpriteHighlight(0);
         } else {
           setSelectedSprite(null);
@@ -67835,7 +67934,7 @@ ${e2}`);
       const scaleInfo = rendererRef.current?.getSpriteScale(index);
       const name = spriteEntries[index]?.name || `Sprite ${index}`;
       if (pos) {
-        setSelectedSprite({ index, name, x: pos.x, y: pos.y, width: scaleInfo?.width ?? 0, height: scaleInfo?.height ?? 0 });
+        setSelectedSprite({ index, name, x: pos.x, y: pos.y, depth: rendererRef.current?.getSpriteParallax(index) ?? 1, width: scaleInfo?.width ?? 0, height: scaleInfo?.height ?? 0 });
         rendererRef.current?.setSelectedSpriteHighlight(index);
       }
     }, [spriteEntries]);
@@ -67854,6 +67953,22 @@ ${e2}`);
         return { ...prev, width, height };
       });
     }, []);
+    const handleSpriteDepthChange = (0, import_react3.useCallback)((depth) => {
+      setSelectedSprite((prev) => {
+        if (!prev) return null;
+        rendererRef.current?.setSpriteParallax(prev.index, depth);
+        const newIndex = rendererRef.current?.sortSpritesByParallax(prev.index) ?? prev.index;
+        if (rendererRef.current) refreshSpriteList(rendererRef.current);
+        return { ...prev, index: newIndex, depth };
+      });
+    }, [refreshSpriteList]);
+    const handleSpriteDepthApply = (0, import_react3.useCallback)((depth, spriteIndex) => {
+      if (!rendererRef.current) return;
+      rendererRef.current.setSpriteParallax(spriteIndex, depth);
+      const newIndex = rendererRef.current.sortSpritesByParallax(spriteIndex);
+      refreshSpriteList(rendererRef.current);
+      setSelectedSprite((prev) => prev ? { ...prev, index: newIndex, depth } : null);
+    }, [refreshSpriteList]);
     return {
       canvasRef,
       rendererRef,
@@ -67871,7 +67986,9 @@ ${e2}`);
       handleSpriteToggle,
       handleSpriteSelect,
       handleSpritePositionChange,
-      handleSpriteSizeChange
+      handleSpriteSizeChange,
+      handleSpriteDepthChange,
+      handleSpriteDepthApply
     };
   }
 
@@ -67956,7 +68073,8 @@ ${e2}`);
     onUndoApply,
     onRedoApply,
     onSpriteMove,
-    onScaleApply
+    onScaleApply,
+    onDepthApply
   }) {
     (0, import_react5.useEffect)(() => {
       const handleKeyDown = (e2) => {
@@ -67967,9 +68085,11 @@ ${e2}`);
             if (action.type === "position") {
               rendererRef.current?.setSpritePosition(action.spriteIndex, action.before.x, action.before.y);
               onUndoApply(action.before.x, action.before.y);
-            } else {
+            } else if (action.type === "scale") {
               rendererRef.current?.setSpriteSize(action.spriteIndex, action.before.width, action.before.height);
               onScaleApply?.(action.before.width, action.before.height);
+            } else if (action.type === "depth") {
+              onDepthApply?.(action.before, action.spriteIndex);
             }
           }
           return;
@@ -67981,9 +68101,11 @@ ${e2}`);
             if (action.type === "position") {
               rendererRef.current?.setSpritePosition(action.spriteIndex, action.after.x, action.after.y);
               onRedoApply(action.after.x, action.after.y);
-            } else {
+            } else if (action.type === "scale") {
               rendererRef.current?.setSpriteSize(action.spriteIndex, action.after.width, action.after.height);
               onScaleApply?.(action.after.width, action.after.height);
+            } else if (action.type === "depth") {
+              onDepthApply?.(action.after, action.spriteIndex);
             }
           }
           return;
@@ -68016,6 +68138,7 @@ ${e2}`);
     const { notifications, notify } = useNotifications();
     const dragStartPos = (0, import_react6.useRef)(null);
     const dragStartSize = (0, import_react6.useRef)(null);
+    const dragStartDepth = (0, import_react6.useRef)(null);
     const {
       canvasRef,
       rendererRef,
@@ -68033,7 +68156,9 @@ ${e2}`);
       handleSpriteToggle,
       handleSpriteSelect,
       handleSpritePositionChange,
-      handleSpriteSizeChange
+      handleSpriteSizeChange,
+      handleSpriteDepthChange,
+      handleSpriteDepthApply
     } = useSceneRenderer(notify);
     const applySelectedSpriteMove = (0, import_react6.useCallback)((x2, y2) => {
       setSelectedSprite((prev) => prev ? { ...prev, x: x2, y: y2 } : null);
@@ -68054,7 +68179,8 @@ ${e2}`);
       onUndoApply: applySelectedSpriteMove,
       onRedoApply: applySelectedSpriteMove,
       onSpriteMove: applySelectedSpriteMove,
-      onScaleApply: applySelectedSpriteSize
+      onScaleApply: applySelectedSpriteSize,
+      onDepthApply: handleSpriteDepthApply
     });
     const handleSpritePositionChangeStart = (0, import_react6.useCallback)((x2, y2) => {
       dragStartPos.current = { x: x2, y: y2 };
@@ -68076,6 +68202,17 @@ ${e2}`);
       dragStartSize.current = null;
       if (before.width !== width || before.height !== height) {
         history.push({ type: "scale", spriteIndex: selectedSprite.index, before, after: { width, height } });
+      }
+    }, [selectedSprite, history]);
+    const handleSpriteDepthChangeStart = (0, import_react6.useCallback)((depth) => {
+      dragStartDepth.current = depth;
+    }, []);
+    const handleSpriteDepthCommit = (0, import_react6.useCallback)((depth) => {
+      if (!selectedSprite || dragStartDepth.current === null) return;
+      const before = dragStartDepth.current;
+      dragStartDepth.current = null;
+      if (before !== depth) {
+        history.push({ type: "depth", spriteIndex: selectedSprite.index, before, after: depth });
       }
     }, [selectedSprite, history]);
     return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
@@ -68105,6 +68242,9 @@ ${e2}`);
             onSpritePositionChange: handleSpritePositionChange,
             onSpritePositionChangeStart: handleSpritePositionChangeStart,
             onSpritePositionCommit: handleSpritePositionCommit,
+            onSpriteDepthChange: handleSpriteDepthChange,
+            onSpriteDepthChangeStart: handleSpriteDepthChangeStart,
+            onSpriteDepthCommit: handleSpriteDepthCommit,
             onSpriteSizeChange: handleSpriteSizeChange,
             onSpriteSizeChangeStart: handleSpriteSizeChangeStart,
             onSpriteSizeCommit: handleSpriteSizeCommit

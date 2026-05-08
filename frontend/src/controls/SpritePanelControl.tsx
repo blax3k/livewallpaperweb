@@ -5,12 +5,16 @@ interface SpritePanelControlProps {
   spriteName: string;
   x: number;
   y: number;
+  depth: number;
   width: number;
   height: number;
   disabled?: boolean;
   onChange: (x: number, y: number) => void;
   onChangeStart?: (x: number, y: number) => void;
   onChangeCommit?: (x: number, y: number) => void;
+  onDepthChange: (depth: number) => void;
+  onDepthChangeStart?: (depth: number) => void;
+  onDepthCommit?: (depth: number) => void;
   onSizeChange: (width: number, height: number) => void;
   onSizeChangeStart?: () => void;
   onSizeCommit?: (width: number, height: number) => void;
@@ -20,11 +24,15 @@ const COORD_MIN = -10;
 const COORD_MAX = 10;
 const COORD_STEP = 0.01;
 
+const DEPTH_MIN = 0.1;
+const DEPTH_MAX = 2.0;
+const DEPTH_STEP = 0.01;
+
 const SIZE_MIN = 0.1;
 const SIZE_MAX = 20;
 const SIZE_STEP = 0.01;
 
-export function SpritePanelControl({ spriteName, x, y, width, height, disabled, onChange, onChangeStart, onChangeCommit, onSizeChange, onSizeChangeStart, onSizeCommit }: SpritePanelControlProps) {
+export function SpritePanelControl({ spriteName, x, y, depth, width, height, disabled, onChange, onChangeStart, onChangeCommit, onDepthChange, onDepthChangeStart, onDepthCommit, onSizeChange, onSizeChangeStart, onSizeCommit }: SpritePanelControlProps) {
   const aspectRatio = width > 0 && height > 0 ? height / width : 1;
 
   const handleWidthChange = (newW: number) => {
@@ -91,6 +99,33 @@ export function SpritePanelControl({ spriteName, x, y, width, height, disabled, 
           onChange={(e) => {
             const val = parseFloat(e.target.value);
             if (!isNaN(val)) { onChange(x, val); onChangeCommit?.(x, val); }
+          }}
+        />
+      </div>
+      <div className="sprite-panel-coord">
+        <label>Z</label>
+        <input
+          type="range"
+          min={DEPTH_MIN}
+          max={DEPTH_MAX}
+          step={DEPTH_STEP}
+          value={Math.min(DEPTH_MAX, Math.max(DEPTH_MIN, depth))}
+          disabled={disabled}
+          onPointerDown={() => onDepthChangeStart?.(depth)}
+          onChange={(e) => onDepthChange(parseFloat(e.target.value))}
+          onPointerUp={(e) => onDepthCommit?.(parseFloat((e.target as HTMLInputElement).value))}
+        />
+        <input
+          type="number"
+          min={DEPTH_MIN}
+          max={DEPTH_MAX}
+          step={DEPTH_STEP}
+          value={parseFloat(depth.toFixed(2))}
+          disabled={disabled}
+          onFocus={() => onDepthChangeStart?.(depth)}
+          onChange={(e) => {
+            const val = parseFloat(e.target.value);
+            if (!isNaN(val) && val >= DEPTH_MIN) { onDepthChange(val); onDepthCommit?.(val); }
           }}
         />
       </div>

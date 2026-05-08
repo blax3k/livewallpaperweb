@@ -4,6 +4,7 @@ import './SpriteListPanel.scss';
 export interface SpriteEntry {
   name: string;
   visible: boolean;
+  parallaxMultiplier: number;
 }
 
 interface SpriteListPanelProps {
@@ -34,6 +35,7 @@ export function SpriteListPanel({ entries, selectedName, onToggle, onSelect }: S
               {entry.visible ? '👁️' : '🚫'}
             </span>
             <span className="sprite-label">{entry.name || `Sprite ${index}`}</span>
+            <span className="sprite-parallax">{entry.parallaxMultiplier.toFixed(2)}</span>
           </div>
         ))}
       </div>

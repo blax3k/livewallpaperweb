@@ -185,6 +185,13 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+#sprite-list-panel .sprite-parallax {
+  font-size: 11px;
+  color: #888;
+  white-space: nowrap;
+  min-width: 32px;
+  text-align: right;
+}
 
 /* src/controls/XFocusControl.scss */
 .control-group .xfocus-row {
