@@ -3,6 +3,7 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import staticFiles from '@fastify/static';
 import path from 'path';
+import { readdir } from 'fs/promises';
 import { pool } from './db';
 import { runMigrations } from './db/migrations';
 
@@ -13,6 +14,13 @@ const server = Fastify({
 // Health check
 server.get('/health', async () => {
   return { status: 'ok' };
+});
+
+// List images available in the public images folder
+server.get('/api/images', async () => {
+  const imagesDir = path.join(__dirname, '../../frontend/public/images');
+  const files = await readdir(imagesDir);
+  return files.filter(f => /\.(png|jpg|jpeg|gif|webp)$/i.test(f));
 });
 
 // List all scenes (id, name, label only — no full data)

@@ -155,6 +155,19 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
     setSelectedSprite(prev => prev ? { ...prev, index: newIndex, depth } : null);
   }, [refreshSpriteList]);
 
+  const handleAddSprite = useCallback(async (textureResource: string) => {
+    if (!rendererRef.current) return;
+    const newIndex = await rendererRef.current.addSprite(textureResource, 5, 5, 1.0);
+    if (newIndex < 0) return;
+    refreshSpriteList(rendererRef.current);
+    const pos = rendererRef.current.getSpritePosition(newIndex);
+    const scaleInfo = rendererRef.current.getSpriteScale(newIndex);
+    const entries = rendererRef.current.getSpriteEntries();
+    const name = entries[newIndex]?.name || textureResource;
+    setSelectedSprite({ index: newIndex, name, x: pos?.x ?? 0, y: pos?.y ?? 0, depth: 1.0, width: scaleInfo?.width ?? 5, height: scaleInfo?.height ?? 5 });
+    rendererRef.current.setSelectedSpriteHighlight(newIndex);
+  }, [refreshSpriteList]);
+
   return {
     canvasRef,
     rendererRef,
@@ -175,6 +188,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
     handleSpriteSizeChange,
     handleSpriteDepthChange,
     handleSpriteDepthApply,
+    handleAddSprite,
   };
 }
 

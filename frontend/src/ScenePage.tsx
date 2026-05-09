@@ -39,6 +39,7 @@ export function ScenePage({ scenes }: ScenePageProps) {
     handleSpriteSizeChange,
     handleSpriteDepthChange,
     handleSpriteDepthApply,
+    handleAddSprite,
   } = useSceneRenderer(notify);
 
   const applySelectedSpriteMove = useCallback((x: number, y: number) => {
@@ -126,6 +127,7 @@ export function ScenePage({ scenes }: ScenePageProps) {
           onXFocusChange={handleXFocusChange}
           onSpriteToggle={handleSpriteToggle}
           onSpriteSelect={handleSpriteSelect}
+          onAddSprite={handleAddSprite}
           onSpritePositionChange={handleSpritePositionChange}
           onSpritePositionChangeStart={handleSpritePositionChangeStart}
           onSpritePositionCommit={handleSpritePositionCommit}

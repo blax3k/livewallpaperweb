@@ -1337,7 +1337,7 @@
           return dispatcher;
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var React4 = require_react(), Internals = {
+        var React5 = require_react(), Internals = {
           d: {
             f: noop,
             r: function() {
@@ -1355,7 +1355,7 @@
           },
           p: 0,
           findDOMNode: null
-        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React4.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React5.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
         "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
           "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
         );
@@ -2890,7 +2890,7 @@
           "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
         }
         function validateOptionProps(element, props) {
-          null == props.value && ("object" === typeof props.children && null !== props.children ? React4.Children.forEach(props.children, function(child) {
+          null == props.value && ("object" === typeof props.children && null !== props.children ? React5.Children.forEach(props.children, function(child) {
             null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
               "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
             ));
@@ -18522,14 +18522,14 @@
           ));
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var Scheduler = require_scheduler(), React4 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+        var Scheduler = require_scheduler(), React5 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
         /* @__PURE__ */ Symbol.for("react.scope");
         var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity");
         /* @__PURE__ */ Symbol.for("react.legacy_hidden");
         /* @__PURE__ */ Symbol.for("react.tracing_marker");
         var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel");
         /* @__PURE__ */ Symbol.for("react.view_transition");
-        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React4.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React5.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
           pending: false,
           data: null,
           method: null,
@@ -21317,7 +21317,7 @@
           }
         };
         (function() {
-          var isomorphicReactPackageVersion = React4.version;
+          var isomorphicReactPackageVersion = React5.version;
           if ("19.2.5" !== isomorphicReactPackageVersion)
             throw Error(
               'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.5\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21671,18 +21671,18 @@
         function isValidElement(object) {
           return "object" === typeof object && null !== object && object.$$typeof === REACT_ELEMENT_TYPE;
         }
-        var React4 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React4.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
+        var React5 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React5.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
           return null;
         };
-        React4 = {
+        React5 = {
           react_stack_bottom_frame: function(callStackForError) {
             return callStackForError();
           }
         };
         var specialPropKeyWarningShown;
         var didWarnAboutElementRef = {};
-        var unknownOwnerDebugStack = React4.react_stack_bottom_frame.bind(
-          React4,
+        var unknownOwnerDebugStack = React5.react_stack_bottom_frame.bind(
+          React5,
           UnknownOwner
         )();
         var unknownOwnerDebugTask = createTask(getTaskName(UnknownOwner));
@@ -64179,16 +64179,49 @@ ${parts.join("\n")}
   var import_client = __toESM(require_client());
 
   // src/ScenePage.tsx
-  var import_react6 = __toESM(require_react());
+  var import_react7 = __toESM(require_react());
 
   // src/controls/SpriteListPanel.tsx
+  var import_react = __toESM(require_react());
   var import_jsx_runtime = __toESM(require_jsx_runtime());
-  function SpriteListPanel({ entries, selectedName, onToggle, onSelect }) {
+  function AddSpriteModal({ onSelect, onClose }) {
+    const [images, setImages] = (0, import_react.useState)([]);
+    const [loading, setLoading] = (0, import_react.useState)(true);
+    (0, import_react.useEffect)(() => {
+      fetch("/api/images").then((r2) => r2.json()).then((files) => {
+        setImages(files);
+        setLoading(false);
+      }).catch(() => setLoading(false));
+    }, []);
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "add-sprite-overlay", onClick: onClose, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "add-sprite-modal", onClick: (e2) => e2.stopPropagation(), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "add-sprite-modal-header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Select Image" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "add-sprite-modal-close", onClick: onClose, children: "\u2715" })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "add-sprite-modal-body", children: [
+        loading && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "add-sprite-loading", children: "Loading\u2026" }),
+        !loading && images.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "add-sprite-loading", children: "No images found." }),
+        images.map((filename) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "add-sprite-image-item", onClick: () => onSelect(filename), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", { src: `/images/${filename}`, alt: filename, className: "add-sprite-thumb" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "add-sprite-image-name", children: filename })
+        ] }, filename))
+      ] })
+    ] }) });
+  }
+  function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd }) {
+    const [showModal, setShowModal] = (0, import_react.useState)(false);
+    const handleImageSelected = (filename) => {
+      setShowModal(false);
+      onAdd(filename);
+    };
     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { id: "sprite-list-panel", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "sprite-list-title", children: [
-        "Sprites (",
-        entries.length,
-        ")"
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [
+          "Sprites (",
+          entries.length,
+          ")"
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "sprite-list-add-btn", onClick: () => setShowModal(true), title: "Add sprite", children: "+" })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "sprite-list", children: entries.map((entry, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
         "div",
@@ -64212,7 +64245,8 @@ ${parts.join("\n")}
           ]
         },
         index
-      )) })
+      )) }),
+      showModal && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AddSpriteModal, { onSelect: handleImageSelected, onClose: () => setShowModal(false) })
     ] });
   }
 
@@ -64461,6 +64495,7 @@ ${parts.join("\n")}
     onXFocusChange,
     onSpriteToggle,
     onSpriteSelect,
+    onAddSprite,
     onSpritePositionChange,
     onSpritePositionChangeStart,
     onSpritePositionCommit,
@@ -64481,7 +64516,8 @@ ${parts.join("\n")}
           entries: spriteEntries,
           selectedName: selectedSprite?.name ?? null,
           onToggle: onSpriteToggle,
-          onSelect: onSpriteSelect
+          onSelect: onSpriteSelect,
+          onAdd: onAddSprite
         }
       ) }),
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { children: "Sprite" }),
@@ -64574,10 +64610,10 @@ ${parts.join("\n")}
   }
 
   // src/hooks/useUndoHistory.ts
-  var import_react = __toESM(require_react());
+  var import_react2 = __toESM(require_react());
   function useUndoHistory() {
-    const past = (0, import_react.useRef)([]);
-    const future = (0, import_react.useRef)([]);
+    const past = (0, import_react2.useRef)([]);
+    const future = (0, import_react2.useRef)([]);
     function push(action) {
       past.current = [...past.current, action];
       future.current = [];
@@ -64604,10 +64640,10 @@ ${parts.join("\n")}
   }
 
   // src/hooks/useNotifications.ts
-  var import_react2 = __toESM(require_react());
+  var import_react3 = __toESM(require_react());
   function useNotifications() {
-    const [notifications, setNotifications] = (0, import_react2.useState)([]);
-    const notify = (0, import_react2.useCallback)((message) => {
+    const [notifications, setNotifications] = (0, import_react3.useState)([]);
+    const notify = (0, import_react3.useCallback)((message) => {
       const id = Date.now();
       setNotifications((prev) => [...prev, { id, message }]);
       setTimeout(() => {
@@ -64618,7 +64654,7 @@ ${parts.join("\n")}
   }
 
   // src/hooks/useSceneRenderer.ts
-  var import_react3 = __toESM(require_react());
+  var import_react4 = __toESM(require_react());
 
   // ../node_modules/pixi.js/lib/environment-browser/browserExt.mjs
   init_Extensions();
@@ -67510,16 +67546,68 @@ ${e2}`);
       this.app.stage.y = canvasHeight / 2;
     }
     /**
-     * Load a texture image from the public folder
+     * Load a texture image from the public folder.
+     * If resourceName already has an image extension, it is used as-is;
+     * otherwise .png is appended for backwards compatibility.
      */
     async loadTexture(resourceName) {
       if (this.textures.has(resourceName)) return;
       try {
-        const texture = await Assets.load(`/images/${resourceName}.png`);
+        const hasExtension = /\.(png|jpg|jpeg|gif|webp)$/i.test(resourceName);
+        const url = hasExtension ? `/images/${resourceName}` : `/images/${resourceName}.png`;
+        const texture = await Assets.load(url);
         this.textures.set(resourceName, texture);
       } catch (error) {
         console.error(`Failed to load texture: ${resourceName}`, error);
       }
+    }
+    /**
+     * Add a new sprite to the scene using an image filename from the public/images folder.
+     * @param textureResource filename (with or without extension) of the image
+     * @param width world-space width
+     * @param height world-space height
+     * @param parallaxMultiplier depth / parallax value
+     * @returns the index of the newly added sprite after sorting, or -1 on failure
+     */
+    async addSprite(textureResource, width, height, parallaxMultiplier) {
+      if (!this.app) return -1;
+      await this.loadTexture(textureResource);
+      const baseName = textureResource.replace(/\.(png|jpg|jpeg|gif|webp)$/i, "");
+      const existingNames = new Set(this.sprites.map((s2) => this.spriteMetadata.get(s2)?.name ?? ""));
+      let name = baseName;
+      let counter = 1;
+      while (existingNames.has(name)) {
+        name = `${baseName}_${counter++}`;
+      }
+      const spriteData = {
+        name,
+        textureResource,
+        textureResourceId: this.sprites.length,
+        positionX: 0,
+        positionY: 0,
+        width,
+        height,
+        parallaxMultiplier,
+        texCoordinates: [0, 0, 0, 1, 1, 0, 1, 1]
+      };
+      const pixiSprite = await this.createSprite(spriteData);
+      if (!pixiSprite) return -1;
+      this.sprites.push(pixiSprite);
+      this.spriteMetadata.set(pixiSprite, {
+        x: 0,
+        parallaxMultiplier,
+        name,
+        visible: true,
+        originalWidth: width,
+        originalHeight: height
+      });
+      this.app.stage.addChild(pixiSprite);
+      if (this.originalSceneData) {
+        this.originalSceneData.sprites.push(spriteData);
+      }
+      const newIndex = this.sortSpritesByParallax(this.sprites.length - 1);
+      this.setScrollOffset(this.currentXFocus);
+      return newIndex;
     }
     /**
      * Create a PixiJS sprite from sprite data with UV texture mapping
@@ -67847,24 +67935,24 @@ ${e2}`);
 
   // src/hooks/useSceneRenderer.ts
   function useSceneRenderer(onNotify) {
-    const [showSceneControls, setShowSceneControls] = (0, import_react3.useState)(false);
-    const [xFocus, setXFocus] = (0, import_react3.useState)(0.5);
-    const [spriteEntries, setSpriteEntries] = (0, import_react3.useState)([]);
-    const [selectedSprite, setSelectedSprite] = (0, import_react3.useState)(null);
-    const [isSaving, setIsSaving] = (0, import_react3.useState)(false);
-    const [phoneGuideVisible, setPhoneGuideVisible] = (0, import_react3.useState)(true);
-    const onNotifyRef = (0, import_react3.useRef)(onNotify);
+    const [showSceneControls, setShowSceneControls] = (0, import_react4.useState)(false);
+    const [xFocus, setXFocus] = (0, import_react4.useState)(0.5);
+    const [spriteEntries, setSpriteEntries] = (0, import_react4.useState)([]);
+    const [selectedSprite, setSelectedSprite] = (0, import_react4.useState)(null);
+    const [isSaving, setIsSaving] = (0, import_react4.useState)(false);
+    const [phoneGuideVisible, setPhoneGuideVisible] = (0, import_react4.useState)(true);
+    const onNotifyRef = (0, import_react4.useRef)(onNotify);
     onNotifyRef.current = onNotify;
-    const phoneGuideVisibleRef = (0, import_react3.useRef)(true);
-    const canvasRef = (0, import_react3.useRef)(null);
-    const rendererRef = (0, import_react3.useRef)(null);
-    const sceneIdRef = (0, import_react3.useRef)(null);
-    const sceneNameRef = (0, import_react3.useRef)(null);
-    const sceneLabelRef = (0, import_react3.useRef)(null);
-    const refreshSpriteList = (0, import_react3.useCallback)((r2) => {
+    const phoneGuideVisibleRef = (0, import_react4.useRef)(true);
+    const canvasRef = (0, import_react4.useRef)(null);
+    const rendererRef = (0, import_react4.useRef)(null);
+    const sceneIdRef = (0, import_react4.useRef)(null);
+    const sceneNameRef = (0, import_react4.useRef)(null);
+    const sceneLabelRef = (0, import_react4.useRef)(null);
+    const refreshSpriteList = (0, import_react4.useCallback)((r2) => {
       setSpriteEntries([...r2.getSpriteEntries()]);
     }, []);
-    const loadScene = (0, import_react3.useCallback)(async (sceneName) => {
+    const loadScene = (0, import_react4.useCallback)(async (sceneName) => {
       try {
         const response = await fetch(`/api/scenes/${sceneName}`);
         const row = await response.json();
@@ -67896,7 +67984,7 @@ ${e2}`);
         console.error("Failed to load scene:", error);
       }
     }, [refreshSpriteList]);
-    const saveScene = (0, import_react3.useCallback)(async () => {
+    const saveScene = (0, import_react4.useCallback)(async () => {
       const name = sceneNameRef.current;
       const label = sceneLabelRef.current;
       const data = rendererRef.current?.getSceneData();
@@ -67915,21 +68003,21 @@ ${e2}`);
         setIsSaving(false);
       }
     }, []);
-    const handleXFocusChange = (0, import_react3.useCallback)((value) => {
+    const handleXFocusChange = (0, import_react4.useCallback)((value) => {
       setXFocus(value);
       rendererRef.current?.setScrollOffset(value);
     }, []);
-    const handlePhoneGuideToggle = (0, import_react3.useCallback)((visible) => {
+    const handlePhoneGuideToggle = (0, import_react4.useCallback)((visible) => {
       phoneGuideVisibleRef.current = visible;
       setPhoneGuideVisible(visible);
       if (visible) rendererRef.current?.showGuide();
       else rendererRef.current?.hideGuide();
     }, []);
-    const handleSpriteToggle = (0, import_react3.useCallback)((index) => {
+    const handleSpriteToggle = (0, import_react4.useCallback)((index) => {
       rendererRef.current?.toggleSpriteByIndex(index);
       if (rendererRef.current) refreshSpriteList(rendererRef.current);
     }, [refreshSpriteList]);
-    const handleSpriteSelect = (0, import_react3.useCallback)((index) => {
+    const handleSpriteSelect = (0, import_react4.useCallback)((index) => {
       const pos = rendererRef.current?.getSpritePosition(index);
       const scaleInfo = rendererRef.current?.getSpriteScale(index);
       const name = spriteEntries[index]?.name || `Sprite ${index}`;
@@ -67938,7 +68026,7 @@ ${e2}`);
         rendererRef.current?.setSelectedSpriteHighlight(index);
       }
     }, [spriteEntries]);
-    const handleSpritePositionChange = (0, import_react3.useCallback)((x2, y2) => {
+    const handleSpritePositionChange = (0, import_react4.useCallback)((x2, y2) => {
       if (!rendererRef.current) return;
       setSelectedSprite((prev) => {
         if (!prev) return null;
@@ -67946,14 +68034,14 @@ ${e2}`);
         return { ...prev, x: x2, y: y2 };
       });
     }, []);
-    const handleSpriteSizeChange = (0, import_react3.useCallback)((width, height) => {
+    const handleSpriteSizeChange = (0, import_react4.useCallback)((width, height) => {
       setSelectedSprite((prev) => {
         if (!prev) return null;
         rendererRef.current?.setSpriteSize(prev.index, width, height);
         return { ...prev, width, height };
       });
     }, []);
-    const handleSpriteDepthChange = (0, import_react3.useCallback)((depth) => {
+    const handleSpriteDepthChange = (0, import_react4.useCallback)((depth) => {
       setSelectedSprite((prev) => {
         if (!prev) return null;
         rendererRef.current?.setSpriteParallax(prev.index, depth);
@@ -67962,12 +68050,24 @@ ${e2}`);
         return { ...prev, index: newIndex, depth };
       });
     }, [refreshSpriteList]);
-    const handleSpriteDepthApply = (0, import_react3.useCallback)((depth, spriteIndex) => {
+    const handleSpriteDepthApply = (0, import_react4.useCallback)((depth, spriteIndex) => {
       if (!rendererRef.current) return;
       rendererRef.current.setSpriteParallax(spriteIndex, depth);
       const newIndex = rendererRef.current.sortSpritesByParallax(spriteIndex);
       refreshSpriteList(rendererRef.current);
       setSelectedSprite((prev) => prev ? { ...prev, index: newIndex, depth } : null);
+    }, [refreshSpriteList]);
+    const handleAddSprite = (0, import_react4.useCallback)(async (textureResource) => {
+      if (!rendererRef.current) return;
+      const newIndex = await rendererRef.current.addSprite(textureResource, 5, 5, 1);
+      if (newIndex < 0) return;
+      refreshSpriteList(rendererRef.current);
+      const pos = rendererRef.current.getSpritePosition(newIndex);
+      const scaleInfo = rendererRef.current.getSpriteScale(newIndex);
+      const entries = rendererRef.current.getSpriteEntries();
+      const name = entries[newIndex]?.name || textureResource;
+      setSelectedSprite({ index: newIndex, name, x: pos?.x ?? 0, y: pos?.y ?? 0, depth: 1, width: scaleInfo?.width ?? 5, height: scaleInfo?.height ?? 5 });
+      rendererRef.current.setSelectedSpriteHighlight(newIndex);
     }, [refreshSpriteList]);
     return {
       canvasRef,
@@ -67988,20 +68088,21 @@ ${e2}`);
       handleSpritePositionChange,
       handleSpriteSizeChange,
       handleSpriteDepthChange,
-      handleSpriteDepthApply
+      handleSpriteDepthApply,
+      handleAddSprite
     };
   }
 
   // src/hooks/useSpriteDrag.ts
-  var import_react4 = __toESM(require_react());
+  var import_react5 = __toESM(require_react());
   function useSpriteDrag({
     selectedSprite,
     rendererRef,
     onSpriteMove,
     onDragCommit
   }) {
-    const canvasDragState = (0, import_react4.useRef)(null);
-    const handleCanvasMouseDown = (0, import_react4.useCallback)((event) => {
+    const canvasDragState = (0, import_react5.useRef)(null);
+    const handleCanvasMouseDown = (0, import_react5.useCallback)((event) => {
       if (!selectedSprite || !rendererRef.current) return;
       const canvas = rendererRef.current.getCanvas();
       if (!canvas) return;
@@ -68019,9 +68120,9 @@ ${e2}`);
         startSpriteY: selectedSprite.y
       };
     }, [selectedSprite, rendererRef]);
-    const dragCallbacksRef = (0, import_react4.useRef)({ onSpriteMove, onDragCommit });
+    const dragCallbacksRef = (0, import_react5.useRef)({ onSpriteMove, onDragCommit });
     dragCallbacksRef.current = { onSpriteMove, onDragCommit };
-    (0, import_react4.useEffect)(() => {
+    (0, import_react5.useEffect)(() => {
       const handleMouseMove = (event) => {
         const drag = canvasDragState.current;
         if (!drag || !rendererRef.current) return;
@@ -68064,7 +68165,7 @@ ${e2}`);
   }
 
   // src/hooks/useKeyboardControls.ts
-  var import_react5 = __toESM(require_react());
+  var import_react6 = __toESM(require_react());
   var ARROW_STEP = 0.05;
   function useKeyboardControls({
     selectedSprite,
@@ -68076,7 +68177,7 @@ ${e2}`);
     onScaleApply,
     onDepthApply
   }) {
-    (0, import_react5.useEffect)(() => {
+    (0, import_react6.useEffect)(() => {
       const handleKeyDown = (e2) => {
         if ((e2.ctrlKey || e2.metaKey) && e2.key === "z" && !e2.shiftKey) {
           e2.preventDefault();
@@ -68136,9 +68237,9 @@ ${e2}`);
   function ScenePage({ scenes }) {
     const history = useUndoHistory();
     const { notifications, notify } = useNotifications();
-    const dragStartPos = (0, import_react6.useRef)(null);
-    const dragStartSize = (0, import_react6.useRef)(null);
-    const dragStartDepth = (0, import_react6.useRef)(null);
+    const dragStartPos = (0, import_react7.useRef)(null);
+    const dragStartSize = (0, import_react7.useRef)(null);
+    const dragStartDepth = (0, import_react7.useRef)(null);
     const {
       canvasRef,
       rendererRef,
@@ -68158,12 +68259,13 @@ ${e2}`);
       handleSpritePositionChange,
       handleSpriteSizeChange,
       handleSpriteDepthChange,
-      handleSpriteDepthApply
+      handleSpriteDepthApply,
+      handleAddSprite
     } = useSceneRenderer(notify);
-    const applySelectedSpriteMove = (0, import_react6.useCallback)((x2, y2) => {
+    const applySelectedSpriteMove = (0, import_react7.useCallback)((x2, y2) => {
       setSelectedSprite((prev) => prev ? { ...prev, x: x2, y: y2 } : null);
     }, [setSelectedSprite]);
-    const applySelectedSpriteSize = (0, import_react6.useCallback)((width, height) => {
+    const applySelectedSpriteSize = (0, import_react7.useCallback)((width, height) => {
       setSelectedSprite((prev) => prev ? { ...prev, width, height } : null);
     }, [setSelectedSprite]);
     const { handleCanvasMouseDown } = useSpriteDrag({
@@ -68182,10 +68284,10 @@ ${e2}`);
       onScaleApply: applySelectedSpriteSize,
       onDepthApply: handleSpriteDepthApply
     });
-    const handleSpritePositionChangeStart = (0, import_react6.useCallback)((x2, y2) => {
+    const handleSpritePositionChangeStart = (0, import_react7.useCallback)((x2, y2) => {
       dragStartPos.current = { x: x2, y: y2 };
     }, []);
-    const handleSpritePositionCommit = (0, import_react6.useCallback)((x2, y2) => {
+    const handleSpritePositionCommit = (0, import_react7.useCallback)((x2, y2) => {
       if (!selectedSprite || !dragStartPos.current) return;
       const before = dragStartPos.current;
       dragStartPos.current = null;
@@ -68193,10 +68295,10 @@ ${e2}`);
         history.push({ type: "position", spriteIndex: selectedSprite.index, before, after: { x: x2, y: y2 } });
       }
     }, [selectedSprite, history]);
-    const handleSpriteSizeChangeStart = (0, import_react6.useCallback)(() => {
+    const handleSpriteSizeChangeStart = (0, import_react7.useCallback)(() => {
       if (selectedSprite) dragStartSize.current = { width: selectedSprite.width, height: selectedSprite.height };
     }, [selectedSprite]);
-    const handleSpriteSizeCommit = (0, import_react6.useCallback)((width, height) => {
+    const handleSpriteSizeCommit = (0, import_react7.useCallback)((width, height) => {
       if (!selectedSprite || !dragStartSize.current) return;
       const before = dragStartSize.current;
       dragStartSize.current = null;
@@ -68204,10 +68306,10 @@ ${e2}`);
         history.push({ type: "scale", spriteIndex: selectedSprite.index, before, after: { width, height } });
       }
     }, [selectedSprite, history]);
-    const handleSpriteDepthChangeStart = (0, import_react6.useCallback)((depth) => {
+    const handleSpriteDepthChangeStart = (0, import_react7.useCallback)((depth) => {
       dragStartDepth.current = depth;
     }, []);
-    const handleSpriteDepthCommit = (0, import_react6.useCallback)((depth) => {
+    const handleSpriteDepthCommit = (0, import_react7.useCallback)((depth) => {
       if (!selectedSprite || dragStartDepth.current === null) return;
       const before = dragStartDepth.current;
       dragStartDepth.current = null;
@@ -68239,6 +68341,7 @@ ${e2}`);
             onXFocusChange: handleXFocusChange,
             onSpriteToggle: handleSpriteToggle,
             onSpriteSelect: handleSpriteSelect,
+            onAddSprite: handleAddSprite,
             onSpritePositionChange: handleSpritePositionChange,
             onSpritePositionChangeStart: handleSpritePositionChangeStart,
             onSpritePositionCommit: handleSpritePositionCommit,

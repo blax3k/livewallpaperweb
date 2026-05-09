@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './SpriteListPanel.scss';
 
 export interface SpriteEntry {
@@ -12,12 +12,56 @@ interface SpriteListPanelProps {
   selectedName: string | null;
   onToggle: (index: number) => void;
   onSelect: (index: number) => void;
+  onAdd: (textureResource: string) => void;
 }
 
-export function SpriteListPanel({ entries, selectedName, onToggle, onSelect }: SpriteListPanelProps) {
+function AddSpriteModal({ onSelect, onClose }: { onSelect: (filename: string) => void; onClose: () => void }) {
+  const [images, setImages] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/images')
+      .then(r => r.json())
+      .then((files: string[]) => { setImages(files); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
+
+  return (
+    <div className="add-sprite-overlay" onClick={onClose}>
+      <div className="add-sprite-modal" onClick={e => e.stopPropagation()}>
+        <div className="add-sprite-modal-header">
+          <span>Select Image</span>
+          <button className="add-sprite-modal-close" onClick={onClose}>✕</button>
+        </div>
+        <div className="add-sprite-modal-body">
+          {loading && <div className="add-sprite-loading">Loading…</div>}
+          {!loading && images.length === 0 && <div className="add-sprite-loading">No images found.</div>}
+          {images.map(filename => (
+            <div key={filename} className="add-sprite-image-item" onClick={() => onSelect(filename)}>
+              <img src={`/images/${filename}`} alt={filename} className="add-sprite-thumb" />
+              <span className="add-sprite-image-name">{filename}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd }: SpriteListPanelProps) {
+  const [showModal, setShowModal] = useState(false);
+
+  const handleImageSelected = (filename: string) => {
+    setShowModal(false);
+    onAdd(filename);
+  };
+
   return (
     <div id="sprite-list-panel">
-      <div className="sprite-list-title">Sprites ({entries.length})</div>
+      <div className="sprite-list-title">
+        <span>Sprites ({entries.length})</span>
+        <button className="sprite-list-add-btn" onClick={() => setShowModal(true)} title="Add sprite">+</button>
+      </div>
       <div className="sprite-list">
         {entries.map((entry, index) => (
           <div
@@ -39,6 +83,7 @@ export function SpriteListPanel({ entries, selectedName, onToggle, onSelect }: S
           </div>
         ))}
       </div>
+      {showModal && <AddSpriteModal onSelect={handleImageSelected} onClose={() => setShowModal(false)} />}
     </div>
   );
 }

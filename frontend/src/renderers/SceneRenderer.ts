@@ -194,17 +194,78 @@ export class SceneRenderer {
   }
 
   /**
-   * Load a texture image from the public folder
+   * Load a texture image from the public folder.
+   * If resourceName already has an image extension, it is used as-is;
+   * otherwise .png is appended for backwards compatibility.
    */
   private async loadTexture(resourceName: string): Promise<void> {
     if (this.textures.has(resourceName)) return;
 
     try {
-      const texture = await PIXI.Assets.load(`/images/${resourceName}.png`);
+      const hasExtension = /\.(png|jpg|jpeg|gif|webp)$/i.test(resourceName);
+      const url = hasExtension ? `/images/${resourceName}` : `/images/${resourceName}.png`;
+      const texture = await PIXI.Assets.load(url);
       this.textures.set(resourceName, texture);
     } catch (error) {
       console.error(`Failed to load texture: ${resourceName}`, error);
     }
+  }
+
+  /**
+   * Add a new sprite to the scene using an image filename from the public/images folder.
+   * @param textureResource filename (with or without extension) of the image
+   * @param width world-space width
+   * @param height world-space height
+   * @param parallaxMultiplier depth / parallax value
+   * @returns the index of the newly added sprite after sorting, or -1 on failure
+   */
+  async addSprite(textureResource: string, width: number, height: number, parallaxMultiplier: number): Promise<number> {
+    if (!this.app) return -1;
+
+    await this.loadTexture(textureResource);
+
+    const baseName = textureResource.replace(/\.(png|jpg|jpeg|gif|webp)$/i, '');
+    const existingNames = new Set(this.sprites.map(s => this.spriteMetadata.get(s)?.name ?? ''));
+    let name = baseName;
+    let counter = 1;
+    while (existingNames.has(name)) {
+      name = `${baseName}_${counter++}`;
+    }
+
+    const spriteData: Sprite = {
+      name,
+      textureResource,
+      textureResourceId: this.sprites.length,
+      positionX: 0,
+      positionY: 0,
+      width,
+      height,
+      parallaxMultiplier,
+      texCoordinates: [0, 0, 0, 1, 1, 0, 1, 1],
+    };
+
+    const pixiSprite = await this.createSprite(spriteData);
+    if (!pixiSprite) return -1;
+
+    this.sprites.push(pixiSprite);
+    this.spriteMetadata.set(pixiSprite, {
+      x: 0,
+      parallaxMultiplier,
+      name,
+      visible: true,
+      originalWidth: width,
+      originalHeight: height,
+    });
+    this.app.stage.addChild(pixiSprite);
+
+    if (this.originalSceneData) {
+      this.originalSceneData.sprites.push(spriteData);
+    }
+
+    const newIndex = this.sortSpritesByParallax(this.sprites.length - 1);
+    this.setScrollOffset(this.currentXFocus);
+
+    return newIndex;
   }
 
   /**
