@@ -553,6 +553,35 @@ export class SceneRenderer {
     }
   }
 
+  removeSpriteByIndex(index: number): void {
+    if (index < 0 || index >= this.sprites.length) return;
+
+    const sprite = this.sprites[index];
+    const metadata = this.spriteMetadata.get(sprite);
+
+    // Remove from stage and clean up
+    sprite.destroy();
+    this.sprites.splice(index, 1);
+    this.spriteMetadata.delete(sprite);
+
+    // Remove from originalSceneData by name so getSceneData() stays in sync
+    if (this.originalSceneData && metadata) {
+      const nameToRemove = metadata.name;
+      const dataIndex = this.originalSceneData.sprites.findIndex(s => s.name === nameToRemove);
+      if (dataIndex !== -1) {
+        this.originalSceneData.sprites.splice(dataIndex, 1);
+      }
+    }
+
+    // Fix up selection highlight
+    if (this.selectedHighlightIndex === index) {
+      this.selectedHighlightIndex = null;
+    } else if (this.selectedHighlightIndex !== null && this.selectedHighlightIndex > index) {
+      this.selectedHighlightIndex--;
+    }
+    this.updateSelectionHighlight();
+  }
+
   private toggleSpriteVisibility(sprite: PIXI.Sprite): void {
     const metadata = this.spriteMetadata.get(sprite);
     if (metadata) {

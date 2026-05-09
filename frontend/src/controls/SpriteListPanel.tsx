@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './SpriteListPanel.scss';
 
 export interface SpriteEntry {
@@ -13,6 +13,7 @@ interface SpriteListPanelProps {
   onToggle: (index: number) => void;
   onSelect: (index: number) => void;
   onAdd: (textureResource: string) => void;
+  onDelete: (index: number) => void;
 }
 
 function AddSpriteModal({ onSelect, onClose }: { onSelect: (filename: string) => void; onClose: () => void }) {
@@ -48,12 +49,34 @@ function AddSpriteModal({ onSelect, onClose }: { onSelect: (filename: string) =>
   );
 }
 
-export function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd }: SpriteListPanelProps) {
+export function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd, onDelete }: SpriteListPanelProps) {
   const [showModal, setShowModal] = useState(false);
+  const [menuOpenIndex, setMenuOpenIndex] = useState<number | null>(null);
+  const [confirmDeleteIndex, setConfirmDeleteIndex] = useState<number | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close the popover when clicking outside it
+  useEffect(() => {
+    if (menuOpenIndex === null) return;
+    const handleClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpenIndex(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [menuOpenIndex]);
 
   const handleImageSelected = (filename: string) => {
     setShowModal(false);
     onAdd(filename);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (confirmDeleteIndex !== null) {
+      onDelete(confirmDeleteIndex);
+    }
+    setConfirmDeleteIndex(null);
   };
 
   return (
@@ -80,9 +103,48 @@ export function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onA
             </span>
             <span className="sprite-label">{entry.name || `Sprite ${index}`}</span>
             <span className="sprite-parallax">{entry.parallaxMultiplier.toFixed(2)}</span>
+            <span
+              className="sprite-menu-trigger"
+              onClick={(e) => {
+                e.stopPropagation();
+                setMenuOpenIndex(menuOpenIndex === index ? null : index);
+              }}
+            >
+              &#8943;
+            </span>
+            {menuOpenIndex === index && (
+              <div
+                className="sprite-menu-popover"
+                ref={menuRef}
+                onClick={e => e.stopPropagation()}
+              >
+                <button
+                  className="sprite-menu-item sprite-menu-item--danger"
+                  onClick={() => {
+                    setMenuOpenIndex(null);
+                    setConfirmDeleteIndex(index);
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>
+
+      {confirmDeleteIndex !== null && (
+        <div className="add-sprite-overlay">
+          <div className="sprite-confirm-dialog">
+            <p>Delete <strong>{entries[confirmDeleteIndex]?.name || `Sprite ${confirmDeleteIndex}`}</strong>?</p>
+            <div className="sprite-confirm-actions">
+              <button className="sprite-confirm-yes" onClick={handleDeleteConfirm}>Yes</button>
+              <button className="sprite-confirm-no" onClick={() => setConfirmDeleteIndex(null)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showModal && <AddSpriteModal onSelect={handleImageSelected} onClose={() => setShowModal(false)} />}
     </div>
   );

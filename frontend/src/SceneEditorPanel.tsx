@@ -24,6 +24,7 @@ interface SceneEditorPanelProps {
   onSpriteToggle: (index: number) => void;
   onSpriteSelect: (index: number) => void;
   onAddSprite: (textureResource: string) => void;
+  onDeleteSprite: (index: number) => void;
   onSpritePositionChange: (x: number, y: number) => void;
   onSpritePositionChangeStart?: (x: number, y: number) => void;
   onSpritePositionCommit?: (x: number, y: number) => void;
@@ -44,6 +45,7 @@ export function SceneEditorPanel({
   onSpriteToggle,
   onSpriteSelect,
   onAddSprite,
+  onDeleteSprite,
   onSpritePositionChange,
   onSpritePositionChangeStart,
   onSpritePositionCommit,
@@ -66,6 +68,7 @@ export function SceneEditorPanel({
           onToggle={onSpriteToggle}
           onSelect={onSpriteSelect}
           onAdd={onAddSprite}
+          onDelete={onDeleteSprite}
         />
       </div>
       <h2>Sprite</h2>

@@ -64208,11 +64208,30 @@ ${parts.join("\n")}
       ] })
     ] }) });
   }
-  function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd }) {
+  function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd, onDelete }) {
     const [showModal, setShowModal] = (0, import_react.useState)(false);
+    const [menuOpenIndex, setMenuOpenIndex] = (0, import_react.useState)(null);
+    const [confirmDeleteIndex, setConfirmDeleteIndex] = (0, import_react.useState)(null);
+    const menuRef = (0, import_react.useRef)(null);
+    (0, import_react.useEffect)(() => {
+      if (menuOpenIndex === null) return;
+      const handleClick = (e2) => {
+        if (menuRef.current && !menuRef.current.contains(e2.target)) {
+          setMenuOpenIndex(null);
+        }
+      };
+      document.addEventListener("mousedown", handleClick);
+      return () => document.removeEventListener("mousedown", handleClick);
+    }, [menuOpenIndex]);
     const handleImageSelected = (filename) => {
       setShowModal(false);
       onAdd(filename);
+    };
+    const handleDeleteConfirm = () => {
+      if (confirmDeleteIndex !== null) {
+        onDelete(confirmDeleteIndex);
+      }
+      setConfirmDeleteIndex(null);
     };
     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { id: "sprite-list-panel", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "sprite-list-title", children: [
@@ -64241,11 +64260,52 @@ ${parts.join("\n")}
               }
             ),
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "sprite-label", children: entry.name || `Sprite ${index}` }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "sprite-parallax", children: entry.parallaxMultiplier.toFixed(2) })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "sprite-parallax", children: entry.parallaxMultiplier.toFixed(2) }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+              "span",
+              {
+                className: "sprite-menu-trigger",
+                onClick: (e2) => {
+                  e2.stopPropagation();
+                  setMenuOpenIndex(menuOpenIndex === index ? null : index);
+                },
+                children: "\u22EF"
+              }
+            ),
+            menuOpenIndex === index && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+              "div",
+              {
+                className: "sprite-menu-popover",
+                ref: menuRef,
+                onClick: (e2) => e2.stopPropagation(),
+                children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                  "button",
+                  {
+                    className: "sprite-menu-item sprite-menu-item--danger",
+                    onClick: () => {
+                      setMenuOpenIndex(null);
+                      setConfirmDeleteIndex(index);
+                    },
+                    children: "Delete"
+                  }
+                )
+              }
+            )
           ]
         },
         index
       )) }),
+      confirmDeleteIndex !== null && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "add-sprite-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "sprite-confirm-dialog", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { children: [
+          "Delete ",
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { children: entries[confirmDeleteIndex]?.name || `Sprite ${confirmDeleteIndex}` }),
+          "?"
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "sprite-confirm-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "sprite-confirm-yes", onClick: handleDeleteConfirm, children: "Yes" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "sprite-confirm-no", onClick: () => setConfirmDeleteIndex(null), children: "Cancel" })
+        ] })
+      ] }) }),
       showModal && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AddSpriteModal, { onSelect: handleImageSelected, onClose: () => setShowModal(false) })
     ] });
   }
@@ -64496,6 +64556,7 @@ ${parts.join("\n")}
     onSpriteToggle,
     onSpriteSelect,
     onAddSprite,
+    onDeleteSprite,
     onSpritePositionChange,
     onSpritePositionChangeStart,
     onSpritePositionCommit,
@@ -64517,7 +64578,8 @@ ${parts.join("\n")}
           selectedName: selectedSprite?.name ?? null,
           onToggle: onSpriteToggle,
           onSelect: onSpriteSelect,
-          onAdd: onAddSprite
+          onAdd: onAddSprite,
+          onDelete: onDeleteSprite
         }
       ) }),
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { children: "Sprite" }),
@@ -67846,6 +67908,27 @@ ${e2}`);
         this.toggleSpriteVisibility(this.sprites[index]);
       }
     }
+    removeSpriteByIndex(index) {
+      if (index < 0 || index >= this.sprites.length) return;
+      const sprite = this.sprites[index];
+      const metadata = this.spriteMetadata.get(sprite);
+      sprite.destroy();
+      this.sprites.splice(index, 1);
+      this.spriteMetadata.delete(sprite);
+      if (this.originalSceneData && metadata) {
+        const nameToRemove = metadata.name;
+        const dataIndex = this.originalSceneData.sprites.findIndex((s2) => s2.name === nameToRemove);
+        if (dataIndex !== -1) {
+          this.originalSceneData.sprites.splice(dataIndex, 1);
+        }
+      }
+      if (this.selectedHighlightIndex === index) {
+        this.selectedHighlightIndex = null;
+      } else if (this.selectedHighlightIndex !== null && this.selectedHighlightIndex > index) {
+        this.selectedHighlightIndex--;
+      }
+      this.updateSelectionHighlight();
+    }
     toggleSpriteVisibility(sprite) {
       const metadata = this.spriteMetadata.get(sprite);
       if (metadata) {
@@ -68069,6 +68152,17 @@ ${e2}`);
       setSelectedSprite({ index: newIndex, name, x: pos?.x ?? 0, y: pos?.y ?? 0, depth: 1, width: scaleInfo?.width ?? 5, height: scaleInfo?.height ?? 5 });
       rendererRef.current.setSelectedSpriteHighlight(newIndex);
     }, [refreshSpriteList]);
+    const handleDeleteSprite = (0, import_react4.useCallback)((index) => {
+      if (!rendererRef.current) return;
+      rendererRef.current.removeSpriteByIndex(index);
+      refreshSpriteList(rendererRef.current);
+      setSelectedSprite((prev) => {
+        if (!prev) return null;
+        if (prev.index === index) return null;
+        if (prev.index > index) return { ...prev, index: prev.index - 1 };
+        return prev;
+      });
+    }, [refreshSpriteList]);
     return {
       canvasRef,
       rendererRef,
@@ -68089,7 +68183,8 @@ ${e2}`);
       handleSpriteSizeChange,
       handleSpriteDepthChange,
       handleSpriteDepthApply,
-      handleAddSprite
+      handleAddSprite,
+      handleDeleteSprite
     };
   }
 
@@ -68260,7 +68355,8 @@ ${e2}`);
       handleSpriteSizeChange,
       handleSpriteDepthChange,
       handleSpriteDepthApply,
-      handleAddSprite
+      handleAddSprite,
+      handleDeleteSprite
     } = useSceneRenderer(notify);
     const applySelectedSpriteMove = (0, import_react7.useCallback)((x2, y2) => {
       setSelectedSprite((prev) => prev ? { ...prev, x: x2, y: y2 } : null);
@@ -68342,6 +68438,7 @@ ${e2}`);
             onSpriteToggle: handleSpriteToggle,
             onSpriteSelect: handleSpriteSelect,
             onAddSprite: handleAddSprite,
+            onDeleteSprite: handleDeleteSprite,
             onSpritePositionChange: handleSpritePositionChange,
             onSpritePositionChangeStart: handleSpritePositionChangeStart,
             onSpritePositionCommit: handleSpritePositionCommit,

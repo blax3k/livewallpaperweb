@@ -168,6 +168,18 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
     rendererRef.current.setSelectedSpriteHighlight(newIndex);
   }, [refreshSpriteList]);
 
+  const handleDeleteSprite = useCallback((index: number) => {
+    if (!rendererRef.current) return;
+    rendererRef.current.removeSpriteByIndex(index);
+    refreshSpriteList(rendererRef.current);
+    setSelectedSprite(prev => {
+      if (!prev) return null;
+      if (prev.index === index) return null;
+      if (prev.index > index) return { ...prev, index: prev.index - 1 };
+      return prev;
+    });
+  }, [refreshSpriteList]);
+
   return {
     canvasRef,
     rendererRef,
@@ -189,6 +201,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
     handleSpriteDepthChange,
     handleSpriteDepthApply,
     handleAddSprite,
+    handleDeleteSprite,
   };
 }
 
