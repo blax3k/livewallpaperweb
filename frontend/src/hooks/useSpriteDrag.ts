@@ -25,6 +25,7 @@ export function useSpriteDrag({
   } | null>(null);
 
   const handleCanvasMouseDown = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+    if (event.button !== 0) return;
     if (!selectedSprite || !rendererRef.current) return;
     const canvas = rendererRef.current.getCanvas();
     if (!canvas) return;
@@ -89,5 +90,9 @@ export function useSpriteDrag({
     };
   }, [rendererRef]);
 
-  return { handleCanvasMouseDown };
+  const cancelDrag = useCallback(() => {
+    canvasDragState.current = null;
+  }, []);
+
+  return { handleCanvasMouseDown, cancelDrag };
 }

@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useState } from 'react';
+import React, { useRef, useCallback, useState, useEffect } from 'react';
 import { SceneEditorPanel, SceneOption } from './SceneEditorPanel';
 import { TopBar } from './TopBar';
 import { NotificationStack } from './NotificationStack';
@@ -19,6 +19,8 @@ export function ScenePage({ scenes }: ScenePageProps) {
   const dragStartPos = useRef<{ x: number; y: number } | null>(null);
   const dragStartSize = useRef<{ width: number; height: number } | null>(null);
   const dragStartDepth = useRef<number | null>(null);
+  const midDragStart = useRef<{ x: number; y: number } | null>(null);
+  const [isPanning, setIsPanning] = useState(false);
   const [editTextureIndex, setEditTextureIndex] = useState<number | null>(null);
 
   const {
@@ -43,6 +45,11 @@ export function ScenePage({ scenes }: ScenePageProps) {
     handleSpriteDepthApply,
     handleAddSprite,
     handleDeleteSprite,
+    handleZoomIn,
+    handleZoomOut,
+    handleZoomAtPoint,
+    handleCenter,
+    zoom,
   } = useSceneRenderer(notify);
 
   const applySelectedSpriteMove = useCallback((x: number, y: number) => {
@@ -53,7 +60,7 @@ export function ScenePage({ scenes }: ScenePageProps) {
     setSelectedSprite(prev => prev ? { ...prev, width, height } : null);
   }, [setSelectedSprite]);
 
-  const { handleCanvasMouseDown } = useSpriteDrag({
+  const { handleCanvasMouseDown, cancelDrag } = useSpriteDrag({
     selectedSprite,
     rendererRef,
     onSpriteMove: applySelectedSpriteMove,
@@ -70,6 +77,58 @@ export function ScenePage({ scenes }: ScenePageProps) {
     onScaleApply: applySelectedSpriteSize,
     onDepthApply: handleSpriteDepthApply,
   });
+
+  useEffect(() => {
+    const el = canvasRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const rect = el.getBoundingClientRect();
+      const cssX = e.clientX - rect.left;
+      const cssY = e.clientY - rect.top;
+      const factor = e.deltaY < 0 ? 1.15 : 1 / 1.15;
+      handleZoomAtPoint(cssX, cssY, factor);
+    };
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
+  }, [canvasRef, rendererRef, handleZoomAtPoint]);
+
+  useEffect(() => {
+    const el = canvasRef.current;
+    if (!el) return;
+
+    const onMouseDown = (e: MouseEvent) => {
+      if (e.button !== 1) return;
+      e.preventDefault();
+      e.stopPropagation();
+      cancelDrag();
+      midDragStart.current = { x: e.clientX, y: e.clientY };
+      setIsPanning(true);
+    };
+
+    const onMouseMove = (e: MouseEvent) => {
+      if (!midDragStart.current) return;
+      const dx = e.clientX - midDragStart.current.x;
+      const dy = e.clientY - midDragStart.current.y;
+      midDragStart.current = { x: e.clientX, y: e.clientY };
+      rendererRef.current?.panBy(dx, dy);
+    };
+
+    const onMouseUp = (e: MouseEvent) => {
+      if (e.button !== 1) return;
+      midDragStart.current = null;
+      setIsPanning(false);
+    };
+
+    el.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+    return () => {
+      el.removeEventListener('mousedown', onMouseDown);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+  }, [canvasRef, rendererRef, cancelDrag]);
 
   const handleSpritePositionChangeStart = useCallback((x: number, y: number) => {
     dragStartPos.current = { x, y };
@@ -120,6 +179,10 @@ export function ScenePage({ scenes }: ScenePageProps) {
         onSceneSelect={loadScene}
         onPhoneGuideToggle={handlePhoneGuideToggle}
         onSave={saveScene}
+        onZoomIn={handleZoomIn}
+        onZoomOut={handleZoomOut}
+        onCenter={handleCenter}
+        zoom={zoom}
       />
       <div className="app-content">
         <SceneEditorPanel
@@ -144,7 +207,12 @@ export function ScenePage({ scenes }: ScenePageProps) {
           onSpriteSizeCommit={handleSpriteSizeCommit}
         />
         <div className="main-content">
-          <div id="canvas-container" ref={canvasRef} onMouseDown={handleCanvasMouseDown} />
+          <div
+            id="canvas-container"
+            ref={canvasRef}
+            onMouseDown={handleCanvasMouseDown}
+            style={isPanning ? { cursor: 'grabbing' } : zoom > 1 ? { cursor: 'grab' } : undefined}
+          />
         </div>
       </div>
       <NotificationStack notifications={notifications} />

@@ -20,6 +20,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
   const [selectedSprite, setSelectedSprite] = useState<SelectedSprite | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [phoneGuideVisible, setPhoneGuideVisible] = useState(true);
+  const [zoom, setZoom] = useState(1.0);
   const onNotifyRef = useRef(onNotify);
   onNotifyRef.current = onNotify;
   const phoneGuideVisibleRef = useRef(true);
@@ -51,6 +52,8 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
       await renderer.loadScene(sceneData);
       rendererRef.current = renderer;
       if (phoneGuideVisibleRef.current) renderer.showGuide();
+
+      setZoom(1.0);
 
       const focus = sceneData.xFocus ?? 0.5;
       setXFocus(focus);
@@ -180,6 +183,33 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
     });
   }, [refreshSpriteList]);
 
+  const ZOOM_FACTOR = 1.25;
+  const WHEEL_ZOOM_FACTOR = 1.15;
+
+  const handleZoomIn = useCallback(() => {
+    rendererRef.current?.zoomAtCenter(ZOOM_FACTOR);
+    setZoom(rendererRef.current?.getZoom() ?? 1.0);
+  }, []);
+
+  const handleZoomOut = useCallback(() => {
+    rendererRef.current?.zoomAtCenter(1 / ZOOM_FACTOR);
+    setZoom(rendererRef.current?.getZoom() ?? 1.0);
+  }, []);
+
+  const handleZoomAtPoint = useCallback((cssX: number, cssY: number, factor: number) => {
+    if (factor >= 1) {
+      rendererRef.current?.zoomAt(cssX, cssY, factor);
+    } else {
+      rendererRef.current?.zoomAtCenter(factor);
+    }
+    setZoom(rendererRef.current?.getZoom() ?? 1.0);
+  }, []);
+
+  const handleCenter = useCallback(() => {
+    rendererRef.current?.resetView();
+    setZoom(1.0);
+  }, []);
+
   return {
     canvasRef,
     rendererRef,
@@ -202,6 +232,11 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
     handleSpriteDepthApply,
     handleAddSprite,
     handleDeleteSprite,
+    handleZoomIn,
+    handleZoomOut,
+    handleZoomAtPoint,
+    handleCenter,
+    zoom,
   };
 }
 

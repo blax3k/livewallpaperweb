@@ -24,6 +24,13 @@ body {
   border-bottom: 1px solid #333;
   flex-shrink: 0;
 
+  .zoom-indicator {
+    color: #fff;
+    font-size: 0.875rem;
+    min-width: 3.5em;
+    text-align: center;
+  }
+
   .control-group {
     margin-bottom: 0;
     display: flex;

@@ -30,6 +30,9 @@ export class SceneRenderer {
   private selectionHighlight: PIXI.Graphics | null = null;
   private selectedHighlightIndex: number | null = null;
   private readonly ZOOM_SCALE = 1.6;
+  private userZoom: number = 1.0;
+  private baseStageX: number = 0;
+  private baseStageY: number = 0;
   private originalSceneData: Scene | null = null;
 
   constructor(container: HTMLElement) {
@@ -129,7 +132,8 @@ export class SceneRenderer {
     // Sort sprites by parallax so list and draw order are consistent
     this.sortSpritesByParallax();
 
-    // Fit scene to view and apply initial xFocus
+    // Reset user zoom and fit scene to view
+    this.userZoom = 1.0;
     this.fitSceneToView();
     this.setScrollOffset(sceneData.xFocus);
   }
@@ -188,11 +192,14 @@ export class SceneRenderer {
     // Calculate scale to fit scene in canvas
     const scale = Math.min(canvasWidth / sceneWidth, canvasHeight / sceneHeight);
     const zoomedScale = scale * this.ZOOM_SCALE;
+    const effectiveScale = zoomedScale * this.userZoom;
 
     // Position stage with world origin (0,0) centered on canvas
-    this.app.stage.scale.set(zoomedScale, zoomedScale);
+    this.app.stage.scale.set(effectiveScale, effectiveScale);
     this.app.stage.x = canvasWidth / 2;
     this.app.stage.y = canvasHeight / 2;
+    this.baseStageX = canvasWidth / 2;
+    this.baseStageY = canvasHeight / 2;
   }
 
   /**
@@ -675,6 +682,79 @@ export class SceneRenderer {
 
   getCanvas(): HTMLCanvasElement | null {
     return this.app ? (this.app.canvas as HTMLCanvasElement) : null;
+  }
+
+  private static readonly MIN_ZOOM = 1.0;
+  private static readonly MAX_ZOOM = 8.0;
+
+  private applyZoomPivot(cssX: number, cssY: number, scaleFactor: number): void {
+    if (!this.app) return;
+    const dpr = window.devicePixelRatio || 1;
+    const pivotX = cssX * dpr;
+    const pivotY = cssY * dpr;
+    this.app.stage.x = pivotX + (this.app.stage.x - pivotX) * scaleFactor;
+    this.app.stage.y = pivotY + (this.app.stage.y - pivotY) * scaleFactor;
+    this.app.stage.scale.set(this.app.stage.scale.x * scaleFactor);
+  }
+
+  /**
+   * Zoom toward a CSS-pixel point on the canvas (e.g. mouse cursor position).
+   * Zooming out past 100% snaps back to the original fitted position.
+   * @param cssX x position in CSS pixels relative to the canvas element
+   * @param cssY y position in CSS pixels relative to the canvas element
+   * @param factor multiplicative zoom factor (>1 to zoom in, <1 to zoom out)
+   */
+  zoomAt(cssX: number, cssY: number, factor: number): void {
+    if (!this.app) return;
+
+    const newUserZoom = Math.max(SceneRenderer.MIN_ZOOM, Math.min(SceneRenderer.MAX_ZOOM, this.userZoom * factor));
+    if (newUserZoom === this.userZoom) return;
+
+    const scaleFactor = newUserZoom / this.userZoom;
+    this.userZoom = newUserZoom;
+    this.applyZoomPivot(cssX, cssY, scaleFactor);
+  }
+
+  /**
+   * Zoom toward the center of the canvas.
+   * Zooming out past 100% snaps back to the original fitted position.
+   * @param factor multiplicative zoom factor (>1 to zoom in, <1 to zoom out)
+   */
+  zoomAtCenter(factor: number): void {
+    if (!this.app) return;
+
+    const newUserZoom = Math.max(SceneRenderer.MIN_ZOOM, Math.min(SceneRenderer.MAX_ZOOM, this.userZoom * factor));
+    if (newUserZoom === this.userZoom) return;
+
+    // Use the stored base stage position (physical pixels) as the pivot so that
+    // zoom-out always converges back toward the perfectly-centered 100% view,
+    // regardless of any panning or previous zoom-in direction.
+    const dpr = window.devicePixelRatio || 1;
+    const scaleFactor = newUserZoom / this.userZoom;
+    this.userZoom = newUserZoom;
+    this.applyZoomPivot(this.baseStageX / dpr, this.baseStageY / dpr, scaleFactor);
+  }
+
+  /**
+   * Reset zoom to 100% and re-center the view.
+   */
+  resetView(): void {
+    this.userZoom = 1.0;
+    this.fitSceneToView();
+  }
+
+  getZoom(): number {
+    return this.userZoom;
+  }
+
+  /**
+   * Pan the stage by a delta in CSS pixels.
+   */
+  panBy(cssDeltaX: number, cssDeltaY: number): void {
+    if (!this.app) return;
+    const dpr = window.devicePixelRatio || 1;
+    this.app.stage.x += cssDeltaX * dpr;
+    this.app.stage.y += cssDeltaY * dpr;
   }
 
   /**

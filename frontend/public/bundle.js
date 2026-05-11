@@ -64664,7 +64664,7 @@ ${parts.join("\n")}
 
   // src/TopBar.tsx
   var import_jsx_runtime7 = __toESM(require_jsx_runtime());
-  function TopBar({ scenes, sceneLoaded, isSaving, phoneGuideVisible, onSceneSelect, onPhoneGuideToggle, onSave }) {
+  function TopBar({ scenes, sceneLoaded, isSaving, phoneGuideVisible, zoom, onSceneSelect, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter }) {
     return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "top-bar", children: [
       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(SceneSelectorControl, { scenes, onSelect: onSceneSelect }),
       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
@@ -64675,6 +64675,13 @@ ${parts.join("\n")}
           onChange: onPhoneGuideToggle
         }
       ),
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: onZoomOut, disabled: !sceneLoaded, title: "Zoom out", children: "\uFF0D" }),
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("span", { className: "zoom-indicator", children: [
+        Math.round(zoom * 100),
+        "%"
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: onZoomIn, disabled: !sceneLoaded, title: "Zoom in", children: "\uFF0B" }),
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: onCenter, disabled: !sceneLoaded, children: "Center" }),
       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: onSave, disabled: isSaving || !sceneLoaded, children: isSaving ? "Saving..." : "Save Scene" })
     ] });
   }
@@ -67860,7 +67867,7 @@ ${e2}`);
   };
 
   // src/renderers/SceneRenderer.ts
-  var SceneRenderer = class {
+  var SceneRenderer = class _SceneRenderer {
     constructor(container) {
       this.app = null;
       this.sprites = [];
@@ -67872,6 +67879,9 @@ ${e2}`);
       this.selectionHighlight = null;
       this.selectedHighlightIndex = null;
       this.ZOOM_SCALE = 1.6;
+      this.userZoom = 1;
+      this.baseStageX = 0;
+      this.baseStageY = 0;
       this.originalSceneData = null;
       this.container = container;
       this.resizeHandler = () => this.onWindowResize();
@@ -67948,6 +67958,7 @@ ${e2}`);
       }
       this.originalSceneData = sceneData;
       this.sortSpritesByParallax();
+      this.userZoom = 1;
       this.fitSceneToView();
       this.setScrollOffset(sceneData.xFocus);
     }
@@ -67992,9 +68003,12 @@ ${e2}`);
       const canvasHeight = this.app.canvas.height;
       const scale = Math.min(canvasWidth / sceneWidth, canvasHeight / sceneHeight);
       const zoomedScale = scale * this.ZOOM_SCALE;
-      this.app.stage.scale.set(zoomedScale, zoomedScale);
+      const effectiveScale = zoomedScale * this.userZoom;
+      this.app.stage.scale.set(effectiveScale, effectiveScale);
       this.app.stage.x = canvasWidth / 2;
       this.app.stage.y = canvasHeight / 2;
+      this.baseStageX = canvasWidth / 2;
+      this.baseStageY = canvasHeight / 2;
     }
     /**
      * Load a texture image from the public folder.
@@ -68394,6 +68408,69 @@ ${e2}`);
     getCanvas() {
       return this.app ? this.app.canvas : null;
     }
+    static {
+      this.MIN_ZOOM = 1;
+    }
+    static {
+      this.MAX_ZOOM = 8;
+    }
+    applyZoomPivot(cssX, cssY, scaleFactor) {
+      if (!this.app) return;
+      const dpr = window.devicePixelRatio || 1;
+      const pivotX = cssX * dpr;
+      const pivotY = cssY * dpr;
+      this.app.stage.x = pivotX + (this.app.stage.x - pivotX) * scaleFactor;
+      this.app.stage.y = pivotY + (this.app.stage.y - pivotY) * scaleFactor;
+      this.app.stage.scale.set(this.app.stage.scale.x * scaleFactor);
+    }
+    /**
+     * Zoom toward a CSS-pixel point on the canvas (e.g. mouse cursor position).
+     * Zooming out past 100% snaps back to the original fitted position.
+     * @param cssX x position in CSS pixels relative to the canvas element
+     * @param cssY y position in CSS pixels relative to the canvas element
+     * @param factor multiplicative zoom factor (>1 to zoom in, <1 to zoom out)
+     */
+    zoomAt(cssX, cssY, factor) {
+      if (!this.app) return;
+      const newUserZoom = Math.max(_SceneRenderer.MIN_ZOOM, Math.min(_SceneRenderer.MAX_ZOOM, this.userZoom * factor));
+      if (newUserZoom === this.userZoom) return;
+      const scaleFactor = newUserZoom / this.userZoom;
+      this.userZoom = newUserZoom;
+      this.applyZoomPivot(cssX, cssY, scaleFactor);
+    }
+    /**
+     * Zoom toward the center of the canvas.
+     * Zooming out past 100% snaps back to the original fitted position.
+     * @param factor multiplicative zoom factor (>1 to zoom in, <1 to zoom out)
+     */
+    zoomAtCenter(factor) {
+      if (!this.app) return;
+      const newUserZoom = Math.max(_SceneRenderer.MIN_ZOOM, Math.min(_SceneRenderer.MAX_ZOOM, this.userZoom * factor));
+      if (newUserZoom === this.userZoom) return;
+      const dpr = window.devicePixelRatio || 1;
+      const scaleFactor = newUserZoom / this.userZoom;
+      this.userZoom = newUserZoom;
+      this.applyZoomPivot(this.baseStageX / dpr, this.baseStageY / dpr, scaleFactor);
+    }
+    /**
+     * Reset zoom to 100% and re-center the view.
+     */
+    resetView() {
+      this.userZoom = 1;
+      this.fitSceneToView();
+    }
+    getZoom() {
+      return this.userZoom;
+    }
+    /**
+     * Pan the stage by a delta in CSS pixels.
+     */
+    panBy(cssDeltaX, cssDeltaY) {
+      if (!this.app) return;
+      const dpr = window.devicePixelRatio || 1;
+      this.app.stage.x += cssDeltaX * dpr;
+      this.app.stage.y += cssDeltaY * dpr;
+    }
     /**
      * Convert CSS-pixel coordinates (relative to the canvas element) to world coordinates.
      * With autoDensity + resolution:dpr, canvas.width is physical pixels, so we multiply by dpr.
@@ -68468,6 +68545,7 @@ ${e2}`);
     const [selectedSprite, setSelectedSprite] = (0, import_react5.useState)(null);
     const [isSaving, setIsSaving] = (0, import_react5.useState)(false);
     const [phoneGuideVisible, setPhoneGuideVisible] = (0, import_react5.useState)(true);
+    const [zoom, setZoom] = (0, import_react5.useState)(1);
     const onNotifyRef = (0, import_react5.useRef)(onNotify);
     onNotifyRef.current = onNotify;
     const phoneGuideVisibleRef = (0, import_react5.useRef)(true);
@@ -68493,6 +68571,7 @@ ${e2}`);
         await renderer.loadScene(sceneData);
         rendererRef.current = renderer;
         if (phoneGuideVisibleRef.current) renderer.showGuide();
+        setZoom(1);
         const focus = sceneData.xFocus ?? 0.5;
         setXFocus(focus);
         setShowSceneControls(true);
@@ -68607,6 +68686,28 @@ ${e2}`);
         return prev;
       });
     }, [refreshSpriteList]);
+    const ZOOM_FACTOR = 1.25;
+    const WHEEL_ZOOM_FACTOR = 1.15;
+    const handleZoomIn = (0, import_react5.useCallback)(() => {
+      rendererRef.current?.zoomAtCenter(ZOOM_FACTOR);
+      setZoom(rendererRef.current?.getZoom() ?? 1);
+    }, []);
+    const handleZoomOut = (0, import_react5.useCallback)(() => {
+      rendererRef.current?.zoomAtCenter(1 / ZOOM_FACTOR);
+      setZoom(rendererRef.current?.getZoom() ?? 1);
+    }, []);
+    const handleZoomAtPoint = (0, import_react5.useCallback)((cssX, cssY, factor) => {
+      if (factor >= 1) {
+        rendererRef.current?.zoomAt(cssX, cssY, factor);
+      } else {
+        rendererRef.current?.zoomAtCenter(factor);
+      }
+      setZoom(rendererRef.current?.getZoom() ?? 1);
+    }, []);
+    const handleCenter = (0, import_react5.useCallback)(() => {
+      rendererRef.current?.resetView();
+      setZoom(1);
+    }, []);
     return {
       canvasRef,
       rendererRef,
@@ -68628,7 +68729,12 @@ ${e2}`);
       handleSpriteDepthChange,
       handleSpriteDepthApply,
       handleAddSprite,
-      handleDeleteSprite
+      handleDeleteSprite,
+      handleZoomIn,
+      handleZoomOut,
+      handleZoomAtPoint,
+      handleCenter,
+      zoom
     };
   }
 
@@ -68642,6 +68748,7 @@ ${e2}`);
   }) {
     const canvasDragState = (0, import_react6.useRef)(null);
     const handleCanvasMouseDown = (0, import_react6.useCallback)((event) => {
+      if (event.button !== 0) return;
       if (!selectedSprite || !rendererRef.current) return;
       const canvas = rendererRef.current.getCanvas();
       if (!canvas) return;
@@ -68700,7 +68807,10 @@ ${e2}`);
         window.removeEventListener("mouseup", handleMouseUp);
       };
     }, [rendererRef]);
-    return { handleCanvasMouseDown };
+    const cancelDrag = (0, import_react6.useCallback)(() => {
+      canvasDragState.current = null;
+    }, []);
+    return { handleCanvasMouseDown, cancelDrag };
   }
 
   // src/hooks/useKeyboardControls.ts
@@ -68779,6 +68889,8 @@ ${e2}`);
     const dragStartPos = (0, import_react8.useRef)(null);
     const dragStartSize = (0, import_react8.useRef)(null);
     const dragStartDepth = (0, import_react8.useRef)(null);
+    const midDragStart = (0, import_react8.useRef)(null);
+    const [isPanning, setIsPanning] = (0, import_react8.useState)(false);
     const [editTextureIndex, setEditTextureIndex] = (0, import_react8.useState)(null);
     const {
       canvasRef,
@@ -68801,7 +68913,12 @@ ${e2}`);
       handleSpriteDepthChange,
       handleSpriteDepthApply,
       handleAddSprite,
-      handleDeleteSprite
+      handleDeleteSprite,
+      handleZoomIn,
+      handleZoomOut,
+      handleZoomAtPoint,
+      handleCenter,
+      zoom
     } = useSceneRenderer(notify);
     const applySelectedSpriteMove = (0, import_react8.useCallback)((x2, y2) => {
       setSelectedSprite((prev) => prev ? { ...prev, x: x2, y: y2 } : null);
@@ -68809,7 +68926,7 @@ ${e2}`);
     const applySelectedSpriteSize = (0, import_react8.useCallback)((width, height) => {
       setSelectedSprite((prev) => prev ? { ...prev, width, height } : null);
     }, [setSelectedSprite]);
-    const { handleCanvasMouseDown } = useSpriteDrag({
+    const { handleCanvasMouseDown, cancelDrag } = useSpriteDrag({
       selectedSprite,
       rendererRef,
       onSpriteMove: applySelectedSpriteMove,
@@ -68825,6 +68942,52 @@ ${e2}`);
       onScaleApply: applySelectedSpriteSize,
       onDepthApply: handleSpriteDepthApply
     });
+    (0, import_react8.useEffect)(() => {
+      const el = canvasRef.current;
+      if (!el) return;
+      const onWheel = (e2) => {
+        e2.preventDefault();
+        const rect = el.getBoundingClientRect();
+        const cssX = e2.clientX - rect.left;
+        const cssY = e2.clientY - rect.top;
+        const factor = e2.deltaY < 0 ? 1.15 : 1 / 1.15;
+        handleZoomAtPoint(cssX, cssY, factor);
+      };
+      el.addEventListener("wheel", onWheel, { passive: false });
+      return () => el.removeEventListener("wheel", onWheel);
+    }, [canvasRef, rendererRef, handleZoomAtPoint]);
+    (0, import_react8.useEffect)(() => {
+      const el = canvasRef.current;
+      if (!el) return;
+      const onMouseDown = (e2) => {
+        if (e2.button !== 1) return;
+        e2.preventDefault();
+        e2.stopPropagation();
+        cancelDrag();
+        midDragStart.current = { x: e2.clientX, y: e2.clientY };
+        setIsPanning(true);
+      };
+      const onMouseMove = (e2) => {
+        if (!midDragStart.current) return;
+        const dx = e2.clientX - midDragStart.current.x;
+        const dy = e2.clientY - midDragStart.current.y;
+        midDragStart.current = { x: e2.clientX, y: e2.clientY };
+        rendererRef.current?.panBy(dx, dy);
+      };
+      const onMouseUp = (e2) => {
+        if (e2.button !== 1) return;
+        midDragStart.current = null;
+        setIsPanning(false);
+      };
+      el.addEventListener("mousedown", onMouseDown);
+      window.addEventListener("mousemove", onMouseMove);
+      window.addEventListener("mouseup", onMouseUp);
+      return () => {
+        el.removeEventListener("mousedown", onMouseDown);
+        window.removeEventListener("mousemove", onMouseMove);
+        window.removeEventListener("mouseup", onMouseUp);
+      };
+    }, [canvasRef, rendererRef, cancelDrag]);
     const handleSpritePositionChangeStart = (0, import_react8.useCallback)((x2, y2) => {
       dragStartPos.current = { x: x2, y: y2 };
     }, []);
@@ -68868,7 +69031,11 @@ ${e2}`);
           phoneGuideVisible,
           onSceneSelect: loadScene,
           onPhoneGuideToggle: handlePhoneGuideToggle,
-          onSave: saveScene
+          onSave: saveScene,
+          onZoomIn: handleZoomIn,
+          onZoomOut: handleZoomOut,
+          onCenter: handleCenter,
+          zoom
         }
       ),
       /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "app-content", children: [
@@ -68896,7 +69063,15 @@ ${e2}`);
             onSpriteSizeCommit: handleSpriteSizeCommit
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "main-content", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { id: "canvas-container", ref: canvasRef, onMouseDown: handleCanvasMouseDown }) })
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "main-content", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+          "div",
+          {
+            id: "canvas-container",
+            ref: canvasRef,
+            onMouseDown: handleCanvasMouseDown,
+            style: isPanning ? { cursor: "grabbing" } : zoom > 1 ? { cursor: "grab" } : void 0
+          }
+        ) })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(NotificationStack, { notifications }),
       editTextureIndex !== null && (() => {
