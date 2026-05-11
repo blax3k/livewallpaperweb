@@ -1337,7 +1337,7 @@
           return dispatcher;
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var React5 = require_react(), Internals = {
+        var React6 = require_react(), Internals = {
           d: {
             f: noop,
             r: function() {
@@ -1355,7 +1355,7 @@
           },
           p: 0,
           findDOMNode: null
-        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React5.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React6.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
         "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
           "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
         );
@@ -2890,7 +2890,7 @@
           "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
         }
         function validateOptionProps(element, props) {
-          null == props.value && ("object" === typeof props.children && null !== props.children ? React5.Children.forEach(props.children, function(child) {
+          null == props.value && ("object" === typeof props.children && null !== props.children ? React6.Children.forEach(props.children, function(child) {
             null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
               "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
             ));
@@ -18522,14 +18522,14 @@
           ));
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var Scheduler = require_scheduler(), React5 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+        var Scheduler = require_scheduler(), React6 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
         /* @__PURE__ */ Symbol.for("react.scope");
         var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity");
         /* @__PURE__ */ Symbol.for("react.legacy_hidden");
         /* @__PURE__ */ Symbol.for("react.tracing_marker");
         var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel");
         /* @__PURE__ */ Symbol.for("react.view_transition");
-        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React5.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React6.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
           pending: false,
           data: null,
           method: null,
@@ -21317,7 +21317,7 @@
           }
         };
         (function() {
-          var isomorphicReactPackageVersion = React5.version;
+          var isomorphicReactPackageVersion = React6.version;
           if ("19.2.5" !== isomorphicReactPackageVersion)
             throw Error(
               'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.5\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21671,18 +21671,18 @@
         function isValidElement(object) {
           return "object" === typeof object && null !== object && object.$$typeof === REACT_ELEMENT_TYPE;
         }
-        var React5 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React5.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
+        var React6 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React6.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
           return null;
         };
-        React5 = {
+        React6 = {
           react_stack_bottom_frame: function(callStackForError) {
             return callStackForError();
           }
         };
         var specialPropKeyWarningShown;
         var didWarnAboutElementRef = {};
-        var unknownOwnerDebugStack = React5.react_stack_bottom_frame.bind(
-          React5,
+        var unknownOwnerDebugStack = React6.react_stack_bottom_frame.bind(
+          React6,
           UnknownOwner
         )();
         var unknownOwnerDebugTask = createTask(getTaskName(UnknownOwner));
@@ -64179,7 +64179,7 @@ ${parts.join("\n")}
   var import_client = __toESM(require_client());
 
   // src/ScenePage.tsx
-  var import_react7 = __toESM(require_react());
+  var import_react8 = __toESM(require_react());
 
   // src/controls/SpriteListPanel.tsx
   var import_react = __toESM(require_react());
@@ -64208,7 +64208,7 @@ ${parts.join("\n")}
       ] })
     ] }) });
   }
-  function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd, onDelete }) {
+  function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd, onDelete, onEditTexture }) {
     const [showModal, setShowModal] = (0, import_react.useState)(false);
     const [menuOpenIndex, setMenuOpenIndex] = (0, import_react.useState)(null);
     const [confirmDeleteIndex, setConfirmDeleteIndex] = (0, import_react.useState)(null);
@@ -64272,23 +64272,36 @@ ${parts.join("\n")}
                 children: "\u22EF"
               }
             ),
-            menuOpenIndex === index && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+            menuOpenIndex === index && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
               "div",
               {
                 className: "sprite-menu-popover",
                 ref: menuRef,
                 onClick: (e2) => e2.stopPropagation(),
-                children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                  "button",
-                  {
-                    className: "sprite-menu-item sprite-menu-item--danger",
-                    onClick: () => {
-                      setMenuOpenIndex(null);
-                      setConfirmDeleteIndex(index);
-                    },
-                    children: "Delete"
-                  }
-                )
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                    "button",
+                    {
+                      className: "sprite-menu-item",
+                      onClick: () => {
+                        setMenuOpenIndex(null);
+                        onEditTexture(index);
+                      },
+                      children: "Edit Texture"
+                    }
+                  ),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                    "button",
+                    {
+                      className: "sprite-menu-item sprite-menu-item--danger",
+                      onClick: () => {
+                        setMenuOpenIndex(null);
+                        setConfirmDeleteIndex(index);
+                      },
+                      children: "Delete"
+                    }
+                  )
+                ]
               }
             )
           ]
@@ -64557,6 +64570,7 @@ ${parts.join("\n")}
     onSpriteSelect,
     onAddSprite,
     onDeleteSprite,
+    onEditTexture,
     onSpritePositionChange,
     onSpritePositionChangeStart,
     onSpritePositionCommit,
@@ -64579,7 +64593,8 @@ ${parts.join("\n")}
           onToggle: onSpriteToggle,
           onSelect: onSpriteSelect,
           onAdd: onAddSprite,
-          onDelete: onDeleteSprite
+          onDelete: onDeleteSprite,
+          onEditTexture
         }
       ) }),
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { children: "Sprite" }),
@@ -64671,52 +64686,8 @@ ${parts.join("\n")}
     return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "notification-stack", children: notifications.map((n2) => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "notification-card", children: n2.message }, n2.id)) });
   }
 
-  // src/hooks/useUndoHistory.ts
+  // src/controls/EditTextureModal.tsx
   var import_react2 = __toESM(require_react());
-  function useUndoHistory() {
-    const past = (0, import_react2.useRef)([]);
-    const future = (0, import_react2.useRef)([]);
-    function push(action) {
-      past.current = [...past.current, action];
-      future.current = [];
-    }
-    function undo() {
-      const action = past.current[past.current.length - 1];
-      if (!action) return null;
-      past.current = past.current.slice(0, -1);
-      future.current = [...future.current, action];
-      return action;
-    }
-    function redo() {
-      const action = future.current[future.current.length - 1];
-      if (!action) return null;
-      future.current = future.current.slice(0, -1);
-      past.current = [...past.current, action];
-      return action;
-    }
-    function clear() {
-      past.current = [];
-      future.current = [];
-    }
-    return { push, undo, redo, clear };
-  }
-
-  // src/hooks/useNotifications.ts
-  var import_react3 = __toESM(require_react());
-  function useNotifications() {
-    const [notifications, setNotifications] = (0, import_react3.useState)([]);
-    const notify = (0, import_react3.useCallback)((message) => {
-      const id = Date.now();
-      setNotifications((prev) => [...prev, { id, message }]);
-      setTimeout(() => {
-        setNotifications((prev) => prev.filter((n2) => n2.id !== id));
-      }, 5e3);
-    }, []);
-    return { notifications, notify };
-  }
-
-  // src/hooks/useSceneRenderer.ts
-  var import_react4 = __toESM(require_react());
 
   // ../node_modules/pixi.js/lib/environment-browser/browserExt.mjs
   init_Extensions();
@@ -67395,6 +67366,423 @@ ${e2}`);
   init_eventemitter3();
   extensions.add(browserExt, webworkerExt);
 
+  // src/renderers/TextureCoordinateCalculator.ts
+  function getNaturalTexSize(originalTexCoords, originalWidth, originalHeight) {
+    if (originalTexCoords.length >= 8) {
+      const initWindowU = Math.abs(originalTexCoords[4] - originalTexCoords[0]);
+      const initWindowV = Math.abs(originalTexCoords[1] - originalTexCoords[3]);
+      return {
+        naturalTexW: initWindowU > 1e-3 ? originalWidth / initWindowU : originalWidth,
+        naturalTexH: initWindowV > 1e-3 ? originalHeight / initWindowV : originalHeight
+      };
+    }
+    return { naturalTexW: originalWidth, naturalTexH: originalHeight };
+  }
+  function calculateTexCoords(originalTexCoords, textureScale, width, height, originalWidth, originalHeight, offsetU, offsetV) {
+    const { naturalTexW, naturalTexH } = getNaturalTexSize(originalTexCoords, originalWidth, originalHeight);
+    const minScaleForCoverage = Math.max(width / naturalTexW, height / naturalTexH);
+    const effectiveScale = minScaleForCoverage * textureScale;
+    const windowSizeU = Math.min(1, width / (naturalTexW * effectiveScale));
+    const windowSizeV = Math.min(1, height / (naturalTexH * effectiveScale));
+    const halfU = windowSizeU * 0.5;
+    const halfV = windowSizeV * 0.5;
+    let baseCenterU = 0.5;
+    let baseCenterV = 0.5;
+    if (originalTexCoords.length >= 8) {
+      baseCenterU = (originalTexCoords[0] + originalTexCoords[4]) * 0.5;
+      baseCenterV = (originalTexCoords[3] + originalTexCoords[1]) * 0.5;
+    }
+    const centerU = Math.max(halfU, Math.min(1 - halfU, baseCenterU + offsetU));
+    const centerV = Math.max(halfV, Math.min(1 - halfV, baseCenterV + offsetV));
+    return {
+      uMin: centerU - halfU,
+      uMax: centerU + halfU,
+      vMin: centerV - halfV,
+      vMax: centerV + halfV,
+      windowSizeU,
+      windowSizeV
+    };
+  }
+  function buildTexCoordArray(w2) {
+    return [w2.uMin, w2.vMax, w2.uMin, w2.vMin, w2.uMax, w2.vMax, w2.uMax, w2.vMin];
+  }
+  function clampTexOffset(currentOffsetU, currentOffsetV, deltaU, deltaV, width, height, originalWidth, originalHeight, textureScale, originalTexCoords) {
+    const { naturalTexW, naturalTexH } = getNaturalTexSize(originalTexCoords, originalWidth, originalHeight);
+    const minScaleForCoverage = Math.max(width / naturalTexW, height / naturalTexH);
+    const effectiveScale = minScaleForCoverage * textureScale;
+    const windowSizeU = Math.min(1, width / (naturalTexW * effectiveScale));
+    const windowSizeV = Math.min(1, height / (naturalTexH * effectiveScale));
+    const halfU = windowSizeU * 0.5;
+    const halfV = windowSizeV * 0.5;
+    let baseCenterU = 0.5;
+    let baseCenterV = 0.5;
+    if (originalTexCoords.length >= 8) {
+      baseCenterU = (originalTexCoords[0] + originalTexCoords[4]) * 0.5;
+      baseCenterV = (originalTexCoords[3] + originalTexCoords[1]) * 0.5;
+    }
+    const newCenterU = Math.max(halfU, Math.min(1 - halfU, baseCenterU + currentOffsetU + deltaU));
+    const newCenterV = Math.max(halfV, Math.min(1 - halfV, baseCenterV + currentOffsetV + deltaV));
+    return [newCenterU - baseCenterU, newCenterV - baseCenterV];
+  }
+  function extractInitialScale(texCoords) {
+    if (texCoords.length < 8) return 1;
+    const windowU = Math.abs(texCoords[4] - texCoords[0]);
+    const windowV = Math.abs(texCoords[1] - texCoords[3]);
+    const maxWindow = Math.max(windowU, windowV);
+    const scale = maxWindow > 1e-3 ? 1 / maxWindow : 1;
+    return Math.max(1, Math.min(8, scale));
+  }
+
+  // src/controls/EditTextureModal.tsx
+  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
+  function imageUrlFromResource(textureResource) {
+    return /\.(png|jpg|jpeg|gif|webp)$/i.test(textureResource) ? `/images/${textureResource}` : `/images/${textureResource}.png`;
+  }
+  var PIXI_SIZE = 600;
+  var WIDTH_MIN = 0.1;
+  var WIDTH_MAX = 15;
+  var WIDTH_STEP = 0.1;
+  var SCALE_MIN = 1;
+  var SCALE_MAX = 8;
+  var SCALE_STEP = 0.1;
+  function EditTextureModal({
+    spriteName,
+    textureResource,
+    texCoordinates,
+    width: initWidth,
+    height: initHeight,
+    onApply,
+    onClose
+  }) {
+    const originalTexCoords = (0, import_react2.useRef)(texCoordinates);
+    const originalWidth = (0, import_react2.useRef)(initWidth);
+    const originalHeight = (0, import_react2.useRef)(initHeight);
+    const [state, setState] = (0, import_react2.useState)(() => ({
+      width: initWidth,
+      height: initHeight,
+      textureScale: extractInitialScale(texCoordinates),
+      offsetU: 0,
+      offsetV: 0
+    }));
+    const stateRef = (0, import_react2.useRef)(state);
+    stateRef.current = state;
+    const containerRef = (0, import_react2.useRef)(null);
+    const pixiAppRef = (0, import_react2.useRef)(null);
+    const pixiSpriteRef = (0, import_react2.useRef)(null);
+    const pixiHighlightRef = (0, import_react2.useRef)(null);
+    const baseTextureRef = (0, import_react2.useRef)(null);
+    const dragging = (0, import_react2.useRef)(false);
+    const lastMousePos = (0, import_react2.useRef)({ x: 0, y: 0 });
+    const updatePixiSprite = (0, import_react2.useCallback)((s2) => {
+      const sprite = pixiSpriteRef.current;
+      const highlight = pixiHighlightRef.current;
+      const baseTexture = baseTextureRef.current;
+      const app = pixiAppRef.current;
+      if (!sprite || !baseTexture || !app) return;
+      const canvasSize = app.renderer.width / (window.devicePixelRatio || 1);
+      const win = calculateTexCoords(
+        originalTexCoords.current,
+        s2.textureScale,
+        s2.width,
+        s2.height,
+        originalWidth.current,
+        originalHeight.current,
+        s2.offsetU,
+        s2.offsetV
+      );
+      sprite.texture = new Texture({
+        source: baseTexture.source,
+        frame: new Rectangle(
+          win.uMin * baseTexture.width,
+          win.vMin * baseTexture.height,
+          (win.uMax - win.uMin) * baseTexture.width,
+          (win.vMax - win.vMin) * baseTexture.height
+        )
+      });
+      const padding = 0.85;
+      const scaleFit = Math.min(
+        canvasSize * padding / s2.width,
+        canvasSize * padding / s2.height
+      );
+      sprite.width = s2.width * scaleFit;
+      sprite.height = s2.height * scaleFit;
+      sprite.x = canvasSize / 2;
+      sprite.y = canvasSize / 2;
+      if (highlight) {
+        highlight.clear();
+        const left = sprite.x - sprite.width / 2;
+        const top = sprite.y - sprite.height / 2;
+        highlight.moveTo(left, top).lineTo(left + sprite.width, top).lineTo(left + sprite.width, top + sprite.height).lineTo(left, top + sprite.height).lineTo(left, top).stroke({ color: 65280, width: 2, alpha: 0.85 });
+      }
+    }, []);
+    (0, import_react2.useEffect)(() => {
+      let app = null;
+      let cancelled = false;
+      const init2 = async () => {
+        if (!containerRef.current) return;
+        const size = containerRef.current.clientWidth || PIXI_SIZE;
+        app = new Application();
+        await app.init({
+          width: size,
+          height: size,
+          backgroundColor: 1118481,
+          antialias: true,
+          autoDensity: true,
+          resolution: window.devicePixelRatio || 1
+        });
+        if (cancelled) {
+          app.destroy(true);
+          return;
+        }
+        containerRef.current.appendChild(app.canvas);
+        const canvas = app.canvas;
+        canvas.style.width = `${size}px`;
+        canvas.style.height = `${size}px`;
+        canvas.style.display = "block";
+        pixiAppRef.current = app;
+        const texture = await Assets.load(imageUrlFromResource(textureResource));
+        if (cancelled) {
+          app.destroy(true);
+          return;
+        }
+        baseTextureRef.current = texture;
+        const sprite = new Sprite();
+        sprite.anchor.set(0.5);
+        app.stage.addChild(sprite);
+        pixiSpriteRef.current = sprite;
+        const highlight = new Graphics();
+        app.stage.addChild(highlight);
+        pixiHighlightRef.current = highlight;
+        updatePixiSprite(stateRef.current);
+      };
+      init2();
+      return () => {
+        cancelled = true;
+        pixiSpriteRef.current = null;
+        pixiHighlightRef.current = null;
+        baseTextureRef.current = null;
+        pixiAppRef.current = null;
+        if (app) {
+          setTimeout(() => app.destroy(true), 0);
+        }
+      };
+    }, [textureResource]);
+    (0, import_react2.useEffect)(() => {
+      updatePixiSprite(state);
+    }, [state, updatePixiSprite]);
+    (0, import_react2.useEffect)(() => {
+      const onMove = (e2) => {
+        if (!dragging.current || !containerRef.current) return;
+        const dx = e2.clientX - lastMousePos.current.x;
+        const dy = e2.clientY - lastMousePos.current.y;
+        lastMousePos.current = { x: e2.clientX, y: e2.clientY };
+        const rect = containerRef.current.getBoundingClientRect();
+        const s2 = stateRef.current;
+        const [newOffU, newOffV] = clampTexOffset(
+          s2.offsetU,
+          s2.offsetV,
+          -(dx / rect.width),
+          -(dy / rect.height),
+          s2.width,
+          s2.height,
+          originalWidth.current,
+          originalHeight.current,
+          s2.textureScale,
+          originalTexCoords.current
+        );
+        setState((prev) => ({ ...prev, offsetU: newOffU, offsetV: newOffV }));
+      };
+      const onUp = () => {
+        dragging.current = false;
+      };
+      document.addEventListener("mousemove", onMove);
+      document.addEventListener("mouseup", onUp);
+      return () => {
+        document.removeEventListener("mousemove", onMove);
+        document.removeEventListener("mouseup", onUp);
+      };
+    }, []);
+    const handleMouseDown = (e2) => {
+      dragging.current = true;
+      lastMousePos.current = { x: e2.clientX, y: e2.clientY };
+    };
+    const handleApply = () => {
+      const s2 = stateRef.current;
+      const win = calculateTexCoords(
+        originalTexCoords.current,
+        s2.textureScale,
+        s2.width,
+        s2.height,
+        originalWidth.current,
+        originalHeight.current,
+        s2.offsetU,
+        s2.offsetV
+      );
+      onApply(buildTexCoordArray(win), s2.width, s2.height);
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "edit-texture-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "edit-texture-modal", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "edit-texture-header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("span", { children: [
+          "Edit Texture \u2014 ",
+          spriteName
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "edit-texture-close", onClick: onClose, children: "\u2715" })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "edit-texture-body", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "edit-texture-controls", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "edit-texture-hint", children: "Drag the preview to pan the texture" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "edit-texture-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("label", { children: "Width" }),
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+              "input",
+              {
+                type: "range",
+                min: WIDTH_MIN,
+                max: WIDTH_MAX,
+                step: WIDTH_STEP,
+                value: state.width,
+                onChange: (e2) => setState((prev) => ({ ...prev, width: parseFloat(e2.target.value) }))
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+              "input",
+              {
+                type: "number",
+                min: WIDTH_MIN,
+                max: WIDTH_MAX,
+                step: WIDTH_STEP,
+                value: parseFloat(state.width.toFixed(1)),
+                onChange: (e2) => {
+                  const v2 = parseFloat(e2.target.value);
+                  if (!isNaN(v2)) setState((prev) => ({ ...prev, width: Math.max(WIDTH_MIN, Math.min(WIDTH_MAX, v2)) }));
+                }
+              }
+            )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "edit-texture-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("label", { children: "Height" }),
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+              "input",
+              {
+                type: "range",
+                min: WIDTH_MIN,
+                max: WIDTH_MAX,
+                step: WIDTH_STEP,
+                value: state.height,
+                onChange: (e2) => setState((prev) => ({ ...prev, height: parseFloat(e2.target.value) }))
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+              "input",
+              {
+                type: "number",
+                min: WIDTH_MIN,
+                max: WIDTH_MAX,
+                step: WIDTH_STEP,
+                value: parseFloat(state.height.toFixed(1)),
+                onChange: (e2) => {
+                  const v2 = parseFloat(e2.target.value);
+                  if (!isNaN(v2)) setState((prev) => ({ ...prev, height: Math.max(WIDTH_MIN, Math.min(WIDTH_MAX, v2)) }));
+                }
+              }
+            )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "edit-texture-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("label", { children: "Tex Scale" }),
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+              "input",
+              {
+                type: "range",
+                min: SCALE_MIN,
+                max: SCALE_MAX,
+                step: SCALE_STEP,
+                value: state.textureScale,
+                onChange: (e2) => setState((prev) => ({ ...prev, textureScale: parseFloat(e2.target.value) }))
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+              "input",
+              {
+                type: "number",
+                min: SCALE_MIN,
+                max: SCALE_MAX,
+                step: SCALE_STEP,
+                value: parseFloat(state.textureScale.toFixed(1)),
+                onChange: (e2) => {
+                  const v2 = parseFloat(e2.target.value);
+                  if (!isNaN(v2))
+                    setState((prev) => ({
+                      ...prev,
+                      textureScale: Math.max(SCALE_MIN, Math.min(SCALE_MAX, v2))
+                    }));
+                }
+              }
+            )
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+          "div",
+          {
+            className: "edit-texture-preview",
+            ref: containerRef,
+            onMouseDown: handleMouseDown
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "edit-texture-footer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "edit-texture-cancel", onClick: onClose, children: "Cancel" }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "edit-texture-apply", onClick: handleApply, children: "Apply" })
+      ] })
+    ] }) });
+  }
+
+  // src/hooks/useUndoHistory.ts
+  var import_react3 = __toESM(require_react());
+  function useUndoHistory() {
+    const past = (0, import_react3.useRef)([]);
+    const future = (0, import_react3.useRef)([]);
+    function push(action) {
+      past.current = [...past.current, action];
+      future.current = [];
+    }
+    function undo() {
+      const action = past.current[past.current.length - 1];
+      if (!action) return null;
+      past.current = past.current.slice(0, -1);
+      future.current = [...future.current, action];
+      return action;
+    }
+    function redo() {
+      const action = future.current[future.current.length - 1];
+      if (!action) return null;
+      future.current = future.current.slice(0, -1);
+      past.current = [...past.current, action];
+      return action;
+    }
+    function clear() {
+      past.current = [];
+      future.current = [];
+    }
+    return { push, undo, redo, clear };
+  }
+
+  // src/hooks/useNotifications.ts
+  var import_react4 = __toESM(require_react());
+  function useNotifications() {
+    const [notifications, setNotifications] = (0, import_react4.useState)([]);
+    const notify = (0, import_react4.useCallback)((message) => {
+      const id = Date.now();
+      setNotifications((prev) => [...prev, { id, message }]);
+      setTimeout(() => {
+        setNotifications((prev) => prev.filter((n2) => n2.id !== id));
+      }, 5e3);
+    }, []);
+    return { notifications, notify };
+  }
+
+  // src/hooks/useSceneRenderer.ts
+  var import_react5 = __toESM(require_react());
+
   // src/renderers/PhoneGuide.ts
   var PhoneGuide = class {
     constructor() {
@@ -67544,6 +67932,7 @@ ${e2}`);
             x: sprite.x,
             parallaxMultiplier: spriteData.parallaxMultiplier,
             name: spriteData.name,
+            textureResource: spriteData.textureResource,
             visible: true,
             originalWidth: spriteData.width,
             originalHeight: spriteData.height
@@ -67659,6 +68048,7 @@ ${e2}`);
         x: 0,
         parallaxMultiplier,
         name,
+        textureResource,
         visible: true,
         originalWidth: width,
         originalHeight: height
@@ -67851,6 +68241,60 @@ ${e2}`);
       }
     }
     /**
+     * Return texture editing data for a sprite: current tex coords, texture resource, and dimensions.
+     */
+    getSpriteTexData(index) {
+      if (index < 0 || index >= this.sprites.length) return null;
+      const sprite = this.sprites[index];
+      const metadata = this.spriteMetadata.get(sprite);
+      if (!metadata) return null;
+      const original = this.originalSceneData?.sprites.find((s2) => s2.name === metadata.name);
+      return {
+        texCoordinates: original?.texCoordinates ? [...original.texCoordinates] : [0, 1, 0, 0, 1, 1, 1, 0],
+        textureResource: metadata.textureResource,
+        width: sprite.width,
+        height: sprite.height
+      };
+    }
+    /**
+     * Apply new texture coordinates, width, and height to a sprite (from the texture editor).
+     * Updates the PIXI sprite's texture frame and dimensions, and syncs originalSceneData.
+     */
+    applyTexture(index, texCoords, width, height) {
+      if (index < 0 || index >= this.sprites.length) return;
+      const sprite = this.sprites[index];
+      const metadata = this.spriteMetadata.get(sprite);
+      if (!metadata) return;
+      const baseTexture = this.textures.get(metadata.textureResource);
+      if (baseTexture) {
+        const uValues = [texCoords[0], texCoords[2], texCoords[4], texCoords[6]];
+        const vValues = [texCoords[1], texCoords[3], texCoords[5], texCoords[7]];
+        const minU = Math.min(...uValues);
+        const maxU = Math.max(...uValues);
+        const minV = Math.min(...vValues);
+        const maxV = Math.max(...vValues);
+        sprite.texture = new Texture({
+          source: baseTexture.source,
+          frame: new Rectangle(
+            minU * baseTexture.width,
+            minV * baseTexture.height,
+            (maxU - minU) * baseTexture.width,
+            (maxV - minV) * baseTexture.height
+          )
+        });
+      }
+      sprite.width = width;
+      sprite.height = height;
+      const original = this.originalSceneData?.sprites.find((s2) => s2.name === metadata.name);
+      if (original) {
+        original.texCoordinates = texCoords;
+        original.width = width;
+        original.height = height;
+      }
+      this.setScrollOffset(this.currentXFocus);
+      this.updateSelectionHighlight();
+    }
+    /**
      * Sort sprites by parallaxMultiplier ascending (furthest back first),
      * with alphabetical name as tiebreaker.
      * Updates the selection highlight index to track the selected sprite.
@@ -68018,24 +68462,24 @@ ${e2}`);
 
   // src/hooks/useSceneRenderer.ts
   function useSceneRenderer(onNotify) {
-    const [showSceneControls, setShowSceneControls] = (0, import_react4.useState)(false);
-    const [xFocus, setXFocus] = (0, import_react4.useState)(0.5);
-    const [spriteEntries, setSpriteEntries] = (0, import_react4.useState)([]);
-    const [selectedSprite, setSelectedSprite] = (0, import_react4.useState)(null);
-    const [isSaving, setIsSaving] = (0, import_react4.useState)(false);
-    const [phoneGuideVisible, setPhoneGuideVisible] = (0, import_react4.useState)(true);
-    const onNotifyRef = (0, import_react4.useRef)(onNotify);
+    const [showSceneControls, setShowSceneControls] = (0, import_react5.useState)(false);
+    const [xFocus, setXFocus] = (0, import_react5.useState)(0.5);
+    const [spriteEntries, setSpriteEntries] = (0, import_react5.useState)([]);
+    const [selectedSprite, setSelectedSprite] = (0, import_react5.useState)(null);
+    const [isSaving, setIsSaving] = (0, import_react5.useState)(false);
+    const [phoneGuideVisible, setPhoneGuideVisible] = (0, import_react5.useState)(true);
+    const onNotifyRef = (0, import_react5.useRef)(onNotify);
     onNotifyRef.current = onNotify;
-    const phoneGuideVisibleRef = (0, import_react4.useRef)(true);
-    const canvasRef = (0, import_react4.useRef)(null);
-    const rendererRef = (0, import_react4.useRef)(null);
-    const sceneIdRef = (0, import_react4.useRef)(null);
-    const sceneNameRef = (0, import_react4.useRef)(null);
-    const sceneLabelRef = (0, import_react4.useRef)(null);
-    const refreshSpriteList = (0, import_react4.useCallback)((r2) => {
+    const phoneGuideVisibleRef = (0, import_react5.useRef)(true);
+    const canvasRef = (0, import_react5.useRef)(null);
+    const rendererRef = (0, import_react5.useRef)(null);
+    const sceneIdRef = (0, import_react5.useRef)(null);
+    const sceneNameRef = (0, import_react5.useRef)(null);
+    const sceneLabelRef = (0, import_react5.useRef)(null);
+    const refreshSpriteList = (0, import_react5.useCallback)((r2) => {
       setSpriteEntries([...r2.getSpriteEntries()]);
     }, []);
-    const loadScene = (0, import_react4.useCallback)(async (sceneName) => {
+    const loadScene = (0, import_react5.useCallback)(async (sceneName) => {
       try {
         const response = await fetch(`/api/scenes/${sceneName}`);
         const row = await response.json();
@@ -68067,7 +68511,7 @@ ${e2}`);
         console.error("Failed to load scene:", error);
       }
     }, [refreshSpriteList]);
-    const saveScene = (0, import_react4.useCallback)(async () => {
+    const saveScene = (0, import_react5.useCallback)(async () => {
       const name = sceneNameRef.current;
       const label = sceneLabelRef.current;
       const data = rendererRef.current?.getSceneData();
@@ -68086,21 +68530,21 @@ ${e2}`);
         setIsSaving(false);
       }
     }, []);
-    const handleXFocusChange = (0, import_react4.useCallback)((value) => {
+    const handleXFocusChange = (0, import_react5.useCallback)((value) => {
       setXFocus(value);
       rendererRef.current?.setScrollOffset(value);
     }, []);
-    const handlePhoneGuideToggle = (0, import_react4.useCallback)((visible) => {
+    const handlePhoneGuideToggle = (0, import_react5.useCallback)((visible) => {
       phoneGuideVisibleRef.current = visible;
       setPhoneGuideVisible(visible);
       if (visible) rendererRef.current?.showGuide();
       else rendererRef.current?.hideGuide();
     }, []);
-    const handleSpriteToggle = (0, import_react4.useCallback)((index) => {
+    const handleSpriteToggle = (0, import_react5.useCallback)((index) => {
       rendererRef.current?.toggleSpriteByIndex(index);
       if (rendererRef.current) refreshSpriteList(rendererRef.current);
     }, [refreshSpriteList]);
-    const handleSpriteSelect = (0, import_react4.useCallback)((index) => {
+    const handleSpriteSelect = (0, import_react5.useCallback)((index) => {
       const pos = rendererRef.current?.getSpritePosition(index);
       const scaleInfo = rendererRef.current?.getSpriteScale(index);
       const name = spriteEntries[index]?.name || `Sprite ${index}`;
@@ -68109,7 +68553,7 @@ ${e2}`);
         rendererRef.current?.setSelectedSpriteHighlight(index);
       }
     }, [spriteEntries]);
-    const handleSpritePositionChange = (0, import_react4.useCallback)((x2, y2) => {
+    const handleSpritePositionChange = (0, import_react5.useCallback)((x2, y2) => {
       if (!rendererRef.current) return;
       setSelectedSprite((prev) => {
         if (!prev) return null;
@@ -68117,14 +68561,14 @@ ${e2}`);
         return { ...prev, x: x2, y: y2 };
       });
     }, []);
-    const handleSpriteSizeChange = (0, import_react4.useCallback)((width, height) => {
+    const handleSpriteSizeChange = (0, import_react5.useCallback)((width, height) => {
       setSelectedSprite((prev) => {
         if (!prev) return null;
         rendererRef.current?.setSpriteSize(prev.index, width, height);
         return { ...prev, width, height };
       });
     }, []);
-    const handleSpriteDepthChange = (0, import_react4.useCallback)((depth) => {
+    const handleSpriteDepthChange = (0, import_react5.useCallback)((depth) => {
       setSelectedSprite((prev) => {
         if (!prev) return null;
         rendererRef.current?.setSpriteParallax(prev.index, depth);
@@ -68133,14 +68577,14 @@ ${e2}`);
         return { ...prev, index: newIndex, depth };
       });
     }, [refreshSpriteList]);
-    const handleSpriteDepthApply = (0, import_react4.useCallback)((depth, spriteIndex) => {
+    const handleSpriteDepthApply = (0, import_react5.useCallback)((depth, spriteIndex) => {
       if (!rendererRef.current) return;
       rendererRef.current.setSpriteParallax(spriteIndex, depth);
       const newIndex = rendererRef.current.sortSpritesByParallax(spriteIndex);
       refreshSpriteList(rendererRef.current);
       setSelectedSprite((prev) => prev ? { ...prev, index: newIndex, depth } : null);
     }, [refreshSpriteList]);
-    const handleAddSprite = (0, import_react4.useCallback)(async (textureResource) => {
+    const handleAddSprite = (0, import_react5.useCallback)(async (textureResource) => {
       if (!rendererRef.current) return;
       const newIndex = await rendererRef.current.addSprite(textureResource, 5, 5, 1);
       if (newIndex < 0) return;
@@ -68152,7 +68596,7 @@ ${e2}`);
       setSelectedSprite({ index: newIndex, name, x: pos?.x ?? 0, y: pos?.y ?? 0, depth: 1, width: scaleInfo?.width ?? 5, height: scaleInfo?.height ?? 5 });
       rendererRef.current.setSelectedSpriteHighlight(newIndex);
     }, [refreshSpriteList]);
-    const handleDeleteSprite = (0, import_react4.useCallback)((index) => {
+    const handleDeleteSprite = (0, import_react5.useCallback)((index) => {
       if (!rendererRef.current) return;
       rendererRef.current.removeSpriteByIndex(index);
       refreshSpriteList(rendererRef.current);
@@ -68189,15 +68633,15 @@ ${e2}`);
   }
 
   // src/hooks/useSpriteDrag.ts
-  var import_react5 = __toESM(require_react());
+  var import_react6 = __toESM(require_react());
   function useSpriteDrag({
     selectedSprite,
     rendererRef,
     onSpriteMove,
     onDragCommit
   }) {
-    const canvasDragState = (0, import_react5.useRef)(null);
-    const handleCanvasMouseDown = (0, import_react5.useCallback)((event) => {
+    const canvasDragState = (0, import_react6.useRef)(null);
+    const handleCanvasMouseDown = (0, import_react6.useCallback)((event) => {
       if (!selectedSprite || !rendererRef.current) return;
       const canvas = rendererRef.current.getCanvas();
       if (!canvas) return;
@@ -68215,9 +68659,9 @@ ${e2}`);
         startSpriteY: selectedSprite.y
       };
     }, [selectedSprite, rendererRef]);
-    const dragCallbacksRef = (0, import_react5.useRef)({ onSpriteMove, onDragCommit });
+    const dragCallbacksRef = (0, import_react6.useRef)({ onSpriteMove, onDragCommit });
     dragCallbacksRef.current = { onSpriteMove, onDragCommit };
-    (0, import_react5.useEffect)(() => {
+    (0, import_react6.useEffect)(() => {
       const handleMouseMove = (event) => {
         const drag = canvasDragState.current;
         if (!drag || !rendererRef.current) return;
@@ -68260,7 +68704,7 @@ ${e2}`);
   }
 
   // src/hooks/useKeyboardControls.ts
-  var import_react6 = __toESM(require_react());
+  var import_react7 = __toESM(require_react());
   var ARROW_STEP = 0.05;
   function useKeyboardControls({
     selectedSprite,
@@ -68272,7 +68716,7 @@ ${e2}`);
     onScaleApply,
     onDepthApply
   }) {
-    (0, import_react6.useEffect)(() => {
+    (0, import_react7.useEffect)(() => {
       const handleKeyDown = (e2) => {
         if ((e2.ctrlKey || e2.metaKey) && e2.key === "z" && !e2.shiftKey) {
           e2.preventDefault();
@@ -68328,13 +68772,14 @@ ${e2}`);
   }
 
   // src/ScenePage.tsx
-  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
   function ScenePage({ scenes }) {
     const history = useUndoHistory();
     const { notifications, notify } = useNotifications();
-    const dragStartPos = (0, import_react7.useRef)(null);
-    const dragStartSize = (0, import_react7.useRef)(null);
-    const dragStartDepth = (0, import_react7.useRef)(null);
+    const dragStartPos = (0, import_react8.useRef)(null);
+    const dragStartSize = (0, import_react8.useRef)(null);
+    const dragStartDepth = (0, import_react8.useRef)(null);
+    const [editTextureIndex, setEditTextureIndex] = (0, import_react8.useState)(null);
     const {
       canvasRef,
       rendererRef,
@@ -68358,10 +68803,10 @@ ${e2}`);
       handleAddSprite,
       handleDeleteSprite
     } = useSceneRenderer(notify);
-    const applySelectedSpriteMove = (0, import_react7.useCallback)((x2, y2) => {
+    const applySelectedSpriteMove = (0, import_react8.useCallback)((x2, y2) => {
       setSelectedSprite((prev) => prev ? { ...prev, x: x2, y: y2 } : null);
     }, [setSelectedSprite]);
-    const applySelectedSpriteSize = (0, import_react7.useCallback)((width, height) => {
+    const applySelectedSpriteSize = (0, import_react8.useCallback)((width, height) => {
       setSelectedSprite((prev) => prev ? { ...prev, width, height } : null);
     }, [setSelectedSprite]);
     const { handleCanvasMouseDown } = useSpriteDrag({
@@ -68380,10 +68825,10 @@ ${e2}`);
       onScaleApply: applySelectedSpriteSize,
       onDepthApply: handleSpriteDepthApply
     });
-    const handleSpritePositionChangeStart = (0, import_react7.useCallback)((x2, y2) => {
+    const handleSpritePositionChangeStart = (0, import_react8.useCallback)((x2, y2) => {
       dragStartPos.current = { x: x2, y: y2 };
     }, []);
-    const handleSpritePositionCommit = (0, import_react7.useCallback)((x2, y2) => {
+    const handleSpritePositionCommit = (0, import_react8.useCallback)((x2, y2) => {
       if (!selectedSprite || !dragStartPos.current) return;
       const before = dragStartPos.current;
       dragStartPos.current = null;
@@ -68391,10 +68836,10 @@ ${e2}`);
         history.push({ type: "position", spriteIndex: selectedSprite.index, before, after: { x: x2, y: y2 } });
       }
     }, [selectedSprite, history]);
-    const handleSpriteSizeChangeStart = (0, import_react7.useCallback)(() => {
+    const handleSpriteSizeChangeStart = (0, import_react8.useCallback)(() => {
       if (selectedSprite) dragStartSize.current = { width: selectedSprite.width, height: selectedSprite.height };
     }, [selectedSprite]);
-    const handleSpriteSizeCommit = (0, import_react7.useCallback)((width, height) => {
+    const handleSpriteSizeCommit = (0, import_react8.useCallback)((width, height) => {
       if (!selectedSprite || !dragStartSize.current) return;
       const before = dragStartSize.current;
       dragStartSize.current = null;
@@ -68402,10 +68847,10 @@ ${e2}`);
         history.push({ type: "scale", spriteIndex: selectedSprite.index, before, after: { width, height } });
       }
     }, [selectedSprite, history]);
-    const handleSpriteDepthChangeStart = (0, import_react7.useCallback)((depth) => {
+    const handleSpriteDepthChangeStart = (0, import_react8.useCallback)((depth) => {
       dragStartDepth.current = depth;
     }, []);
-    const handleSpriteDepthCommit = (0, import_react7.useCallback)((depth) => {
+    const handleSpriteDepthCommit = (0, import_react8.useCallback)((depth) => {
       if (!selectedSprite || dragStartDepth.current === null) return;
       const before = dragStartDepth.current;
       dragStartDepth.current = null;
@@ -68413,8 +68858,8 @@ ${e2}`);
         history.push({ type: "depth", spriteIndex: selectedSprite.index, before, after: depth });
       }
     }, [selectedSprite, history]);
-    return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(import_jsx_runtime10.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
         TopBar,
         {
           scenes,
@@ -68426,8 +68871,8 @@ ${e2}`);
           onSave: saveScene
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "app-content", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "app-content", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
           SceneEditorPanel,
           {
             sceneLoaded: showSceneControls,
@@ -68439,6 +68884,7 @@ ${e2}`);
             onSpriteSelect: handleSpriteSelect,
             onAddSprite: handleAddSprite,
             onDeleteSprite: handleDeleteSprite,
+            onEditTexture: setEditTextureIndex,
             onSpritePositionChange: handleSpritePositionChange,
             onSpritePositionChangeStart: handleSpritePositionChangeStart,
             onSpritePositionCommit: handleSpritePositionCommit,
@@ -68450,21 +68896,43 @@ ${e2}`);
             onSpriteSizeCommit: handleSpriteSizeCommit
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "main-content", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { id: "canvas-container", ref: canvasRef, onMouseDown: handleCanvasMouseDown }) })
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "main-content", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { id: "canvas-container", ref: canvasRef, onMouseDown: handleCanvasMouseDown }) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(NotificationStack, { notifications })
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(NotificationStack, { notifications }),
+      editTextureIndex !== null && (() => {
+        const texData = rendererRef.current?.getSpriteTexData(editTextureIndex);
+        if (!texData) return null;
+        return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+          EditTextureModal,
+          {
+            spriteName: spriteEntries[editTextureIndex]?.name ?? `Sprite ${editTextureIndex}`,
+            textureResource: texData.textureResource,
+            texCoordinates: texData.texCoordinates,
+            width: texData.width,
+            height: texData.height,
+            onApply: (texCoords, width, height) => {
+              rendererRef.current?.applyTexture(editTextureIndex, texCoords, width, height);
+              setSelectedSprite(
+                (prev) => prev && prev.index === editTextureIndex ? { ...prev, width, height } : prev
+              );
+              setEditTextureIndex(null);
+            },
+            onClose: () => setEditTextureIndex(null)
+          }
+        );
+      })()
     ] });
   }
 
   // src/client.tsx
-  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime11 = __toESM(require_jsx_runtime());
   window.addEventListener("DOMContentLoaded", async () => {
     try {
       const response = await fetch("/api/scenes");
       const data = await response.json();
       const scenes = data.map((s2) => ({ value: s2.name, label: s2.label }));
       const root = (0, import_client.createRoot)(document.body);
-      root.render(/* @__PURE__ */ (0, import_jsx_runtime10.jsx)(ScenePage, { scenes }));
+      root.render(/* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ScenePage, { scenes }));
     } catch (error) {
       console.error("Failed to initialize app:", error);
     }

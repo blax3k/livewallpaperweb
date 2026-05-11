@@ -1,7 +1,8 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useState } from 'react';
 import { SceneEditorPanel, SceneOption } from './SceneEditorPanel';
 import { TopBar } from './TopBar';
 import { NotificationStack } from './NotificationStack';
+import { EditTextureModal } from './controls/EditTextureModal';
 import { useUndoHistory } from './hooks/useUndoHistory';
 import { useNotifications } from './hooks/useNotifications';
 import { useSceneRenderer } from './hooks/useSceneRenderer';
@@ -18,6 +19,7 @@ export function ScenePage({ scenes }: ScenePageProps) {
   const dragStartPos = useRef<{ x: number; y: number } | null>(null);
   const dragStartSize = useRef<{ width: number; height: number } | null>(null);
   const dragStartDepth = useRef<number | null>(null);
+  const [editTextureIndex, setEditTextureIndex] = useState<number | null>(null);
 
   const {
     canvasRef,
@@ -130,6 +132,7 @@ export function ScenePage({ scenes }: ScenePageProps) {
           onSpriteSelect={handleSpriteSelect}
           onAddSprite={handleAddSprite}
           onDeleteSprite={handleDeleteSprite}
+          onEditTexture={setEditTextureIndex}
           onSpritePositionChange={handleSpritePositionChange}
           onSpritePositionChangeStart={handleSpritePositionChangeStart}
           onSpritePositionCommit={handleSpritePositionCommit}
@@ -145,6 +148,27 @@ export function ScenePage({ scenes }: ScenePageProps) {
         </div>
       </div>
       <NotificationStack notifications={notifications} />
+      {editTextureIndex !== null && (() => {
+        const texData = rendererRef.current?.getSpriteTexData(editTextureIndex);
+        if (!texData) return null;
+        return (
+          <EditTextureModal
+            spriteName={spriteEntries[editTextureIndex]?.name ?? `Sprite ${editTextureIndex}`}
+            textureResource={texData.textureResource}
+            texCoordinates={texData.texCoordinates}
+            width={texData.width}
+            height={texData.height}
+            onApply={(texCoords, width, height) => {
+              rendererRef.current?.applyTexture(editTextureIndex, texCoords, width, height);
+              setSelectedSprite(prev =>
+                prev && prev.index === editTextureIndex ? { ...prev, width, height } : prev,
+              );
+              setEditTextureIndex(null);
+            }}
+            onClose={() => setEditTextureIndex(null)}
+          />
+        );
+      })()}
     </>
   );
 }

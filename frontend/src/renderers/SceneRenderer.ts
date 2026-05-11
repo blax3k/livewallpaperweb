@@ -7,6 +7,7 @@ interface SpriteMetadata {
   x: number;
   parallaxMultiplier: number;
   name: string;
+  textureResource: string;
   visible: boolean;
   originalWidth: number;
   originalHeight: number;
@@ -105,6 +106,7 @@ export class SceneRenderer {
           x: sprite.x,
           parallaxMultiplier: spriteData.parallaxMultiplier,
           name: spriteData.name,
+          textureResource: spriteData.textureResource,
           visible: true,
           originalWidth: spriteData.width,
           originalHeight: spriteData.height,
@@ -252,6 +254,7 @@ export class SceneRenderer {
       x: 0,
       parallaxMultiplier,
       name,
+      textureResource,
       visible: true,
       originalWidth: width,
       originalHeight: height,
@@ -480,6 +483,74 @@ export class SceneRenderer {
         this.setScrollOffset(this.currentXFocus);
       }
     }
+  }
+
+  /**
+   * Return texture editing data for a sprite: current tex coords, texture resource, and dimensions.
+   */
+  getSpriteTexData(index: number): {
+    texCoordinates: number[];
+    textureResource: string;
+    width: number;
+    height: number;
+  } | null {
+    if (index < 0 || index >= this.sprites.length) return null;
+    const sprite = this.sprites[index];
+    const metadata = this.spriteMetadata.get(sprite);
+    if (!metadata) return null;
+
+    const original = this.originalSceneData?.sprites.find(s => s.name === metadata.name);
+    return {
+      texCoordinates: original?.texCoordinates ? [...original.texCoordinates] : [0, 1, 0, 0, 1, 1, 1, 0],
+      textureResource: metadata.textureResource,
+      width: sprite.width,
+      height: sprite.height,
+    };
+  }
+
+  /**
+   * Apply new texture coordinates, width, and height to a sprite (from the texture editor).
+   * Updates the PIXI sprite's texture frame and dimensions, and syncs originalSceneData.
+   */
+  applyTexture(index: number, texCoords: number[], width: number, height: number): void {
+    if (index < 0 || index >= this.sprites.length) return;
+    const sprite = this.sprites[index];
+    const metadata = this.spriteMetadata.get(sprite);
+    if (!metadata) return;
+
+    const baseTexture = this.textures.get(metadata.textureResource);
+    if (baseTexture) {
+      const uValues = [texCoords[0], texCoords[2], texCoords[4], texCoords[6]];
+      const vValues = [texCoords[1], texCoords[3], texCoords[5], texCoords[7]];
+      const minU = Math.min(...uValues);
+      const maxU = Math.max(...uValues);
+      const minV = Math.min(...vValues);
+      const maxV = Math.max(...vValues);
+
+      sprite.texture = new PIXI.Texture({
+        source: baseTexture.source,
+        frame: new PIXI.Rectangle(
+          minU * baseTexture.width,
+          minV * baseTexture.height,
+          (maxU - minU) * baseTexture.width,
+          (maxV - minV) * baseTexture.height,
+        ),
+      });
+    }
+
+    sprite.width = width;
+    sprite.height = height;
+
+    // Sync originalSceneData
+    const original = this.originalSceneData?.sprites.find(s => s.name === metadata.name);
+    if (original) {
+      original.texCoordinates = texCoords;
+      original.width = width;
+      original.height = height;
+    }
+
+    this.setScrollOffset(this.currentXFocus);
+    this.updateSelectionHighlight();
   }
 
   /**

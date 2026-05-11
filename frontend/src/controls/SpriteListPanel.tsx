@@ -14,6 +14,7 @@ interface SpriteListPanelProps {
   onSelect: (index: number) => void;
   onAdd: (textureResource: string) => void;
   onDelete: (index: number) => void;
+  onEditTexture: (index: number) => void;
 }
 
 function AddSpriteModal({ onSelect, onClose }: { onSelect: (filename: string) => void; onClose: () => void }) {
@@ -49,7 +50,7 @@ function AddSpriteModal({ onSelect, onClose }: { onSelect: (filename: string) =>
   );
 }
 
-export function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd, onDelete }: SpriteListPanelProps) {
+export function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd, onDelete, onEditTexture }: SpriteListPanelProps) {
   const [showModal, setShowModal] = useState(false);
   const [menuOpenIndex, setMenuOpenIndex] = useState<number | null>(null);
   const [confirmDeleteIndex, setConfirmDeleteIndex] = useState<number | null>(null);
@@ -118,6 +119,15 @@ export function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onA
                 ref={menuRef}
                 onClick={e => e.stopPropagation()}
               >
+                <button
+                  className="sprite-menu-item"
+                  onClick={() => {
+                    setMenuOpenIndex(null);
+                    onEditTexture(index);
+                  }}
+                >
+                  Edit Texture
+                </button>
                 <button
                   className="sprite-menu-item sprite-menu-item--danger"
                   onClick={() => {
