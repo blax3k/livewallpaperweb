@@ -5,6 +5,7 @@ import type { SpriteEntry } from '../controls/SpriteListPanel';
 
 interface SpriteMetadata {
   x: number;
+  y: number;
   parallaxMultiplier: number;
   name: string;
   textureResource: string;
@@ -33,6 +34,8 @@ export class SceneRenderer {
   private userZoom: number = 1.0;
   private baseStageX: number = 0;
   private baseStageY: number = 0;
+  private gyroOffsetX: number = 0;
+  private gyroOffsetY: number = 0;
   private originalSceneData: Scene | null = null;
 
   constructor(container: HTMLElement) {
@@ -107,6 +110,7 @@ export class SceneRenderer {
         this.sprites.push(sprite);
         this.spriteMetadata.set(sprite, {
           x: sprite.x,
+          y: sprite.y,
           parallaxMultiplier: spriteData.parallaxMultiplier,
           name: spriteData.name,
           textureResource: spriteData.textureResource,
@@ -259,6 +263,7 @@ export class SceneRenderer {
     this.sprites.push(pixiSprite);
     this.spriteMetadata.set(pixiSprite, {
       x: 0,
+      y: 0,
       parallaxMultiplier,
       name,
       textureResource,
@@ -328,13 +333,18 @@ export class SceneRenderer {
    */
   setScrollOffset(xFocus: number): void {
     this.currentXFocus = xFocus;
+    this.applyAllPositions();
+  }
+
+  private applyAllPositions(): void {
     const SCROLL_SCALE = 5.0;
-    const scrollOffset = (0.5 - xFocus) * SCROLL_SCALE;
+    const scrollOffset = (0.5 - this.currentXFocus) * SCROLL_SCALE;
 
     for (const sprite of this.sprites) {
       const metadata = this.spriteMetadata.get(sprite);
       if (metadata) {
-        sprite.x = metadata.x + scrollOffset * metadata.parallaxMultiplier;
+        sprite.x = metadata.x + (scrollOffset + this.gyroOffsetX) * metadata.parallaxMultiplier;
+        sprite.y = metadata.y + this.gyroOffsetY * metadata.parallaxMultiplier;
       }
     }
 
@@ -368,7 +378,7 @@ export class SceneRenderer {
       const sprite = this.sprites[index];
       const metadata = this.spriteMetadata.get(sprite);
       if (metadata) {
-        return { x: metadata.x, y: sprite.y };
+        return { x: metadata.x, y: metadata.y };
       }
     }
     return null;
@@ -380,11 +390,8 @@ export class SceneRenderer {
       const metadata = this.spriteMetadata.get(sprite);
       if (metadata) {
         metadata.x = x;
-        sprite.y = y;
-        const SCROLL_SCALE = 5.0;
-        const scrollOffset = (0.5 - this.currentXFocus) * SCROLL_SCALE;
-        sprite.x = x + scrollOffset * metadata.parallaxMultiplier;
-        this.updateSelectionHighlight();
+        metadata.y = y;
+        this.applyAllPositions();
       }
     }
   }
@@ -616,7 +623,7 @@ export class SceneRenderer {
         return {
           ...original,
           positionX: metadata?.x ?? original.positionX,
-          positionY: sprite.y,
+          positionY: metadata?.y ?? original.positionY,
           width: sprite.width,
           height: sprite.height,
           parallaxMultiplier: metadata?.parallaxMultiplier ?? original.parallaxMultiplier,
@@ -745,6 +752,22 @@ export class SceneRenderer {
 
   getZoom(): number {
     return this.userZoom;
+  }
+
+  /**
+   * Set gyroscope simulation offsets in world units (clamped to ±0.5).
+   * gyroX maps to left/right tilt, gyroY to forward/back tilt.
+   */
+  setGyroOffset(x: number, y: number): void {
+    this.gyroOffsetX = Math.max(-0.5, Math.min(0.5, x));
+    this.gyroOffsetY = Math.max(-0.5, Math.min(0.5, y));
+    this.applyAllPositions();
+  }
+
+  clearGyroOffset(): void {
+    this.gyroOffsetX = 0;
+    this.gyroOffsetY = 0;
+    this.applyAllPositions();
   }
 
   /**

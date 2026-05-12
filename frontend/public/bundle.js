@@ -64664,7 +64664,7 @@ ${parts.join("\n")}
 
   // src/TopBar.tsx
   var import_jsx_runtime7 = __toESM(require_jsx_runtime());
-  function TopBar({ scenes, sceneLoaded, isSaving, phoneGuideVisible, zoom, onSceneSelect, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter }) {
+  function TopBar({ scenes, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, onSceneSelect, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }) {
     return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "top-bar", children: [
       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(SceneSelectorControl, { scenes, onSelect: onSceneSelect }),
       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
@@ -64682,6 +64682,16 @@ ${parts.join("\n")}
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: onZoomIn, disabled: !sceneLoaded, title: "Zoom in", children: "\uFF0B" }),
       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: onCenter, disabled: !sceneLoaded, children: "Center" }),
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+        "button",
+        {
+          onClick: onGyroModeToggle,
+          disabled: !sceneLoaded,
+          title: gyroMode ? "Switch to default pointer" : "Switch to gyro simulation mode",
+          className: gyroMode ? "active" : "",
+          children: gyroMode ? "\u{1F4F1} Gyro" : "\u{1F5B1} Default"
+        }
+      ),
       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: onSave, disabled: isSaving || !sceneLoaded, children: isSaving ? "Saving..." : "Save Scene" })
     ] });
   }
@@ -67882,6 +67892,8 @@ ${e2}`);
       this.userZoom = 1;
       this.baseStageX = 0;
       this.baseStageY = 0;
+      this.gyroOffsetX = 0;
+      this.gyroOffsetY = 0;
       this.originalSceneData = null;
       this.container = container;
       this.resizeHandler = () => this.onWindowResize();
@@ -67940,6 +67952,7 @@ ${e2}`);
           this.sprites.push(sprite);
           this.spriteMetadata.set(sprite, {
             x: sprite.x,
+            y: sprite.y,
             parallaxMultiplier: spriteData.parallaxMultiplier,
             name: spriteData.name,
             textureResource: spriteData.textureResource,
@@ -68060,6 +68073,7 @@ ${e2}`);
       this.sprites.push(pixiSprite);
       this.spriteMetadata.set(pixiSprite, {
         x: 0,
+        y: 0,
         parallaxMultiplier,
         name,
         textureResource,
@@ -68117,12 +68131,16 @@ ${e2}`);
      */
     setScrollOffset(xFocus) {
       this.currentXFocus = xFocus;
+      this.applyAllPositions();
+    }
+    applyAllPositions() {
       const SCROLL_SCALE = 5;
-      const scrollOffset = (0.5 - xFocus) * SCROLL_SCALE;
+      const scrollOffset = (0.5 - this.currentXFocus) * SCROLL_SCALE;
       for (const sprite of this.sprites) {
         const metadata = this.spriteMetadata.get(sprite);
         if (metadata) {
-          sprite.x = metadata.x + scrollOffset * metadata.parallaxMultiplier;
+          sprite.x = metadata.x + (scrollOffset + this.gyroOffsetX) * metadata.parallaxMultiplier;
+          sprite.y = metadata.y + this.gyroOffsetY * metadata.parallaxMultiplier;
         }
       }
       this.updateSelectionHighlight();
@@ -68152,7 +68170,7 @@ ${e2}`);
         const sprite = this.sprites[index];
         const metadata = this.spriteMetadata.get(sprite);
         if (metadata) {
-          return { x: metadata.x, y: sprite.y };
+          return { x: metadata.x, y: metadata.y };
         }
       }
       return null;
@@ -68163,11 +68181,8 @@ ${e2}`);
         const metadata = this.spriteMetadata.get(sprite);
         if (metadata) {
           metadata.x = x2;
-          sprite.y = y2;
-          const SCROLL_SCALE = 5;
-          const scrollOffset = (0.5 - this.currentXFocus) * SCROLL_SCALE;
-          sprite.x = x2 + scrollOffset * metadata.parallaxMultiplier;
-          this.updateSelectionHighlight();
+          metadata.y = y2;
+          this.applyAllPositions();
         }
       }
     }
@@ -68353,7 +68368,7 @@ ${e2}`);
           return {
             ...original,
             positionX: metadata?.x ?? original.positionX,
-            positionY: sprite.y,
+            positionY: metadata?.y ?? original.positionY,
             width: sprite.width,
             height: sprite.height,
             parallaxMultiplier: metadata?.parallaxMultiplier ?? original.parallaxMultiplier
@@ -68461,6 +68476,20 @@ ${e2}`);
     }
     getZoom() {
       return this.userZoom;
+    }
+    /**
+     * Set gyroscope simulation offsets in world units (clamped to ±0.5).
+     * gyroX maps to left/right tilt, gyroY to forward/back tilt.
+     */
+    setGyroOffset(x2, y2) {
+      this.gyroOffsetX = Math.max(-0.5, Math.min(0.5, x2));
+      this.gyroOffsetY = Math.max(-0.5, Math.min(0.5, y2));
+      this.applyAllPositions();
+    }
+    clearGyroOffset() {
+      this.gyroOffsetX = 0;
+      this.gyroOffsetY = 0;
+      this.applyAllPositions();
     }
     /**
      * Pan the stage by a delta in CSS pixels.
@@ -68708,6 +68737,18 @@ ${e2}`);
       rendererRef.current?.resetView();
       setZoom(1);
     }, []);
+    const [gyroMode, setGyroMode] = (0, import_react5.useState)(false);
+    const handleGyroModeToggle = (0, import_react5.useCallback)(() => {
+      setGyroMode((prev) => {
+        if (prev) rendererRef.current?.clearGyroOffset();
+        return !prev;
+      });
+    }, []);
+    const handleGyroOffset = (0, import_react5.useCallback)((deltaX, deltaY, canvasWidth, canvasHeight) => {
+      const gyroX = deltaX / canvasWidth * 0.5;
+      const gyroY = deltaY / canvasHeight * 0.5;
+      rendererRef.current?.setGyroOffset(gyroX, gyroY);
+    }, []);
     return {
       canvasRef,
       rendererRef,
@@ -68734,7 +68775,10 @@ ${e2}`);
       handleZoomOut,
       handleZoomAtPoint,
       handleCenter,
-      zoom
+      zoom,
+      gyroMode,
+      handleGyroModeToggle,
+      handleGyroOffset
     };
   }
 
@@ -68891,6 +68935,8 @@ ${e2}`);
     const dragStartDepth = (0, import_react8.useRef)(null);
     const midDragStart = (0, import_react8.useRef)(null);
     const [isPanning, setIsPanning] = (0, import_react8.useState)(false);
+    const isGyroDragging = (0, import_react8.useRef)(false);
+    const gyroOrigin = (0, import_react8.useRef)(null);
     const [editTextureIndex, setEditTextureIndex] = (0, import_react8.useState)(null);
     const {
       canvasRef,
@@ -68918,7 +68964,10 @@ ${e2}`);
       handleZoomOut,
       handleZoomAtPoint,
       handleCenter,
-      zoom
+      zoom,
+      gyroMode,
+      handleGyroModeToggle,
+      handleGyroOffset
     } = useSceneRenderer(notify);
     const applySelectedSpriteMove = (0, import_react8.useCallback)((x2, y2) => {
       setSelectedSprite((prev) => prev ? { ...prev, x: x2, y: y2 } : null);
@@ -68988,6 +69037,39 @@ ${e2}`);
         window.removeEventListener("mouseup", onMouseUp);
       };
     }, [canvasRef, rendererRef, cancelDrag]);
+    (0, import_react8.useEffect)(() => {
+      const el = canvasRef.current;
+      if (!el) return;
+      const onMouseDown = (e2) => {
+        if (!gyroMode || e2.button !== 0) return;
+        e2.stopPropagation();
+        cancelDrag();
+        isGyroDragging.current = true;
+        gyroOrigin.current = { x: e2.clientX, y: e2.clientY };
+      };
+      const onMouseMove = (e2) => {
+        if (!isGyroDragging.current || !gyroOrigin.current) return;
+        const canvas = rendererRef.current?.getCanvas();
+        const w2 = canvas ? parseFloat(canvas.style.width) || canvas.width : el.clientWidth;
+        const h2 = canvas ? parseFloat(canvas.style.height) || canvas.height : el.clientHeight;
+        const dx = e2.clientX - gyroOrigin.current.x;
+        const dy = e2.clientY - gyroOrigin.current.y;
+        handleGyroOffset(dx, dy, w2, h2);
+      };
+      const onMouseUp = (e2) => {
+        if (e2.button !== 0) return;
+        isGyroDragging.current = false;
+        gyroOrigin.current = null;
+      };
+      el.addEventListener("mousedown", onMouseDown);
+      window.addEventListener("mousemove", onMouseMove);
+      window.addEventListener("mouseup", onMouseUp);
+      return () => {
+        el.removeEventListener("mousedown", onMouseDown);
+        window.removeEventListener("mousemove", onMouseMove);
+        window.removeEventListener("mouseup", onMouseUp);
+      };
+    }, [canvasRef, rendererRef, gyroMode, handleGyroOffset, cancelDrag]);
     const handleSpritePositionChangeStart = (0, import_react8.useCallback)((x2, y2) => {
       dragStartPos.current = { x: x2, y: y2 };
     }, []);
@@ -69035,7 +69117,9 @@ ${e2}`);
           onZoomIn: handleZoomIn,
           onZoomOut: handleZoomOut,
           onCenter: handleCenter,
-          zoom
+          zoom,
+          gyroMode,
+          onGyroModeToggle: handleGyroModeToggle
         }
       ),
       /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "app-content", children: [
@@ -69068,8 +69152,8 @@ ${e2}`);
           {
             id: "canvas-container",
             ref: canvasRef,
-            onMouseDown: handleCanvasMouseDown,
-            style: isPanning ? { cursor: "grabbing" } : zoom > 1 ? { cursor: "grab" } : void 0
+            onMouseDown: gyroMode ? void 0 : handleCanvasMouseDown,
+            style: gyroMode ? { cursor: isGyroDragging.current ? "crosshair" : "crosshair" } : isPanning ? { cursor: "grabbing" } : zoom > 1 ? { cursor: "grab" } : void 0
           }
         ) })
       ] }),

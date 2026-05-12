@@ -210,6 +210,23 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
     setZoom(1.0);
   }, []);
 
+  const [gyroMode, setGyroMode] = useState(false);
+
+  const handleGyroModeToggle = useCallback(() => {
+    setGyroMode(prev => {
+      if (prev) rendererRef.current?.clearGyroOffset();
+      return !prev;
+    });
+  }, []);
+
+  const handleGyroOffset = useCallback((deltaX: number, deltaY: number, canvasWidth: number, canvasHeight: number) => {
+    // Map a drag delta to gyro offsets clamped to ±0.5 world units (matching Android's motionOffsetLimit).
+    // Dragging the full canvas width/height corresponds to the maximum ±0.5 offset.
+    const gyroX = (deltaX / canvasWidth) * 0.5;
+    const gyroY = (deltaY / canvasHeight) * 0.5;
+    rendererRef.current?.setGyroOffset(gyroX, gyroY);
+  }, []);
+
   return {
     canvasRef,
     rendererRef,
@@ -237,6 +254,9 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
     handleZoomAtPoint,
     handleCenter,
     zoom,
+    gyroMode,
+    handleGyroModeToggle,
+    handleGyroOffset,
   };
 }
 

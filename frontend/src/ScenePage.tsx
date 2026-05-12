@@ -21,6 +21,8 @@ export function ScenePage({ scenes }: ScenePageProps) {
   const dragStartDepth = useRef<number | null>(null);
   const midDragStart = useRef<{ x: number; y: number } | null>(null);
   const [isPanning, setIsPanning] = useState(false);
+  const isGyroDragging = useRef(false);
+  const gyroOrigin = useRef<{ x: number; y: number } | null>(null);
   const [editTextureIndex, setEditTextureIndex] = useState<number | null>(null);
 
   const {
@@ -50,6 +52,9 @@ export function ScenePage({ scenes }: ScenePageProps) {
     handleZoomAtPoint,
     handleCenter,
     zoom,
+    gyroMode,
+    handleGyroModeToggle,
+    handleGyroOffset,
   } = useSceneRenderer(notify);
 
   const applySelectedSpriteMove = useCallback((x: number, y: number) => {
@@ -130,6 +135,44 @@ export function ScenePage({ scenes }: ScenePageProps) {
     };
   }, [canvasRef, rendererRef, cancelDrag]);
 
+  useEffect(() => {
+    const el = canvasRef.current;
+    if (!el) return;
+
+    const onMouseDown = (e: MouseEvent) => {
+      if (!gyroMode || e.button !== 0) return;
+      e.stopPropagation();
+      cancelDrag();
+      isGyroDragging.current = true;
+      gyroOrigin.current = { x: e.clientX, y: e.clientY };
+    };
+
+    const onMouseMove = (e: MouseEvent) => {
+      if (!isGyroDragging.current || !gyroOrigin.current) return;
+      const canvas = rendererRef.current?.getCanvas();
+      const w = canvas ? parseFloat(canvas.style.width) || canvas.width : el.clientWidth;
+      const h = canvas ? parseFloat(canvas.style.height) || canvas.height : el.clientHeight;
+      const dx = e.clientX - gyroOrigin.current.x;
+      const dy = e.clientY - gyroOrigin.current.y;
+      handleGyroOffset(dx, dy, w, h);
+    };
+
+    const onMouseUp = (e: MouseEvent) => {
+      if (e.button !== 0) return;
+      isGyroDragging.current = false;
+      gyroOrigin.current = null;
+    };
+
+    el.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+    return () => {
+      el.removeEventListener('mousedown', onMouseDown);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+  }, [canvasRef, rendererRef, gyroMode, handleGyroOffset, cancelDrag]);
+
   const handleSpritePositionChangeStart = useCallback((x: number, y: number) => {
     dragStartPos.current = { x, y };
   }, []);
@@ -183,6 +226,8 @@ export function ScenePage({ scenes }: ScenePageProps) {
         onZoomOut={handleZoomOut}
         onCenter={handleCenter}
         zoom={zoom}
+        gyroMode={gyroMode}
+        onGyroModeToggle={handleGyroModeToggle}
       />
       <div className="app-content">
         <SceneEditorPanel
@@ -210,8 +255,16 @@ export function ScenePage({ scenes }: ScenePageProps) {
           <div
             id="canvas-container"
             ref={canvasRef}
-            onMouseDown={handleCanvasMouseDown}
-            style={isPanning ? { cursor: 'grabbing' } : zoom > 1 ? { cursor: 'grab' } : undefined}
+            onMouseDown={gyroMode ? undefined : handleCanvasMouseDown}
+            style={
+              gyroMode
+                ? { cursor: isGyroDragging.current ? 'crosshair' : 'crosshair' }
+                : isPanning
+                  ? { cursor: 'grabbing' }
+                  : zoom > 1
+                    ? { cursor: 'grab' }
+                    : undefined
+            }
           />
         </div>
       </div>
