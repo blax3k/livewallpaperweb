@@ -64558,7 +64558,7 @@ ${parts.join("\n")}
     ] });
   }
 
-  // src/SceneEditorPanel.tsx
+  // src/controls/SceneEditorPanel.tsx
   var import_jsx_runtime4 = __toESM(require_jsx_runtime());
   function SceneEditorPanel({
     sceneLoaded,
@@ -64662,7 +64662,7 @@ ${parts.join("\n")}
     ] });
   }
 
-  // src/TopBar.tsx
+  // src/controls/TopBar.tsx
   var import_jsx_runtime7 = __toESM(require_jsx_runtime());
   function TopBar({ scenes, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, onSceneSelect, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }) {
     return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "top-bar", children: [
@@ -64696,7 +64696,7 @@ ${parts.join("\n")}
     ] });
   }
 
-  // src/NotificationStack.tsx
+  // src/controls/NotificationStack.tsx
   var import_jsx_runtime8 = __toESM(require_jsx_runtime());
   function NotificationStack({ notifications }) {
     if (notifications.length === 0) return null;
