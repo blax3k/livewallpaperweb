@@ -7,17 +7,19 @@ export interface SceneOption {
 
 interface SceneSelectorControlProps {
   scenes: SceneOption[];
+  currentScene?: string | null;
   disabled?: boolean;
   onSelect: (sceneName: string) => void;
 }
 
-export function SceneSelectorControl({ scenes, disabled, onSelect }: SceneSelectorControlProps) {
+export function SceneSelectorControl({ scenes, currentScene, disabled, onSelect }: SceneSelectorControlProps) {
   return (
     <div className="control-group">
       <label htmlFor="scene-select">Scene:</label>
       <select
         id="scene-select"
         disabled={disabled}
+        value={currentScene ?? ''}
         onChange={(e) => {
           if (e.target.value) onSelect(e.target.value);
         }}

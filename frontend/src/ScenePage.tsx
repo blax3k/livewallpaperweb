@@ -13,7 +13,8 @@ interface ScenePageProps {
   scenes: SceneOption[];
 }
 
-export function ScenePage({ scenes }: ScenePageProps) {
+export function ScenePage({ scenes: initialScenes }: ScenePageProps) {
+  const [scenes, setScenes] = useState<SceneOption[]>(initialScenes);
   const history = useUndoHistory();
   const { notifications, notify } = useNotifications();
   const dragStartPos = useRef<{ x: number; y: number } | null>(null);
@@ -29,6 +30,7 @@ export function ScenePage({ scenes }: ScenePageProps) {
     canvasRef,
     rendererRef,
     showSceneControls,
+    currentSceneName,
     xFocus,
     spriteEntries,
     selectedSprite,
@@ -212,14 +214,37 @@ export function ScenePage({ scenes }: ScenePageProps) {
     }
   }, [selectedSprite, history]);
 
+  const handleNewScene = useCallback(async (label: string) => {
+    const name = label.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+    const emptyScene = { sprites: [], xFocus: 0.5 };
+    try {
+      const response = await fetch('/api/scenes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, label, data: emptyScene }),
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        notify((err as { error?: string }).error ?? 'Failed to create scene');
+        return;
+      }
+      setScenes(prev => [...prev, { value: name, label }].sort((a, b) => a.label.localeCompare(b.label)));
+      loadScene(name);
+    } catch {
+      notify('Failed to create scene');
+    }
+  }, [loadScene, notify]);
+
   return (
     <>
       <TopBar
         scenes={scenes}
+        currentSceneName={currentSceneName}
         sceneLoaded={showSceneControls}
         isSaving={isSaving}
         phoneGuideVisible={phoneGuideVisible}
         onSceneSelect={loadScene}
+        onNewScene={handleNewScene}
         onPhoneGuideToggle={handlePhoneGuideToggle}
         onSave={saveScene}
         onZoomIn={handleZoomIn}

@@ -56,8 +56,8 @@ export class SceneRenderer {
       const containerHeight = this.container.clientHeight || 400;
       const size = Math.min(containerWidth, containerHeight);
 
-      this.app = new PIXI.Application();
-      await this.app.init({
+      const app = new PIXI.Application();
+      await app.init({
         width: size,
         height: size,
         backgroundColor: 0x000000,
@@ -66,12 +66,15 @@ export class SceneRenderer {
         resolution: window.devicePixelRatio,
       });
 
-      this.container.appendChild(this.app.canvas);
-      const canvas = this.app.canvas as HTMLCanvasElement;
+      this.container.appendChild(app.canvas);
+      const canvas = app.canvas as HTMLCanvasElement;
       canvas.style.width = `${size}px`;
       canvas.style.height = `${size}px`;
       canvas.style.display = 'block';
 
+      // Set this.app only after full initialisation so loadScene's readiness
+      // check (while !this.app) correctly waits for the canvas to exist.
+      this.app = app;
       window.addEventListener('resize', this.resizeHandler);
     } catch (error) {
       console.error('Failed to initialize PixiJS:', error);
@@ -146,31 +149,30 @@ export class SceneRenderer {
    * Scale and position the scene to fit the canvas view
    * Centers the view around world x=0 (the room sprite)
    */
+  // Default world-space extent used when the scene has no sprites (matches PhoneGuide WORLD_HEIGHT)
+  private readonly DEFAULT_WORLD_SIZE = 10;
+
   private fitSceneToView(): void {
-    if (!this.app || this.sprites.length === 0) return;
+    if (!this.app) return;
 
-    // Calculate scene bounds (only for visible sprites)
-    let minX = Infinity;
-    let minY = Infinity;
-    let maxX = -Infinity;
-    let maxY = -Infinity;
+    let sceneWidth: number;
+    let sceneHeight: number;
 
-    for (const sprite of this.sprites) {
-      const metadata = this.spriteMetadata.get(sprite);
-      if (!metadata || !metadata.visible) continue;
+    if (this.sprites.length === 0) {
+      // No sprites yet — use the phone guide world dimensions so it renders at a sensible scale
+      sceneWidth = this.DEFAULT_WORLD_SIZE;
+      sceneHeight = this.DEFAULT_WORLD_SIZE;
+    } else {
+      // Calculate scene bounds (only for visible sprites)
+      let minX = Infinity;
+      let minY = Infinity;
+      let maxX = -Infinity;
+      let maxY = -Infinity;
 
-      const halfWidth = sprite.width / 2;
-      const halfHeight = sprite.height / 2;
-
-      minX = Math.min(minX, sprite.x - halfWidth);
-      minY = Math.min(minY, sprite.y - halfHeight);
-      maxX = Math.max(maxX, sprite.x + halfWidth);
-      maxY = Math.max(maxY, sprite.y + halfHeight);
-    }
-
-    // Fallback to all sprites if none are visible
-    if (minX === Infinity) {
       for (const sprite of this.sprites) {
+        const metadata = this.spriteMetadata.get(sprite);
+        if (!metadata || !metadata.visible) continue;
+
         const halfWidth = sprite.width / 2;
         const halfHeight = sprite.height / 2;
 
@@ -179,24 +181,34 @@ export class SceneRenderer {
         maxX = Math.max(maxX, sprite.x + halfWidth);
         maxY = Math.max(maxY, sprite.y + halfHeight);
       }
+
+      // Fallback to all sprites if none are visible
+      if (minX === Infinity) {
+        for (const sprite of this.sprites) {
+          const halfWidth = sprite.width / 2;
+          const halfHeight = sprite.height / 2;
+
+          minX = Math.min(minX, sprite.x - halfWidth);
+          minY = Math.min(minY, sprite.y - halfHeight);
+          maxX = Math.max(maxX, sprite.x + halfWidth);
+          maxY = Math.max(maxY, sprite.y + halfHeight);
+        }
+      }
+
+      // Pad outward and clamp to at least the default world size so Center never
+      // over-zooms on sparse scenes (e.g. a single small sprite in a new scene).
+      const padding = 0.1;
+      sceneWidth = Math.max(maxX - minX + 2 * padding, this.DEFAULT_WORLD_SIZE);
+      sceneHeight = Math.max(maxY - minY + 2 * padding, this.DEFAULT_WORLD_SIZE);
     }
-
-    // Add padding
-    const padding = 0.1;
-    minX -= padding;
-    minY -= padding;
-    maxX += padding;
-    maxY += padding;
-
-    const sceneWidth = maxX - minX;
-    const sceneHeight = maxY - minY;
     const canvasWidth = this.app.canvas.width;
     const canvasHeight = this.app.canvas.height;
 
-    // Calculate scale to fit scene in canvas
+    // Fit the scene exactly into the canvas (no extra zoom multiplier).
+    // ZOOM_SCALE was previously applied here, causing content to be 1.6× larger
+    // than the canvas — clipping the phone guide and over-zooming sparse scenes.
     const scale = Math.min(canvasWidth / sceneWidth, canvasHeight / sceneHeight);
-    const zoomedScale = scale * this.ZOOM_SCALE;
-    const effectiveScale = zoomedScale * this.userZoom;
+    const effectiveScale = scale * this.userZoom;
 
     // Position stage with world origin (0,0) centered on canvas
     this.app.stage.scale.set(effectiveScale, effectiveScale);

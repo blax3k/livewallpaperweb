@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { SceneSelectorControl, SceneOption } from './SceneSelectorControl';
 import { PhoneGuideControl } from './PhoneGuideControl';
+import { NewSceneDialog } from './NewSceneDialog';
 
 interface TopBarProps {
   scenes: SceneOption[];
+  currentSceneName: string | null;
   sceneLoaded: boolean;
   isSaving: boolean;
   phoneGuideVisible: boolean;
   zoom: number;
   gyroMode: boolean;
   onSceneSelect: (sceneName: string) => void;
+  onNewScene: (label: string) => void;
   onPhoneGuideToggle: (visible: boolean) => void;
   onSave: () => void;
   onZoomIn: () => void;
@@ -18,10 +21,24 @@ interface TopBarProps {
   onGyroModeToggle: () => void;
 }
 
-export function TopBar({ scenes, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, onSceneSelect, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }: TopBarProps) {
+export function TopBar({ scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, onSceneSelect, onNewScene, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }: TopBarProps) {
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const handleConfirm = (label: string) => {
+    setDialogOpen(false);
+    onNewScene(label);
+  };
+
   return (
     <div className="top-bar">
-      <SceneSelectorControl scenes={scenes} onSelect={onSceneSelect} />
+      <SceneSelectorControl scenes={scenes} currentScene={currentSceneName} onSelect={onSceneSelect} />
+      <button onClick={() => setDialogOpen(true)}>+ New Scene</button>
+      {dialogOpen && (
+        <NewSceneDialog
+          onConfirm={handleConfirm}
+          onCancel={() => setDialogOpen(false)}
+        />
+      )}
       <PhoneGuideControl
         checked={phoneGuideVisible}
         disabled={!sceneLoaded}

@@ -15,6 +15,7 @@ export interface SelectedSprite {
 
 export function useSceneRenderer(onNotify?: (message: string) => void) {
   const [showSceneControls, setShowSceneControls] = useState(false);
+  const [currentSceneName, setCurrentSceneName] = useState<string | null>(null);
   const [xFocus, setXFocus] = useState(0.5);
   const [spriteEntries, setSpriteEntries] = useState<SpriteEntry[]>([]);
   const [selectedSprite, setSelectedSprite] = useState<SelectedSprite | null>(null);
@@ -43,6 +44,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
       sceneIdRef.current = row.id;
       sceneNameRef.current = row.name;
       sceneLabelRef.current = row.label;
+      setCurrentSceneName(row.name);
 
       rendererRef.current?.destroy();
 
@@ -231,6 +233,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
     canvasRef,
     rendererRef,
     showSceneControls,
+    currentSceneName,
     xFocus,
     spriteEntries,
     selectedSprite,
