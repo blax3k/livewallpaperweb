@@ -68826,8 +68826,8 @@ ${e2}`);
       });
     }, []);
     const handleGyroOffset = (0, import_react7.useCallback)((deltaX, deltaY, canvasWidth, canvasHeight) => {
-      const gyroX = deltaX / canvasWidth * 0.5;
-      const gyroY = deltaY / canvasHeight * 0.5;
+      const gyroX = deltaX / canvasWidth * 2;
+      const gyroY = deltaY / canvasHeight * 2;
       rendererRef.current?.setGyroOffset(gyroX, gyroY);
     }, []);
     return {

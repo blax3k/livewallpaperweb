@@ -228,9 +228,9 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
 
   const handleGyroOffset = useCallback((deltaX: number, deltaY: number, canvasWidth: number, canvasHeight: number) => {
     // Map a drag delta to gyro offsets clamped to ±0.5 world units (matching Android's motionOffsetLimit).
-    // Dragging the full canvas width/height corresponds to the maximum ±0.5 offset.
-    const gyroX = (deltaX / canvasWidth) * 0.5;
-    const gyroY = (deltaY / canvasHeight) * 0.5;
+    // Dragging 2/3 of the canvas width/height reaches the ±0.5 maximum (factor = 0.5 * 1.5 = 0.75).
+    const gyroX = (deltaX / canvasWidth) * 2;
+    const gyroY = (deltaY / canvasHeight) * 2;
     rendererRef.current?.setGyroOffset(gyroX, gyroY);
   }, []);
 
