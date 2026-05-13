@@ -1,6 +1,6 @@
 import React from 'react';
-import { SceneSelectorControl, SceneOption } from './controls/SceneSelectorControl';
-import { PhoneGuideControl } from './controls/PhoneGuideControl';
+import { SceneSelectorControl, SceneOption } from './SceneSelectorControl';
+import { PhoneGuideControl } from './PhoneGuideControl';
 
 interface TopBarProps {
   scenes: SceneOption[];

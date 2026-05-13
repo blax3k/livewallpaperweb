@@ -1,7 +1,7 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
-import { SceneEditorPanel, SceneOption } from './SceneEditorPanel';
-import { TopBar } from './TopBar';
-import { NotificationStack } from './NotificationStack';
+import { SceneEditorPanel, SceneOption } from './controls/SceneEditorPanel';
+import { TopBar } from './controls/TopBar';
+import { NotificationStack } from './controls/NotificationStack';
 import { EditTextureModal } from './controls/EditTextureModal';
 import { useUndoHistory } from './hooks/useUndoHistory';
 import { useNotifications } from './hooks/useNotifications';

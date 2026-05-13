@@ -1,9 +1,9 @@
 import React from 'react';
-import { SpriteListPanel, SpriteEntry } from './controls/SpriteListPanel';
-import { XFocusControl } from './controls/XFocusControl';
-import { SpritePanelControl } from './controls/SpritePanelControl';
+import { SpriteListPanel, SpriteEntry } from './SpriteListPanel';
+import { XFocusControl } from './XFocusControl';
+import { SpritePanelControl } from './SpritePanelControl';
 
-export type { SceneOption } from './controls/SceneSelectorControl';
+export type { SceneOption } from './SceneSelectorControl';
 
 interface SelectedSprite {
   index: number;

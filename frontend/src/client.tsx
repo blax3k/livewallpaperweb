@@ -2,7 +2,7 @@ import './styles/main.scss';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { ScenePage } from './ScenePage';
-import type { SceneOption } from './SceneEditorPanel';
+import type { SceneOption } from './controls/SceneEditorPanel';
 
 window.addEventListener('DOMContentLoaded', async () => {
   try {

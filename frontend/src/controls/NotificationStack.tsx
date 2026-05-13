@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Notification } from './hooks/useNotifications';
+import type { Notification } from '../hooks/useNotifications';
 
 interface NotificationStackProps {
   notifications: Notification[];
