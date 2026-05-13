@@ -67953,6 +67953,7 @@ ${e2}`);
       this.baseStageY = 0;
       this.gyroOffsetX = 0;
       this.gyroOffsetY = 0;
+      this.isGyroScaled = false;
       this.originalSceneData = null;
       /**
        * Scale and position the scene to fit the canvas view
@@ -68542,6 +68543,49 @@ ${e2}`);
       return this.userZoom;
     }
     /**
+     * Apply gyro scaling to all sprites, matching Android's Scene.applyGyroScaling().
+     * Formula: scaleFactor = 1.0 + parallaxMultiplier * 0.1
+     * Both the sprite size and position are scaled away from center by this factor.
+     */
+    enableGyroScaling() {
+      if (this.isGyroScaled) return;
+      for (const sprite of this.sprites) {
+        const metadata = this.spriteMetadata.get(sprite);
+        if (!metadata) continue;
+        const scaleFactor = 1 + metadata.parallaxMultiplier * 0.1;
+        metadata.preGyroX = metadata.x;
+        metadata.preGyroY = metadata.y;
+        metadata.preGyroWidth = sprite.width;
+        metadata.preGyroHeight = sprite.height;
+        sprite.width = sprite.width * scaleFactor;
+        sprite.height = sprite.height * scaleFactor;
+        metadata.x = metadata.x * scaleFactor;
+        metadata.y = metadata.y * scaleFactor;
+      }
+      this.isGyroScaled = true;
+      this.applyAllPositions();
+    }
+    /**
+     * Remove gyro scaling and restore all sprites to their pre-gyro dimensions and positions.
+     */
+    disableGyroScaling() {
+      if (!this.isGyroScaled) return;
+      for (const sprite of this.sprites) {
+        const metadata = this.spriteMetadata.get(sprite);
+        if (!metadata) continue;
+        if (metadata.preGyroWidth !== void 0) sprite.width = metadata.preGyroWidth;
+        if (metadata.preGyroHeight !== void 0) sprite.height = metadata.preGyroHeight;
+        if (metadata.preGyroX !== void 0) metadata.x = metadata.preGyroX;
+        if (metadata.preGyroY !== void 0) metadata.y = metadata.preGyroY;
+        metadata.preGyroX = void 0;
+        metadata.preGyroY = void 0;
+        metadata.preGyroWidth = void 0;
+        metadata.preGyroHeight = void 0;
+      }
+      this.isGyroScaled = false;
+      this.applyAllPositions();
+    }
+    /**
      * Set gyroscope simulation offsets in world units (clamped to ±0.5).
      * gyroX maps to left/right tilt, gyroY to forward/back tilt.
      */
@@ -68806,7 +68850,12 @@ ${e2}`);
     const [gyroMode, setGyroMode] = (0, import_react7.useState)(false);
     const handleGyroModeToggle = (0, import_react7.useCallback)(() => {
       setGyroMode((prev) => {
-        if (prev) rendererRef.current?.clearGyroOffset();
+        if (prev) {
+          rendererRef.current?.clearGyroOffset();
+          rendererRef.current?.disableGyroScaling();
+        } else {
+          rendererRef.current?.enableGyroScaling();
+        }
         return !prev;
       });
     }, []);

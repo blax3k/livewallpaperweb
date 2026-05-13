@@ -12,6 +12,11 @@ interface SpriteMetadata {
   visible: boolean;
   originalWidth: number;
   originalHeight: number;
+  // Preserved values while gyro scaling is active
+  preGyroX?: number;
+  preGyroY?: number;
+  preGyroWidth?: number;
+  preGyroHeight?: number;
 }
 
 /**
@@ -36,6 +41,7 @@ export class SceneRenderer {
   private baseStageY: number = 0;
   private gyroOffsetX: number = 0;
   private gyroOffsetY: number = 0;
+  private isGyroScaled: boolean = false;
   private originalSceneData: Scene | null = null;
 
   constructor(container: HTMLElement) {
@@ -764,6 +770,51 @@ export class SceneRenderer {
 
   getZoom(): number {
     return this.userZoom;
+  }
+
+  /**
+   * Apply gyro scaling to all sprites, matching Android's Scene.applyGyroScaling().
+   * Formula: scaleFactor = 1.0 + parallaxMultiplier * 0.1
+   * Both the sprite size and position are scaled away from center by this factor.
+   */
+  enableGyroScaling(): void {
+    if (this.isGyroScaled) return;
+    for (const sprite of this.sprites) {
+      const metadata = this.spriteMetadata.get(sprite);
+      if (!metadata) continue;
+      const scaleFactor = 1.0 + metadata.parallaxMultiplier * 0.1;
+      metadata.preGyroX = metadata.x;
+      metadata.preGyroY = metadata.y;
+      metadata.preGyroWidth = sprite.width;
+      metadata.preGyroHeight = sprite.height;
+      sprite.width = sprite.width * scaleFactor;
+      sprite.height = sprite.height * scaleFactor;
+      metadata.x = metadata.x * scaleFactor;
+      metadata.y = metadata.y * scaleFactor;
+    }
+    this.isGyroScaled = true;
+    this.applyAllPositions();
+  }
+
+  /**
+   * Remove gyro scaling and restore all sprites to their pre-gyro dimensions and positions.
+   */
+  disableGyroScaling(): void {
+    if (!this.isGyroScaled) return;
+    for (const sprite of this.sprites) {
+      const metadata = this.spriteMetadata.get(sprite);
+      if (!metadata) continue;
+      if (metadata.preGyroWidth !== undefined) sprite.width = metadata.preGyroWidth;
+      if (metadata.preGyroHeight !== undefined) sprite.height = metadata.preGyroHeight;
+      if (metadata.preGyroX !== undefined) metadata.x = metadata.preGyroX;
+      if (metadata.preGyroY !== undefined) metadata.y = metadata.preGyroY;
+      metadata.preGyroX = undefined;
+      metadata.preGyroY = undefined;
+      metadata.preGyroWidth = undefined;
+      metadata.preGyroHeight = undefined;
+    }
+    this.isGyroScaled = false;
+    this.applyAllPositions();
   }
 
   /**

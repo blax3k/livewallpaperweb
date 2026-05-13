@@ -216,7 +216,12 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
 
   const handleGyroModeToggle = useCallback(() => {
     setGyroMode(prev => {
-      if (prev) rendererRef.current?.clearGyroOffset();
+      if (prev) {
+        rendererRef.current?.clearGyroOffset();
+        rendererRef.current?.disableGyroScaling();
+      } else {
+        rendererRef.current?.enableGyroScaling();
+      }
       return !prev;
     });
   }, []);
