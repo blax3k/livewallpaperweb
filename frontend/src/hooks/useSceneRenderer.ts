@@ -38,13 +38,13 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
   const loadScene = useCallback(async (sceneName: string) => {
     try {
       const response = await fetch(`/api/scenes/${sceneName}`);
-      const row: { id: string; name: string; label: string; data: Scene } = await response.json();
-      const sceneData: Scene = row.data;
+      const scene: { id: string; name: string; label: string; data: Scene } = await response.json();
+      const sceneData: Scene = scene.data;
 
-      sceneIdRef.current = row.id;
-      sceneNameRef.current = row.name;
-      sceneLabelRef.current = row.label;
-      setCurrentSceneName(row.name);
+      sceneIdRef.current = scene.id;
+      sceneNameRef.current = scene.name;
+      sceneLabelRef.current = scene.label;
+      setCurrentSceneName(scene.name);
 
       rendererRef.current?.destroy();
 
@@ -186,7 +186,6 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
   }, [refreshSpriteList]);
 
   const ZOOM_FACTOR = 1.25;
-  const WHEEL_ZOOM_FACTOR = 1.15;
 
   const handleZoomIn = useCallback(() => {
     rendererRef.current?.zoomAtCenter(ZOOM_FACTOR);
