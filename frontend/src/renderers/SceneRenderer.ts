@@ -161,59 +161,13 @@ export class SceneRenderer {
   private fitSceneToView(): void {
     if (!this.app) return;
 
-    let sceneWidth: number;
-    let sceneHeight: number;
-
-    if (this.sprites.length === 0) {
-      // No sprites yet — use the phone guide world dimensions so it renders at a sensible scale
-      sceneWidth = this.DEFAULT_WORLD_SIZE;
-      sceneHeight = this.DEFAULT_WORLD_SIZE;
-    } else {
-      // Calculate scene bounds (only for visible sprites)
-      let minX = Infinity;
-      let minY = Infinity;
-      let maxX = -Infinity;
-      let maxY = -Infinity;
-
-      for (const sprite of this.sprites) {
-        const metadata = this.spriteMetadata.get(sprite);
-        if (!metadata || !metadata.visible) continue;
-
-        const halfWidth = sprite.width / 2;
-        const halfHeight = sprite.height / 2;
-
-        minX = Math.min(minX, sprite.x - halfWidth);
-        minY = Math.min(minY, sprite.y - halfHeight);
-        maxX = Math.max(maxX, sprite.x + halfWidth);
-        maxY = Math.max(maxY, sprite.y + halfHeight);
-      }
-
-      // Fallback to all sprites if none are visible
-      if (minX === Infinity) {
-        for (const sprite of this.sprites) {
-          const halfWidth = sprite.width / 2;
-          const halfHeight = sprite.height / 2;
-
-          minX = Math.min(minX, sprite.x - halfWidth);
-          minY = Math.min(minY, sprite.y - halfHeight);
-          maxX = Math.max(maxX, sprite.x + halfWidth);
-          maxY = Math.max(maxY, sprite.y + halfHeight);
-        }
-      }
-
-      // Pad outward and clamp to at least the default world size so Center never
-      // over-zooms on sparse scenes (e.g. a single small sprite in a new scene).
-      const padding = 0.1;
-      sceneWidth = Math.max(maxX - minX + 2 * padding, this.DEFAULT_WORLD_SIZE);
-      sceneHeight = Math.max(maxY - minY + 2 * padding, this.DEFAULT_WORLD_SIZE);
-    }
     const canvasWidth = this.app.canvas.width;
     const canvasHeight = this.app.canvas.height;
 
-    // Fit the scene exactly into the canvas (no extra zoom multiplier).
-    // ZOOM_SCALE was previously applied here, causing content to be 1.6× larger
-    // than the canvas — clipping the phone guide and over-zooming sparse scenes.
-    const scale = Math.min(canvasWidth / sceneWidth, canvasHeight / sceneHeight);
+    // Always frame the fixed 10-unit world — this matches Android where the viewport is
+    // always the phone screen regardless of how far sprites extend. The phone guide
+    // (GUIDE_HEIGHT=9.99) will consistently fill the top/bottom edges of the canvas.
+    const scale = Math.min(canvasWidth / this.DEFAULT_WORLD_SIZE, canvasHeight / this.DEFAULT_WORLD_SIZE);
     const effectiveScale = scale * this.userZoom;
 
     // Position stage with world origin (0,0) centered on canvas
@@ -709,7 +663,7 @@ export class SceneRenderer {
     return this.app ? (this.app.canvas as HTMLCanvasElement) : null;
   }
 
-  private static readonly MIN_ZOOM = 1.0;
+  private static readonly MIN_ZOOM = 0.2;
   private static readonly MAX_ZOOM = 8.0;
 
   private applyZoomPivot(cssX: number, cssY: number, scaleFactor: number): void {

@@ -68044,43 +68044,9 @@ ${e2}`);
     }
     fitSceneToView() {
       if (!this.app) return;
-      let sceneWidth;
-      let sceneHeight;
-      if (this.sprites.length === 0) {
-        sceneWidth = this.DEFAULT_WORLD_SIZE;
-        sceneHeight = this.DEFAULT_WORLD_SIZE;
-      } else {
-        let minX = Infinity;
-        let minY = Infinity;
-        let maxX = -Infinity;
-        let maxY = -Infinity;
-        for (const sprite of this.sprites) {
-          const metadata = this.spriteMetadata.get(sprite);
-          if (!metadata || !metadata.visible) continue;
-          const halfWidth = sprite.width / 2;
-          const halfHeight = sprite.height / 2;
-          minX = Math.min(minX, sprite.x - halfWidth);
-          minY = Math.min(minY, sprite.y - halfHeight);
-          maxX = Math.max(maxX, sprite.x + halfWidth);
-          maxY = Math.max(maxY, sprite.y + halfHeight);
-        }
-        if (minX === Infinity) {
-          for (const sprite of this.sprites) {
-            const halfWidth = sprite.width / 2;
-            const halfHeight = sprite.height / 2;
-            minX = Math.min(minX, sprite.x - halfWidth);
-            minY = Math.min(minY, sprite.y - halfHeight);
-            maxX = Math.max(maxX, sprite.x + halfWidth);
-            maxY = Math.max(maxY, sprite.y + halfHeight);
-          }
-        }
-        const padding = 0.1;
-        sceneWidth = Math.max(maxX - minX + 2 * padding, this.DEFAULT_WORLD_SIZE);
-        sceneHeight = Math.max(maxY - minY + 2 * padding, this.DEFAULT_WORLD_SIZE);
-      }
       const canvasWidth = this.app.canvas.width;
       const canvasHeight = this.app.canvas.height;
-      const scale = Math.min(canvasWidth / sceneWidth, canvasHeight / sceneHeight);
+      const scale = Math.min(canvasWidth / this.DEFAULT_WORLD_SIZE, canvasHeight / this.DEFAULT_WORLD_SIZE);
       const effectiveScale = scale * this.userZoom;
       this.app.stage.scale.set(effectiveScale, effectiveScale);
       this.app.stage.x = canvasWidth / 2;
@@ -68489,7 +68455,7 @@ ${e2}`);
       return this.app ? this.app.canvas : null;
     }
     static {
-      this.MIN_ZOOM = 1;
+      this.MIN_ZOOM = 0.2;
     }
     static {
       this.MAX_ZOOM = 8;
