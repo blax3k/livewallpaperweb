@@ -328,7 +328,7 @@ export class SceneRenderer {
       const metadata = this.spriteMetadata.get(sprite);
       if (metadata) {
         sprite.x = metadata.x + (scrollOffset + this.gyroOffsetX) * metadata.parallaxMultiplier;
-        sprite.y = metadata.y + this.gyroOffsetY * metadata.parallaxMultiplier;
+        sprite.y = -metadata.y + this.gyroOffsetY * metadata.parallaxMultiplier;
       }
     }
 
