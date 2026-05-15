@@ -20,6 +20,7 @@ export function ScenePage({ scenes: initialScenes }: ScenePageProps) {
   const dragStartPos = useRef<{ x: number; y: number } | null>(null);
   const dragStartSize = useRef<{ width: number; height: number } | null>(null);
   const dragStartDepth = useRef<number | null>(null);
+  const dragStartXFocus = useRef<number | null>(null);
   const midDragStart = useRef<{ x: number; y: number } | null>(null);
   const [isPanning, setIsPanning] = useState(false);
   const isGyroDragging = useRef(false);
@@ -87,6 +88,7 @@ export function ScenePage({ scenes: initialScenes }: ScenePageProps) {
     onSpriteMove: applySelectedSpriteMove,
     onScaleApply: applySelectedSpriteSize,
     onDepthApply: handleSpriteDepthApply,
+    onXFocusApply: handleXFocusChange,
   });
 
   useEffect(() => {
@@ -209,6 +211,19 @@ export function ScenePage({ scenes: initialScenes }: ScenePageProps) {
     dragStartDepth.current = depth;
   }, []);
 
+  const handleXFocusChangeStart = useCallback((value: number) => {
+    dragStartXFocus.current = value;
+  }, []);
+
+  const handleXFocusCommit = useCallback((value: number) => {
+    if (dragStartXFocus.current === null) return;
+    const before = dragStartXFocus.current;
+    dragStartXFocus.current = null;
+    if (before !== value) {
+      history.push({ type: 'xFocus', before, after: value });
+    }
+  }, [history]);
+
   const handleSpriteDepthCommit = useCallback((depth: number) => {
     if (!selectedSprite || dragStartDepth.current === null) return;
     const before = dragStartDepth.current;
@@ -267,6 +282,8 @@ export function ScenePage({ scenes: initialScenes }: ScenePageProps) {
           spriteEntries={spriteEntries}
           selectedSprite={selectedSprite}
           onXFocusChange={handleXFocusChange}
+          onXFocusChangeStart={handleXFocusChangeStart}
+          onXFocusCommit={handleXFocusCommit}
           onStartTimeChange={handleStartTimeChange}
           onEndTimeChange={handleEndTimeChange}
           onSpriteToggle={handleSpriteToggle}

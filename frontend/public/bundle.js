@@ -64325,7 +64325,7 @@ ${parts.join("\n")}
 
   // src/controls/XFocusControl.tsx
   var import_jsx_runtime2 = __toESM(require_jsx_runtime());
-  function XFocusControl({ disabled, value, onChange }) {
+  function XFocusControl({ disabled, value, onChange, onChangeStart, onChangeCommit }) {
     return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "control-group", children: [
       /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("label", { htmlFor: "xfocus-slider", children: "Camera Focus:" }),
       /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "xfocus-row", children: [
@@ -64339,7 +64339,9 @@ ${parts.join("\n")}
             step: "0.01",
             value,
             disabled,
-            onChange: (e2) => onChange(parseFloat(e2.target.value))
+            onMouseDown: () => onChangeStart?.(value),
+            onChange: (e2) => onChange(parseFloat(e2.target.value)),
+            onMouseUp: (e2) => onChangeCommit?.(parseFloat(e2.target.value))
           }
         ),
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { children: value.toFixed(2) })
@@ -64568,6 +64570,8 @@ ${parts.join("\n")}
     spriteEntries,
     selectedSprite,
     onXFocusChange,
+    onXFocusChangeStart,
+    onXFocusCommit,
     onStartTimeChange,
     onEndTimeChange,
     onSpriteToggle,
@@ -64596,7 +64600,7 @@ ${parts.join("\n")}
     }
     return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "controls", children: [
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { children: "Scene" }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(XFocusControl, { disabled: !sceneLoaded, value: xFocus, onChange: onXFocusChange }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(XFocusControl, { disabled: !sceneLoaded, value: xFocus, onChange: onXFocusChange, onChangeStart: onXFocusChangeStart, onChangeCommit: onXFocusCommit }),
       /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "control-group", children: [
         /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { htmlFor: "start-time-input", children: "Start Time:" }),
         /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
@@ -69016,7 +69020,8 @@ ${e2}`);
     onRedoApply,
     onSpriteMove,
     onScaleApply,
-    onDepthApply
+    onDepthApply,
+    onXFocusApply
   }) {
     (0, import_react9.useEffect)(() => {
       const handleKeyDown = (e2) => {
@@ -69032,6 +69037,9 @@ ${e2}`);
               onScaleApply?.(action.before.width, action.before.height);
             } else if (action.type === "depth") {
               onDepthApply?.(action.before, action.spriteIndex);
+            } else if (action.type === "xFocus") {
+              rendererRef.current?.setScrollOffset(action.before);
+              onXFocusApply?.(action.before);
             }
           }
           return;
@@ -69048,6 +69056,9 @@ ${e2}`);
               onScaleApply?.(action.after.width, action.after.height);
             } else if (action.type === "depth") {
               onDepthApply?.(action.after, action.spriteIndex);
+            } else if (action.type === "xFocus") {
+              rendererRef.current?.setScrollOffset(action.after);
+              onXFocusApply?.(action.after);
             }
           }
           return;
@@ -69082,6 +69093,7 @@ ${e2}`);
     const dragStartPos = (0, import_react10.useRef)(null);
     const dragStartSize = (0, import_react10.useRef)(null);
     const dragStartDepth = (0, import_react10.useRef)(null);
+    const dragStartXFocus = (0, import_react10.useRef)(null);
     const midDragStart = (0, import_react10.useRef)(null);
     const [isPanning, setIsPanning] = (0, import_react10.useState)(false);
     const isGyroDragging = (0, import_react10.useRef)(false);
@@ -69143,7 +69155,8 @@ ${e2}`);
       onRedoApply: applySelectedSpriteMove,
       onSpriteMove: applySelectedSpriteMove,
       onScaleApply: applySelectedSpriteSize,
-      onDepthApply: handleSpriteDepthApply
+      onDepthApply: handleSpriteDepthApply,
+      onXFocusApply: handleXFocusChange
     });
     (0, import_react10.useEffect)(() => {
       const el = canvasRef.current;
@@ -69249,6 +69262,17 @@ ${e2}`);
     const handleSpriteDepthChangeStart = (0, import_react10.useCallback)((depth) => {
       dragStartDepth.current = depth;
     }, []);
+    const handleXFocusChangeStart = (0, import_react10.useCallback)((value) => {
+      dragStartXFocus.current = value;
+    }, []);
+    const handleXFocusCommit = (0, import_react10.useCallback)((value) => {
+      if (dragStartXFocus.current === null) return;
+      const before = dragStartXFocus.current;
+      dragStartXFocus.current = null;
+      if (before !== value) {
+        history.push({ type: "xFocus", before, after: value });
+      }
+    }, [history]);
     const handleSpriteDepthCommit = (0, import_react10.useCallback)((depth) => {
       if (!selectedSprite || dragStartDepth.current === null) return;
       const before = dragStartDepth.current;
@@ -69309,6 +69333,8 @@ ${e2}`);
             spriteEntries,
             selectedSprite,
             onXFocusChange: handleXFocusChange,
+            onXFocusChangeStart: handleXFocusChangeStart,
+            onXFocusCommit: handleXFocusCommit,
             onStartTimeChange: handleStartTimeChange,
             onEndTimeChange: handleEndTimeChange,
             onSpriteToggle: handleSpriteToggle,

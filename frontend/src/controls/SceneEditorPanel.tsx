@@ -23,6 +23,8 @@ interface SceneEditorPanelProps {
   spriteEntries: SpriteEntry[];
   selectedSprite: SelectedSprite | null;
   onXFocusChange: (value: number) => void;
+  onXFocusChangeStart?: (value: number) => void;
+  onXFocusCommit?: (value: number) => void;
   onStartTimeChange: (value: number) => void;
   onEndTimeChange: (value: number) => void;
   onSpriteToggle: (index: number) => void;
@@ -49,6 +51,8 @@ export function SceneEditorPanel({
   spriteEntries,
   selectedSprite,
   onXFocusChange,
+  onXFocusChangeStart,
+  onXFocusCommit,
   onStartTimeChange,
   onEndTimeChange,
   onSpriteToggle,
@@ -80,7 +84,7 @@ export function SceneEditorPanel({
   return (
     <div className="controls">
       <h2>Scene</h2>
-      <XFocusControl disabled={!sceneLoaded} value={xFocus} onChange={onXFocusChange} />
+      <XFocusControl disabled={!sceneLoaded} value={xFocus} onChange={onXFocusChange} onChangeStart={onXFocusChangeStart} onChangeCommit={onXFocusCommit} />
       <div className="control-group">
         <label htmlFor="start-time-input">Start Time:</label>
         <input

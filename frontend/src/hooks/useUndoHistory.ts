@@ -21,7 +21,13 @@ export interface DepthAction {
   after: number;
 }
 
-export type HistoryAction = PositionAction | ScaleAction | DepthAction;
+export interface XFocusAction {
+  type: 'xFocus';
+  before: number;
+  after: number;
+}
+
+export type HistoryAction = PositionAction | ScaleAction | DepthAction | XFocusAction;
 
 export function useUndoHistory() {
   const past = useRef<HistoryAction[]>([]);

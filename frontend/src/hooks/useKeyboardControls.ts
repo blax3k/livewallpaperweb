@@ -14,6 +14,7 @@ interface UseKeyboardControlsOptions {
   onSpriteMove: (x: number, y: number) => void;
   onScaleApply?: (width: number, height: number) => void;
   onDepthApply?: (depth: number, spriteIndex: number) => void;
+  onXFocusApply?: (value: number) => void;
 }
 
 export function useKeyboardControls({
@@ -25,6 +26,7 @@ export function useKeyboardControls({
   onSpriteMove,
   onScaleApply,
   onDepthApply,
+  onXFocusApply,
 }: UseKeyboardControlsOptions) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -41,6 +43,9 @@ export function useKeyboardControls({
             onScaleApply?.(action.before.width, action.before.height);
           } else if (action.type === 'depth') {
             onDepthApply?.(action.before, action.spriteIndex);
+          } else if (action.type === 'xFocus') {
+            rendererRef.current?.setScrollOffset(action.before);
+            onXFocusApply?.(action.before);
           }
         }
         return;
@@ -58,6 +63,9 @@ export function useKeyboardControls({
             onScaleApply?.(action.after.width, action.after.height);
           } else if (action.type === 'depth') {
             onDepthApply?.(action.after, action.spriteIndex);
+          } else if (action.type === 'xFocus') {
+            rendererRef.current?.setScrollOffset(action.after);
+            onXFocusApply?.(action.after);
           }
         }
         return;
