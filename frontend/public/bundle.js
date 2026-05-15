@@ -64563,9 +64563,13 @@ ${parts.join("\n")}
   function SceneEditorPanel({
     sceneLoaded,
     xFocus,
+    startTime,
+    endTime,
     spriteEntries,
     selectedSprite,
     onXFocusChange,
+    onStartTimeChange,
+    onEndTimeChange,
     onSpriteToggle,
     onSpriteSelect,
     onAddSprite,
@@ -64581,9 +64585,44 @@ ${parts.join("\n")}
     onSpriteSizeChangeStart,
     onSpriteSizeCommit
   }) {
+    function minutesToTimeString(minutes) {
+      const h2 = Math.floor(minutes / 60) % 24;
+      const m2 = minutes % 60;
+      return `${String(h2).padStart(2, "0")}:${String(m2).padStart(2, "0")}`;
+    }
+    function timeStringToMinutes(timeStr) {
+      const [h2, m2] = timeStr.split(":").map(Number);
+      return h2 * 60 + m2;
+    }
     return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "controls", children: [
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { children: "Scene" }),
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(XFocusControl, { disabled: !sceneLoaded, value: xFocus, onChange: onXFocusChange }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "control-group", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { htmlFor: "start-time-input", children: "Start Time:" }),
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+          "input",
+          {
+            type: "time",
+            id: "start-time-input",
+            disabled: !sceneLoaded,
+            value: minutesToTimeString(startTime),
+            onChange: (e2) => onStartTimeChange(timeStringToMinutes(e2.target.value))
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "control-group", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { htmlFor: "end-time-input", children: "End Time:" }),
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+          "input",
+          {
+            type: "time",
+            id: "end-time-input",
+            disabled: !sceneLoaded,
+            value: minutesToTimeString(endTime),
+            onChange: (e2) => onEndTimeChange(timeStringToMinutes(e2.target.value))
+          }
+        )
+      ] }),
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { children: "Sprites" }),
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
         SpriteListPanel,
@@ -67945,6 +67984,8 @@ ${e2}`);
       this.phoneGuide = null;
       this.showPhoneGuideFlag = false;
       this.currentXFocus = 0.5;
+      this.currentStartTime = 0;
+      this.currentEndTime = 1439;
       this.selectionHighlight = null;
       this.selectedHighlightIndex = null;
       this.ZOOM_SCALE = 1.6;
@@ -68037,6 +68078,8 @@ ${e2}`);
         guideGraphics.visible = this.showPhoneGuideFlag;
       }
       this.originalSceneData = sceneData;
+      this.currentStartTime = sceneData.startTime ?? 0;
+      this.currentEndTime = sceneData.endTime ?? 1439;
       this.sortSpritesByParallax();
       this.userZoom = 1;
       this.fitSceneToView();
@@ -68163,6 +68206,12 @@ ${e2}`);
     setScrollOffset(xFocus) {
       this.currentXFocus = xFocus;
       this.applyAllPositions();
+    }
+    setStartTime(value) {
+      this.currentStartTime = value;
+    }
+    setEndTime(value) {
+      this.currentEndTime = value;
     }
     applyAllPositions() {
       const SCROLL_SCALE = 5;
@@ -68393,6 +68442,8 @@ ${e2}`);
       return {
         ...this.originalSceneData,
         xFocus: this.currentXFocus,
+        startTime: this.currentStartTime,
+        endTime: this.currentEndTime,
         sprites: this.sprites.map((sprite) => {
           const metadata = this.spriteMetadata.get(sprite);
           const original = originalByName.get(metadata?.name ?? "") ?? this.originalSceneData.sprites[0];
@@ -68645,6 +68696,8 @@ ${e2}`);
     const [showSceneControls, setShowSceneControls] = (0, import_react7.useState)(false);
     const [currentSceneName, setCurrentSceneName] = (0, import_react7.useState)(null);
     const [xFocus, setXFocus] = (0, import_react7.useState)(0.5);
+    const [startTime, setStartTime] = (0, import_react7.useState)(0);
+    const [endTime, setEndTime] = (0, import_react7.useState)(1439);
     const [spriteEntries, setSpriteEntries] = (0, import_react7.useState)([]);
     const [selectedSprite, setSelectedSprite] = (0, import_react7.useState)(null);
     const [isSaving, setIsSaving] = (0, import_react7.useState)(false);
@@ -68664,12 +68717,12 @@ ${e2}`);
     const loadScene = (0, import_react7.useCallback)(async (sceneName) => {
       try {
         const response = await fetch(`/api/scenes/${sceneName}`);
-        const row = await response.json();
-        const sceneData = row.data;
-        sceneIdRef.current = row.id;
-        sceneNameRef.current = row.name;
-        sceneLabelRef.current = row.label;
-        setCurrentSceneName(row.name);
+        const scene = await response.json();
+        const sceneData = scene.data;
+        sceneIdRef.current = scene.id;
+        sceneNameRef.current = scene.name;
+        sceneLabelRef.current = scene.label;
+        setCurrentSceneName(scene.name);
         rendererRef.current?.destroy();
         if (!canvasRef.current) return;
         const renderer = new SceneRenderer(canvasRef.current);
@@ -68679,6 +68732,8 @@ ${e2}`);
         setZoom(1);
         const focus = sceneData.xFocus ?? 0.5;
         setXFocus(focus);
+        setStartTime(sceneData.startTime ?? 0);
+        setEndTime(sceneData.endTime ?? 1439);
         setShowSceneControls(true);
         refreshSpriteList(renderer);
         const firstPos = renderer.getSpritePosition(0);
@@ -68717,6 +68772,14 @@ ${e2}`);
     const handleXFocusChange = (0, import_react7.useCallback)((value) => {
       setXFocus(value);
       rendererRef.current?.setScrollOffset(value);
+    }, []);
+    const handleStartTimeChange = (0, import_react7.useCallback)((value) => {
+      setStartTime(value);
+      rendererRef.current?.setStartTime(value);
+    }, []);
+    const handleEndTimeChange = (0, import_react7.useCallback)((value) => {
+      setEndTime(value);
+      rendererRef.current?.setEndTime(value);
     }, []);
     const handlePhoneGuideToggle = (0, import_react7.useCallback)((visible) => {
       phoneGuideVisibleRef.current = visible;
@@ -68792,7 +68855,6 @@ ${e2}`);
       });
     }, [refreshSpriteList]);
     const ZOOM_FACTOR = 1.25;
-    const WHEEL_ZOOM_FACTOR = 1.15;
     const handleZoomIn = (0, import_react7.useCallback)(() => {
       rendererRef.current?.zoomAtCenter(ZOOM_FACTOR);
       setZoom(rendererRef.current?.getZoom() ?? 1);
@@ -68836,6 +68898,8 @@ ${e2}`);
       showSceneControls,
       currentSceneName,
       xFocus,
+      startTime,
+      endTime,
       spriteEntries,
       selectedSprite,
       setSelectedSprite,
@@ -68844,6 +68908,8 @@ ${e2}`);
       loadScene,
       saveScene,
       handleXFocusChange,
+      handleStartTimeChange,
+      handleEndTimeChange,
       handlePhoneGuideToggle,
       handleSpriteToggle,
       handleSpriteSelect,
@@ -69027,6 +69093,8 @@ ${e2}`);
       showSceneControls,
       currentSceneName,
       xFocus,
+      startTime,
+      endTime,
       spriteEntries,
       selectedSprite,
       setSelectedSprite,
@@ -69035,6 +69103,8 @@ ${e2}`);
       loadScene,
       saveScene,
       handleXFocusChange,
+      handleStartTimeChange,
+      handleEndTimeChange,
       handlePhoneGuideToggle,
       handleSpriteToggle,
       handleSpriteSelect,
@@ -69234,9 +69304,13 @@ ${e2}`);
           {
             sceneLoaded: showSceneControls,
             xFocus,
+            startTime,
+            endTime,
             spriteEntries,
             selectedSprite,
             onXFocusChange: handleXFocusChange,
+            onStartTimeChange: handleStartTimeChange,
+            onEndTimeChange: handleEndTimeChange,
             onSpriteToggle: handleSpriteToggle,
             onSpriteSelect: handleSpriteSelect,
             onAddSprite: handleAddSprite,

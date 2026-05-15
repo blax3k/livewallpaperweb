@@ -18,9 +18,13 @@ interface SelectedSprite {
 interface SceneEditorPanelProps {
   sceneLoaded: boolean;
   xFocus: number;
+  startTime: number;
+  endTime: number;
   spriteEntries: SpriteEntry[];
   selectedSprite: SelectedSprite | null;
   onXFocusChange: (value: number) => void;
+  onStartTimeChange: (value: number) => void;
+  onEndTimeChange: (value: number) => void;
   onSpriteToggle: (index: number) => void;
   onSpriteSelect: (index: number) => void;
   onAddSprite: (textureResource: string) => void;
@@ -40,9 +44,13 @@ interface SceneEditorPanelProps {
 export function SceneEditorPanel({
   sceneLoaded,
   xFocus,
+  startTime,
+  endTime,
   spriteEntries,
   selectedSprite,
   onXFocusChange,
+  onStartTimeChange,
+  onEndTimeChange,
   onSpriteToggle,
   onSpriteSelect,
   onAddSprite,
@@ -58,10 +66,41 @@ export function SceneEditorPanel({
   onSpriteSizeChangeStart,
   onSpriteSizeCommit,
 }: SceneEditorPanelProps) {
+  function minutesToTimeString(minutes: number): string {
+    const h = Math.floor(minutes / 60) % 24;
+    const m = minutes % 60;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+  }
+
+  function timeStringToMinutes(timeStr: string): number {
+    const [h, m] = timeStr.split(':').map(Number);
+    return h * 60 + m;
+  }
+
   return (
     <div className="controls">
       <h2>Scene</h2>
       <XFocusControl disabled={!sceneLoaded} value={xFocus} onChange={onXFocusChange} />
+      <div className="control-group">
+        <label htmlFor="start-time-input">Start Time:</label>
+        <input
+          type="time"
+          id="start-time-input"
+          disabled={!sceneLoaded}
+          value={minutesToTimeString(startTime)}
+          onChange={(e) => onStartTimeChange(timeStringToMinutes(e.target.value))}
+        />
+      </div>
+      <div className="control-group">
+        <label htmlFor="end-time-input">End Time:</label>
+        <input
+          type="time"
+          id="end-time-input"
+          disabled={!sceneLoaded}
+          value={minutesToTimeString(endTime)}
+          onChange={(e) => onEndTimeChange(timeStringToMinutes(e.target.value))}
+        />
+      </div>
       <h2>Sprites</h2>
       <div className="control-group">
         <SpriteListPanel

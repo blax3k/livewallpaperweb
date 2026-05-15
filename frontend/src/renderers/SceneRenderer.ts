@@ -33,6 +33,8 @@ export class SceneRenderer {
   private phoneGuide: PhoneGuide | null = null;
   private showPhoneGuideFlag: boolean = false;
   private currentXFocus: number = 0.5;
+  private currentStartTime: number = 0;
+  private currentEndTime: number = 1439;
   private selectionHighlight: PIXI.Graphics | null = null;
   private selectedHighlightIndex: number | null = null;
   private readonly ZOOM_SCALE = 1.6;
@@ -141,6 +143,8 @@ export class SceneRenderer {
 
     // Store original scene data for later serialization
     this.originalSceneData = sceneData;
+    this.currentStartTime = sceneData.startTime ?? 0;
+    this.currentEndTime = sceneData.endTime ?? 1439;
 
     // Sort sprites by parallax so list and draw order are consistent
     this.sortSpritesByParallax();
@@ -306,6 +310,14 @@ export class SceneRenderer {
   setScrollOffset(xFocus: number): void {
     this.currentXFocus = xFocus;
     this.applyAllPositions();
+  }
+
+  setStartTime(value: number): void {
+    this.currentStartTime = value;
+  }
+
+  setEndTime(value: number): void {
+    this.currentEndTime = value;
   }
 
   private applyAllPositions(): void {
@@ -589,6 +601,8 @@ export class SceneRenderer {
     return {
       ...this.originalSceneData,
       xFocus: this.currentXFocus,
+      startTime: this.currentStartTime,
+      endTime: this.currentEndTime,
       sprites: this.sprites.map((sprite) => {
         const metadata = this.spriteMetadata.get(sprite);
         const original = originalByName.get(metadata?.name ?? '') ?? this.originalSceneData!.sprites[0];

@@ -32,6 +32,8 @@ export function ScenePage({ scenes: initialScenes }: ScenePageProps) {
     showSceneControls,
     currentSceneName,
     xFocus,
+    startTime,
+    endTime,
     spriteEntries,
     selectedSprite,
     setSelectedSprite,
@@ -40,6 +42,8 @@ export function ScenePage({ scenes: initialScenes }: ScenePageProps) {
     loadScene,
     saveScene,
     handleXFocusChange,
+    handleStartTimeChange,
+    handleEndTimeChange,
     handlePhoneGuideToggle,
     handleSpriteToggle,
     handleSpriteSelect,
@@ -258,9 +262,13 @@ export function ScenePage({ scenes: initialScenes }: ScenePageProps) {
         <SceneEditorPanel
           sceneLoaded={showSceneControls}
           xFocus={xFocus}
+          startTime={startTime}
+          endTime={endTime}
           spriteEntries={spriteEntries}
           selectedSprite={selectedSprite}
           onXFocusChange={handleXFocusChange}
+          onStartTimeChange={handleStartTimeChange}
+          onEndTimeChange={handleEndTimeChange}
           onSpriteToggle={handleSpriteToggle}
           onSpriteSelect={handleSpriteSelect}
           onAddSprite={handleAddSprite}

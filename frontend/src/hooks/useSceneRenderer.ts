@@ -17,6 +17,8 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
   const [showSceneControls, setShowSceneControls] = useState(false);
   const [currentSceneName, setCurrentSceneName] = useState<string | null>(null);
   const [xFocus, setXFocus] = useState(0.5);
+  const [startTime, setStartTime] = useState(0);
+  const [endTime, setEndTime] = useState(1439);
   const [spriteEntries, setSpriteEntries] = useState<SpriteEntry[]>([]);
   const [selectedSprite, setSelectedSprite] = useState<SelectedSprite | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -59,6 +61,8 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
 
       const focus = sceneData.xFocus ?? 0.5;
       setXFocus(focus);
+      setStartTime(sceneData.startTime ?? 0);
+      setEndTime(sceneData.endTime ?? 1439);
       setShowSceneControls(true);
       refreshSpriteList(renderer);
 
@@ -101,6 +105,16 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
   const handleXFocusChange = useCallback((value: number) => {
     setXFocus(value);
     rendererRef.current?.setScrollOffset(value);
+  }, []);
+
+  const handleStartTimeChange = useCallback((value: number) => {
+    setStartTime(value);
+    rendererRef.current?.setStartTime(value);
+  }, []);
+
+  const handleEndTimeChange = useCallback((value: number) => {
+    setEndTime(value);
+    rendererRef.current?.setEndTime(value);
   }, []);
 
   const handlePhoneGuideToggle = useCallback((visible: boolean) => {
@@ -239,6 +253,8 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
     showSceneControls,
     currentSceneName,
     xFocus,
+    startTime,
+    endTime,
     spriteEntries,
     selectedSprite,
     setSelectedSprite,
@@ -247,6 +263,8 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
     loadScene,
     saveScene,
     handleXFocusChange,
+    handleStartTimeChange,
+    handleEndTimeChange,
     handlePhoneGuideToggle,
     handleSpriteToggle,
     handleSpriteSelect,
