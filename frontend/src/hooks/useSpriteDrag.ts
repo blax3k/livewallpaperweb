@@ -57,7 +57,7 @@ export function useSpriteDrag({
       const rect = canvas.getBoundingClientRect();
       const world = rendererRef.current.canvasToWorld(event.clientX - rect.left, event.clientY - rect.top);
       const newX = drag.startSpriteX + (world.x - drag.startMouseWorldX);
-      const newY = drag.startSpriteY + (world.y - drag.startMouseWorldY);
+      const newY = drag.startSpriteY - (world.y - drag.startMouseWorldY);
       rendererRef.current.setSpritePosition(drag.spriteIndex, newX, newY);
       dragCallbacksRef.current.onSpriteMove(newX, newY);
     };
@@ -70,7 +70,7 @@ export function useSpriteDrag({
       const rect = canvas.getBoundingClientRect();
       const world = rendererRef.current.canvasToWorld(event.clientX - rect.left, event.clientY - rect.top);
       const newX = drag.startSpriteX + (world.x - drag.startMouseWorldX);
-      const newY = drag.startSpriteY + (world.y - drag.startMouseWorldY);
+      const newY = drag.startSpriteY - (world.y - drag.startMouseWorldY);
       canvasDragState.current = null;
       if (newX !== drag.startSpriteX || newY !== drag.startSpriteY) {
         dragCallbacksRef.current.onDragCommit({

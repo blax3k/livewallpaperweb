@@ -86,24 +86,28 @@ export function SceneEditorPanel({
       <h2>Scene</h2>
       <XFocusControl disabled={!sceneLoaded} value={xFocus} onChange={onXFocusChange} onChangeStart={onXFocusChangeStart} onChangeCommit={onXFocusCommit} />
       <div className="control-group">
-        <label htmlFor="start-time-input">Start Time:</label>
-        <input
-          type="time"
-          id="start-time-input"
-          disabled={!sceneLoaded}
-          value={minutesToTimeString(startTime)}
-          onChange={(e) => onStartTimeChange(timeStringToMinutes(e.target.value))}
-        />
-      </div>
-      <div className="control-group">
-        <label htmlFor="end-time-input">End Time:</label>
-        <input
-          type="time"
-          id="end-time-input"
-          disabled={!sceneLoaded}
-          value={minutesToTimeString(endTime)}
-          onChange={(e) => onEndTimeChange(timeStringToMinutes(e.target.value))}
-        />
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+            <label htmlFor="start-time-input" style={{ fontSize: '12px', marginBottom: '4px' }}>Start Time:</label>
+            <input
+              type="time"
+              id="start-time-input"
+              disabled={!sceneLoaded}
+              value={minutesToTimeString(startTime)}
+              onChange={(e) => onStartTimeChange(timeStringToMinutes(e.target.value))}
+            />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+            <label htmlFor="end-time-input" style={{ fontSize: '12px', marginBottom: '4px' }}>End Time:</label>
+            <input
+              type="time"
+              id="end-time-input"
+              disabled={!sceneLoaded}
+              value={minutesToTimeString(endTime)}
+              onChange={(e) => onEndTimeChange(timeStringToMinutes(e.target.value))}
+            />
+          </div>
+        </div>
       </div>
       <h2>Sprites</h2>
       <div className="control-group">

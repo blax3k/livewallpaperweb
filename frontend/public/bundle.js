@@ -64601,32 +64601,34 @@ ${parts.join("\n")}
     return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "controls", children: [
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { children: "Scene" }),
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(XFocusControl, { disabled: !sceneLoaded, value: xFocus, onChange: onXFocusChange, onChangeStart: onXFocusChangeStart, onChangeCommit: onXFocusCommit }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "control-group", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { htmlFor: "start-time-input", children: "Start Time:" }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-          "input",
-          {
-            type: "time",
-            id: "start-time-input",
-            disabled: !sceneLoaded,
-            value: minutesToTimeString(startTime),
-            onChange: (e2) => onStartTimeChange(timeStringToMinutes(e2.target.value))
-          }
-        )
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "control-group", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { htmlFor: "end-time-input", children: "End Time:" }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-          "input",
-          {
-            type: "time",
-            id: "end-time-input",
-            disabled: !sceneLoaded,
-            value: minutesToTimeString(endTime),
-            onChange: (e2) => onEndTimeChange(timeStringToMinutes(e2.target.value))
-          }
-        )
-      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { style: { display: "flex", gap: "8px", alignItems: "center" }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { style: { display: "flex", flexDirection: "column", flex: 1 }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { htmlFor: "start-time-input", style: { fontSize: "12px", marginBottom: "4px" }, children: "Start Time:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+            "input",
+            {
+              type: "time",
+              id: "start-time-input",
+              disabled: !sceneLoaded,
+              value: minutesToTimeString(startTime),
+              onChange: (e2) => onStartTimeChange(timeStringToMinutes(e2.target.value))
+            }
+          )
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { style: { display: "flex", flexDirection: "column", flex: 1 }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { htmlFor: "end-time-input", style: { fontSize: "12px", marginBottom: "4px" }, children: "End Time:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+            "input",
+            {
+              type: "time",
+              id: "end-time-input",
+              disabled: !sceneLoaded,
+              value: minutesToTimeString(endTime),
+              onChange: (e2) => onEndTimeChange(timeStringToMinutes(e2.target.value))
+            }
+          )
+        ] })
+      ] }) }),
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { children: "Sprites" }),
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
         SpriteListPanel,
@@ -68973,7 +68975,7 @@ ${e2}`);
         const rect = canvas.getBoundingClientRect();
         const world = rendererRef.current.canvasToWorld(event.clientX - rect.left, event.clientY - rect.top);
         const newX = drag.startSpriteX + (world.x - drag.startMouseWorldX);
-        const newY = drag.startSpriteY + (world.y - drag.startMouseWorldY);
+        const newY = drag.startSpriteY - (world.y - drag.startMouseWorldY);
         rendererRef.current.setSpritePosition(drag.spriteIndex, newX, newY);
         dragCallbacksRef.current.onSpriteMove(newX, newY);
       };
@@ -68985,7 +68987,7 @@ ${e2}`);
         const rect = canvas.getBoundingClientRect();
         const world = rendererRef.current.canvasToWorld(event.clientX - rect.left, event.clientY - rect.top);
         const newX = drag.startSpriteX + (world.x - drag.startMouseWorldX);
-        const newY = drag.startSpriteY + (world.y - drag.startMouseWorldY);
+        const newY = drag.startSpriteY - (world.y - drag.startMouseWorldY);
         canvasDragState.current = null;
         if (newX !== drag.startSpriteX || newY !== drag.startSpriteY) {
           dragCallbacksRef.current.onDragCommit({
