@@ -64250,8 +64250,9 @@ ${parts.join("\n")}
       ] })
     ] }) });
   }
-  function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd, onDelete, onEditTexture }) {
+  function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd, onChangeTexture, onDelete, onEditTexture }) {
     const [showModal, setShowModal] = (0, import_react.useState)(false);
+    const [changeTextureIndex, setChangeTextureIndex] = (0, import_react.useState)(null);
     const [menuOpenIndex, setMenuOpenIndex] = (0, import_react.useState)(null);
     const [confirmDeleteIndex, setConfirmDeleteIndex] = (0, import_react.useState)(null);
     const menuRef = (0, import_react.useRef)(null);
@@ -64266,8 +64267,13 @@ ${parts.join("\n")}
       return () => document.removeEventListener("mousedown", handleClick);
     }, [menuOpenIndex]);
     const handleImageSelected = (filename) => {
+      if (changeTextureIndex !== null) {
+        onChangeTexture(changeTextureIndex, filename);
+        setChangeTextureIndex(null);
+      } else {
+        onAdd(filename);
+      }
       setShowModal(false);
-      onAdd(filename);
     };
     const handleDeleteConfirm = () => {
       if (confirmDeleteIndex !== null) {
@@ -64327,6 +64333,18 @@ ${parts.join("\n")}
                       className: "sprite-menu-item",
                       onClick: () => {
                         setMenuOpenIndex(null);
+                        setChangeTextureIndex(index);
+                        setShowModal(true);
+                      },
+                      children: "Change Texture"
+                    }
+                  ),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                    "button",
+                    {
+                      className: "sprite-menu-item",
+                      onClick: () => {
+                        setMenuOpenIndex(null);
                         onEditTexture(index);
                       },
                       children: "Edit Texture"
@@ -64361,7 +64379,16 @@ ${parts.join("\n")}
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "sprite-confirm-no", onClick: () => setConfirmDeleteIndex(null), children: "Cancel" })
         ] })
       ] }) }),
-      showModal && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AddSpriteModal, { onSelect: handleImageSelected, onClose: () => setShowModal(false) })
+      showModal && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+        AddSpriteModal,
+        {
+          onSelect: handleImageSelected,
+          onClose: () => {
+            setShowModal(false);
+            setChangeTextureIndex(null);
+          }
+        }
+      )
     ] });
   }
 
@@ -64619,6 +64646,7 @@ ${parts.join("\n")}
     onSpriteToggle,
     onSpriteSelect,
     onAddSprite,
+    onChangeTexture,
     onDeleteSprite,
     onEditTexture,
     onSpritePositionChange,
@@ -64680,6 +64708,7 @@ ${parts.join("\n")}
           onToggle: onSpriteToggle,
           onSelect: onSpriteSelect,
           onAdd: onAddSprite,
+          onChangeTexture,
           onDelete: onDeleteSprite,
           onEditTexture
         }
@@ -68458,6 +68487,28 @@ ${e2}`);
       this.updateSelectionHighlight();
     }
     /**
+     * Swap the texture of an existing sprite without changing its position or dimensions.
+     * Resets tex coordinates to the full texture (no UV crop).
+     */
+    async changeTexture(index, textureResource) {
+      if (index < 0 || index >= this.sprites.length) return;
+      const sprite = this.sprites[index];
+      const metadata = this.spriteMetadata.get(sprite);
+      if (!metadata) return;
+      await this.loadTexture(textureResource);
+      const newTexture = this.textures.get(textureResource);
+      if (!newTexture) return;
+      sprite.texture = newTexture;
+      metadata.textureResource = textureResource;
+      const original = this.originalSceneData?.sprites.find((s2) => s2.name === metadata.name);
+      if (original) {
+        original.textureResource = textureResource;
+        original.texCoordinates = [0, 0, 0, 1, 1, 0, 1, 1];
+      }
+      this.setScrollOffset(this.currentXFocus);
+      this.updateSelectionHighlight();
+    }
+    /**
      * Sort sprites by parallaxMultiplier ascending (furthest back first),
      * with alphabetical name as tiebreaker.
      * Updates the selection highlight index to track the selected sprite.
@@ -68897,6 +68948,9 @@ ${e2}`);
       setSelectedSprite({ index: newIndex, name, x: pos?.x ?? 0, y: pos?.y ?? 0, depth: 1, width: scaleInfo?.width ?? 5, height: scaleInfo?.height ?? 5 });
       rendererRef.current.setSelectedSpriteHighlight(newIndex);
     }, [refreshSpriteList]);
+    const handleChangeTexture = (0, import_react7.useCallback)(async (index, textureResource) => {
+      await rendererRef.current?.changeTexture(index, textureResource);
+    }, []);
     const handleDeleteSprite = (0, import_react7.useCallback)((index) => {
       if (!rendererRef.current) return;
       rendererRef.current.removeSpriteByIndex(index);
@@ -68972,6 +69026,7 @@ ${e2}`);
       handleSpriteDepthChange,
       handleSpriteDepthApply,
       handleAddSprite,
+      handleChangeTexture,
       handleDeleteSprite,
       handleZoomIn,
       handleZoomOut,
@@ -69175,6 +69230,7 @@ ${e2}`);
       handleSpriteDepthChange,
       handleSpriteDepthApply,
       handleAddSprite,
+      handleChangeTexture,
       handleDeleteSprite,
       handleZoomIn,
       handleZoomOut,
@@ -69390,6 +69446,7 @@ ${e2}`);
             onSpriteToggle: handleSpriteToggle,
             onSpriteSelect: handleSpriteSelect,
             onAddSprite: handleAddSprite,
+            onChangeTexture: handleChangeTexture,
             onDeleteSprite: handleDeleteSprite,
             onEditTexture: setEditTextureIndex,
             onSpritePositionChange: handleSpritePositionChange,

@@ -187,6 +187,10 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
     rendererRef.current.setSelectedSpriteHighlight(newIndex);
   }, [refreshSpriteList]);
 
+  const handleChangeTexture = useCallback(async (index: number, textureResource: string) => {
+    await rendererRef.current?.changeTexture(index, textureResource);
+  }, []);
+
   const handleDeleteSprite = useCallback((index: number) => {
     if (!rendererRef.current) return;
     rendererRef.current.removeSpriteByIndex(index);
@@ -273,6 +277,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
     handleSpriteDepthChange,
     handleSpriteDepthApply,
     handleAddSprite,
+    handleChangeTexture,
     handleDeleteSprite,
     handleZoomIn,
     handleZoomOut,

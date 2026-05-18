@@ -53,6 +53,7 @@ export function ScenePage({ scenes: initialScenes }: ScenePageProps) {
     handleSpriteDepthChange,
     handleSpriteDepthApply,
     handleAddSprite,
+    handleChangeTexture,
     handleDeleteSprite,
     handleZoomIn,
     handleZoomOut,
@@ -289,6 +290,7 @@ export function ScenePage({ scenes: initialScenes }: ScenePageProps) {
           onSpriteToggle={handleSpriteToggle}
           onSpriteSelect={handleSpriteSelect}
           onAddSprite={handleAddSprite}
+          onChangeTexture={handleChangeTexture}
           onDeleteSprite={handleDeleteSprite}
           onEditTexture={setEditTextureIndex}
           onSpritePositionChange={handleSpritePositionChange}

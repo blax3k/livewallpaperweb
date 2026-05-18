@@ -558,6 +558,33 @@ export class SceneRenderer {
   }
 
   /**
+   * Swap the texture of an existing sprite without changing its position or dimensions.
+   * Resets tex coordinates to the full texture (no UV crop).
+   */
+  async changeTexture(index: number, textureResource: string): Promise<void> {
+    if (index < 0 || index >= this.sprites.length) return;
+    const sprite = this.sprites[index];
+    const metadata = this.spriteMetadata.get(sprite);
+    if (!metadata) return;
+
+    await this.loadTexture(textureResource);
+    const newTexture = this.textures.get(textureResource);
+    if (!newTexture) return;
+
+    sprite.texture = newTexture;
+    metadata.textureResource = textureResource;
+
+    const original = this.originalSceneData?.sprites.find(s => s.name === metadata.name);
+    if (original) {
+      original.textureResource = textureResource;
+      original.texCoordinates = [0, 0, 0, 1, 1, 0, 1, 1];
+    }
+
+    this.setScrollOffset(this.currentXFocus);
+    this.updateSelectionHighlight();
+  }
+
+  /**
    * Sort sprites by parallaxMultiplier ascending (furthest back first),
    * with alphabetical name as tiebreaker.
    * Updates the selection highlight index to track the selected sprite.

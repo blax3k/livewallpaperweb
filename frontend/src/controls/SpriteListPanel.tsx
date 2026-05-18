@@ -22,6 +22,7 @@ interface SpriteListPanelProps {
   onToggle: (index: number) => void;
   onSelect: (index: number) => void;
   onAdd: (textureResource: string) => void;
+  onChangeTexture: (index: number, textureResource: string) => void;
   onDelete: (index: number) => void;
   onEditTexture: (index: number) => void;
 }
@@ -96,8 +97,9 @@ function AddSpriteModal({ onSelect, onClose }: { onSelect: (textureResource: str
   );
 }
 
-export function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd, onDelete, onEditTexture }: SpriteListPanelProps) {
+export function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd, onChangeTexture, onDelete, onEditTexture }: SpriteListPanelProps) {
   const [showModal, setShowModal] = useState(false);
+  const [changeTextureIndex, setChangeTextureIndex] = useState<number | null>(null);
   const [menuOpenIndex, setMenuOpenIndex] = useState<number | null>(null);
   const [confirmDeleteIndex, setConfirmDeleteIndex] = useState<number | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -115,8 +117,13 @@ export function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onA
   }, [menuOpenIndex]);
 
   const handleImageSelected = (filename: string) => {
+    if (changeTextureIndex !== null) {
+      onChangeTexture(changeTextureIndex, filename);
+      setChangeTextureIndex(null);
+    } else {
+      onAdd(filename);
+    }
     setShowModal(false);
-    onAdd(filename);
   };
 
   const handleDeleteConfirm = () => {
@@ -169,6 +176,16 @@ export function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onA
                   className="sprite-menu-item"
                   onClick={() => {
                     setMenuOpenIndex(null);
+                    setChangeTextureIndex(index);
+                    setShowModal(true);
+                  }}
+                >
+                  Change Texture
+                </button>
+                <button
+                  className="sprite-menu-item"
+                  onClick={() => {
+                    setMenuOpenIndex(null);
                     onEditTexture(index);
                   }}
                 >
@@ -201,7 +218,12 @@ export function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onA
         </div>
       )}
 
-      {showModal && <AddSpriteModal onSelect={handleImageSelected} onClose={() => setShowModal(false)} />}
+      {showModal && (
+        <AddSpriteModal
+          onSelect={handleImageSelected}
+          onClose={() => { setShowModal(false); setChangeTextureIndex(null); }}
+        />
+      )}
     </div>
   );
 }
