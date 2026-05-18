@@ -27,6 +27,7 @@ interface TexEditState {
 }
 
 function imageUrlFromResource(textureResource: string): string {
+  if (textureResource.startsWith('/')) return textureResource;
   return /\.(png|jpg|jpeg|gif|webp)$/i.test(textureResource)
     ? `/images/${textureResource}`
     : `/images/${textureResource}.png`;

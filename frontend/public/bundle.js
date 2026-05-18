@@ -64187,24 +64187,66 @@ ${parts.join("\n")}
   function AddSpriteModal({ onSelect, onClose }) {
     const [images, setImages] = (0, import_react.useState)([]);
     const [loading, setLoading] = (0, import_react.useState)(true);
-    (0, import_react.useEffect)(() => {
-      fetch("/api/images").then((r2) => r2.json()).then((files) => {
-        setImages(files);
+    const [uploading, setUploading] = (0, import_react.useState)(false);
+    const fileInputRef = (0, import_react.useRef)(null);
+    const fetchImages = () => {
+      fetch("/api/images").then((r2) => r2.json()).then((records) => {
+        setImages(records);
         setLoading(false);
       }).catch(() => setLoading(false));
+    };
+    (0, import_react.useEffect)(() => {
+      fetchImages();
     }, []);
+    const handleFileChange = async (e2) => {
+      const file = e2.target.files?.[0];
+      if (!file) return;
+      setUploading(true);
+      const form = new FormData();
+      form.append("file", file);
+      try {
+        const res = await fetch("/api/images", { method: "POST", body: form });
+        if (!res.ok) throw new Error("Upload failed");
+        const record = await res.json();
+        setImages((prev) => [record, ...prev]);
+      } finally {
+        setUploading(false);
+        e2.target.value = "";
+      }
+    };
     return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "add-sprite-overlay", onClick: onClose, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "add-sprite-modal", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "add-sprite-modal-header", children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Select Image" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "add-sprite-modal-close", onClick: onClose, children: "\u2715" })
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "add-sprite-modal-header-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+            "button",
+            {
+              className: "add-sprite-upload-btn",
+              disabled: uploading,
+              onClick: () => fileInputRef.current?.click(),
+              children: uploading ? "Uploading\u2026" : "Upload"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+            "input",
+            {
+              ref: fileInputRef,
+              type: "file",
+              accept: "image/png,image/jpeg,image/gif,image/webp",
+              style: { display: "none" },
+              onChange: handleFileChange
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "add-sprite-modal-close", onClick: onClose, children: "\u2715" })
+        ] })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "add-sprite-modal-body", children: [
         loading && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "add-sprite-loading", children: "Loading\u2026" }),
-        !loading && images.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "add-sprite-loading", children: "No images found." }),
-        images.map((filename) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "add-sprite-image-item", onClick: () => onSelect(filename), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", { src: `/images/${filename}`, alt: filename, className: "add-sprite-thumb" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "add-sprite-image-name", children: filename })
-        ] }, filename))
+        !loading && images.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "add-sprite-loading", children: "No images found. Upload one to get started." }),
+        images.map((image) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "add-sprite-image-item", onClick: () => onSelect(`/uploads/${image.filename}`), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", { src: `/uploads/${image.filename}`, alt: image.original_name, className: "add-sprite-thumb" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "add-sprite-image-name", children: image.original_name })
+        ] }, image.id))
       ] })
     ] }) });
   }
@@ -67557,6 +67599,7 @@ ${e2}`);
   // src/controls/EditTextureModal.tsx
   var import_jsx_runtime10 = __toESM(require_jsx_runtime());
   function imageUrlFromResource(textureResource) {
+    if (textureResource.startsWith("/")) return textureResource;
     return /\.(png|jpg|jpeg|gif|webp)$/i.test(textureResource) ? `/images/${textureResource}` : `/images/${textureResource}.png`;
   }
   var PIXI_SIZE = 600;
@@ -68111,8 +68154,13 @@ ${e2}`);
     async loadTexture(resourceName) {
       if (this.textures.has(resourceName)) return;
       try {
-        const hasExtension = /\.(png|jpg|jpeg|gif|webp)$/i.test(resourceName);
-        const url = hasExtension ? `/images/${resourceName}` : `/images/${resourceName}.png`;
+        let url;
+        if (resourceName.startsWith("/")) {
+          url = resourceName;
+        } else {
+          const hasExtension = /\.(png|jpg|jpeg|gif|webp)$/i.test(resourceName);
+          url = hasExtension ? `/images/${resourceName}` : `/images/${resourceName}.png`;
+        }
         const texture = await Assets.load(url);
         this.textures.set(resourceName, texture);
       } catch (error) {

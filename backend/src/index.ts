@@ -2,25 +2,77 @@ import 'dotenv/config';
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import staticFiles from '@fastify/static';
+import multipart from '@fastify/multipart';
 import path from 'path';
-import { readdir } from 'fs/promises';
+import { randomUUID } from 'crypto';
 import { pool } from './db';
 import { runMigrations } from './db/migrations';
+import { LocalStorage } from './storage';
 
 const server = Fastify({
   logger: true,
 });
+
+const uploadsDir = path.join(__dirname, '../data/uploads');
+const storage = new LocalStorage(uploadsDir);
+
+const ALLOWED_MIME_TYPES = new Set(['image/png', 'image/jpeg', 'image/gif', 'image/webp']);
+const MIME_TO_EXT: Record<string, string> = {
+  'image/png': '.png',
+  'image/jpeg': '.jpg',
+  'image/gif': '.gif',
+  'image/webp': '.webp',
+};
 
 // Health check
 server.get('/health', async () => {
   return { status: 'ok' };
 });
 
-// List images available in the public images folder
+// List all uploaded images (from DB)
 server.get('/api/images', async () => {
-  const imagesDir = path.join(__dirname, '../../frontend/public/images');
-  const files = await readdir(imagesDir);
-  return files.filter(f => /\.(png|jpg|jpeg|gif|webp)$/i.test(f));
+  const result = await pool.query('SELECT * FROM images ORDER BY created_at DESC');
+  return result.rows;
+});
+
+// Upload a new image
+server.post('/api/images', async (req, reply) => {
+  const part = await req.file();
+  if (!part) return reply.status(400).send({ error: 'No file uploaded' });
+
+  if (!ALLOWED_MIME_TYPES.has(part.mimetype)) {
+    // Consume the stream to avoid memory leaks
+    part.file.resume();
+    return reply.status(400).send({ error: 'Unsupported file type. Allowed: png, jpg, gif, webp' });
+  }
+
+  const ext = MIME_TO_EXT[part.mimetype];
+  const filename = `${randomUUID()}${ext}`;
+
+  const chunks: Buffer[] = [];
+  for await (const chunk of part.file) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+  const buffer = Buffer.concat(chunks);
+
+  await storage.save(filename, buffer);
+
+  const result = await pool.query(
+    'INSERT INTO images (filename, original_name, mime_type, size_bytes) VALUES ($1, $2, $3, $4) RETURNING *',
+    [filename, part.filename, part.mimetype, buffer.length],
+  );
+
+  return reply.status(201).send(result.rows[0]);
+});
+
+// Delete an image
+server.delete<{ Params: { id: string } }>('/api/images/:id', async (req, reply) => {
+  const { id } = req.params;
+  const result = await pool.query('DELETE FROM images WHERE id = $1 RETURNING filename', [id]);
+  if (result.rows.length === 0) return reply.status(404).send({ error: 'Image not found' });
+
+  await storage.delete(result.rows[0].filename);
+  return reply.status(204).send();
 });
 
 // List all scenes (id, name, label only — no full data)
@@ -83,14 +135,25 @@ server.delete<{ Params: { name: string } }>('/api/scenes/:name', async (req, rep
 const start = async () => {
   try {
     await runMigrations();
+    await storage.init();
 
     // Register plugins
     await server.register(cors, {
       origin: process.env.CORS_ORIGIN ?? 'http://localhost:3001',
     });
 
+    await server.register(multipart, {
+      limits: { fileSize: 20 * 1024 * 1024 }, // 20 MB
+    });
+
     await server.register(staticFiles, {
       root: path.join(__dirname, '../../frontend/public'),
+    });
+
+    await server.register(staticFiles, {
+      root: uploadsDir,
+      prefix: '/uploads/',
+      decorateReply: false,
     });
 
     const port = Number(process.env.PORT) || 3000;

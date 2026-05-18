@@ -191,8 +191,14 @@ export class SceneRenderer {
     if (this.textures.has(resourceName)) return;
 
     try {
-      const hasExtension = /\.(png|jpg|jpeg|gif|webp)$/i.test(resourceName);
-      const url = hasExtension ? `/images/${resourceName}` : `/images/${resourceName}.png`;
+      let url: string;
+      if (resourceName.startsWith('/')) {
+        // Already a full path (e.g. uploaded image at /uploads/...)
+        url = resourceName;
+      } else {
+        const hasExtension = /\.(png|jpg|jpeg|gif|webp)$/i.test(resourceName);
+        url = hasExtension ? `/images/${resourceName}` : `/images/${resourceName}.png`;
+      }
       const texture = await PIXI.Assets.load(url);
       this.textures.set(resourceName, texture);
     } catch (error) {

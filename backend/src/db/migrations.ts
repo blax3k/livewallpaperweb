@@ -11,6 +11,15 @@ export async function runMigrations() {
       updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
     );
 
+    CREATE TABLE IF NOT EXISTS images (
+      id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      filename      TEXT NOT NULL UNIQUE,
+      original_name TEXT NOT NULL,
+      mime_type     TEXT NOT NULL,
+      size_bytes    INTEGER NOT NULL,
+      created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+
     CREATE OR REPLACE FUNCTION update_updated_at()
     RETURNS TRIGGER AS $$
     BEGIN

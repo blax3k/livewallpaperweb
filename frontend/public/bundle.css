@@ -330,6 +330,28 @@ body {
   color: #ccc;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
+.add-sprite-modal-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.add-sprite-upload-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ccc;
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.add-sprite-upload-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+.add-sprite-upload-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 .add-sprite-modal-close {
   background: none;
   border: none;
