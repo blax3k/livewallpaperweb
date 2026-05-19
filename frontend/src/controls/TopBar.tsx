@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { SceneSelectorControl, SceneOption } from './SceneSelectorControl';
 import { PhoneGuideControl } from './PhoneGuideControl';
 import { NewSceneDialog } from './NewSceneDialog';
+import { ImageLibraryModal } from './ImageLibraryModal';
 
 interface TopBarProps {
   scenes: SceneOption[];
@@ -23,6 +24,7 @@ interface TopBarProps {
 
 export function TopBar({ scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, onSceneSelect, onNewScene, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }: TopBarProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [libraryOpen, setLibraryOpen] = useState(false);
 
   const handleConfirm = (label: string) => {
     setDialogOpen(false);
@@ -37,6 +39,12 @@ export function TopBar({ scenes, currentSceneName, sceneLoaded, isSaving, phoneG
         <NewSceneDialog
           onConfirm={handleConfirm}
           onCancel={() => setDialogOpen(false)}
+        />
+      )}
+      <button onClick={() => setLibraryOpen(true)} title="Browse and upload images">Image Library</button>
+      {libraryOpen && (
+        <ImageLibraryModal
+          onClose={() => setLibraryOpen(false)}
         />
       )}
       <PhoneGuideControl
