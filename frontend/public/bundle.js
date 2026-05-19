@@ -68486,11 +68486,29 @@ ${e2}`);
       this.setScrollOffset(this.currentXFocus);
       this.updateSelectionHighlight();
     }
+    getSpriteTextureResource(index) {
+      if (index >= 0 && index < this.sprites.length) {
+        const metadata = this.spriteMetadata.get(this.sprites[index]);
+        if (metadata) return metadata.textureResource;
+      }
+      return null;
+    }
+    getSpriteTexCoordinates(index) {
+      if (index >= 0 && index < this.sprites.length) {
+        const sprite = this.sprites[index];
+        const metadata = this.spriteMetadata.get(sprite);
+        if (!metadata) return null;
+        const original = this.originalSceneData?.sprites.find((s2) => s2.name === metadata.name);
+        return original?.texCoordinates ?? null;
+      }
+      return null;
+    }
     /**
      * Swap the texture of an existing sprite without changing its position or dimensions.
-     * Resets tex coordinates to the full texture (no UV crop).
+     * Resets tex coordinates to the full texture (no UV crop) unless texCoords is provided.
+     * If forceSize is provided, uses those exact dimensions instead of computing from aspect ratio.
      */
-    async changeTexture(index, textureResource) {
+    async changeTexture(index, textureResource, forceSize, texCoords) {
       if (index < 0 || index >= this.sprites.length) return;
       const sprite = this.sprites[index];
       const metadata = this.spriteMetadata.get(sprite);
@@ -68498,12 +68516,39 @@ ${e2}`);
       await this.loadTexture(textureResource);
       const newTexture = this.textures.get(textureResource);
       if (!newTexture) return;
-      sprite.texture = newTexture;
+      const currentWidth = forceSize?.width ?? sprite.width;
+      const newHeight = forceSize?.height ?? (newTexture.width > 0 ? currentWidth * newTexture.height / newTexture.width : sprite.height);
+      if (texCoords && texCoords.length === 8) {
+        const uValues = [texCoords[0], texCoords[2], texCoords[4], texCoords[6]];
+        const vValues = [texCoords[1], texCoords[3], texCoords[5], texCoords[7]];
+        const minU = Math.min(...uValues);
+        const maxU = Math.max(...uValues);
+        const minV = Math.min(...vValues);
+        const maxV = Math.max(...vValues);
+        sprite.texture = new Texture({
+          source: newTexture.source,
+          frame: new Rectangle(
+            minU * newTexture.width,
+            minV * newTexture.height,
+            (maxU - minU) * newTexture.width,
+            (maxV - minV) * newTexture.height
+          )
+        });
+      } else {
+        sprite.texture = newTexture;
+      }
+      sprite.width = currentWidth;
+      sprite.height = newHeight;
       metadata.textureResource = textureResource;
+      metadata.originalWidth = currentWidth;
+      metadata.originalHeight = newHeight;
+      const storedTexCoords = texCoords ?? [0, 0, 0, 1, 1, 0, 1, 1];
       const original = this.originalSceneData?.sprites.find((s2) => s2.name === metadata.name);
       if (original) {
         original.textureResource = textureResource;
-        original.texCoordinates = [0, 0, 0, 1, 1, 0, 1, 1];
+        original.texCoordinates = storedTexCoords;
+        original.width = currentWidth;
+        original.height = newHeight;
       }
       this.setScrollOffset(this.currentXFocus);
       this.updateSelectionHighlight();
@@ -68950,6 +68995,10 @@ ${e2}`);
     }, [refreshSpriteList]);
     const handleChangeTexture = (0, import_react7.useCallback)(async (index, textureResource) => {
       await rendererRef.current?.changeTexture(index, textureResource);
+      const scaleInfo = rendererRef.current?.getSpriteScale(index);
+      if (scaleInfo) {
+        setSelectedSprite((prev) => prev?.index === index ? { ...prev, width: scaleInfo.width, height: scaleInfo.height } : prev);
+      }
     }, []);
     const handleDeleteSprite = (0, import_react7.useCallback)((index) => {
       if (!rendererRef.current) return;
@@ -69126,7 +69175,8 @@ ${e2}`);
     onSpriteMove,
     onScaleApply,
     onDepthApply,
-    onXFocusApply
+    onXFocusApply,
+    onTextureApply
   }) {
     (0, import_react9.useEffect)(() => {
       const handleKeyDown = (e2) => {
@@ -69145,6 +69195,8 @@ ${e2}`);
             } else if (action.type === "xFocus") {
               rendererRef.current?.setScrollOffset(action.before);
               onXFocusApply?.(action.before);
+            } else if (action.type === "texture") {
+              onTextureApply?.(action.spriteIndex, action.before.textureResource, action.before.width, action.before.height, action.before.texCoordinates);
             }
           }
           return;
@@ -69164,6 +69216,8 @@ ${e2}`);
             } else if (action.type === "xFocus") {
               rendererRef.current?.setScrollOffset(action.after);
               onXFocusApply?.(action.after);
+            } else if (action.type === "texture") {
+              onTextureApply?.(action.spriteIndex, action.after.textureResource, action.after.width, action.after.height, action.after.texCoordinates);
             }
           }
           return;
@@ -69247,6 +69301,10 @@ ${e2}`);
     const applySelectedSpriteSize = (0, import_react10.useCallback)((width, height) => {
       setSelectedSprite((prev) => prev ? { ...prev, width, height } : null);
     }, [setSelectedSprite]);
+    const handleTextureApply = (0, import_react10.useCallback)((index, textureResource, width, height, texCoordinates) => {
+      rendererRef.current?.changeTexture(index, textureResource, { width, height }, texCoordinates);
+      setSelectedSprite((prev) => prev?.index === index ? { ...prev, width, height } : prev);
+    }, [rendererRef, setSelectedSprite]);
     const { handleCanvasMouseDown, cancelDrag } = useSpriteDrag({
       selectedSprite,
       rendererRef,
@@ -69262,7 +69320,8 @@ ${e2}`);
       onSpriteMove: applySelectedSpriteMove,
       onScaleApply: applySelectedSpriteSize,
       onDepthApply: handleSpriteDepthApply,
-      onXFocusApply: handleXFocusChange
+      onXFocusApply: handleXFocusChange,
+      onTextureApply: handleTextureApply
     });
     (0, import_react10.useEffect)(() => {
       const el = canvasRef.current;
@@ -69365,6 +69424,19 @@ ${e2}`);
         history.push({ type: "scale", spriteIndex: selectedSprite.index, before, after: { width, height } });
       }
     }, [selectedSprite, history]);
+    const handleChangeTextureWithHistory = (0, import_react10.useCallback)(async (index, textureResource) => {
+      const beforeTexture = rendererRef.current?.getSpriteTextureResource(index) ?? "";
+      const beforeSize = rendererRef.current?.getSpriteScale(index);
+      const beforeTexCoords = rendererRef.current?.getSpriteTexCoordinates(index) ?? [0, 0, 0, 1, 1, 0, 1, 1];
+      await handleChangeTexture(index, textureResource);
+      const afterSize = rendererRef.current?.getSpriteScale(index);
+      history.push({
+        type: "texture",
+        spriteIndex: index,
+        before: { textureResource: beforeTexture, width: beforeSize?.width ?? 0, height: beforeSize?.height ?? 0, texCoordinates: beforeTexCoords },
+        after: { textureResource, width: afterSize?.width ?? 0, height: afterSize?.height ?? 0, texCoordinates: [0, 0, 0, 1, 1, 0, 1, 1] }
+      });
+    }, [handleChangeTexture, rendererRef, history]);
     const handleSpriteDepthChangeStart = (0, import_react10.useCallback)((depth) => {
       dragStartDepth.current = depth;
     }, []);
@@ -69446,7 +69518,7 @@ ${e2}`);
             onSpriteToggle: handleSpriteToggle,
             onSpriteSelect: handleSpriteSelect,
             onAddSprite: handleAddSprite,
-            onChangeTexture: handleChangeTexture,
+            onChangeTexture: handleChangeTextureWithHistory,
             onDeleteSprite: handleDeleteSprite,
             onEditTexture: setEditTextureIndex,
             onSpritePositionChange: handleSpritePositionChange,

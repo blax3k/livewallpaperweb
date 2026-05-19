@@ -73,6 +73,11 @@ export function ScenePage({ scenes: initialScenes }: ScenePageProps) {
     setSelectedSprite(prev => prev ? { ...prev, width, height } : null);
   }, [setSelectedSprite]);
 
+  const handleTextureApply = useCallback((index: number, textureResource: string, width: number, height: number, texCoordinates: number[]) => {
+    rendererRef.current?.changeTexture(index, textureResource, { width, height }, texCoordinates);
+    setSelectedSprite(prev => prev?.index === index ? { ...prev, width, height } : prev);
+  }, [rendererRef, setSelectedSprite]);
+
   const { handleCanvasMouseDown, cancelDrag } = useSpriteDrag({
     selectedSprite,
     rendererRef,
@@ -90,6 +95,7 @@ export function ScenePage({ scenes: initialScenes }: ScenePageProps) {
     onScaleApply: applySelectedSpriteSize,
     onDepthApply: handleSpriteDepthApply,
     onXFocusApply: handleXFocusChange,
+    onTextureApply: handleTextureApply,
   });
 
   useEffect(() => {
@@ -208,6 +214,20 @@ export function ScenePage({ scenes: initialScenes }: ScenePageProps) {
     }
   }, [selectedSprite, history]);
 
+  const handleChangeTextureWithHistory = useCallback(async (index: number, textureResource: string) => {
+    const beforeTexture = rendererRef.current?.getSpriteTextureResource(index) ?? '';
+    const beforeSize = rendererRef.current?.getSpriteScale(index);
+    const beforeTexCoords = rendererRef.current?.getSpriteTexCoordinates(index) ?? [0, 0, 0, 1, 1, 0, 1, 1];
+    await handleChangeTexture(index, textureResource);
+    const afterSize = rendererRef.current?.getSpriteScale(index);
+    history.push({
+      type: 'texture',
+      spriteIndex: index,
+      before: { textureResource: beforeTexture, width: beforeSize?.width ?? 0, height: beforeSize?.height ?? 0, texCoordinates: beforeTexCoords },
+      after: { textureResource, width: afterSize?.width ?? 0, height: afterSize?.height ?? 0, texCoordinates: [0, 0, 0, 1, 1, 0, 1, 1] },
+    });
+  }, [handleChangeTexture, rendererRef, history]);
+
   const handleSpriteDepthChangeStart = useCallback((depth: number) => {
     dragStartDepth.current = depth;
   }, []);
@@ -290,7 +310,7 @@ export function ScenePage({ scenes: initialScenes }: ScenePageProps) {
           onSpriteToggle={handleSpriteToggle}
           onSpriteSelect={handleSpriteSelect}
           onAddSprite={handleAddSprite}
-          onChangeTexture={handleChangeTexture}
+          onChangeTexture={handleChangeTextureWithHistory}
           onDeleteSprite={handleDeleteSprite}
           onEditTexture={setEditTextureIndex}
           onSpritePositionChange={handleSpritePositionChange}

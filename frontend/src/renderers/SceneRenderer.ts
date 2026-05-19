@@ -557,11 +557,31 @@ export class SceneRenderer {
     this.updateSelectionHighlight();
   }
 
+  getSpriteTextureResource(index: number): string | null {
+    if (index >= 0 && index < this.sprites.length) {
+      const metadata = this.spriteMetadata.get(this.sprites[index]);
+      if (metadata) return metadata.textureResource;
+    }
+    return null;
+  }
+
+  getSpriteTexCoordinates(index: number): number[] | null {
+    if (index >= 0 && index < this.sprites.length) {
+      const sprite = this.sprites[index];
+      const metadata = this.spriteMetadata.get(sprite);
+      if (!metadata) return null;
+      const original = this.originalSceneData?.sprites.find(s => s.name === metadata.name);
+      return original?.texCoordinates ?? null;
+    }
+    return null;
+  }
+
   /**
    * Swap the texture of an existing sprite without changing its position or dimensions.
-   * Resets tex coordinates to the full texture (no UV crop).
+   * Resets tex coordinates to the full texture (no UV crop) unless texCoords is provided.
+   * If forceSize is provided, uses those exact dimensions instead of computing from aspect ratio.
    */
-  async changeTexture(index: number, textureResource: string): Promise<void> {
+  async changeTexture(index: number, textureResource: string, forceSize?: { width: number; height: number }, texCoords?: number[]): Promise<void> {
     if (index < 0 || index >= this.sprites.length) return;
     const sprite = this.sprites[index];
     const metadata = this.spriteMetadata.get(sprite);
@@ -571,13 +591,44 @@ export class SceneRenderer {
     const newTexture = this.textures.get(textureResource);
     if (!newTexture) return;
 
-    sprite.texture = newTexture;
-    metadata.textureResource = textureResource;
+    // Preserve world-space width; adjust height to match the new texture's aspect ratio.
+    // forceSize overrides this for exact undo/redo restoration.
+    const currentWidth = forceSize?.width ?? sprite.width;
+    const newHeight = forceSize?.height ?? (newTexture.width > 0 ? currentWidth * newTexture.height / newTexture.width : sprite.height);
 
+    // Apply texture — use provided texCoords for a cropped frame, otherwise use the full texture
+    if (texCoords && texCoords.length === 8) {
+      const uValues = [texCoords[0], texCoords[2], texCoords[4], texCoords[6]];
+      const vValues = [texCoords[1], texCoords[3], texCoords[5], texCoords[7]];
+      const minU = Math.min(...uValues);
+      const maxU = Math.max(...uValues);
+      const minV = Math.min(...vValues);
+      const maxV = Math.max(...vValues);
+      sprite.texture = new PIXI.Texture({
+        source: newTexture.source,
+        frame: new PIXI.Rectangle(
+          minU * newTexture.width,
+          minV * newTexture.height,
+          (maxU - minU) * newTexture.width,
+          (maxV - minV) * newTexture.height,
+        ),
+      });
+    } else {
+      sprite.texture = newTexture;
+    }
+    sprite.width = currentWidth;
+    sprite.height = newHeight;
+    metadata.textureResource = textureResource;
+    metadata.originalWidth = currentWidth;
+    metadata.originalHeight = newHeight;
+
+    const storedTexCoords = texCoords ?? [0, 0, 0, 1, 1, 0, 1, 1];
     const original = this.originalSceneData?.sprites.find(s => s.name === metadata.name);
     if (original) {
       original.textureResource = textureResource;
-      original.texCoordinates = [0, 0, 0, 1, 1, 0, 1, 1];
+      original.texCoordinates = storedTexCoords;
+      original.width = currentWidth;
+      original.height = newHeight;
     }
 
     this.setScrollOffset(this.currentXFocus);

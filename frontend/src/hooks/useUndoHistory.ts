@@ -27,7 +27,14 @@ export interface XFocusAction {
   after: number;
 }
 
-export type HistoryAction = PositionAction | ScaleAction | DepthAction | XFocusAction;
+export interface TextureAction {
+  type: 'texture';
+  spriteIndex: number;
+  before: { textureResource: string; width: number; height: number; texCoordinates: number[] };
+  after: { textureResource: string; width: number; height: number; texCoordinates: number[] };
+}
+
+export type HistoryAction = PositionAction | ScaleAction | DepthAction | XFocusAction | TextureAction;
 
 export function useUndoHistory() {
   const past = useRef<HistoryAction[]>([]);

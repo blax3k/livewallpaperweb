@@ -189,6 +189,10 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
 
   const handleChangeTexture = useCallback(async (index: number, textureResource: string) => {
     await rendererRef.current?.changeTexture(index, textureResource);
+    const scaleInfo = rendererRef.current?.getSpriteScale(index);
+    if (scaleInfo) {
+      setSelectedSprite(prev => prev?.index === index ? { ...prev, width: scaleInfo.width, height: scaleInfo.height } : prev);
+    }
   }, []);
 
   const handleDeleteSprite = useCallback((index: number) => {
