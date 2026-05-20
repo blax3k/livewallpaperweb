@@ -69720,7 +69720,25 @@ ${e2}`);
 
   // src/SceneListPage.tsx
   var import_react12 = __toESM(require_react());
+
+  // src/components/PageLayout.tsx
   var import_jsx_runtime14 = __toESM(require_jsx_runtime());
+  function PageLayout({ children }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "page-layout", children });
+  }
+  function PageHeader({ title, left, children }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "page-header", children: [
+      left,
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "page-header-title", children: title }),
+      children
+    ] });
+  }
+  function PageBody({ children }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "page-body", children });
+  }
+
+  // src/SceneListPage.tsx
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
   function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }) {
     const [scenes, setScenes] = (0, import_react12.useState)([]);
     const [loading, setLoading] = (0, import_react12.useState)(true);
@@ -69738,17 +69756,14 @@ ${e2}`);
         setLoading(false);
       }).catch(() => setLoading(false));
     }, []);
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "scene-list-page", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "scene-list-header", children: [
-        onBack && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { className: "scene-list-back-btn", onClick: onBack, children: "\u2190" }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "scene-list-title", children: "Scenes" })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "scene-list-body", children: [
-        loading && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "scene-list-empty", children: "Loading\u2026" }),
-        !loading && scenes.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "scene-list-empty", children: "No scenes found. Create one from within the editor." }),
-        !loading && scenes.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "scene-list-grid", children: scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "scene-card", onClick: () => onSelect(scene.name), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "scene-card-preview", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(PageLayout, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(PageHeader, { title: "Scenes", left: onBack && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button, { onClick: onBack, children: "\u2190" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(PageBody, { children: [
+        loading && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "scene-list-empty", children: "Loading\u2026" }),
+        !loading && scenes.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "scene-list-empty", children: "No scenes found. Create one from within the editor." }),
+        !loading && scenes.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "scene-list-grid", children: scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "scene-card", onClick: () => onSelect(scene.name), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "scene-card-preview", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
               "img",
               {
                 src: `/thumbnails/${scene.name}.jpg?v=${thumbBuster}`,
@@ -69757,9 +69772,9 @@ ${e2}`);
                 onError: () => setFailedThumbs((prev) => new Set(prev).add(scene.name))
               }
             ),
-            failedThumbs.has(scene.name) && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "scene-card-icon", children: "\u{1F3AC}" })
+            failedThumbs.has(scene.name) && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "scene-card-icon", children: "\u{1F3AC}" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "scene-card-label", children: scene.label })
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "scene-card-label", children: scene.label })
         ] }, scene.id)) })
       ] })
     ] });
@@ -69770,7 +69785,7 @@ ${e2}`);
 
   // src/controls/NewProjectDialog.tsx
   var import_react13 = __toESM(require_react());
-  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
   function NewProjectDialog({ onConfirm, onCancel }) {
     const [name, setName] = (0, import_react13.useState)("");
     const inputRef = (0, import_react13.useRef)(null);
@@ -69785,12 +69800,12 @@ ${e2}`);
     const handleKeyDown = (e2) => {
       if (e2.key === "Escape") onCancel();
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "new-scene-overlay", onKeyDown: handleKeyDown, children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "new-scene-dialog", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h2", { className: "new-scene-title", children: "New Project" }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("form", { onSubmit: handleSubmit, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "new-scene-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("label", { htmlFor: "new-project-name", children: "Project name" }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "new-scene-overlay", onKeyDown: handleKeyDown, children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "new-scene-dialog", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h2", { className: "new-scene-title", children: "New Project" }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("form", { onSubmit: handleSubmit, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "new-scene-field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("label", { htmlFor: "new-project-name", children: "Project name" }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
             "input",
             {
               id: "new-project-name",
@@ -69802,16 +69817,16 @@ ${e2}`);
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "new-scene-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button, { type: "button", onClick: onCancel, children: "Cancel" }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button, { type: "submit", variant: "primary", disabled: !name.trim(), children: "OK" })
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "new-scene-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Button, { type: "button", onClick: onCancel, children: "Cancel" }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Button, { type: "submit", variant: "primary", disabled: !name.trim(), children: "OK" })
         ] })
       ] })
     ] }) });
   }
 
   // src/ProjectListPage.tsx
-  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
   function ProjectListPage({ onSelect }) {
     const [projects, setProjects] = (0, import_react14.useState)([]);
     const [loading, setLoading] = (0, import_react14.useState)(true);
@@ -69832,20 +69847,17 @@ ${e2}`);
         setShowDialog(false);
       });
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "project-list-page", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "project-list-header", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "project-list-title", children: "Projects" }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Button, { onClick: () => setShowDialog(true), children: "+ Project" })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "project-list-body", children: [
-        loading && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "project-list-empty", children: "Loading\u2026" }),
-        !loading && projects.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "project-list-empty", children: "No projects yet. Create one to get started." }),
-        !loading && projects.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "project-list-grid", children: projects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "project-card", onClick: () => onSelect(project), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "project-card-icon", children: "\u{1F4C1}" }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "project-card-name", children: project.name })
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(PageLayout, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(PageHeader, { title: "Projects", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button, { onClick: () => setShowDialog(true), children: "+ Project" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(PageBody, { children: [
+        loading && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "project-list-empty", children: "Loading\u2026" }),
+        !loading && projects.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "project-list-empty", children: "No projects yet. Create one to get started." }),
+        !loading && projects.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "project-list-grid", children: projects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "project-card", onClick: () => onSelect(project), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "project-card-icon", children: "\u{1F4C1}" }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "project-card-name", children: project.name })
         ] }, project.id)) })
       ] }),
-      showDialog && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+      showDialog && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
         NewProjectDialog,
         {
           onConfirm: handleCreate,
@@ -69856,7 +69868,7 @@ ${e2}`);
   }
 
   // src/client.tsx
-  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
   function pageFromPath() {
     const sceneMatch = window.location.pathname.match(/^\/scene\/([^/]+)$/);
     if (sceneMatch) {
@@ -69894,7 +69906,7 @@ ${e2}`);
     }, []);
     const handleSaved = (0, import_react15.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
     if (page.type === "scene") {
-      return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
         ScenePage,
         {
           initialScene: page.sceneName,
@@ -69904,7 +69916,7 @@ ${e2}`);
       );
     }
     if (page.type === "scenes") {
-      return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
         SceneListPage,
         {
           onSelect: (sceneName) => navigateToScene(sceneName, page.project),
@@ -69914,11 +69926,11 @@ ${e2}`);
         }
       );
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(ProjectListPage, { onSelect: navigateToProject });
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ProjectListPage, { onSelect: navigateToProject });
   }
   window.addEventListener("DOMContentLoaded", () => {
     const root = (0, import_client.createRoot)(document.body);
-    root.render(/* @__PURE__ */ (0, import_jsx_runtime17.jsx)(App, {}));
+    root.render(/* @__PURE__ */ (0, import_jsx_runtime18.jsx)(App, {}));
   });
 })();
 /*! Bundled license information:

@@ -1,34 +1,3 @@
-.scene-list-page {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  background: #0d0d0d;
-  color: #ccc;
-}
-
-.scene-list-header {
-  display: flex;
-  align-items: center;
-  padding: 12px 24px;
-  background: #111;
-  border-bottom: 1px solid #333;
-  flex-shrink: 0;
-}
-
-.scene-list-title {
-  font-size: 15px;
-  font-weight: bold;
-  color: #e0e0e0;
-  letter-spacing: 0.03em;
-  flex: 1;
-}
-
-.scene-list-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 28px 32px;
-}
-
 .scene-list-empty {
   color: #666;
   font-size: 13px;

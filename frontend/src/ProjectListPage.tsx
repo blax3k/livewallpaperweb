@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './ProjectListPage.scss';
 import { NewProjectDialog } from './controls/NewProjectDialog';
 import { Button } from './components/Button';
+import { PageLayout, PageHeader, PageBody } from './components/PageLayout';
 
 interface ProjectRecord {
   id: string;
@@ -38,12 +39,11 @@ export function ProjectListPage({ onSelect }: ProjectListPageProps) {
   };
 
   return (
-    <div className="project-list-page">
-      <div className="project-list-header">
-        <span className="project-list-title">Projects</span>
+    <PageLayout>
+      <PageHeader title="Projects">
         <Button onClick={() => setShowDialog(true)}>+ Project</Button>
-      </div>
-      <div className="project-list-body">
+      </PageHeader>
+      <PageBody>
         {loading && <div className="project-list-empty">Loading…</div>}
         {!loading && projects.length === 0 && (
           <div className="project-list-empty">No projects yet. Create one to get started.</div>
@@ -58,13 +58,13 @@ export function ProjectListPage({ onSelect }: ProjectListPageProps) {
             ))}
           </div>
         )}
-      </div>
+      </PageBody>
       {showDialog && (
         <NewProjectDialog
           onConfirm={handleCreate}
           onCancel={() => setShowDialog(false)}
         />
       )}
-    </div>
+    </PageLayout>
   );
 }

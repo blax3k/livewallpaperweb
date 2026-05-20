@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './SceneListPage.scss';
 import { Button } from './components/Button';
+import { PageLayout, PageHeader, PageBody } from './components/PageLayout';
 
 interface SceneRecord {
   id: string;
@@ -36,14 +37,9 @@ export function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }: 
   }, []);
 
   return (
-    <div className="scene-list-page">
-      <div className="scene-list-header">
-        {onBack && (
-          <Button className="scene-list-back-btn" onClick={onBack}>←</Button>
-        )}
-        <span className="scene-list-title">Scenes</span>
-      </div>
-      <div className="scene-list-body">
+    <PageLayout>
+      <PageHeader title="Scenes" left={onBack && <Button onClick={onBack}>←</Button>} />
+      <PageBody>
         {loading && <div className="scene-list-empty">Loading…</div>}
         {!loading && scenes.length === 0 && (
           <div className="scene-list-empty">No scenes found. Create one from within the editor.</div>
@@ -66,7 +62,7 @@ export function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }: 
             ))}
           </div>
         )}
-      </div>
-    </div>
+      </PageBody>
+    </PageLayout>
   );
 }
