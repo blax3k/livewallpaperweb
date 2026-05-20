@@ -72,6 +72,7 @@ export class SceneRenderer {
         antialias: true,
         autoDensity: true,
         resolution: window.devicePixelRatio,
+        preserveDrawingBuffer: true,
       });
 
       this.container.appendChild(app.canvas);
@@ -950,6 +951,44 @@ export class SceneRenderer {
     canvas.style.height = `${size}px`;
 
     this.fitSceneToView();
+  }
+
+  /**
+   * Capture a 256x256 JPEG snapshot of the current scene for use as a thumbnail.
+   * Temporarily centers xFocus to 0.5 and hides the phone guide before capturing,
+   * then restores both to their original state. The scene data is never modified.
+   * Returns a base64 data URL, or null if the renderer is not ready.
+   */
+  captureSnapshot(): string | null {
+    if (!this.app) return null;
+
+    // Save current state
+    const savedXFocus = this.currentXFocus;
+    const guideGraphics = this.phoneGuide?.getGraphics() ?? null;
+    const savedGuideVisible = guideGraphics?.visible ?? false;
+
+    // Apply thumbnail state: center the scene, hide guide
+    this.setScrollOffset(0.5);
+    if (guideGraphics) guideGraphics.visible = false;
+
+    // Force a synchronous render so the canvas reflects the temp state
+    this.app.renderer.render(this.app.stage);
+
+    // Capture
+    const src = this.app.canvas as HTMLCanvasElement;
+    const size = 256;
+    const offscreen = document.createElement('canvas');
+    offscreen.width = size;
+    offscreen.height = size;
+    const ctx = offscreen.getContext('2d');
+    if (ctx) ctx.drawImage(src, 0, 0, src.width, src.height, 0, 0, size, size);
+    const result = ctx ? offscreen.toDataURL('image/jpeg', 0.85) : null;
+
+    // Restore original state
+    this.setScrollOffset(savedXFocus);
+    if (guideGraphics) guideGraphics.visible = savedGuideVisible;
+
+    return result;
   }
 
   /**

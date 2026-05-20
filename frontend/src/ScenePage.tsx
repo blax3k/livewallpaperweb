@@ -10,11 +10,13 @@ import { useSpriteDrag } from './hooks/useSpriteDrag';
 import { useKeyboardControls } from './hooks/useKeyboardControls';
 
 interface ScenePageProps {
-  scenes: SceneOption[];
+  initialScene?: string;
+  onBack?: () => void;
+  onSaved?: () => void;
 }
 
-export function ScenePage({ scenes: initialScenes }: ScenePageProps) {
-  const [scenes, setScenes] = useState<SceneOption[]>(initialScenes);
+export function ScenePage({ initialScene, onBack, onSaved }: ScenePageProps) {
+  const [scenes, setScenes] = useState<SceneOption[]>([]);
   const history = useUndoHistory();
   const { notifications, notify } = useNotifications();
   const dragStartPos = useRef<{ x: number; y: number } | null>(null);
@@ -63,7 +65,7 @@ export function ScenePage({ scenes: initialScenes }: ScenePageProps) {
     gyroMode,
     handleGyroModeToggle,
     handleGyroOffset,
-  } = useSceneRenderer(notify);
+  } = useSceneRenderer(notify, onSaved);
 
   const applySelectedSpriteMove = useCallback((x: number, y: number) => {
     setSelectedSprite(prev => prev ? { ...prev, x, y } : null);
@@ -97,6 +99,20 @@ export function ScenePage({ scenes: initialScenes }: ScenePageProps) {
     onXFocusApply: handleXFocusChange,
     onTextureApply: handleTextureApply,
   });
+
+  useEffect(() => {
+    fetch('/api/scenes')
+      .then(r => r.json())
+      .then((data: { name: string; label: string }[]) =>
+        setScenes(data.map(s => ({ value: s.name, label: s.label })))
+      )
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (initialScene) loadScene(initialScene);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const el = canvasRef.current;
@@ -283,6 +299,7 @@ export function ScenePage({ scenes: initialScenes }: ScenePageProps) {
         sceneLoaded={showSceneControls}
         isSaving={isSaving}
         phoneGuideVisible={phoneGuideVisible}
+        onBack={onBack}
         onSceneSelect={loadScene}
         onNewScene={handleNewScene}
         onPhoneGuideToggle={handlePhoneGuideToggle}

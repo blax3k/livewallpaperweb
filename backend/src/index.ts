@@ -16,6 +16,9 @@ const server = Fastify({
 const uploadsDir = path.join(__dirname, '../data/uploads');
 const storage = new LocalStorage(uploadsDir);
 
+const thumbnailsDir = path.join(__dirname, '../data/thumbnails');
+const thumbnailStorage = new LocalStorage(thumbnailsDir);
+
 const ALLOWED_MIME_TYPES = new Set(['image/png', 'image/jpeg', 'image/gif', 'image/webp']);
 const MIME_TO_EXT: Record<string, string> = {
   'image/png': '.png',
@@ -119,6 +122,17 @@ server.put<{ Params: { name: string }; Body: { label: string; data: unknown } }>
   return result.rows[0];
 });
 
+// Save or overwrite a scene thumbnail
+server.put<{ Params: { name: string }; Body: { dataUrl: string } }>('/api/scenes/:name/thumbnail', async (req, reply) => {
+  const { name } = req.params;
+  const { dataUrl } = req.body;
+  const match = dataUrl.match(/^data:image\/(jpeg|jpg|png);base64,(.+)$/);
+  if (!match) return reply.status(400).send({ error: 'Invalid dataUrl' });
+  const buffer = Buffer.from(match[2], 'base64');
+  await thumbnailStorage.save(`${name}.jpg`, buffer);
+  return reply.status(204).send();
+});
+
 // Delete a scene
 server.delete<{ Params: { name: string } }>('/api/scenes/:name', async (req, reply) => {
   const result = await pool.query(
@@ -131,11 +145,17 @@ server.delete<{ Params: { name: string } }>('/api/scenes/:name', async (req, rep
   return reply.status(204).send();
 });
 
+// SPA catch-all: serve index.html for /scene/* so direct URL access works
+server.get('/scene/*', (req, reply) => {
+  reply.sendFile('index.html', path.join(__dirname, '../../frontend/public'));
+});
+
 // Start server
 const start = async () => {
   try {
     await runMigrations();
     await storage.init();
+    await thumbnailStorage.init();
 
     // Register plugins
     await server.register(cors, {
@@ -153,6 +173,12 @@ const start = async () => {
     await server.register(staticFiles, {
       root: uploadsDir,
       prefix: '/uploads/',
+      decorateReply: false,
+    });
+
+    await server.register(staticFiles, {
+      root: thumbnailsDir,
+      prefix: '/thumbnails/',
       decorateReply: false,
     });
 

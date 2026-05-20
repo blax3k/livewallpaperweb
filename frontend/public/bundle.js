@@ -33,277 +33,6 @@
     mod
   ));
 
-  // ../node_modules/scheduler/cjs/scheduler.development.js
-  var require_scheduler_development = __commonJS({
-    "../node_modules/scheduler/cjs/scheduler.development.js"(exports) {
-      "use strict";
-      (function() {
-        function performWorkUntilDeadline() {
-          needsPaint = false;
-          if (isMessageLoopRunning) {
-            var currentTime = exports.unstable_now();
-            startTime = currentTime;
-            var hasMoreWork = true;
-            try {
-              a: {
-                isHostCallbackScheduled = false;
-                isHostTimeoutScheduled && (isHostTimeoutScheduled = false, localClearTimeout(taskTimeoutID), taskTimeoutID = -1);
-                isPerformingWork = true;
-                var previousPriorityLevel = currentPriorityLevel;
-                try {
-                  b: {
-                    advanceTimers(currentTime);
-                    for (currentTask = peek(taskQueue); null !== currentTask && !(currentTask.expirationTime > currentTime && shouldYieldToHost()); ) {
-                      var callback = currentTask.callback;
-                      if ("function" === typeof callback) {
-                        currentTask.callback = null;
-                        currentPriorityLevel = currentTask.priorityLevel;
-                        var continuationCallback = callback(
-                          currentTask.expirationTime <= currentTime
-                        );
-                        currentTime = exports.unstable_now();
-                        if ("function" === typeof continuationCallback) {
-                          currentTask.callback = continuationCallback;
-                          advanceTimers(currentTime);
-                          hasMoreWork = true;
-                          break b;
-                        }
-                        currentTask === peek(taskQueue) && pop(taskQueue);
-                        advanceTimers(currentTime);
-                      } else pop(taskQueue);
-                      currentTask = peek(taskQueue);
-                    }
-                    if (null !== currentTask) hasMoreWork = true;
-                    else {
-                      var firstTimer = peek(timerQueue);
-                      null !== firstTimer && requestHostTimeout(
-                        handleTimeout,
-                        firstTimer.startTime - currentTime
-                      );
-                      hasMoreWork = false;
-                    }
-                  }
-                  break a;
-                } finally {
-                  currentTask = null, currentPriorityLevel = previousPriorityLevel, isPerformingWork = false;
-                }
-                hasMoreWork = void 0;
-              }
-            } finally {
-              hasMoreWork ? schedulePerformWorkUntilDeadline() : isMessageLoopRunning = false;
-            }
-          }
-        }
-        function push(heap, node) {
-          var index = heap.length;
-          heap.push(node);
-          a: for (; 0 < index; ) {
-            var parentIndex = index - 1 >>> 1, parent = heap[parentIndex];
-            if (0 < compare(parent, node))
-              heap[parentIndex] = node, heap[index] = parent, index = parentIndex;
-            else break a;
-          }
-        }
-        function peek(heap) {
-          return 0 === heap.length ? null : heap[0];
-        }
-        function pop(heap) {
-          if (0 === heap.length) return null;
-          var first = heap[0], last = heap.pop();
-          if (last !== first) {
-            heap[0] = last;
-            a: for (var index = 0, length = heap.length, halfLength = length >>> 1; index < halfLength; ) {
-              var leftIndex = 2 * (index + 1) - 1, left = heap[leftIndex], rightIndex = leftIndex + 1, right = heap[rightIndex];
-              if (0 > compare(left, last))
-                rightIndex < length && 0 > compare(right, left) ? (heap[index] = right, heap[rightIndex] = last, index = rightIndex) : (heap[index] = left, heap[leftIndex] = last, index = leftIndex);
-              else if (rightIndex < length && 0 > compare(right, last))
-                heap[index] = right, heap[rightIndex] = last, index = rightIndex;
-              else break a;
-            }
-          }
-          return first;
-        }
-        function compare(a2, b2) {
-          var diff = a2.sortIndex - b2.sortIndex;
-          return 0 !== diff ? diff : a2.id - b2.id;
-        }
-        function advanceTimers(currentTime) {
-          for (var timer = peek(timerQueue); null !== timer; ) {
-            if (null === timer.callback) pop(timerQueue);
-            else if (timer.startTime <= currentTime)
-              pop(timerQueue), timer.sortIndex = timer.expirationTime, push(taskQueue, timer);
-            else break;
-            timer = peek(timerQueue);
-          }
-        }
-        function handleTimeout(currentTime) {
-          isHostTimeoutScheduled = false;
-          advanceTimers(currentTime);
-          if (!isHostCallbackScheduled)
-            if (null !== peek(taskQueue))
-              isHostCallbackScheduled = true, isMessageLoopRunning || (isMessageLoopRunning = true, schedulePerformWorkUntilDeadline());
-            else {
-              var firstTimer = peek(timerQueue);
-              null !== firstTimer && requestHostTimeout(
-                handleTimeout,
-                firstTimer.startTime - currentTime
-              );
-            }
-        }
-        function shouldYieldToHost() {
-          return needsPaint ? true : exports.unstable_now() - startTime < frameInterval ? false : true;
-        }
-        function requestHostTimeout(callback, ms) {
-          taskTimeoutID = localSetTimeout(function() {
-            callback(exports.unstable_now());
-          }, ms);
-        }
-        "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        exports.unstable_now = void 0;
-        if ("object" === typeof performance && "function" === typeof performance.now) {
-          var localPerformance = performance;
-          exports.unstable_now = function() {
-            return localPerformance.now();
-          };
-        } else {
-          var localDate = Date, initialTime = localDate.now();
-          exports.unstable_now = function() {
-            return localDate.now() - initialTime;
-          };
-        }
-        var taskQueue = [], timerQueue = [], taskIdCounter = 1, currentTask = null, currentPriorityLevel = 3, isPerformingWork = false, isHostCallbackScheduled = false, isHostTimeoutScheduled = false, needsPaint = false, localSetTimeout = "function" === typeof setTimeout ? setTimeout : null, localClearTimeout = "function" === typeof clearTimeout ? clearTimeout : null, localSetImmediate = "undefined" !== typeof setImmediate ? setImmediate : null, isMessageLoopRunning = false, taskTimeoutID = -1, frameInterval = 5, startTime = -1;
-        if ("function" === typeof localSetImmediate)
-          var schedulePerformWorkUntilDeadline = function() {
-            localSetImmediate(performWorkUntilDeadline);
-          };
-        else if ("undefined" !== typeof MessageChannel) {
-          var channel = new MessageChannel(), port = channel.port2;
-          channel.port1.onmessage = performWorkUntilDeadline;
-          schedulePerformWorkUntilDeadline = function() {
-            port.postMessage(null);
-          };
-        } else
-          schedulePerformWorkUntilDeadline = function() {
-            localSetTimeout(performWorkUntilDeadline, 0);
-          };
-        exports.unstable_IdlePriority = 5;
-        exports.unstable_ImmediatePriority = 1;
-        exports.unstable_LowPriority = 4;
-        exports.unstable_NormalPriority = 3;
-        exports.unstable_Profiling = null;
-        exports.unstable_UserBlockingPriority = 2;
-        exports.unstable_cancelCallback = function(task) {
-          task.callback = null;
-        };
-        exports.unstable_forceFrameRate = function(fps) {
-          0 > fps || 125 < fps ? console.error(
-            "forceFrameRate takes a positive int between 0 and 125, forcing frame rates higher than 125 fps is not supported"
-          ) : frameInterval = 0 < fps ? Math.floor(1e3 / fps) : 5;
-        };
-        exports.unstable_getCurrentPriorityLevel = function() {
-          return currentPriorityLevel;
-        };
-        exports.unstable_next = function(eventHandler) {
-          switch (currentPriorityLevel) {
-            case 1:
-            case 2:
-            case 3:
-              var priorityLevel = 3;
-              break;
-            default:
-              priorityLevel = currentPriorityLevel;
-          }
-          var previousPriorityLevel = currentPriorityLevel;
-          currentPriorityLevel = priorityLevel;
-          try {
-            return eventHandler();
-          } finally {
-            currentPriorityLevel = previousPriorityLevel;
-          }
-        };
-        exports.unstable_requestPaint = function() {
-          needsPaint = true;
-        };
-        exports.unstable_runWithPriority = function(priorityLevel, eventHandler) {
-          switch (priorityLevel) {
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-              break;
-            default:
-              priorityLevel = 3;
-          }
-          var previousPriorityLevel = currentPriorityLevel;
-          currentPriorityLevel = priorityLevel;
-          try {
-            return eventHandler();
-          } finally {
-            currentPriorityLevel = previousPriorityLevel;
-          }
-        };
-        exports.unstable_scheduleCallback = function(priorityLevel, callback, options) {
-          var currentTime = exports.unstable_now();
-          "object" === typeof options && null !== options ? (options = options.delay, options = "number" === typeof options && 0 < options ? currentTime + options : currentTime) : options = currentTime;
-          switch (priorityLevel) {
-            case 1:
-              var timeout = -1;
-              break;
-            case 2:
-              timeout = 250;
-              break;
-            case 5:
-              timeout = 1073741823;
-              break;
-            case 4:
-              timeout = 1e4;
-              break;
-            default:
-              timeout = 5e3;
-          }
-          timeout = options + timeout;
-          priorityLevel = {
-            id: taskIdCounter++,
-            callback,
-            priorityLevel,
-            startTime: options,
-            expirationTime: timeout,
-            sortIndex: -1
-          };
-          options > currentTime ? (priorityLevel.sortIndex = options, push(timerQueue, priorityLevel), null === peek(taskQueue) && priorityLevel === peek(timerQueue) && (isHostTimeoutScheduled ? (localClearTimeout(taskTimeoutID), taskTimeoutID = -1) : isHostTimeoutScheduled = true, requestHostTimeout(handleTimeout, options - currentTime))) : (priorityLevel.sortIndex = timeout, push(taskQueue, priorityLevel), isHostCallbackScheduled || isPerformingWork || (isHostCallbackScheduled = true, isMessageLoopRunning || (isMessageLoopRunning = true, schedulePerformWorkUntilDeadline())));
-          return priorityLevel;
-        };
-        exports.unstable_shouldYield = shouldYieldToHost;
-        exports.unstable_wrapCallback = function(callback) {
-          var parentPriorityLevel = currentPriorityLevel;
-          return function() {
-            var previousPriorityLevel = currentPriorityLevel;
-            currentPriorityLevel = parentPriorityLevel;
-            try {
-              return callback.apply(this, arguments);
-            } finally {
-              currentPriorityLevel = previousPriorityLevel;
-            }
-          };
-        };
-        "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop(Error());
-      })();
-    }
-  });
-
-  // ../node_modules/scheduler/index.js
-  var require_scheduler = __commonJS({
-    "../node_modules/scheduler/index.js"(exports, module) {
-      "use strict";
-      if (false) {
-        module.exports = null;
-      } else {
-        module.exports = require_scheduler_development();
-      }
-    }
-  });
-
   // ../node_modules/react/cjs/react.development.js
   var require_react_development = __commonJS({
     "../node_modules/react/cjs/react.development.js"(exports, module) {
@@ -1288,6 +1017,277 @@
     }
   });
 
+  // ../node_modules/scheduler/cjs/scheduler.development.js
+  var require_scheduler_development = __commonJS({
+    "../node_modules/scheduler/cjs/scheduler.development.js"(exports) {
+      "use strict";
+      (function() {
+        function performWorkUntilDeadline() {
+          needsPaint = false;
+          if (isMessageLoopRunning) {
+            var currentTime = exports.unstable_now();
+            startTime = currentTime;
+            var hasMoreWork = true;
+            try {
+              a: {
+                isHostCallbackScheduled = false;
+                isHostTimeoutScheduled && (isHostTimeoutScheduled = false, localClearTimeout(taskTimeoutID), taskTimeoutID = -1);
+                isPerformingWork = true;
+                var previousPriorityLevel = currentPriorityLevel;
+                try {
+                  b: {
+                    advanceTimers(currentTime);
+                    for (currentTask = peek(taskQueue); null !== currentTask && !(currentTask.expirationTime > currentTime && shouldYieldToHost()); ) {
+                      var callback = currentTask.callback;
+                      if ("function" === typeof callback) {
+                        currentTask.callback = null;
+                        currentPriorityLevel = currentTask.priorityLevel;
+                        var continuationCallback = callback(
+                          currentTask.expirationTime <= currentTime
+                        );
+                        currentTime = exports.unstable_now();
+                        if ("function" === typeof continuationCallback) {
+                          currentTask.callback = continuationCallback;
+                          advanceTimers(currentTime);
+                          hasMoreWork = true;
+                          break b;
+                        }
+                        currentTask === peek(taskQueue) && pop(taskQueue);
+                        advanceTimers(currentTime);
+                      } else pop(taskQueue);
+                      currentTask = peek(taskQueue);
+                    }
+                    if (null !== currentTask) hasMoreWork = true;
+                    else {
+                      var firstTimer = peek(timerQueue);
+                      null !== firstTimer && requestHostTimeout(
+                        handleTimeout,
+                        firstTimer.startTime - currentTime
+                      );
+                      hasMoreWork = false;
+                    }
+                  }
+                  break a;
+                } finally {
+                  currentTask = null, currentPriorityLevel = previousPriorityLevel, isPerformingWork = false;
+                }
+                hasMoreWork = void 0;
+              }
+            } finally {
+              hasMoreWork ? schedulePerformWorkUntilDeadline() : isMessageLoopRunning = false;
+            }
+          }
+        }
+        function push(heap, node) {
+          var index = heap.length;
+          heap.push(node);
+          a: for (; 0 < index; ) {
+            var parentIndex = index - 1 >>> 1, parent = heap[parentIndex];
+            if (0 < compare(parent, node))
+              heap[parentIndex] = node, heap[index] = parent, index = parentIndex;
+            else break a;
+          }
+        }
+        function peek(heap) {
+          return 0 === heap.length ? null : heap[0];
+        }
+        function pop(heap) {
+          if (0 === heap.length) return null;
+          var first = heap[0], last = heap.pop();
+          if (last !== first) {
+            heap[0] = last;
+            a: for (var index = 0, length = heap.length, halfLength = length >>> 1; index < halfLength; ) {
+              var leftIndex = 2 * (index + 1) - 1, left = heap[leftIndex], rightIndex = leftIndex + 1, right = heap[rightIndex];
+              if (0 > compare(left, last))
+                rightIndex < length && 0 > compare(right, left) ? (heap[index] = right, heap[rightIndex] = last, index = rightIndex) : (heap[index] = left, heap[leftIndex] = last, index = leftIndex);
+              else if (rightIndex < length && 0 > compare(right, last))
+                heap[index] = right, heap[rightIndex] = last, index = rightIndex;
+              else break a;
+            }
+          }
+          return first;
+        }
+        function compare(a2, b2) {
+          var diff = a2.sortIndex - b2.sortIndex;
+          return 0 !== diff ? diff : a2.id - b2.id;
+        }
+        function advanceTimers(currentTime) {
+          for (var timer = peek(timerQueue); null !== timer; ) {
+            if (null === timer.callback) pop(timerQueue);
+            else if (timer.startTime <= currentTime)
+              pop(timerQueue), timer.sortIndex = timer.expirationTime, push(taskQueue, timer);
+            else break;
+            timer = peek(timerQueue);
+          }
+        }
+        function handleTimeout(currentTime) {
+          isHostTimeoutScheduled = false;
+          advanceTimers(currentTime);
+          if (!isHostCallbackScheduled)
+            if (null !== peek(taskQueue))
+              isHostCallbackScheduled = true, isMessageLoopRunning || (isMessageLoopRunning = true, schedulePerformWorkUntilDeadline());
+            else {
+              var firstTimer = peek(timerQueue);
+              null !== firstTimer && requestHostTimeout(
+                handleTimeout,
+                firstTimer.startTime - currentTime
+              );
+            }
+        }
+        function shouldYieldToHost() {
+          return needsPaint ? true : exports.unstable_now() - startTime < frameInterval ? false : true;
+        }
+        function requestHostTimeout(callback, ms) {
+          taskTimeoutID = localSetTimeout(function() {
+            callback(exports.unstable_now());
+          }, ms);
+        }
+        "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
+        exports.unstable_now = void 0;
+        if ("object" === typeof performance && "function" === typeof performance.now) {
+          var localPerformance = performance;
+          exports.unstable_now = function() {
+            return localPerformance.now();
+          };
+        } else {
+          var localDate = Date, initialTime = localDate.now();
+          exports.unstable_now = function() {
+            return localDate.now() - initialTime;
+          };
+        }
+        var taskQueue = [], timerQueue = [], taskIdCounter = 1, currentTask = null, currentPriorityLevel = 3, isPerformingWork = false, isHostCallbackScheduled = false, isHostTimeoutScheduled = false, needsPaint = false, localSetTimeout = "function" === typeof setTimeout ? setTimeout : null, localClearTimeout = "function" === typeof clearTimeout ? clearTimeout : null, localSetImmediate = "undefined" !== typeof setImmediate ? setImmediate : null, isMessageLoopRunning = false, taskTimeoutID = -1, frameInterval = 5, startTime = -1;
+        if ("function" === typeof localSetImmediate)
+          var schedulePerformWorkUntilDeadline = function() {
+            localSetImmediate(performWorkUntilDeadline);
+          };
+        else if ("undefined" !== typeof MessageChannel) {
+          var channel = new MessageChannel(), port = channel.port2;
+          channel.port1.onmessage = performWorkUntilDeadline;
+          schedulePerformWorkUntilDeadline = function() {
+            port.postMessage(null);
+          };
+        } else
+          schedulePerformWorkUntilDeadline = function() {
+            localSetTimeout(performWorkUntilDeadline, 0);
+          };
+        exports.unstable_IdlePriority = 5;
+        exports.unstable_ImmediatePriority = 1;
+        exports.unstable_LowPriority = 4;
+        exports.unstable_NormalPriority = 3;
+        exports.unstable_Profiling = null;
+        exports.unstable_UserBlockingPriority = 2;
+        exports.unstable_cancelCallback = function(task) {
+          task.callback = null;
+        };
+        exports.unstable_forceFrameRate = function(fps) {
+          0 > fps || 125 < fps ? console.error(
+            "forceFrameRate takes a positive int between 0 and 125, forcing frame rates higher than 125 fps is not supported"
+          ) : frameInterval = 0 < fps ? Math.floor(1e3 / fps) : 5;
+        };
+        exports.unstable_getCurrentPriorityLevel = function() {
+          return currentPriorityLevel;
+        };
+        exports.unstable_next = function(eventHandler) {
+          switch (currentPriorityLevel) {
+            case 1:
+            case 2:
+            case 3:
+              var priorityLevel = 3;
+              break;
+            default:
+              priorityLevel = currentPriorityLevel;
+          }
+          var previousPriorityLevel = currentPriorityLevel;
+          currentPriorityLevel = priorityLevel;
+          try {
+            return eventHandler();
+          } finally {
+            currentPriorityLevel = previousPriorityLevel;
+          }
+        };
+        exports.unstable_requestPaint = function() {
+          needsPaint = true;
+        };
+        exports.unstable_runWithPriority = function(priorityLevel, eventHandler) {
+          switch (priorityLevel) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+              break;
+            default:
+              priorityLevel = 3;
+          }
+          var previousPriorityLevel = currentPriorityLevel;
+          currentPriorityLevel = priorityLevel;
+          try {
+            return eventHandler();
+          } finally {
+            currentPriorityLevel = previousPriorityLevel;
+          }
+        };
+        exports.unstable_scheduleCallback = function(priorityLevel, callback, options) {
+          var currentTime = exports.unstable_now();
+          "object" === typeof options && null !== options ? (options = options.delay, options = "number" === typeof options && 0 < options ? currentTime + options : currentTime) : options = currentTime;
+          switch (priorityLevel) {
+            case 1:
+              var timeout = -1;
+              break;
+            case 2:
+              timeout = 250;
+              break;
+            case 5:
+              timeout = 1073741823;
+              break;
+            case 4:
+              timeout = 1e4;
+              break;
+            default:
+              timeout = 5e3;
+          }
+          timeout = options + timeout;
+          priorityLevel = {
+            id: taskIdCounter++,
+            callback,
+            priorityLevel,
+            startTime: options,
+            expirationTime: timeout,
+            sortIndex: -1
+          };
+          options > currentTime ? (priorityLevel.sortIndex = options, push(timerQueue, priorityLevel), null === peek(taskQueue) && priorityLevel === peek(timerQueue) && (isHostTimeoutScheduled ? (localClearTimeout(taskTimeoutID), taskTimeoutID = -1) : isHostTimeoutScheduled = true, requestHostTimeout(handleTimeout, options - currentTime))) : (priorityLevel.sortIndex = timeout, push(taskQueue, priorityLevel), isHostCallbackScheduled || isPerformingWork || (isHostCallbackScheduled = true, isMessageLoopRunning || (isMessageLoopRunning = true, schedulePerformWorkUntilDeadline())));
+          return priorityLevel;
+        };
+        exports.unstable_shouldYield = shouldYieldToHost;
+        exports.unstable_wrapCallback = function(callback) {
+          var parentPriorityLevel = currentPriorityLevel;
+          return function() {
+            var previousPriorityLevel = currentPriorityLevel;
+            currentPriorityLevel = parentPriorityLevel;
+            try {
+              return callback.apply(this, arguments);
+            } finally {
+              currentPriorityLevel = previousPriorityLevel;
+            }
+          };
+        };
+        "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop(Error());
+      })();
+    }
+  });
+
+  // ../node_modules/scheduler/index.js
+  var require_scheduler = __commonJS({
+    "../node_modules/scheduler/index.js"(exports, module) {
+      "use strict";
+      if (false) {
+        module.exports = null;
+      } else {
+        module.exports = require_scheduler_development();
+      }
+    }
+  });
+
   // ../node_modules/react-dom/cjs/react-dom.development.js
   var require_react_dom_development = __commonJS({
     "../node_modules/react-dom/cjs/react-dom.development.js"(exports) {
@@ -1337,7 +1337,7 @@
           return dispatcher;
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var React9 = require_react(), Internals = {
+        var React11 = require_react(), Internals = {
           d: {
             f: noop,
             r: function() {
@@ -1355,7 +1355,7 @@
           },
           p: 0,
           findDOMNode: null
-        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React9.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React11.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
         "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
           "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
         );
@@ -2890,7 +2890,7 @@
           "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
         }
         function validateOptionProps(element, props) {
-          null == props.value && ("object" === typeof props.children && null !== props.children ? React9.Children.forEach(props.children, function(child) {
+          null == props.value && ("object" === typeof props.children && null !== props.children ? React11.Children.forEach(props.children, function(child) {
             null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
               "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
             ));
@@ -18522,14 +18522,14 @@
           ));
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var Scheduler = require_scheduler(), React9 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+        var Scheduler = require_scheduler(), React11 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
         /* @__PURE__ */ Symbol.for("react.scope");
         var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity");
         /* @__PURE__ */ Symbol.for("react.legacy_hidden");
         /* @__PURE__ */ Symbol.for("react.tracing_marker");
         var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel");
         /* @__PURE__ */ Symbol.for("react.view_transition");
-        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React9.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React11.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
           pending: false,
           data: null,
           method: null,
@@ -21317,7 +21317,7 @@
           }
         };
         (function() {
-          var isomorphicReactPackageVersion = React9.version;
+          var isomorphicReactPackageVersion = React11.version;
           if ("19.2.5" !== isomorphicReactPackageVersion)
             throw Error(
               'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.5\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21671,18 +21671,18 @@
         function isValidElement(object) {
           return "object" === typeof object && null !== object && object.$$typeof === REACT_ELEMENT_TYPE;
         }
-        var React9 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React9.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
+        var React11 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React11.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
           return null;
         };
-        React9 = {
+        React11 = {
           react_stack_bottom_frame: function(callStackForError) {
             return callStackForError();
           }
         };
         var specialPropKeyWarningShown;
         var didWarnAboutElementRef = {};
-        var unknownOwnerDebugStack = React9.react_stack_bottom_frame.bind(
-          React9,
+        var unknownOwnerDebugStack = React11.react_stack_bottom_frame.bind(
+          React11,
           UnknownOwner
         )();
         var unknownOwnerDebugTask = createTask(getTaskName(UnknownOwner));
@@ -64176,6 +64176,7 @@ ${parts.join("\n")}
   });
 
   // src/client.tsx
+  var import_react13 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/ScenePage.tsx
@@ -64910,7 +64911,7 @@ ${parts.join("\n")}
 
   // src/controls/TopBar.tsx
   var import_jsx_runtime9 = __toESM(require_jsx_runtime());
-  function TopBar({ scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, onSceneSelect, onNewScene, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }) {
+  function TopBar({ scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, onBack, onSceneSelect, onNewScene, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }) {
     const [dialogOpen, setDialogOpen] = (0, import_react4.useState)(false);
     const [libraryOpen, setLibraryOpen] = (0, import_react4.useState)(false);
     const handleConfirm = (label) => {
@@ -64918,6 +64919,7 @@ ${parts.join("\n")}
       onNewScene(label);
     };
     return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "top-bar", children: [
+      onBack && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { onClick: onBack, title: "Back to scenes", children: "\u2190 Scenes" }),
       /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SceneSelectorControl, { scenes, currentScene: currentSceneName, onSelect: onSceneSelect }),
       /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { onClick: () => setDialogOpen(true), children: "+ New Scene" }),
       dialogOpen && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
@@ -68192,7 +68194,8 @@ ${e2}`);
           backgroundColor: 0,
           antialias: true,
           autoDensity: true,
-          resolution: window.devicePixelRatio
+          resolution: window.devicePixelRatio,
+          preserveDrawingBuffer: true
         });
         this.container.appendChild(app.canvas);
         const canvas = app.canvas;
@@ -68913,6 +68916,32 @@ ${e2}`);
       this.fitSceneToView();
     }
     /**
+     * Capture a 256x256 JPEG snapshot of the current scene for use as a thumbnail.
+     * Temporarily centers xFocus to 0.5 and hides the phone guide before capturing,
+     * then restores both to their original state. The scene data is never modified.
+     * Returns a base64 data URL, or null if the renderer is not ready.
+     */
+    captureSnapshot() {
+      if (!this.app) return null;
+      const savedXFocus = this.currentXFocus;
+      const guideGraphics = this.phoneGuide?.getGraphics() ?? null;
+      const savedGuideVisible = guideGraphics?.visible ?? false;
+      this.setScrollOffset(0.5);
+      if (guideGraphics) guideGraphics.visible = false;
+      this.app.renderer.render(this.app.stage);
+      const src = this.app.canvas;
+      const size = 256;
+      const offscreen = document.createElement("canvas");
+      offscreen.width = size;
+      offscreen.height = size;
+      const ctx = offscreen.getContext("2d");
+      if (ctx) ctx.drawImage(src, 0, 0, src.width, src.height, 0, 0, size, size);
+      const result = ctx ? offscreen.toDataURL("image/jpeg", 0.85) : null;
+      this.setScrollOffset(savedXFocus);
+      if (guideGraphics) guideGraphics.visible = savedGuideVisible;
+      return result;
+    }
+    /**
      * Destroy the renderer and clean up resources
      */
     destroy() {
@@ -68934,7 +68963,7 @@ ${e2}`);
   };
 
   // src/hooks/useSceneRenderer.ts
-  function useSceneRenderer(onNotify) {
+  function useSceneRenderer(onNotify, onSaved) {
     const [showSceneControls, setShowSceneControls] = (0, import_react8.useState)(false);
     const [currentSceneName, setCurrentSceneName] = (0, import_react8.useState)(null);
     const [xFocus, setXFocus] = (0, import_react8.useState)(0.5);
@@ -68947,6 +68976,8 @@ ${e2}`);
     const [zoom, setZoom] = (0, import_react8.useState)(1);
     const onNotifyRef = (0, import_react8.useRef)(onNotify);
     onNotifyRef.current = onNotify;
+    const onSavedRef = (0, import_react8.useRef)(onSaved);
+    onSavedRef.current = onSaved;
     const phoneGuideVisibleRef = (0, import_react8.useRef)(true);
     const canvasRef = (0, import_react8.useRef)(null);
     const rendererRef = (0, import_react8.useRef)(null);
@@ -69004,7 +69035,17 @@ ${e2}`);
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ label, data })
         });
+        const dataUrl = rendererRef.current?.captureSnapshot();
+        if (dataUrl) {
+          fetch(`/api/scenes/${name}/thumbnail`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ dataUrl })
+          }).catch(() => {
+          });
+        }
         onNotifyRef.current?.("Scene saved!");
+        onSavedRef.current?.();
       } catch (error) {
         console.error("Failed to save scene:", error);
       } finally {
@@ -69337,8 +69378,8 @@ ${e2}`);
 
   // src/ScenePage.tsx
   var import_jsx_runtime12 = __toESM(require_jsx_runtime());
-  function ScenePage({ scenes: initialScenes }) {
-    const [scenes, setScenes] = (0, import_react11.useState)(initialScenes);
+  function ScenePage({ initialScene, onBack, onSaved }) {
+    const [scenes, setScenes] = (0, import_react11.useState)([]);
     const history = useUndoHistory();
     const { notifications, notify } = useNotifications();
     const dragStartPos = (0, import_react11.useRef)(null);
@@ -69386,7 +69427,7 @@ ${e2}`);
       gyroMode,
       handleGyroModeToggle,
       handleGyroOffset
-    } = useSceneRenderer(notify);
+    } = useSceneRenderer(notify, onSaved);
     const applySelectedSpriteMove = (0, import_react11.useCallback)((x2, y2) => {
       setSelectedSprite((prev) => prev ? { ...prev, x: x2, y: y2 } : null);
     }, [setSelectedSprite]);
@@ -69415,6 +69456,15 @@ ${e2}`);
       onXFocusApply: handleXFocusChange,
       onTextureApply: handleTextureApply
     });
+    (0, import_react11.useEffect)(() => {
+      fetch("/api/scenes").then((r2) => r2.json()).then(
+        (data) => setScenes(data.map((s2) => ({ value: s2.name, label: s2.label })))
+      ).catch(() => {
+      });
+    }, []);
+    (0, import_react11.useEffect)(() => {
+      if (initialScene) loadScene(initialScene);
+    }, []);
     (0, import_react11.useEffect)(() => {
       const el = canvasRef.current;
       if (!el) return;
@@ -69580,6 +69630,7 @@ ${e2}`);
           sceneLoaded: showSceneControls,
           isSaving,
           phoneGuideVisible,
+          onBack,
           onSceneSelect: loadScene,
           onNewScene: handleNewScene,
           onPhoneGuideToggle: handlePhoneGuideToggle,
@@ -69660,26 +69711,96 @@ ${e2}`);
     ] });
   }
 
-  // src/client.tsx
+  // src/SceneListPage.tsx
+  var import_react12 = __toESM(require_react());
   var import_jsx_runtime13 = __toESM(require_jsx_runtime());
-  window.addEventListener("DOMContentLoaded", async () => {
-    try {
-      const response = await fetch("/api/scenes");
-      const data = await response.json();
-      const scenes = data.map((s2) => ({ value: s2.name, label: s2.label }));
-      const root = (0, import_client.createRoot)(document.body);
-      root.render(/* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ScenePage, { scenes }));
-    } catch (error) {
-      console.error("Failed to initialize app:", error);
+  function SceneListPage({ onSelect, thumbBuster = 0 }) {
+    const [scenes, setScenes] = (0, import_react12.useState)([]);
+    const [loading, setLoading] = (0, import_react12.useState)(true);
+    const [failedThumbs, setFailedThumbs] = (0, import_react12.useState)(/* @__PURE__ */ new Set());
+    const prevBusterRef = (0, import_react12.useRef)(thumbBuster);
+    (0, import_react12.useEffect)(() => {
+      if (thumbBuster !== prevBusterRef.current) {
+        prevBusterRef.current = thumbBuster;
+        setFailedThumbs(/* @__PURE__ */ new Set());
+      }
+    }, [thumbBuster]);
+    (0, import_react12.useEffect)(() => {
+      fetch("/api/scenes").then((r2) => r2.json()).then((records) => {
+        setScenes(records);
+        setLoading(false);
+      }).catch(() => setLoading(false));
+    }, []);
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "scene-list-page", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "scene-list-header", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "scene-list-title", children: "Scenes" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "scene-list-body", children: [
+        loading && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "scene-list-empty", children: "Loading\u2026" }),
+        !loading && scenes.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "scene-list-empty", children: "No scenes found. Create one from within the editor." }),
+        !loading && scenes.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "scene-list-grid", children: scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "scene-card", onClick: () => onSelect(scene.name), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "scene-card-preview", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+              "img",
+              {
+                src: `/thumbnails/${scene.name}.jpg?v=${thumbBuster}`,
+                alt: scene.label,
+                className: "scene-card-thumb",
+                onError: () => setFailedThumbs((prev) => new Set(prev).add(scene.name))
+              }
+            ),
+            failedThumbs.has(scene.name) && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "scene-card-icon", children: "\u{1F3AC}" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "scene-card-label", children: scene.label })
+        ] }, scene.id)) })
+      ] })
+    ] });
+  }
+
+  // src/client.tsx
+  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
+  function pageFromPath() {
+    const match = window.location.pathname.match(/^\/scene\/([^/]+)$/);
+    return match ? { type: "scene", sceneName: decodeURIComponent(match[1]) } : { type: "list" };
+  }
+  function App() {
+    const [page, setPage] = (0, import_react13.useState)(pageFromPath);
+    const [thumbBuster, setThumbBuster] = (0, import_react13.useState)(0);
+    (0, import_react13.useEffect)(() => {
+      const onPopState = () => setPage(pageFromPath());
+      window.addEventListener("popstate", onPopState);
+      return () => window.removeEventListener("popstate", onPopState);
+    }, []);
+    const navigateToScene = (0, import_react13.useCallback)((sceneName) => {
+      window.history.pushState(null, "", `/scene/${encodeURIComponent(sceneName)}`);
+      setPage({ type: "scene", sceneName });
+    }, []);
+    const navigateBack = (0, import_react13.useCallback)(() => {
+      window.history.pushState(null, "", "/");
+      setPage({ type: "list" });
+    }, []);
+    const handleSaved = (0, import_react13.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
+    if (page.type === "scene") {
+      return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+        ScenePage,
+        {
+          initialScene: page.sceneName,
+          onBack: navigateBack,
+          onSaved: handleSaved
+        }
+      );
     }
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SceneListPage, { onSelect: navigateToScene, thumbBuster });
+  }
+  window.addEventListener("DOMContentLoaded", () => {
+    const root = (0, import_client.createRoot)(document.body);
+    root.render(/* @__PURE__ */ (0, import_jsx_runtime14.jsx)(App, {}));
   });
 })();
 /*! Bundled license information:
 
-scheduler/cjs/scheduler.development.js:
+react/cjs/react.development.js:
   (**
    * @license React
-   * scheduler.development.js
+   * react.development.js
    *
    * Copyright (c) Meta Platforms, Inc. and affiliates.
    *
@@ -69687,10 +69808,10 @@ scheduler/cjs/scheduler.development.js:
    * LICENSE file in the root directory of this source tree.
    *)
 
-react/cjs/react.development.js:
+scheduler/cjs/scheduler.development.js:
   (**
    * @license React
-   * react.development.js
+   * scheduler.development.js
    *
    * Copyright (c) Meta Platforms, Inc. and affiliates.
    *

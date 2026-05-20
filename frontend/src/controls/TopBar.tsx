@@ -12,6 +12,7 @@ interface TopBarProps {
   phoneGuideVisible: boolean;
   zoom: number;
   gyroMode: boolean;
+  onBack?: () => void;
   onSceneSelect: (sceneName: string) => void;
   onNewScene: (label: string) => void;
   onPhoneGuideToggle: (visible: boolean) => void;
@@ -22,7 +23,7 @@ interface TopBarProps {
   onGyroModeToggle: () => void;
 }
 
-export function TopBar({ scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, onSceneSelect, onNewScene, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }: TopBarProps) {
+export function TopBar({ scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, onBack, onSceneSelect, onNewScene, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }: TopBarProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [libraryOpen, setLibraryOpen] = useState(false);
 
@@ -33,6 +34,9 @@ export function TopBar({ scenes, currentSceneName, sceneLoaded, isSaving, phoneG
 
   return (
     <div className="top-bar">
+      {onBack && (
+        <button onClick={onBack} title="Back to scenes">← Scenes</button>
+      )}
       <SceneSelectorControl scenes={scenes} currentScene={currentSceneName} onSelect={onSceneSelect} />
       <button onClick={() => setDialogOpen(true)}>+ New Scene</button>
       {dialogOpen && (

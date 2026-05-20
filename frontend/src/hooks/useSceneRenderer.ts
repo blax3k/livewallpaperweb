@@ -13,7 +13,7 @@ export interface SelectedSprite {
   height: number;
 }
 
-export function useSceneRenderer(onNotify?: (message: string) => void) {
+export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?: () => void) {
   const [showSceneControls, setShowSceneControls] = useState(false);
   const [currentSceneName, setCurrentSceneName] = useState<string | null>(null);
   const [xFocus, setXFocus] = useState(0.5);
@@ -26,6 +26,8 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
   const [zoom, setZoom] = useState(1.0);
   const onNotifyRef = useRef(onNotify);
   onNotifyRef.current = onNotify;
+  const onSavedRef = useRef(onSaved);
+  onSavedRef.current = onSaved;
   const phoneGuideVisibleRef = useRef(true);
   const canvasRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<SceneRenderer | null>(null);
@@ -94,7 +96,16 @@ export function useSceneRenderer(onNotify?: (message: string) => void) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ label, data }),
       });
+      const dataUrl = rendererRef.current?.captureSnapshot();
+      if (dataUrl) {
+        fetch(`/api/scenes/${name}/thumbnail`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dataUrl }),
+        }).catch(() => {});
+      }
       onNotifyRef.current?.('Scene saved!');
+      onSavedRef.current?.();
     } catch (error) {
       console.error('Failed to save scene:', error);
     } finally {
