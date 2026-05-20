@@ -129,33 +129,6 @@
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.edit-texture-cancel,
-.edit-texture-apply {
-  padding: 6px 18px;
-  border-radius: 5px;
-  border: none;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.edit-texture-cancel {
-  background: rgba(255, 255, 255, 0.1);
-  color: #ccc;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.18);
-  }
-}
-
-.edit-texture-apply {
-  background: #4a9eff;
-  color: #fff;
-
-  &:hover {
-    background: #3a8eef;
-  }
-}
-
 
 .edit-texture-header {
   display: flex;

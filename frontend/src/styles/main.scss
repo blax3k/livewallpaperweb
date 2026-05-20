@@ -24,41 +24,6 @@ body {
   border-bottom: 1px solid #333;
   flex-shrink: 0;
 
-  button {
-    appearance: none;
-    background: #1e1e1e;
-    color: #d0d0d0;
-    border: 1px solid #3a3a3a;
-    border-radius: 5px;
-    padding: 5px 12px;
-    font-size: 0.8125rem;
-    font-family: inherit;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background 0.15s, border-color 0.15s, color 0.15s;
-
-    &:hover:not(:disabled) {
-      background: #2a2a2a;
-      border-color: #555;
-      color: #fff;
-    }
-
-    &:active:not(:disabled) {
-      background: #333;
-    }
-
-    &.active {
-      background: #1a3a5c;
-      border-color: #2d6aad;
-      color: #7fb9f5;
-    }
-
-    &:disabled {
-      opacity: 0.35;
-      cursor: default;
-    }
-  }
-
   .zoom-indicator {
     color: #fff;
     font-size: 0.875rem;

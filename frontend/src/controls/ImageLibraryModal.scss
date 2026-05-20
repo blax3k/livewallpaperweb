@@ -38,26 +38,6 @@
   gap: 8px;
 }
 
-.add-sprite-upload-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  color: #ccc;
-  border-radius: 4px;
-  padding: 3px 10px;
-  font-size: 12px;
-  cursor: pointer;
-
-  &:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.18);
-    color: #fff;
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-}
-
 .add-sprite-modal-close {
   background: none;
   border: none;
@@ -172,26 +152,6 @@
   justify-content: flex-end;
 }
 
-.add-sprite-confirm-btn {
-  background: rgba(99, 179, 237, 0.25);
-  border: 1px solid rgba(99, 179, 237, 0.5);
-  color: #cce;
-  border-radius: 4px;
-  padding: 5px 18px;
-  font-size: 12px;
-  cursor: pointer;
-
-  &:hover:not(:disabled) {
-    background: rgba(99, 179, 237, 0.4);
-    color: #fff;
-  }
-
-  &:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-}
-
 .add-sprite-thumb {
   width: 100%;
   aspect-ratio: 1;
@@ -281,4 +241,10 @@
   color: #888 !important;
   font-size: 11px !important;
   margin-bottom: 20px !important;
+}
+
+.sprite-confirm-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
 }

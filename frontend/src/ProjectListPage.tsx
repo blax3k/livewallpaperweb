@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './ProjectListPage.scss';
 import { NewProjectDialog } from './controls/NewProjectDialog';
+import { Button } from './components/Button';
 
 interface ProjectRecord {
   id: string;
@@ -40,9 +41,7 @@ export function ProjectListPage({ onSelect }: ProjectListPageProps) {
     <div className="project-list-page">
       <div className="project-list-header">
         <span className="project-list-title">Projects</span>
-        <button className="project-list-new-btn" onClick={() => setShowDialog(true)}>
-          + Project
-        </button>
+        <Button onClick={() => setShowDialog(true)}>+ Project</Button>
       </div>
       <div className="project-list-body">
         {loading && <div className="project-list-empty">Loading…</div>}

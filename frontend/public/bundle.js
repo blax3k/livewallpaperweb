@@ -64188,7 +64188,15 @@ ${parts.join("\n")}
   // src/controls/ImageLibraryModal.tsx
   var import_react = __toESM(require_react());
   var import_react_dom = __toESM(require_react_dom());
+
+  // src/components/Button.tsx
   var import_jsx_runtime = __toESM(require_jsx_runtime());
+  function Button({ variant = "default", className = "", children, ...rest }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: `btn btn--${variant} ${className}`.trim(), ...rest, children });
+  }
+
+  // src/controls/ImageLibraryModal.tsx
+  var import_jsx_runtime2 = __toESM(require_jsx_runtime());
   function ImageLibraryModal({ onSelect, onClose }) {
     const [images, setImages] = (0, import_react.useState)([]);
     const [loading, setLoading] = (0, import_react.useState)(true);
@@ -64236,21 +64244,20 @@ ${parts.join("\n")}
       }
     };
     return (0, import_react_dom.createPortal)(
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "add-sprite-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "add-sprite-modal", onClick: (e2) => e2.stopPropagation(), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "add-sprite-modal-header", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Select Image" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "add-sprite-modal-header-actions", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                "button",
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(import_jsx_runtime2.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "add-sprite-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "add-sprite-modal", onClick: (e2) => e2.stopPropagation(), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "add-sprite-modal-header", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { children: "Select Image" }),
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "add-sprite-modal-header-actions", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+                Button,
                 {
-                  className: "add-sprite-upload-btn",
                   disabled: uploading,
                   onClick: () => fileInputRef.current?.click(),
                   children: uploading ? "Uploading\u2026" : "Upload"
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+              /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
                 "input",
                 {
                   ref: fileInputRef,
@@ -64260,21 +64267,21 @@ ${parts.join("\n")}
                   onChange: handleFileChange
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "add-sprite-modal-close", onClick: onClose, children: "\u2715" })
+              /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { className: "add-sprite-modal-close", onClick: onClose, children: "\u2715" })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "add-sprite-modal-body", children: [
-            loading && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "add-sprite-loading", children: "Loading\u2026" }),
-            !loading && images.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "add-sprite-loading", children: "No images found. Upload one to get started." }),
-            images.map((image) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "add-sprite-modal-body", children: [
+            loading && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "add-sprite-loading", children: "Loading\u2026" }),
+            !loading && images.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "add-sprite-loading", children: "No images found. Upload one to get started." }),
+            images.map((image) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
               "div",
               {
                 className: `add-sprite-image-item${selectedImage === `/uploads/${image.filename}` ? " add-sprite-image-item--selected" : ""}`,
                 onClick: () => setSelectedImage(`/uploads/${image.filename}`),
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", { src: `/uploads/${image.filename}`, alt: image.original_name, className: "add-sprite-thumb" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "add-sprite-image-name", children: image.original_name }),
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "image-item-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("img", { src: `/uploads/${image.filename}`, alt: image.original_name, className: "add-sprite-thumb" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "add-sprite-image-name", children: image.original_name }),
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "image-item-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
                     "button",
                     {
                       className: "image-item-overlay-btn image-item-overlay-btn--preview",
@@ -64286,7 +64293,7 @@ ${parts.join("\n")}
                       children: "\u{1F441}"
                     }
                   ) }),
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
                     "button",
                     {
                       className: "image-item-overlay-btn image-item-overlay-btn--delete",
@@ -64300,10 +64307,10 @@ ${parts.join("\n")}
               image.id
             ))
           ] }),
-          onSelect && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "add-sprite-modal-footer", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-            "button",
+          onSelect && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "add-sprite-modal-footer", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+            Button,
             {
-              className: "add-sprite-confirm-btn",
+              variant: "primary",
               disabled: selectedImage === null,
               onClick: () => {
                 onSelect(selectedImage);
@@ -64312,20 +64319,20 @@ ${parts.join("\n")}
             }
           ) })
         ] }) }),
-        previewImage && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "add-sprite-preview-overlay", onClick: () => setPreviewImage(null), children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "add-sprite-preview-modal", onClick: (e2) => e2.stopPropagation(), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "add-sprite-preview-close", onClick: () => setPreviewImage(null), children: "\u2715" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", { src: `/uploads/${previewImage.filename}`, alt: previewImage.original_name, className: "add-sprite-preview-img" })
+        previewImage && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "add-sprite-preview-overlay", onClick: () => setPreviewImage(null), children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "add-sprite-preview-modal", onClick: (e2) => e2.stopPropagation(), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { className: "add-sprite-preview-close", onClick: () => setPreviewImage(null), children: "\u2715" }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("img", { src: `/uploads/${previewImage.filename}`, alt: previewImage.original_name, className: "add-sprite-preview-img" })
         ] }) }),
-        confirmDelete && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "add-sprite-preview-overlay", onClick: () => setConfirmDelete(null), children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "add-sprite-confirm-delete-dialog", onClick: (e2) => e2.stopPropagation(), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { children: [
+        confirmDelete && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "add-sprite-preview-overlay", onClick: () => setConfirmDelete(null), children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "add-sprite-confirm-delete-dialog", onClick: (e2) => e2.stopPropagation(), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("p", { children: [
             "Delete ",
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { children: confirmDelete.original_name }),
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("strong", { children: confirmDelete.original_name }),
             "?"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "add-sprite-confirm-delete-sub", children: "This cannot be undone." }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "sprite-confirm-actions", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "sprite-confirm-yes", onClick: handleDeleteConfirmed, children: "Delete" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "sprite-confirm-no", onClick: () => setConfirmDelete(null), children: "Cancel" })
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "add-sprite-confirm-delete-sub", children: "This cannot be undone." }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "sprite-confirm-actions", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Button, { variant: "danger", onClick: handleDeleteConfirmed, children: "Delete" }),
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Button, { onClick: () => setConfirmDelete(null), children: "Cancel" })
           ] })
         ] }) })
       ] }),
@@ -64334,7 +64341,7 @@ ${parts.join("\n")}
   }
 
   // src/controls/SpriteListPanel.tsx
-  var import_jsx_runtime2 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime3 = __toESM(require_jsx_runtime());
   function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd, onChangeTexture, onDelete, onEditTexture }) {
     const [showModal, setShowModal] = (0, import_react2.useState)(false);
     const [changeTextureIndex, setChangeTextureIndex] = (0, import_react2.useState)(null);
@@ -64366,22 +64373,22 @@ ${parts.join("\n")}
       }
       setConfirmDeleteIndex(null);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { id: "sprite-list-panel", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "sprite-list-title", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("span", { children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { id: "sprite-list-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "sprite-list-title", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("span", { children: [
           "Sprites (",
           entries.length,
           ")"
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { className: "sprite-list-add-btn", onClick: () => setShowModal(true), title: "Add sprite", children: "+" })
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { className: "sprite-list-add-btn", onClick: () => setShowModal(true), title: "Add sprite", children: "+" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "sprite-list", children: entries.map((entry, index) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "sprite-list", children: entries.map((entry, index) => /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
         "div",
         {
           className: `sprite-list-item${entry.name === selectedName ? " sprite-list-item--selected" : ""}`,
           onClick: () => onSelect(index),
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
               "span",
               {
                 className: "sprite-eye-icon",
@@ -64392,9 +64399,9 @@ ${parts.join("\n")}
                 children: entry.visible ? "\u{1F441}\uFE0F" : "\u{1F6AB}"
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "sprite-label", children: entry.name || `Sprite ${index}` }),
-            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "sprite-parallax", children: entry.parallaxMultiplier.toFixed(2) }),
-            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "sprite-label", children: entry.name || `Sprite ${index}` }),
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "sprite-parallax", children: entry.parallaxMultiplier.toFixed(2) }),
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
               "span",
               {
                 className: "sprite-menu-trigger",
@@ -64405,14 +64412,14 @@ ${parts.join("\n")}
                 children: "\u22EF"
               }
             ),
-            menuOpenIndex === index && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
+            menuOpenIndex === index && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
               "div",
               {
                 className: "sprite-menu-popover",
                 ref: menuRef,
                 onClick: (e2) => e2.stopPropagation(),
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+                  /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
                     "button",
                     {
                       className: "sprite-menu-item",
@@ -64424,7 +64431,7 @@ ${parts.join("\n")}
                       children: "Change Texture"
                     }
                   ),
-                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+                  /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
                     "button",
                     {
                       className: "sprite-menu-item",
@@ -64435,7 +64442,7 @@ ${parts.join("\n")}
                       children: "Edit Texture"
                     }
                   ),
-                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+                  /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
                     "button",
                     {
                       className: "sprite-menu-item sprite-menu-item--danger",
@@ -64453,18 +64460,18 @@ ${parts.join("\n")}
         },
         index
       )) }),
-      confirmDeleteIndex !== null && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "add-sprite-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "sprite-confirm-dialog", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("p", { children: [
+      confirmDeleteIndex !== null && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "add-sprite-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "sprite-confirm-dialog", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("p", { children: [
           "Delete ",
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("strong", { children: entries[confirmDeleteIndex]?.name || `Sprite ${confirmDeleteIndex}` }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("strong", { children: entries[confirmDeleteIndex]?.name || `Sprite ${confirmDeleteIndex}` }),
           "?"
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "sprite-confirm-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { className: "sprite-confirm-yes", onClick: handleDeleteConfirm, children: "Yes" }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { className: "sprite-confirm-no", onClick: () => setConfirmDeleteIndex(null), children: "Cancel" })
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "sprite-confirm-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { className: "sprite-confirm-yes", onClick: handleDeleteConfirm, children: "Yes" }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { className: "sprite-confirm-no", onClick: () => setConfirmDeleteIndex(null), children: "Cancel" })
         ] })
       ] }) }),
-      showModal && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+      showModal && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
         ImageLibraryModal,
         {
           onSelect: handleImageSelected,
@@ -64478,12 +64485,12 @@ ${parts.join("\n")}
   }
 
   // src/controls/XFocusControl.tsx
-  var import_jsx_runtime3 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime4 = __toESM(require_jsx_runtime());
   function XFocusControl({ disabled, value, onChange, onChangeStart, onChangeCommit }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "control-group", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("label", { htmlFor: "xfocus-slider", children: "Camera Focus:" }),
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "xfocus-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "control-group", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { htmlFor: "xfocus-slider", children: "Camera Focus:" }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "xfocus-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
           "input",
           {
             type: "range",
@@ -64498,13 +64505,13 @@ ${parts.join("\n")}
             onMouseUp: (e2) => onChangeCommit?.(parseFloat(e2.target.value))
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: value.toFixed(2) })
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: value.toFixed(2) })
       ] })
     ] });
   }
 
   // src/controls/SpritePanelControl.tsx
-  var import_jsx_runtime4 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime5 = __toESM(require_jsx_runtime());
   var COORD_MIN = -10;
   var COORD_MAX = 10;
   var COORD_STEP = 0.01;
@@ -64524,11 +64531,11 @@ ${parts.join("\n")}
       const newW = Math.max(SIZE_MIN, newH / aspectRatio);
       onSizeChange(newW, newH);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { id: "sprite-panel-control", className: disabled ? "sprite-panel-control--disabled" : void 0, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "sprite-panel-name", children: disabled ? "No sprite selected" : spriteName }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "sprite-panel-coord", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { children: "X" }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { id: "sprite-panel-control", className: disabled ? "sprite-panel-control--disabled" : void 0, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "sprite-panel-name", children: disabled ? "No sprite selected" : spriteName }),
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "sprite-panel-coord", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { children: "X" }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
           "input",
           {
             type: "range",
@@ -64542,7 +64549,7 @@ ${parts.join("\n")}
             onPointerUp: (e2) => onChangeCommit?.(parseFloat(e2.target.value), y2)
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
           "input",
           {
             type: "number",
@@ -64562,9 +64569,9 @@ ${parts.join("\n")}
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "sprite-panel-coord", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { children: "Y" }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "sprite-panel-coord", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { children: "Y" }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
           "input",
           {
             type: "range",
@@ -64578,7 +64585,7 @@ ${parts.join("\n")}
             onPointerUp: (e2) => onChangeCommit?.(x2, parseFloat(e2.target.value))
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
           "input",
           {
             type: "number",
@@ -64598,9 +64605,9 @@ ${parts.join("\n")}
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "sprite-panel-coord", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { children: "Z" }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "sprite-panel-coord", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { children: "Z" }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
           "input",
           {
             type: "range",
@@ -64614,7 +64621,7 @@ ${parts.join("\n")}
             onPointerUp: (e2) => onDepthCommit?.(parseFloat(e2.target.value))
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
           "input",
           {
             type: "number",
@@ -64634,9 +64641,9 @@ ${parts.join("\n")}
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "sprite-panel-coord", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { children: "W" }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "sprite-panel-coord", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { children: "W" }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
           "input",
           {
             type: "range",
@@ -64650,7 +64657,7 @@ ${parts.join("\n")}
             onPointerUp: (e2) => onSizeCommit?.(parseFloat(e2.target.value), Math.max(SIZE_MIN, parseFloat(e2.target.value) * aspectRatio))
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
           "input",
           {
             type: "number",
@@ -64671,9 +64678,9 @@ ${parts.join("\n")}
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "sprite-panel-coord", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { children: "H" }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "sprite-panel-coord", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { children: "H" }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
           "input",
           {
             type: "range",
@@ -64690,7 +64697,7 @@ ${parts.join("\n")}
             }
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
           "input",
           {
             type: "number",
@@ -64715,7 +64722,7 @@ ${parts.join("\n")}
   }
 
   // src/controls/SceneEditorPanel.tsx
-  var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime6 = __toESM(require_jsx_runtime());
   function SceneEditorPanel({
     sceneLoaded,
     xFocus,
@@ -64753,13 +64760,13 @@ ${parts.join("\n")}
       const [h2, m2] = timeStr.split(":").map(Number);
       return h2 * 60 + m2;
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "controls", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { children: "Scene" }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(XFocusControl, { disabled: !sceneLoaded, value: xFocus, onChange: onXFocusChange, onChangeStart: onXFocusChangeStart, onChangeCommit: onXFocusCommit }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: { display: "flex", gap: "8px", alignItems: "center" }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: { display: "flex", flexDirection: "column", flex: 1 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { htmlFor: "start-time-input", style: { fontSize: "12px", marginBottom: "4px" }, children: "Start Time:" }),
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "controls", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { children: "Scene" }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(XFocusControl, { disabled: !sceneLoaded, value: xFocus, onChange: onXFocusChange, onChangeStart: onXFocusChangeStart, onChangeCommit: onXFocusCommit }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: { display: "flex", gap: "8px", alignItems: "center" }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: { display: "flex", flexDirection: "column", flex: 1 }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("label", { htmlFor: "start-time-input", style: { fontSize: "12px", marginBottom: "4px" }, children: "Start Time:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
             "input",
             {
               type: "time",
@@ -64770,9 +64777,9 @@ ${parts.join("\n")}
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: { display: "flex", flexDirection: "column", flex: 1 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("label", { htmlFor: "end-time-input", style: { fontSize: "12px", marginBottom: "4px" }, children: "End Time:" }),
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: { display: "flex", flexDirection: "column", flex: 1 }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("label", { htmlFor: "end-time-input", style: { fontSize: "12px", marginBottom: "4px" }, children: "End Time:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
             "input",
             {
               type: "time",
@@ -64784,8 +64791,8 @@ ${parts.join("\n")}
           )
         ] })
       ] }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { children: "Sprites" }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { children: "Sprites" }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
         SpriteListPanel,
         {
           entries: spriteEntries,
@@ -64798,8 +64805,8 @@ ${parts.join("\n")}
           onEditTexture
         }
       ) }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { children: "Sprite" }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { children: "Sprite" }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
         SpritePanelControl,
         {
           spriteName: selectedSprite?.name ?? "",
@@ -64827,11 +64834,11 @@ ${parts.join("\n")}
   var import_react4 = __toESM(require_react());
 
   // src/controls/SceneSelectorControl.tsx
-  var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
   function SceneSelectorControl({ scenes, currentScene, disabled, onSelect }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "control-group", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("label", { htmlFor: "scene-select", children: "Scene:" }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "control-group", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("label", { htmlFor: "scene-select", children: "Scene:" }),
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
         "select",
         {
           id: "scene-select",
@@ -64841,8 +64848,8 @@ ${parts.join("\n")}
             if (e2.target.value) onSelect(e2.target.value);
           },
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: "", children: "-- Choose a scene --" }),
-            scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: scene.value, children: scene.label }, scene.value))
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("option", { value: "", children: "-- Choose a scene --" }),
+            scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("option", { value: scene.value, children: scene.label }, scene.value))
           ]
         }
       )
@@ -64850,10 +64857,10 @@ ${parts.join("\n")}
   }
 
   // src/controls/PhoneGuideControl.tsx
-  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
   function PhoneGuideControl({ checked, disabled, onChange }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("label", { className: "guide-label", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("label", { className: "guide-label", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
         "input",
         {
           type: "checkbox",
@@ -64863,13 +64870,13 @@ ${parts.join("\n")}
           onChange: (e2) => onChange(e2.target.checked)
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { children: "Phone Guide" })
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { children: "Phone Guide" })
     ] });
   }
 
   // src/controls/NewSceneDialog.tsx
   var import_react3 = __toESM(require_react());
-  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
   function NewSceneDialog({ onConfirm, onCancel }) {
     const [name, setName] = (0, import_react3.useState)("");
     const inputRef = (0, import_react3.useRef)(null);
@@ -64884,12 +64891,12 @@ ${parts.join("\n")}
     const handleKeyDown = (e2) => {
       if (e2.key === "Escape") onCancel();
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "new-scene-overlay", onKeyDown: handleKeyDown, children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "new-scene-dialog", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("h2", { className: "new-scene-title", children: "New Scene" }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("form", { onSubmit: handleSubmit, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "new-scene-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("label", { htmlFor: "new-scene-name", children: "Scene name" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "new-scene-overlay", onKeyDown: handleKeyDown, children: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "new-scene-dialog", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h2", { className: "new-scene-title", children: "New Scene" }),
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("form", { onSubmit: handleSubmit, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "new-scene-field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("label", { htmlFor: "new-scene-name", children: "Scene name" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
             "input",
             {
               id: "new-scene-name",
@@ -64901,16 +64908,16 @@ ${parts.join("\n")}
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "new-scene-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("button", { type: "button", onClick: onCancel, children: "Cancel" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("button", { type: "submit", disabled: !name.trim(), children: "OK" })
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "new-scene-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Button, { type: "button", onClick: onCancel, children: "Cancel" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Button, { type: "submit", variant: "primary", disabled: !name.trim(), children: "OK" })
         ] })
       ] })
     ] }) });
   }
 
   // src/controls/TopBar.tsx
-  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
   function TopBar({ scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, onBack, onSceneSelect, onNewScene, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }) {
     const [dialogOpen, setDialogOpen] = (0, import_react4.useState)(false);
     const [libraryOpen, setLibraryOpen] = (0, import_react4.useState)(false);
@@ -64918,25 +64925,25 @@ ${parts.join("\n")}
       setDialogOpen(false);
       onNewScene(label);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "top-bar", children: [
-      onBack && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { onClick: onBack, title: "Back to scenes", children: "\u2190 Scenes" }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SceneSelectorControl, { scenes, currentScene: currentSceneName, onSelect: onSceneSelect }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { onClick: () => setDialogOpen(true), children: "+ New Scene" }),
-      dialogOpen && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "top-bar", children: [
+      onBack && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Button, { onClick: onBack, title: "Back to scenes", children: "\u2190 Scenes" }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(SceneSelectorControl, { scenes, currentScene: currentSceneName, onSelect: onSceneSelect }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Button, { onClick: () => setDialogOpen(true), children: "+ New Scene" }),
+      dialogOpen && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
         NewSceneDialog,
         {
           onConfirm: handleConfirm,
           onCancel: () => setDialogOpen(false)
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { onClick: () => setLibraryOpen(true), title: "Browse and upload images", children: "Image Library" }),
-      libraryOpen && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Button, { onClick: () => setLibraryOpen(true), title: "Browse and upload images", children: "Image Library" }),
+      libraryOpen && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
         ImageLibraryModal,
         {
           onClose: () => setLibraryOpen(false)
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
         PhoneGuideControl,
         {
           checked: phoneGuideVisible,
@@ -64944,15 +64951,15 @@ ${parts.join("\n")}
           onChange: onPhoneGuideToggle
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { onClick: onZoomOut, disabled: !sceneLoaded, title: "Zoom out", children: "\uFF0D" }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("span", { className: "zoom-indicator", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Button, { onClick: onZoomOut, disabled: !sceneLoaded, title: "Zoom out", children: "\uFF0D" }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { className: "zoom-indicator", children: [
         Math.round(zoom * 100),
         "%"
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { onClick: onZoomIn, disabled: !sceneLoaded, title: "Zoom in", children: "\uFF0B" }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { onClick: onCenter, disabled: !sceneLoaded, children: "Center" }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-        "button",
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Button, { onClick: onZoomIn, disabled: !sceneLoaded, title: "Zoom in", children: "\uFF0B" }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Button, { onClick: onCenter, disabled: !sceneLoaded, children: "Center" }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+        Button,
         {
           onClick: onGyroModeToggle,
           disabled: !sceneLoaded,
@@ -64961,15 +64968,15 @@ ${parts.join("\n")}
           children: gyroMode ? "\u{1F4F1} Gyro" : "\u{1F5B1} Default"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { onClick: onSave, disabled: isSaving || !sceneLoaded, children: isSaving ? "Saving..." : "Save Scene" })
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Button, { onClick: onSave, disabled: isSaving || !sceneLoaded, children: isSaving ? "Saving..." : "Save Scene" })
     ] });
   }
 
   // src/controls/NotificationStack.tsx
-  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime11 = __toESM(require_jsx_runtime());
   function NotificationStack({ notifications }) {
     if (notifications.length === 0) return null;
-    return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "notification-stack", children: notifications.map((n2) => /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "notification-card", children: n2.message }, n2.id)) });
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "notification-stack", children: notifications.map((n2) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "notification-card", children: n2.message }, n2.id)) });
   }
 
   // src/controls/EditTextureModal.tsx
@@ -67720,7 +67727,7 @@ ${e2}`);
   }
 
   // src/controls/EditTextureModal.tsx
-  var import_jsx_runtime11 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
   function imageUrlFromResource(textureResource) {
     if (textureResource.startsWith("/")) return textureResource;
     return /\.(png|jpg|jpeg|gif|webp)$/i.test(textureResource) ? `/images/${textureResource}` : `/images/${textureResource}.png`;
@@ -67907,20 +67914,20 @@ ${e2}`);
       );
       onApply(buildTexCoordArray(win), s2.width, s2.height);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "edit-texture-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "edit-texture-modal", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "edit-texture-header", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "edit-texture-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "edit-texture-modal", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "edit-texture-header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { children: [
           "Edit Texture \u2014 ",
           spriteName
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { className: "edit-texture-close", onClick: onClose, children: "\u2715" })
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { className: "edit-texture-close", onClick: onClose, children: "\u2715" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "edit-texture-body", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "edit-texture-controls", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "edit-texture-hint", children: "Drag the preview to pan the texture" }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "edit-texture-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("label", { children: "Width" }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "edit-texture-body", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "edit-texture-controls", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { className: "edit-texture-hint", children: "Drag the preview to pan the texture" }),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "edit-texture-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("label", { children: "Width" }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
               "input",
               {
                 type: "range",
@@ -67931,7 +67938,7 @@ ${e2}`);
                 onChange: (e2) => setState((prev) => ({ ...prev, width: parseFloat(e2.target.value) }))
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
               "input",
               {
                 type: "number",
@@ -67946,9 +67953,9 @@ ${e2}`);
               }
             )
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "edit-texture-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("label", { children: "Height" }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "edit-texture-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("label", { children: "Height" }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
               "input",
               {
                 type: "range",
@@ -67959,7 +67966,7 @@ ${e2}`);
                 onChange: (e2) => setState((prev) => ({ ...prev, height: parseFloat(e2.target.value) }))
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
               "input",
               {
                 type: "number",
@@ -67974,9 +67981,9 @@ ${e2}`);
               }
             )
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "edit-texture-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("label", { children: "Tex Scale" }),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "edit-texture-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("label", { children: "Tex Scale" }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
               "input",
               {
                 type: "range",
@@ -67987,7 +67994,7 @@ ${e2}`);
                 onChange: (e2) => setState((prev) => ({ ...prev, textureScale: parseFloat(e2.target.value) }))
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
               "input",
               {
                 type: "number",
@@ -68007,7 +68014,7 @@ ${e2}`);
             )
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
           "div",
           {
             className: "edit-texture-preview",
@@ -68016,9 +68023,9 @@ ${e2}`);
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "edit-texture-footer", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { className: "edit-texture-cancel", onClick: onClose, children: "Cancel" }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { className: "edit-texture-apply", onClick: handleApply, children: "Apply" })
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "edit-texture-footer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Button, { onClick: onClose, children: "Cancel" }),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Button, { variant: "primary", onClick: handleApply, children: "Apply" })
       ] })
     ] }) });
   }
@@ -69377,7 +69384,7 @@ ${e2}`);
   }
 
   // src/ScenePage.tsx
-  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
   function ScenePage({ initialScene, onBack, onSaved }) {
     const [scenes, setScenes] = (0, import_react11.useState)([]);
     const history = useUndoHistory();
@@ -69621,8 +69628,8 @@ ${e2}`);
         notify("Failed to create scene");
       }
     }, [loadScene, notify]);
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_jsx_runtime12.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_jsx_runtime13.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
         TopBar,
         {
           scenes,
@@ -69643,8 +69650,8 @@ ${e2}`);
           onGyroModeToggle: handleGyroModeToggle
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "app-content", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "app-content", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
           SceneEditorPanel,
           {
             sceneLoaded: showSceneControls,
@@ -69675,7 +69682,7 @@ ${e2}`);
             onSpriteSizeCommit: handleSpriteSizeCommit
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "main-content", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "main-content", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
           "div",
           {
             id: "canvas-container",
@@ -69685,11 +69692,11 @@ ${e2}`);
           }
         ) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(NotificationStack, { notifications }),
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(NotificationStack, { notifications }),
       editTextureIndex !== null && (() => {
         const texData = rendererRef.current?.getSpriteTexData(editTextureIndex);
         if (!texData) return null;
-        return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+        return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
           EditTextureModal,
           {
             spriteName: spriteEntries[editTextureIndex]?.name ?? `Sprite ${editTextureIndex}`,
@@ -69713,7 +69720,7 @@ ${e2}`);
 
   // src/SceneListPage.tsx
   var import_react12 = __toESM(require_react());
-  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
   function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }) {
     const [scenes, setScenes] = (0, import_react12.useState)([]);
     const [loading, setLoading] = (0, import_react12.useState)(true);
@@ -69731,17 +69738,17 @@ ${e2}`);
         setLoading(false);
       }).catch(() => setLoading(false));
     }, []);
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "scene-list-page", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "scene-list-header", children: [
-        onBack && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("button", { className: "scene-list-back-btn", onClick: onBack, children: "\u2190" }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "scene-list-title", children: "Scenes" })
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "scene-list-page", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "scene-list-header", children: [
+        onBack && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { className: "scene-list-back-btn", onClick: onBack, children: "\u2190" }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "scene-list-title", children: "Scenes" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "scene-list-body", children: [
-        loading && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "scene-list-empty", children: "Loading\u2026" }),
-        !loading && scenes.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "scene-list-empty", children: "No scenes found. Create one from within the editor." }),
-        !loading && scenes.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "scene-list-grid", children: scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "scene-card", onClick: () => onSelect(scene.name), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "scene-card-preview", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "scene-list-body", children: [
+        loading && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "scene-list-empty", children: "Loading\u2026" }),
+        !loading && scenes.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "scene-list-empty", children: "No scenes found. Create one from within the editor." }),
+        !loading && scenes.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "scene-list-grid", children: scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "scene-card", onClick: () => onSelect(scene.name), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "scene-card-preview", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
               "img",
               {
                 src: `/thumbnails/${scene.name}.jpg?v=${thumbBuster}`,
@@ -69750,9 +69757,9 @@ ${e2}`);
                 onError: () => setFailedThumbs((prev) => new Set(prev).add(scene.name))
               }
             ),
-            failedThumbs.has(scene.name) && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "scene-card-icon", children: "\u{1F3AC}" })
+            failedThumbs.has(scene.name) && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "scene-card-icon", children: "\u{1F3AC}" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "scene-card-label", children: scene.label })
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "scene-card-label", children: scene.label })
         ] }, scene.id)) })
       ] })
     ] });
@@ -69763,7 +69770,7 @@ ${e2}`);
 
   // src/controls/NewProjectDialog.tsx
   var import_react13 = __toESM(require_react());
-  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
   function NewProjectDialog({ onConfirm, onCancel }) {
     const [name, setName] = (0, import_react13.useState)("");
     const inputRef = (0, import_react13.useRef)(null);
@@ -69778,12 +69785,12 @@ ${e2}`);
     const handleKeyDown = (e2) => {
       if (e2.key === "Escape") onCancel();
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "new-scene-overlay", onKeyDown: handleKeyDown, children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "new-scene-dialog", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h2", { className: "new-scene-title", children: "New Project" }),
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("form", { onSubmit: handleSubmit, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "new-scene-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("label", { htmlFor: "new-project-name", children: "Project name" }),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "new-scene-overlay", onKeyDown: handleKeyDown, children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "new-scene-dialog", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h2", { className: "new-scene-title", children: "New Project" }),
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("form", { onSubmit: handleSubmit, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "new-scene-field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("label", { htmlFor: "new-project-name", children: "Project name" }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
             "input",
             {
               id: "new-project-name",
@@ -69795,16 +69802,16 @@ ${e2}`);
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "new-scene-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("button", { type: "button", onClick: onCancel, children: "Cancel" }),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("button", { type: "submit", disabled: !name.trim(), children: "OK" })
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "new-scene-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button, { type: "button", onClick: onCancel, children: "Cancel" }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button, { type: "submit", variant: "primary", disabled: !name.trim(), children: "OK" })
         ] })
       ] })
     ] }) });
   }
 
   // src/ProjectListPage.tsx
-  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
   function ProjectListPage({ onSelect }) {
     const [projects, setProjects] = (0, import_react14.useState)([]);
     const [loading, setLoading] = (0, import_react14.useState)(true);
@@ -69825,20 +69832,20 @@ ${e2}`);
         setShowDialog(false);
       });
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "project-list-page", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "project-list-header", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "project-list-title", children: "Projects" }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("button", { className: "project-list-new-btn", onClick: () => setShowDialog(true), children: "+ Project" })
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "project-list-page", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "project-list-header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "project-list-title", children: "Projects" }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Button, { onClick: () => setShowDialog(true), children: "+ Project" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "project-list-body", children: [
-        loading && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "project-list-empty", children: "Loading\u2026" }),
-        !loading && projects.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "project-list-empty", children: "No projects yet. Create one to get started." }),
-        !loading && projects.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "project-list-grid", children: projects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "project-card", onClick: () => onSelect(project), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "project-card-icon", children: "\u{1F4C1}" }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "project-card-name", children: project.name })
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "project-list-body", children: [
+        loading && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "project-list-empty", children: "Loading\u2026" }),
+        !loading && projects.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "project-list-empty", children: "No projects yet. Create one to get started." }),
+        !loading && projects.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "project-list-grid", children: projects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "project-card", onClick: () => onSelect(project), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "project-card-icon", children: "\u{1F4C1}" }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "project-card-name", children: project.name })
         ] }, project.id)) })
       ] }),
-      showDialog && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+      showDialog && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
         NewProjectDialog,
         {
           onConfirm: handleCreate,
@@ -69849,7 +69856,7 @@ ${e2}`);
   }
 
   // src/client.tsx
-  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
   function pageFromPath() {
     const sceneMatch = window.location.pathname.match(/^\/scene\/([^/]+)$/);
     if (sceneMatch) {
@@ -69887,7 +69894,7 @@ ${e2}`);
     }, []);
     const handleSaved = (0, import_react15.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
     if (page.type === "scene") {
-      return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
         ScenePage,
         {
           initialScene: page.sceneName,
@@ -69897,7 +69904,7 @@ ${e2}`);
       );
     }
     if (page.type === "scenes") {
-      return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
         SceneListPage,
         {
           onSelect: (sceneName) => navigateToScene(sceneName, page.project),
@@ -69907,11 +69914,11 @@ ${e2}`);
         }
       );
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ProjectListPage, { onSelect: navigateToProject });
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(ProjectListPage, { onSelect: navigateToProject });
   }
   window.addEventListener("DOMContentLoaded", () => {
     const root = (0, import_client.createRoot)(document.body);
-    root.render(/* @__PURE__ */ (0, import_jsx_runtime16.jsx)(App, {}));
+    root.render(/* @__PURE__ */ (0, import_jsx_runtime17.jsx)(App, {}));
   });
 })();
 /*! Bundled license information:

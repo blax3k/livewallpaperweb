@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import './ImageLibraryModal.scss';
+import { Button } from '../components/Button';
 
 interface ImageRecord {
   id: string;
@@ -68,13 +69,12 @@ export function ImageLibraryModal({ onSelect, onClose }: { onSelect?: (textureRe
         <div className="add-sprite-modal-header">
           <span>Select Image</span>
           <div className="add-sprite-modal-header-actions">
-            <button
-              className="add-sprite-upload-btn"
+            <Button
               disabled={uploading}
               onClick={() => fileInputRef.current?.click()}
             >
               {uploading ? 'Uploading…' : 'Upload'}
-            </button>
+            </Button>
             <input
               ref={fileInputRef}
               type="file"
@@ -117,13 +117,13 @@ export function ImageLibraryModal({ onSelect, onClose }: { onSelect?: (textureRe
         </div>
         {onSelect && (
           <div className="add-sprite-modal-footer">
-            <button
-              className="add-sprite-confirm-btn"
+            <Button
+              variant="primary"
               disabled={selectedImage === null}
               onClick={() => { onSelect(selectedImage!); }}
             >
               Select
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -142,8 +142,8 @@ export function ImageLibraryModal({ onSelect, onClose }: { onSelect?: (textureRe
           <p>Delete <strong>{confirmDelete.original_name}</strong>?</p>
           <p className="add-sprite-confirm-delete-sub">This cannot be undone.</p>
           <div className="sprite-confirm-actions">
-            <button className="sprite-confirm-yes" onClick={handleDeleteConfirmed}>Delete</button>
-            <button className="sprite-confirm-no" onClick={() => setConfirmDelete(null)}>Cancel</button>
+            <Button variant="danger" onClick={handleDeleteConfirmed}>Delete</Button>
+            <Button onClick={() => setConfirmDelete(null)}>Cancel</Button>
           </div>
         </div>
       </div>

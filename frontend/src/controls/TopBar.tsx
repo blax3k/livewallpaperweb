@@ -3,6 +3,7 @@ import { SceneSelectorControl, SceneOption } from './SceneSelectorControl';
 import { PhoneGuideControl } from './PhoneGuideControl';
 import { NewSceneDialog } from './NewSceneDialog';
 import { ImageLibraryModal } from './ImageLibraryModal';
+import { Button } from '../components/Button';
 
 interface TopBarProps {
   scenes: SceneOption[];
@@ -35,17 +36,17 @@ export function TopBar({ scenes, currentSceneName, sceneLoaded, isSaving, phoneG
   return (
     <div className="top-bar">
       {onBack && (
-        <button onClick={onBack} title="Back to scenes">← Scenes</button>
+        <Button onClick={onBack} title="Back to scenes">← Scenes</Button>
       )}
       <SceneSelectorControl scenes={scenes} currentScene={currentSceneName} onSelect={onSceneSelect} />
-      <button onClick={() => setDialogOpen(true)}>+ New Scene</button>
+      <Button onClick={() => setDialogOpen(true)}>+ New Scene</Button>
       {dialogOpen && (
         <NewSceneDialog
           onConfirm={handleConfirm}
           onCancel={() => setDialogOpen(false)}
         />
       )}
-      <button onClick={() => setLibraryOpen(true)} title="Browse and upload images">Image Library</button>
+      <Button onClick={() => setLibraryOpen(true)} title="Browse and upload images">Image Library</Button>
       {libraryOpen && (
         <ImageLibraryModal
           onClose={() => setLibraryOpen(false)}
@@ -56,21 +57,21 @@ export function TopBar({ scenes, currentSceneName, sceneLoaded, isSaving, phoneG
         disabled={!sceneLoaded}
         onChange={onPhoneGuideToggle}
       />
-      <button onClick={onZoomOut} disabled={!sceneLoaded} title="Zoom out">－</button>
+      <Button onClick={onZoomOut} disabled={!sceneLoaded} title="Zoom out">－</Button>
       <span className="zoom-indicator">{Math.round(zoom * 100)}%</span>
-      <button onClick={onZoomIn} disabled={!sceneLoaded} title="Zoom in">＋</button>
-      <button onClick={onCenter} disabled={!sceneLoaded}>Center</button>
-      <button
+      <Button onClick={onZoomIn} disabled={!sceneLoaded} title="Zoom in">＋</Button>
+      <Button onClick={onCenter} disabled={!sceneLoaded}>Center</Button>
+      <Button
         onClick={onGyroModeToggle}
         disabled={!sceneLoaded}
         title={gyroMode ? 'Switch to default pointer' : 'Switch to gyro simulation mode'}
         className={gyroMode ? 'active' : ''}
       >
         {gyroMode ? '📱 Gyro' : '🖱 Default'}
-      </button>
-      <button onClick={onSave} disabled={isSaving || !sceneLoaded}>
+      </Button>
+      <Button onClick={onSave} disabled={isSaving || !sceneLoaded}>
         {isSaving ? 'Saving...' : 'Save Scene'}
-      </button>
+      </Button>
     </div>
   );
 }

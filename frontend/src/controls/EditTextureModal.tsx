@@ -7,6 +7,7 @@ import {
   extractInitialScale,
 } from '../renderers/TextureCoordinateCalculator';
 import './EditTextureModal.scss';
+import { Button } from '../components/Button';
 
 interface EditTextureModalProps {
   spriteName: string;
@@ -365,8 +366,8 @@ export function EditTextureModal({
         </div>
 
         <div className="edit-texture-footer">
-          <button className="edit-texture-cancel" onClick={onClose}>Cancel</button>
-          <button className="edit-texture-apply" onClick={handleApply}>Apply</button>
+          <Button onClick={onClose}>Cancel</Button>
+          <Button variant="primary" onClick={handleApply}>Apply</Button>
         </div>
 
       </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './NewSceneDialog.scss';
+import { Button } from '../components/Button';
 
 interface NewSceneDialogProps {
   onConfirm: (name: string) => void;
@@ -41,8 +42,8 @@ export function NewSceneDialog({ onConfirm, onCancel }: NewSceneDialogProps) {
             />
           </div>
           <div className="new-scene-actions">
-            <button type="button" onClick={onCancel}>Cancel</button>
-            <button type="submit" disabled={!name.trim()}>OK</button>
+            <Button type="button" onClick={onCancel}>Cancel</Button>
+            <Button type="submit" variant="primary" disabled={!name.trim()}>OK</Button>
           </div>
         </form>
       </div>

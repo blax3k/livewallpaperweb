@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './SceneListPage.scss';
+import { Button } from './components/Button';
 
 interface SceneRecord {
   id: string;
@@ -38,7 +39,7 @@ export function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }: 
     <div className="scene-list-page">
       <div className="scene-list-header">
         {onBack && (
-          <button className="scene-list-back-btn" onClick={onBack}>←</button>
+          <Button className="scene-list-back-btn" onClick={onBack}>←</Button>
         )}
         <span className="scene-list-title">Scenes</span>
       </div>
