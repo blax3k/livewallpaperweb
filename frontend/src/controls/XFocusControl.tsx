@@ -1,5 +1,5 @@
 import React from 'react';
-import './XFocusControl.scss';
+import { SliderRow } from '../components/SliderRow';
 
 interface XFocusControlProps {
   disabled?: boolean;
@@ -11,23 +11,17 @@ interface XFocusControlProps {
 
 export function XFocusControl({ disabled, value, onChange, onChangeStart, onChangeCommit }: XFocusControlProps) {
   return (
-    <div className="control-group">
-      <label htmlFor="xfocus-slider">Camera Focus:</label>
-      <div className="xfocus-row">
-        <input
-          type="range"
-          id="xfocus-slider"
-          min="0"
-          max="1"
-          step="0.01"
-          value={value}
-          disabled={disabled}
-          onMouseDown={() => onChangeStart?.(value)}
-          onChange={(e) => onChange(parseFloat(e.target.value))}
-          onMouseUp={(e) => onChangeCommit?.(parseFloat((e.target as HTMLInputElement).value))}
-        />
-        <span>{value.toFixed(2)}</span>
-      </div>
+    <div style={{ marginBottom: 12 }}>
+      <SliderRow
+        label="Focus"
+        min={0} max={1} step={0.01}
+        value={value}
+        disabled={disabled}
+        decimalPlaces={2}
+        onChange={onChange}
+        onPointerDown={() => onChangeStart?.(value)}
+        onPointerUp={(v) => onChangeCommit?.(v)}
+      />
     </div>
   );
 }

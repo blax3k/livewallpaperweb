@@ -1,0 +1,41 @@
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  label {
+    font-size: 12px;
+    color: #aaa;
+    flex-shrink: 0;
+  }
+
+  input[type='range'] {
+    flex: 1;
+    min-width: 0;
+  }
+
+  input[type='number'] {
+    width: 58px;
+    flex-shrink: 0;
+    background: #1e1e1e;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    color: #ccc;
+    font-size: 12px;
+    padding: 3px 6px;
+    text-align: right;
+
+    &:focus {
+      outline: none;
+      border-color: #888;
+    }
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    -moz-appearance: textfield;
+  }
+}

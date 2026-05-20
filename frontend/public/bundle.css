@@ -604,17 +604,51 @@ body {
   background: #2a1010;
 }
 
-/* src/controls/XFocusControl.scss */
-.control-group .xfocus-row {
+/* src/components/SliderRow.scss */
+.slider-row {
   display: flex;
-  gap: 10px;
   align-items: center;
+  gap: 8px;
 }
-.control-group #xfocus-slider {
+.slider-row label {
+  font-size: 12px;
+  color: #aaa;
+  flex-shrink: 0;
+}
+.slider-row input[type=range] {
   flex: 1;
+  min-width: 0;
+}
+.slider-row input[type=number] {
+  width: 58px;
+  flex-shrink: 0;
+  background: #1e1e1e;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  color: #ccc;
+  font-size: 12px;
+  padding: 3px 6px;
+  text-align: right;
+}
+.slider-row input[type=number]:focus {
+  outline: none;
+  border-color: #888;
+}
+.slider-row input[type=number]::-webkit-outer-spin-button,
+.slider-row input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.slider-row input[type=number] {
+  -moz-appearance: textfield;
 }
 
 /* src/controls/SpritePanelControl.scss */
+#sprite-panel-control {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 #sprite-panel-control.sprite-panel-control--disabled {
   opacity: 0.4;
   pointer-events: none;
@@ -622,54 +656,12 @@ body {
 #sprite-panel-control .sprite-panel-name {
   font-size: 12px;
   font-weight: bold;
-  margin-bottom: 10px;
   color: #ccc;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-#sprite-panel-control .sprite-panel-coord {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-#sprite-panel-control .sprite-panel-coord label {
-  font-size: 11px;
-  color: #aaa;
-  width: 12px;
-  flex-shrink: 0;
-}
-#sprite-panel-control .sprite-panel-coord input[type=range] {
-  flex: 1;
-  min-width: 0;
-}
-#sprite-panel-control .sprite-panel-coord input[type=number] {
-  width: 58px;
-  flex-shrink: 0;
-  background: #222;
-  border: 1px solid #555;
-  border-radius: 4px;
-  color: #fff;
-  font-size: 11px;
-  padding: 3px 5px;
-  text-align: right;
-}
-#sprite-panel-control .sprite-panel-coord input[type=number]:focus {
-  outline: none;
-  border-color: #888;
-}
-#sprite-panel-control .sprite-panel-coord input[type=number] {
-}
-#sprite-panel-control .sprite-panel-coord input[type=number]::-webkit-outer-spin-button,
-#sprite-panel-control .sprite-panel-coord input[type=number]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-#sprite-panel-control .sprite-panel-coord input[type=number] {
-  -moz-appearance: textfield;
 }
 
 /* src/controls/PhoneGuideControl.scss */
@@ -824,32 +816,6 @@ body {
   margin: 0;
   text-align: center;
 }
-.edit-texture-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.edit-texture-row label {
-  font-size: 12px;
-  color: #aaa;
-  min-width: 70px;
-  text-align: right;
-  flex-shrink: 0;
-}
-.edit-texture-row input[type=range] {
-  flex: 1;
-}
-.edit-texture-row input[type=number] {
-  width: 58px;
-  flex-shrink: 0;
-  background: #1a1a1a;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #ccc;
-  border-radius: 4px;
-  padding: 3px 6px;
-  font-size: 12px;
-  text-align: right;
-}
 .edit-texture-footer {
   flex-shrink: 0;
   display: flex;
@@ -857,29 +823,6 @@ body {
   gap: 8px;
   padding: 10px 14px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-.edit-texture-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
-  font-size: 13px;
-  font-weight: bold;
-  color: #ccc;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-.edit-texture-close {
-  background: none;
-  border: none;
-  color: #aaa;
-  cursor: pointer;
-  font-size: 14px;
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-.edit-texture-close:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
 }
 
 /* src/SceneListPage.scss */

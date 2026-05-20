@@ -1,5 +1,6 @@
 import React from 'react';
 import './SpritePanelControl.scss';
+import { SliderRow } from '../components/SliderRow';
 
 interface SpritePanelControlProps {
   spriteName: string;
@@ -48,152 +49,51 @@ export function SpritePanelControl({ spriteName, x, y, depth, width, height, dis
   return (
     <div id="sprite-panel-control" className={disabled ? 'sprite-panel-control--disabled' : undefined}>
       <div className="sprite-panel-name">{disabled ? 'No sprite selected' : spriteName}</div>
-      <div className="sprite-panel-coord">
-        <label>X</label>
-        <input
-          type="range"
-          min={COORD_MIN}
-          max={COORD_MAX}
-          step={COORD_STEP}
-          value={x}
-          disabled={disabled}
-          onPointerDown={() => onChangeStart?.(x, y)}
-          onChange={(e) => onChange(parseFloat(e.target.value), y)}
-          onPointerUp={(e) => onChangeCommit?.(parseFloat((e.target as HTMLInputElement).value), y)}
-        />
-        <input
-          type="number"
-          min={COORD_MIN}
-          max={COORD_MAX}
-          step={COORD_STEP}
-          value={parseFloat(x.toFixed(2))}
-          disabled={disabled}
-          onFocus={() => onChangeStart?.(x, y)}
-          onChange={(e) => {
-            const val = parseFloat(e.target.value);
-            if (!isNaN(val)) { onChange(val, y); onChangeCommit?.(val, y); }
-          }}
-        />
-      </div>
-      <div className="sprite-panel-coord">
-        <label>Y</label>
-        <input
-          type="range"
-          min={COORD_MIN}
-          max={COORD_MAX}
-          step={COORD_STEP}
-          value={y}
-          disabled={disabled}
-          onPointerDown={() => onChangeStart?.(x, y)}
-          onChange={(e) => onChange(x, parseFloat(e.target.value))}
-          onPointerUp={(e) => onChangeCommit?.(x, parseFloat((e.target as HTMLInputElement).value))}
-        />
-        <input
-          type="number"
-          min={COORD_MIN}
-          max={COORD_MAX}
-          step={COORD_STEP}
-          value={parseFloat(y.toFixed(2))}
-          disabled={disabled}
-          onFocus={() => onChangeStart?.(x, y)}
-          onChange={(e) => {
-            const val = parseFloat(e.target.value);
-            if (!isNaN(val)) { onChange(x, val); onChangeCommit?.(x, val); }
-          }}
-        />
-      </div>
-      <div className="sprite-panel-coord">
-        <label>Z</label>
-        <input
-          type="range"
-          min={DEPTH_MIN}
-          max={DEPTH_MAX}
-          step={DEPTH_STEP}
-          value={Math.min(DEPTH_MAX, Math.max(DEPTH_MIN, depth))}
-          disabled={disabled}
-          onPointerDown={() => onDepthChangeStart?.(depth)}
-          onChange={(e) => onDepthChange(parseFloat(e.target.value))}
-          onPointerUp={(e) => onDepthCommit?.(parseFloat((e.target as HTMLInputElement).value))}
-        />
-        <input
-          type="number"
-          min={DEPTH_MIN}
-          max={DEPTH_MAX}
-          step={DEPTH_STEP}
-          value={parseFloat(depth.toFixed(2))}
-          disabled={disabled}
-          onFocus={() => onDepthChangeStart?.(depth)}
-          onChange={(e) => {
-            const val = parseFloat(e.target.value);
-            if (!isNaN(val) && val >= DEPTH_MIN) { onDepthChange(val); onDepthCommit?.(val); }
-          }}
-        />
-      </div>
-      <div className="sprite-panel-coord">
-        <label>W</label>
-        <input
-          type="range"
-          min={SIZE_MIN}
-          max={SIZE_MAX}
-          step={SIZE_STEP}
-          value={Math.min(SIZE_MAX, Math.max(SIZE_MIN, width))}
-          disabled={disabled}
-          onPointerDown={() => onSizeChangeStart?.()}
-          onChange={(e) => handleWidthChange(parseFloat(e.target.value))}
-          onPointerUp={(e) => onSizeCommit?.(parseFloat((e.target as HTMLInputElement).value), Math.max(SIZE_MIN, parseFloat((e.target as HTMLInputElement).value) * aspectRatio))}
-        />
-        <input
-          type="number"
-          min={SIZE_MIN}
-          max={SIZE_MAX}
-          step={SIZE_STEP}
-          value={parseFloat(width.toFixed(2))}
-          disabled={disabled}
-          onFocus={() => onSizeChangeStart?.()}
-          onChange={(e) => {
-            const val = parseFloat(e.target.value);
-            if (!isNaN(val) && val >= SIZE_MIN) {
-              const newH = Math.max(SIZE_MIN, val * aspectRatio);
-              onSizeChange(val, newH);
-              onSizeCommit?.(val, newH);
-            }
-          }}
-        />
-      </div>
-      <div className="sprite-panel-coord">
-        <label>H</label>
-        <input
-          type="range"
-          min={SIZE_MIN}
-          max={SIZE_MAX}
-          step={SIZE_STEP}
-          value={Math.min(SIZE_MAX, Math.max(SIZE_MIN, height))}
-          disabled={disabled}
-          onPointerDown={() => onSizeChangeStart?.()}
-          onChange={(e) => handleHeightChange(parseFloat(e.target.value))}
-          onPointerUp={(e) => {
-            const newH = parseFloat((e.target as HTMLInputElement).value);
-            onSizeCommit?.(Math.max(SIZE_MIN, newH / aspectRatio), newH);
-          }}
-        />
-        <input
-          type="number"
-          min={SIZE_MIN}
-          max={SIZE_MAX}
-          step={SIZE_STEP}
-          value={parseFloat(height.toFixed(2))}
-          disabled={disabled}
-          onFocus={() => onSizeChangeStart?.()}
-          onChange={(e) => {
-            const val = parseFloat(e.target.value);
-            if (!isNaN(val) && val >= SIZE_MIN) {
-              const newW = Math.max(SIZE_MIN, val / aspectRatio);
-              onSizeChange(newW, val);
-              onSizeCommit?.(newW, val);
-            }
-          }}
-        />
-      </div>
+      <SliderRow
+        label="X" min={COORD_MIN} max={COORD_MAX} step={COORD_STEP}
+        value={x} disabled={disabled} labelWidth={12}
+        onPointerDown={() => onChangeStart?.(x, y)}
+        onChange={(v) => onChange(v, y)}
+        onPointerUp={(v) => onChangeCommit?.(v, y)}
+        onFocus={() => onChangeStart?.(x, y)}
+        onCommit={(v) => onChangeCommit?.(v, y)}
+      />
+      <SliderRow
+        label="Y" min={COORD_MIN} max={COORD_MAX} step={COORD_STEP}
+        value={y} disabled={disabled} labelWidth={12}
+        onPointerDown={() => onChangeStart?.(x, y)}
+        onChange={(v) => onChange(x, v)}
+        onPointerUp={(v) => onChangeCommit?.(x, v)}
+        onFocus={() => onChangeStart?.(x, y)}
+        onCommit={(v) => onChangeCommit?.(x, v)}
+      />
+      <SliderRow
+        label="Z" min={DEPTH_MIN} max={DEPTH_MAX} step={DEPTH_STEP}
+        value={Math.min(DEPTH_MAX, Math.max(DEPTH_MIN, depth))} disabled={disabled} labelWidth={12}
+        onPointerDown={() => onDepthChangeStart?.(depth)}
+        onChange={(v) => onDepthChange(v)}
+        onPointerUp={(v) => onDepthCommit?.(v)}
+        onFocus={() => onDepthChangeStart?.(depth)}
+        onCommit={(v) => { if (v >= DEPTH_MIN) onDepthCommit?.(v); }}
+      />
+      <SliderRow
+        label="W" min={SIZE_MIN} max={SIZE_MAX} step={SIZE_STEP}
+        value={Math.min(SIZE_MAX, Math.max(SIZE_MIN, width))} disabled={disabled} labelWidth={12}
+        onPointerDown={() => onSizeChangeStart?.()}
+        onChange={(v) => { if (v >= SIZE_MIN) handleWidthChange(v); }}
+        onPointerUp={(v) => onSizeCommit?.(v, Math.max(SIZE_MIN, v * aspectRatio))}
+        onFocus={() => onSizeChangeStart?.()}
+        onCommit={(v) => { if (v >= SIZE_MIN) onSizeCommit?.(v, Math.max(SIZE_MIN, v * aspectRatio)); }}
+      />
+      <SliderRow
+        label="H" min={SIZE_MIN} max={SIZE_MAX} step={SIZE_STEP}
+        value={Math.min(SIZE_MAX, Math.max(SIZE_MIN, height))} disabled={disabled} labelWidth={12}
+        onPointerDown={() => onSizeChangeStart?.()}
+        onChange={(v) => { if (v >= SIZE_MIN) handleHeightChange(v); }}
+        onPointerUp={(v) => onSizeCommit?.(Math.max(SIZE_MIN, v / aspectRatio), v)}
+        onFocus={() => onSizeChangeStart?.()}
+        onCommit={(v) => { if (v >= SIZE_MIN) onSizeCommit?.(Math.max(SIZE_MIN, v / aspectRatio), v); }}
+      />
     </div>
   );
 }

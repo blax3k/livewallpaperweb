@@ -8,6 +8,7 @@ import {
 } from '../renderers/TextureCoordinateCalculator';
 import './EditTextureModal.scss';
 import { Button } from '../components/Button';
+import { SliderRow } from '../components/SliderRow';
 
 interface EditTextureModalProps {
   spriteName: string;
@@ -281,80 +282,32 @@ export function EditTextureModal({
           <div className="edit-texture-controls">
             <p className="edit-texture-hint">Drag the preview to pan the texture</p>
 
-            <div className="edit-texture-row">
-              <label>Width</label>
-              <input
-                type="range"
-                min={WIDTH_MIN}
-                max={WIDTH_MAX}
-                step={WIDTH_STEP}
-                value={state.width}
-                onChange={e => setState(prev => ({ ...prev, width: parseFloat(e.target.value) }))}
-              />
-              <input
-                type="number"
-                min={WIDTH_MIN}
-                max={WIDTH_MAX}
-                step={WIDTH_STEP}
-                value={parseFloat(state.width.toFixed(1))}
-                onChange={e => {
-                  const v = parseFloat(e.target.value);
-                  if (!isNaN(v)) setState(prev => ({ ...prev, width: Math.max(WIDTH_MIN, Math.min(WIDTH_MAX, v)) }));
-                }}
-              />
-            </div>
+            <SliderRow
+              label="Width"
+              min={WIDTH_MIN} max={WIDTH_MAX} step={WIDTH_STEP}
+              value={state.width}
+              decimalPlaces={1}
+              labelWidth={70} labelAlign="right"
+              onChange={(v) => setState(prev => ({ ...prev, width: Math.max(WIDTH_MIN, Math.min(WIDTH_MAX, v)) }))}
+            />
 
-            <div className="edit-texture-row">
-              <label>Height</label>
-              <input
-                type="range"
-                min={WIDTH_MIN}
-                max={WIDTH_MAX}
-                step={WIDTH_STEP}
-                value={state.height}
-                onChange={e => setState(prev => ({ ...prev, height: parseFloat(e.target.value) }))}
-              />
-              <input
-                type="number"
-                min={WIDTH_MIN}
-                max={WIDTH_MAX}
-                step={WIDTH_STEP}
-                value={parseFloat(state.height.toFixed(1))}
-                onChange={e => {
-                  const v = parseFloat(e.target.value);
-                  if (!isNaN(v)) setState(prev => ({ ...prev, height: Math.max(WIDTH_MIN, Math.min(WIDTH_MAX, v)) }));
-                }}
-              />
-            </div>
+            <SliderRow
+              label="Height"
+              min={WIDTH_MIN} max={WIDTH_MAX} step={WIDTH_STEP}
+              value={state.height}
+              decimalPlaces={1}
+              labelWidth={70} labelAlign="right"
+              onChange={(v) => setState(prev => ({ ...prev, height: Math.max(WIDTH_MIN, Math.min(WIDTH_MAX, v)) }))}
+            />
 
-            <div className="edit-texture-row">
-              <label>Tex Scale</label>
-              <input
-                type="range"
-                min={SCALE_MIN}
-                max={SCALE_MAX}
-                step={SCALE_STEP}
-                value={state.textureScale}
-                onChange={e =>
-                  setState(prev => ({ ...prev, textureScale: parseFloat(e.target.value) }))
-                }
-              />
-              <input
-                type="number"
-                min={SCALE_MIN}
-                max={SCALE_MAX}
-                step={SCALE_STEP}
-                value={parseFloat(state.textureScale.toFixed(1))}
-                onChange={e => {
-                  const v = parseFloat(e.target.value);
-                  if (!isNaN(v))
-                    setState(prev => ({
-                      ...prev,
-                      textureScale: Math.max(SCALE_MIN, Math.min(SCALE_MAX, v)),
-                    }));
-                }}
-              />
-            </div>
+            <SliderRow
+              label="Tex Scale"
+              min={SCALE_MIN} max={SCALE_MAX} step={SCALE_STEP}
+              value={state.textureScale}
+              decimalPlaces={1}
+              labelWidth={70} labelAlign="right"
+              onChange={(v) => setState(prev => ({ ...prev, textureScale: Math.max(SCALE_MIN, Math.min(SCALE_MAX, v)) }))}
+            />
           </div>
 
           {/* PixiJS preview — fills height, stays square */}
