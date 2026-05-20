@@ -9,10 +9,12 @@ interface SceneRecord {
 
 interface SceneListPageProps {
   onSelect: (sceneName: string) => void;
+  onBack?: () => void;
+  projectId?: string;
   thumbBuster?: number;
 }
 
-export function SceneListPage({ onSelect, thumbBuster = 0 }: SceneListPageProps) {
+export function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }: SceneListPageProps) {
   const [scenes, setScenes] = useState<SceneRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [failedThumbs, setFailedThumbs] = useState<Set<string>>(new Set());
@@ -26,7 +28,7 @@ export function SceneListPage({ onSelect, thumbBuster = 0 }: SceneListPageProps)
   }, [thumbBuster]);
 
   useEffect(() => {
-    fetch('/api/scenes')
+    fetch(`/api/scenes${projectId ? `?projectId=${encodeURIComponent(projectId)}` : ''}`)
       .then(r => r.json())
       .then((records: SceneRecord[]) => { setScenes(records); setLoading(false); })
       .catch(() => setLoading(false));
@@ -35,6 +37,9 @@ export function SceneListPage({ onSelect, thumbBuster = 0 }: SceneListPageProps)
   return (
     <div className="scene-list-page">
       <div className="scene-list-header">
+        {onBack && (
+          <button className="scene-list-back-btn" onClick={onBack}>←</button>
+        )}
         <span className="scene-list-title">Scenes</span>
       </div>
       <div className="scene-list-body">

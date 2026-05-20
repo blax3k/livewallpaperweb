@@ -27,6 +27,22 @@ const MIME_TO_EXT: Record<string, string> = {
   'image/webp': '.webp',
 };
 
+// List all projects
+server.get('/api/projects', async () => {
+  const result = await pool.query('SELECT id, name FROM projects ORDER BY name ASC');
+  return result.rows;
+});
+
+// Create a new project
+server.post<{ Body: { name: string } }>('/api/projects', async (req, reply) => {
+  const { name } = req.body;
+  const result = await pool.query(
+    'INSERT INTO projects (name) VALUES ($1) RETURNING id, name',
+    [name],
+  );
+  return reply.status(201).send(result.rows[0]);
+});
+
 // Health check
 server.get('/health', async () => {
   return { status: 'ok' };
@@ -79,7 +95,15 @@ server.delete<{ Params: { id: string } }>('/api/images/:id', async (req, reply) 
 });
 
 // List all scenes (id, name, label only — no full data)
-server.get('/api/scenes', async () => {
+server.get<{ Querystring: { projectId?: string } }>('/api/scenes', async (req) => {
+  const { projectId } = req.query;
+  if (projectId) {
+    const result = await pool.query(
+      'SELECT id, name, label FROM scenes WHERE project_id = $1 ORDER BY label ASC',
+      [projectId],
+    );
+    return result.rows;
+  }
   const result = await pool.query(
     'SELECT id, name, label FROM scenes ORDER BY label ASC'
   );
@@ -143,6 +167,11 @@ server.delete<{ Params: { name: string } }>('/api/scenes/:name', async (req, rep
     return reply.status(404).send({ error: 'Scene not found' });
   }
   return reply.status(204).send();
+});
+
+// SPA catch-all: serve index.html for /project/* so direct URL access works
+server.get('/project/*', (req, reply) => {
+  reply.sendFile('index.html', path.join(__dirname, '../../frontend/public'));
 });
 
 // SPA catch-all: serve index.html for /scene/* so direct URL access works

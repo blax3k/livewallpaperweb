@@ -1337,7 +1337,7 @@
           return dispatcher;
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var React11 = require_react(), Internals = {
+        var React13 = require_react(), Internals = {
           d: {
             f: noop,
             r: function() {
@@ -1355,7 +1355,7 @@
           },
           p: 0,
           findDOMNode: null
-        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React11.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React13.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
         "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
           "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
         );
@@ -2890,7 +2890,7 @@
           "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
         }
         function validateOptionProps(element, props) {
-          null == props.value && ("object" === typeof props.children && null !== props.children ? React11.Children.forEach(props.children, function(child) {
+          null == props.value && ("object" === typeof props.children && null !== props.children ? React13.Children.forEach(props.children, function(child) {
             null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
               "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
             ));
@@ -18522,14 +18522,14 @@
           ));
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var Scheduler = require_scheduler(), React11 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+        var Scheduler = require_scheduler(), React13 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
         /* @__PURE__ */ Symbol.for("react.scope");
         var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity");
         /* @__PURE__ */ Symbol.for("react.legacy_hidden");
         /* @__PURE__ */ Symbol.for("react.tracing_marker");
         var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel");
         /* @__PURE__ */ Symbol.for("react.view_transition");
-        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React11.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React13.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
           pending: false,
           data: null,
           method: null,
@@ -21317,7 +21317,7 @@
           }
         };
         (function() {
-          var isomorphicReactPackageVersion = React11.version;
+          var isomorphicReactPackageVersion = React13.version;
           if ("19.2.5" !== isomorphicReactPackageVersion)
             throw Error(
               'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.5\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21671,18 +21671,18 @@
         function isValidElement(object) {
           return "object" === typeof object && null !== object && object.$$typeof === REACT_ELEMENT_TYPE;
         }
-        var React11 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React11.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
+        var React13 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React13.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
           return null;
         };
-        React11 = {
+        React13 = {
           react_stack_bottom_frame: function(callStackForError) {
             return callStackForError();
           }
         };
         var specialPropKeyWarningShown;
         var didWarnAboutElementRef = {};
-        var unknownOwnerDebugStack = React11.react_stack_bottom_frame.bind(
-          React11,
+        var unknownOwnerDebugStack = React13.react_stack_bottom_frame.bind(
+          React13,
           UnknownOwner
         )();
         var unknownOwnerDebugTask = createTask(getTaskName(UnknownOwner));
@@ -64176,7 +64176,7 @@ ${parts.join("\n")}
   });
 
   // src/client.tsx
-  var import_react13 = __toESM(require_react());
+  var import_react15 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/ScenePage.tsx
@@ -69714,7 +69714,7 @@ ${e2}`);
   // src/SceneListPage.tsx
   var import_react12 = __toESM(require_react());
   var import_jsx_runtime13 = __toESM(require_jsx_runtime());
-  function SceneListPage({ onSelect, thumbBuster = 0 }) {
+  function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }) {
     const [scenes, setScenes] = (0, import_react12.useState)([]);
     const [loading, setLoading] = (0, import_react12.useState)(true);
     const [failedThumbs, setFailedThumbs] = (0, import_react12.useState)(/* @__PURE__ */ new Set());
@@ -69726,13 +69726,16 @@ ${e2}`);
       }
     }, [thumbBuster]);
     (0, import_react12.useEffect)(() => {
-      fetch("/api/scenes").then((r2) => r2.json()).then((records) => {
+      fetch(`/api/scenes${projectId ? `?projectId=${encodeURIComponent(projectId)}` : ""}`).then((r2) => r2.json()).then((records) => {
         setScenes(records);
         setLoading(false);
       }).catch(() => setLoading(false));
     }, []);
     return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "scene-list-page", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "scene-list-header", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "scene-list-title", children: "Scenes" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "scene-list-header", children: [
+        onBack && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("button", { className: "scene-list-back-btn", onClick: onBack, children: "\u2190" }),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "scene-list-title", children: "Scenes" })
+      ] }),
       /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "scene-list-body", children: [
         loading && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "scene-list-empty", children: "Loading\u2026" }),
         !loading && scenes.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "scene-list-empty", children: "No scenes found. Create one from within the editor." }),
@@ -69755,44 +69758,160 @@ ${e2}`);
     ] });
   }
 
-  // src/client.tsx
+  // src/ProjectListPage.tsx
+  var import_react14 = __toESM(require_react());
+
+  // src/controls/NewProjectDialog.tsx
+  var import_react13 = __toESM(require_react());
   var import_jsx_runtime14 = __toESM(require_jsx_runtime());
+  function NewProjectDialog({ onConfirm, onCancel }) {
+    const [name, setName] = (0, import_react13.useState)("");
+    const inputRef = (0, import_react13.useRef)(null);
+    (0, import_react13.useEffect)(() => {
+      inputRef.current?.focus();
+    }, []);
+    const handleSubmit = (e2) => {
+      e2.preventDefault();
+      const trimmed = name.trim();
+      if (trimmed) onConfirm(trimmed);
+    };
+    const handleKeyDown = (e2) => {
+      if (e2.key === "Escape") onCancel();
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "new-scene-overlay", onKeyDown: handleKeyDown, children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "new-scene-dialog", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h2", { className: "new-scene-title", children: "New Project" }),
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("form", { onSubmit: handleSubmit, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "new-scene-field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("label", { htmlFor: "new-project-name", children: "Project name" }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+            "input",
+            {
+              id: "new-project-name",
+              ref: inputRef,
+              type: "text",
+              value: name,
+              onChange: (e2) => setName(e2.target.value),
+              placeholder: "Enter project name"
+            }
+          )
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "new-scene-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("button", { type: "button", onClick: onCancel, children: "Cancel" }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("button", { type: "submit", disabled: !name.trim(), children: "OK" })
+        ] })
+      ] })
+    ] }) });
+  }
+
+  // src/ProjectListPage.tsx
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
+  function ProjectListPage({ onSelect }) {
+    const [projects, setProjects] = (0, import_react14.useState)([]);
+    const [loading, setLoading] = (0, import_react14.useState)(true);
+    const [showDialog, setShowDialog] = (0, import_react14.useState)(false);
+    (0, import_react14.useEffect)(() => {
+      fetch("/api/projects").then((r2) => r2.json()).then((records) => {
+        setProjects(records);
+        setLoading(false);
+      }).catch(() => setLoading(false));
+    }, []);
+    const handleCreate = (name) => {
+      fetch("/api/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name })
+      }).then((r2) => r2.json()).then((project) => {
+        setProjects((prev) => [...prev, project].sort((a2, b2) => a2.name.localeCompare(b2.name)));
+        setShowDialog(false);
+      });
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "project-list-page", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "project-list-header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "project-list-title", children: "Projects" }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("button", { className: "project-list-new-btn", onClick: () => setShowDialog(true), children: "+ Project" })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "project-list-body", children: [
+        loading && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "project-list-empty", children: "Loading\u2026" }),
+        !loading && projects.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "project-list-empty", children: "No projects yet. Create one to get started." }),
+        !loading && projects.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "project-list-grid", children: projects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "project-card", onClick: () => onSelect(project), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "project-card-icon", children: "\u{1F4C1}" }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "project-card-name", children: project.name })
+        ] }, project.id)) })
+      ] }),
+      showDialog && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+        NewProjectDialog,
+        {
+          onConfirm: handleCreate,
+          onCancel: () => setShowDialog(false)
+        }
+      )
+    ] });
+  }
+
+  // src/client.tsx
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
   function pageFromPath() {
-    const match = window.location.pathname.match(/^\/scene\/([^/]+)$/);
-    return match ? { type: "scene", sceneName: decodeURIComponent(match[1]) } : { type: "list" };
+    const sceneMatch = window.location.pathname.match(/^\/scene\/([^/]+)$/);
+    if (sceneMatch) {
+      return { type: "projects" };
+    }
+    const projectMatch = window.location.pathname.match(/^\/project\/([^/]+)$/);
+    if (projectMatch) {
+      return { type: "scenes", project: { id: decodeURIComponent(projectMatch[1]), name: "" } };
+    }
+    return { type: "projects" };
   }
   function App() {
-    const [page, setPage] = (0, import_react13.useState)(pageFromPath);
-    const [thumbBuster, setThumbBuster] = (0, import_react13.useState)(0);
-    (0, import_react13.useEffect)(() => {
+    const [page, setPage] = (0, import_react15.useState)(pageFromPath);
+    const [thumbBuster, setThumbBuster] = (0, import_react15.useState)(0);
+    (0, import_react15.useEffect)(() => {
       const onPopState = () => setPage(pageFromPath());
       window.addEventListener("popstate", onPopState);
       return () => window.removeEventListener("popstate", onPopState);
     }, []);
-    const navigateToScene = (0, import_react13.useCallback)((sceneName) => {
+    const navigateToProject = (0, import_react15.useCallback)((project) => {
+      window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
+      setPage({ type: "scenes", project });
+    }, []);
+    const navigateToScene = (0, import_react15.useCallback)((sceneName, project) => {
       window.history.pushState(null, "", `/scene/${encodeURIComponent(sceneName)}`);
-      setPage({ type: "scene", sceneName });
+      setPage({ type: "scene", sceneName, project });
     }, []);
-    const navigateBack = (0, import_react13.useCallback)(() => {
+    const navigateBackToProjects = (0, import_react15.useCallback)(() => {
       window.history.pushState(null, "", "/");
-      setPage({ type: "list" });
+      setPage({ type: "projects" });
     }, []);
-    const handleSaved = (0, import_react13.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
+    const navigateBackToScenes = (0, import_react15.useCallback)((project) => {
+      window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
+      setPage({ type: "scenes", project });
+    }, []);
+    const handleSaved = (0, import_react15.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
     if (page.type === "scene") {
-      return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
         ScenePage,
         {
           initialScene: page.sceneName,
-          onBack: navigateBack,
+          onBack: () => navigateBackToScenes(page.project),
           onSaved: handleSaved
         }
       );
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SceneListPage, { onSelect: navigateToScene, thumbBuster });
+    if (page.type === "scenes") {
+      return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+        SceneListPage,
+        {
+          onSelect: (sceneName) => navigateToScene(sceneName, page.project),
+          onBack: navigateBackToProjects,
+          projectId: page.project.id,
+          thumbBuster
+        }
+      );
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ProjectListPage, { onSelect: navigateToProject });
   }
   window.addEventListener("DOMContentLoaded", () => {
     const root = (0, import_client.createRoot)(document.body);
-    root.render(/* @__PURE__ */ (0, import_jsx_runtime14.jsx)(App, {}));
+    root.render(/* @__PURE__ */ (0, import_jsx_runtime16.jsx)(App, {}));
   });
 })();
 /*! Bundled license information:
