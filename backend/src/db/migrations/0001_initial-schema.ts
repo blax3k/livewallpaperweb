@@ -8,7 +8,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     name: { type: 'text', notNull: true },
     created_at: { type: 'timestamptz', notNull: true, default: pgm.func('now()') },
     updated_at: { type: 'timestamptz', notNull: true, default: pgm.func('now()') },
-  });
+  }, { ifNotExists: true });
 
   pgm.createTable('scenes', {
     id: { type: 'uuid', primaryKey: true, default: pgm.func('gen_random_uuid()') },
@@ -17,7 +17,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     data: { type: 'jsonb', notNull: true },
     created_at: { type: 'timestamptz', notNull: true, default: pgm.func('now()') },
     updated_at: { type: 'timestamptz', notNull: true, default: pgm.func('now()') },
-  });
+  }, { ifNotExists: true });
 
   pgm.createTable('images', {
     id: { type: 'uuid', primaryKey: true, default: pgm.func('gen_random_uuid()') },
@@ -26,7 +26,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     mime_type: { type: 'text', notNull: true },
     size_bytes: { type: 'integer', notNull: true },
     created_at: { type: 'timestamptz', notNull: true, default: pgm.func('now()') },
-  });
+  }, { ifNotExists: true });
 
   pgm.sql(`
     CREATE OR REPLACE FUNCTION update_updated_at()
@@ -38,19 +38,13 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     $$ LANGUAGE plpgsql;
   `);
 
-  pgm.createTrigger('projects', 'projects_updated_at', {
-    when: 'BEFORE',
-    operation: 'UPDATE',
-    level: 'ROW',
-    function: 'update_updated_at',
-  });
+  pgm.sql(`CREATE OR REPLACE TRIGGER projects_updated_at
+    BEFORE UPDATE ON "projects"
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at()`);
 
-  pgm.createTrigger('scenes', 'scenes_updated_at', {
-    when: 'BEFORE',
-    operation: 'UPDATE',
-    level: 'ROW',
-    function: 'update_updated_at',
-  });
+  pgm.sql(`CREATE OR REPLACE TRIGGER scenes_updated_at
+    BEFORE UPDATE ON "scenes"
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at()`);
 }
 
 export async function down(pgm: MigrationBuilder): Promise<void> {
