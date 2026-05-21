@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './SceneListPage.scss';
 import { Button } from './components/Button';
 import { PageLayout, PageHeader, PageBody } from './components/PageLayout';
+import { NewSceneDialog } from './controls/NewSceneDialog';
 
 interface SceneRecord {
   id: string;
@@ -20,6 +21,7 @@ export function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }: 
   const [scenes, setScenes] = useState<SceneRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [failedThumbs, setFailedThumbs] = useState<Set<string>>(new Set());
+  const [showDialog, setShowDialog] = useState(false);
   const prevBusterRef = useRef(thumbBuster);
 
   useEffect(() => {
@@ -36,9 +38,25 @@ export function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }: 
       .catch(() => setLoading(false));
   }, []);
 
+  const handleCreate = (label: string) => {
+    const name = label.trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+    fetch('/api/scenes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, label: label.trim(), data: { sprites: [], xFocus: 0 }, projectId }),
+    })
+      .then(r => r.json())
+      .then((scene: SceneRecord) => {
+        setShowDialog(false);
+        onSelect(scene);
+      });
+  };
+
   return (
     <PageLayout>
-      <PageHeader title="Scenes" left={onBack && <Button onClick={onBack}>←</Button>} />
+      <PageHeader title="Scenes" left={onBack && <Button onClick={onBack}>←</Button>}>
+        <Button onClick={() => setShowDialog(true)}>+ Scene</Button>
+      </PageHeader>
       <PageBody>
         {loading && <div className="scene-list-empty">Loading…</div>}
         {!loading && scenes.length === 0 && (
@@ -63,6 +81,12 @@ export function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }: 
           </div>
         )}
       </PageBody>
+      {showDialog && (
+        <NewSceneDialog
+          onConfirm={handleCreate}
+          onCancel={() => setShowDialog(false)}
+        />
+      )}
     </PageLayout>
   );
 }

@@ -135,11 +135,11 @@ server.get<{ Params: { name: string } }>('/api/scenes/:name', async (req, reply)
 });
 
 // Create a new scene
-server.post<{ Body: { name: string; label: string; data: unknown } }>('/api/scenes', async (req, reply) => {
-  const { name, label, data } = req.body;
+server.post<{ Body: { name: string; label: string; data: unknown; projectId?: string } }>('/api/scenes', async (req, reply) => {
+  const { name, label, data, projectId } = req.body;
   const result = await pool.query(
-    'INSERT INTO scenes (name, label, data) VALUES ($1, $2, $3) RETURNING *',
-    [name, label, data]
+    'INSERT INTO scenes (name, label, data, project_id) VALUES ($1, $2, $3, $4) RETURNING *',
+    [name, label, data, projectId ?? null]
   );
   return reply.status(201).send(result.rows[0]);
 });

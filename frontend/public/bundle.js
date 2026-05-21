@@ -69660,6 +69660,7 @@ ${e2}`);
     const [scenes, setScenes] = (0, import_react12.useState)([]);
     const [loading, setLoading] = (0, import_react12.useState)(true);
     const [failedThumbs, setFailedThumbs] = (0, import_react12.useState)(/* @__PURE__ */ new Set());
+    const [showDialog, setShowDialog] = (0, import_react12.useState)(false);
     const prevBusterRef = (0, import_react12.useRef)(thumbBuster);
     (0, import_react12.useEffect)(() => {
       if (thumbBuster !== prevBusterRef.current) {
@@ -69673,8 +69674,19 @@ ${e2}`);
         setLoading(false);
       }).catch(() => setLoading(false));
     }, []);
+    const handleCreate = (label) => {
+      const name = label.trim().toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
+      fetch("/api/scenes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, label: label.trim(), data: { sprites: [], xFocus: 0 }, projectId })
+      }).then((r2) => r2.json()).then((scene) => {
+        setShowDialog(false);
+        onSelect(scene);
+      });
+    };
     return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(PageLayout, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(PageHeader, { title: "Scenes", left: onBack && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Button, { onClick: onBack, children: "\u2190" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(PageHeader, { title: "Scenes", left: onBack && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Button, { onClick: onBack, children: "\u2190" }), children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Button, { onClick: () => setShowDialog(true), children: "+ Scene" }) }),
       /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(PageBody, { children: [
         loading && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "scene-list-empty", children: "Loading\u2026" }),
         !loading && scenes.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "scene-list-empty", children: "No scenes found. Create one from within the editor." }),
@@ -69693,7 +69705,14 @@ ${e2}`);
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "scene-card-label", children: scene.label })
         ] }, scene.id)) })
-      ] })
+      ] }),
+      showDialog && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+        NewSceneDialog,
+        {
+          onConfirm: handleCreate,
+          onCancel: () => setShowDialog(false)
+        }
+      )
     ] });
   }
 
