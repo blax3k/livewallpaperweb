@@ -10,7 +10,7 @@ interface SceneRecord {
 }
 
 interface SceneListPageProps {
-  onSelect: (sceneName: string) => void;
+  onSelect: (scene: SceneRecord) => void;
   onBack?: () => void;
   projectId?: string;
   thumbBuster?: number;
@@ -47,7 +47,7 @@ export function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }: 
         {!loading && scenes.length > 0 && (
           <div className="scene-list-grid">
             {scenes.map(scene => (
-              <div key={scene.id} className="scene-card" onClick={() => onSelect(scene.name)}>
+              <div key={scene.id} className="scene-card" onClick={() => onSelect(scene)}>
                 <div className="scene-card-preview">
                   <img
                     src={`/thumbnails/${scene.name}.jpg?v=${thumbBuster}`}

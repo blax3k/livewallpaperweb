@@ -69678,7 +69678,7 @@ ${e2}`);
       /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(PageBody, { children: [
         loading && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "scene-list-empty", children: "Loading\u2026" }),
         !loading && scenes.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "scene-list-empty", children: "No scenes found. Create one from within the editor." }),
-        !loading && scenes.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "scene-list-grid", children: scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "scene-card", onClick: () => onSelect(scene.name), children: [
+        !loading && scenes.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "scene-list-grid", children: scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "scene-card", onClick: () => onSelect(scene), children: [
           /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "scene-card-preview", children: [
             /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
               "img",
@@ -69787,9 +69787,11 @@ ${e2}`);
   // src/client.tsx
   var import_jsx_runtime19 = __toESM(require_jsx_runtime());
   function pageFromPath() {
-    const sceneMatch = window.location.pathname.match(/^\/scene\/([^/]+)$/);
+    const sceneMatch = window.location.pathname.match(/^\/project\/([^/]+)\/scene\/([^/]+)$/);
     if (sceneMatch) {
-      return { type: "projects" };
+      const projectId = decodeURIComponent(sceneMatch[1]);
+      const sceneId = decodeURIComponent(sceneMatch[2]);
+      return { type: "scene", sceneId, sceneName: "", project: { id: projectId, name: "" } };
     }
     const projectMatch = window.location.pathname.match(/^\/project\/([^/]+)$/);
     if (projectMatch) {
@@ -69805,13 +69807,25 @@ ${e2}`);
       window.addEventListener("popstate", onPopState);
       return () => window.removeEventListener("popstate", onPopState);
     }, []);
+    const sceneIdToResolve = page.type === "scene" && !page.sceneName ? page.sceneId : null;
+    (0, import_react15.useEffect)(() => {
+      if (!sceneIdToResolve) return;
+      fetch(`/api/scenes/id/${encodeURIComponent(sceneIdToResolve)}`).then((r2) => r2.ok ? r2.json() : null).then((data) => {
+        if (data?.name) {
+          setPage(
+            (prev) => prev.type === "scene" && prev.sceneId === sceneIdToResolve ? { ...prev, sceneName: data.name } : prev
+          );
+        }
+      }).catch(() => {
+      });
+    }, [sceneIdToResolve]);
     const navigateToProject = (0, import_react15.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
       setPage({ type: "scenes", project });
     }, []);
-    const navigateToScene = (0, import_react15.useCallback)((sceneName, project) => {
-      window.history.pushState(null, "", `/scene/${encodeURIComponent(sceneName)}`);
-      setPage({ type: "scene", sceneName, project });
+    const navigateToScene = (0, import_react15.useCallback)((scene, project) => {
+      window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/scene/${encodeURIComponent(scene.id)}`);
+      setPage({ type: "scene", sceneId: scene.id, sceneName: scene.name, project });
     }, []);
     const navigateBackToProjects = (0, import_react15.useCallback)(() => {
       window.history.pushState(null, "", "/");
@@ -69823,6 +69837,9 @@ ${e2}`);
     }, []);
     const handleSaved = (0, import_react15.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
     if (page.type === "scene") {
+      if (!page.sceneName) {
+        return null;
+      }
       return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
         ScenePage,
         {
@@ -69836,7 +69853,7 @@ ${e2}`);
       return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
         SceneListPage,
         {
-          onSelect: (sceneName) => navigateToScene(sceneName, page.project),
+          onSelect: (scene) => navigateToScene(scene, page.project),
           onBack: navigateBackToProjects,
           projectId: page.project.id,
           thumbBuster

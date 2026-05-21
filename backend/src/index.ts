@@ -110,6 +110,18 @@ server.get<{ Querystring: { projectId?: string } }>('/api/scenes', async (req) =
   return result.rows;
 });
 
+// Get a single scene by UUID
+server.get<{ Params: { id: string } }>('/api/scenes/id/:id', async (req, reply) => {
+  const result = await pool.query(
+    'SELECT id, name, label FROM scenes WHERE id = $1',
+    [req.params.id]
+  );
+  if (result.rows.length === 0) {
+    return reply.status(404).send({ error: 'Scene not found' });
+  }
+  return result.rows[0];
+});
+
 // Get a single scene's full data
 server.get<{ Params: { name: string } }>('/api/scenes/:name', async (req, reply) => {
   const result = await pool.query(
@@ -169,13 +181,8 @@ server.delete<{ Params: { name: string } }>('/api/scenes/:name', async (req, rep
   return reply.status(204).send();
 });
 
-// SPA catch-all: serve index.html for /project/* so direct URL access works
+// SPA catch-all: serve index.html for /project/* (covers /project/:id and /project/:id/scene/:sceneId)
 server.get('/project/*', (req, reply) => {
-  reply.sendFile('index.html', path.join(__dirname, '../../frontend/public'));
-});
-
-// SPA catch-all: serve index.html for /scene/* so direct URL access works
-server.get('/scene/*', (req, reply) => {
   reply.sendFile('index.html', path.join(__dirname, '../../frontend/public'));
 });
 
