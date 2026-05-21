@@ -68242,7 +68242,7 @@ ${e2}`);
         width,
         height,
         parallaxMultiplier,
-        texCoordinates: [0, 0, 0, 1, 1, 0, 1, 1]
+        texCoordinates: [0, 1, 0, 0, 1, 1, 1, 0]
       };
       const pixiSprite = await this.createSprite(spriteData);
       if (!pixiSprite) return -1;
@@ -69500,7 +69500,7 @@ ${e2}`);
         type: "texture",
         spriteIndex: index,
         before: { textureResource: beforeTexture, width: beforeSize?.width ?? 0, height: beforeSize?.height ?? 0, texCoordinates: beforeTexCoords },
-        after: { textureResource, width: afterSize?.width ?? 0, height: afterSize?.height ?? 0, texCoordinates: [0, 0, 0, 1, 1, 0, 1, 1] }
+        after: { textureResource, width: afterSize?.width ?? 0, height: afterSize?.height ?? 0, texCoordinates: [0, 1, 0, 0, 1, 1, 1, 0] }
       });
     }, [handleChangeTexture, rendererRef, history]);
     const handleSpriteDepthChangeStart = (0, import_react11.useCallback)((depth) => {
