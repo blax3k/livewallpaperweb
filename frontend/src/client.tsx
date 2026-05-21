@@ -1,4 +1,5 @@
 import './styles/main.scss';
+console.log('[bundle] loaded — build b85774b');
 import React, { useState, useCallback, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ScenePage } from './ScenePage';

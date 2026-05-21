@@ -69809,6 +69809,7 @@ ${e2}`);
 
   // src/client.tsx
   var import_jsx_runtime19 = __toESM(require_jsx_runtime());
+  console.log("[bundle] loaded \u2014 build b85774b");
   function pageFromPath() {
     const sceneMatch = window.location.pathname.match(/^\/project\/([^/]+)\/scene\/([^/]+)$/);
     if (sceneMatch) {
