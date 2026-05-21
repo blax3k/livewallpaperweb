@@ -12,5 +12,5 @@
     "resolveJsonModule": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "src/db/migrate.ts", "src/db/assign-project.ts", "src/db/seed.ts", "src/db/migrations"]
+  "exclude": ["node_modules", "dist", "src/db/migrate.ts", "src/db/assign-project.ts", "src/db/seed.ts"]
 }
