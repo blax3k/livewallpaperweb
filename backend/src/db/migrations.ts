@@ -1,7 +1,7 @@
 import path from 'path';
-import { runner } from 'node-pg-migrate';
 
 export async function runMigrations() {
+  const { runner } = await import('node-pg-migrate');
   await runner({
     databaseUrl: process.env.DATABASE_URL!,
     dir: path.join(__dirname, 'migrations'),
