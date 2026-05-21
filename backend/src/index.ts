@@ -189,6 +189,8 @@ server.get('/project/*', (req, reply) => {
 // Start server
 const start = async () => {
   try {
+    console.log('[storage] uploadsDir:', uploadsDir);
+    console.log('[storage] thumbnailsDir:', thumbnailsDir);
     await runMigrations();
     await storage.init();
     await thumbnailStorage.init();
