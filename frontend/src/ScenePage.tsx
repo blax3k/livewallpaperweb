@@ -233,7 +233,7 @@ export function ScenePage({ initialScene, onBack, onSaved }: ScenePageProps) {
   const handleChangeTextureWithHistory = useCallback(async (index: number, textureResource: string) => {
     const beforeTexture = rendererRef.current?.getSpriteTextureResource(index) ?? '';
     const beforeSize = rendererRef.current?.getSpriteScale(index);
-    const beforeTexCoords = rendererRef.current?.getSpriteTexCoordinates(index) ?? [0, 0, 0, 1, 1, 0, 1, 1];
+    const beforeTexCoords = rendererRef.current?.getSpriteTexCoordinates(index) ?? [0, 1, 0, 0, 1, 1, 1, 0];
     await handleChangeTexture(index, textureResource);
     const afterSize = rendererRef.current?.getSpriteScale(index);
     history.push({

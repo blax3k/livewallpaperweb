@@ -623,7 +623,7 @@ export class SceneRenderer {
     metadata.originalWidth = currentWidth;
     metadata.originalHeight = newHeight;
 
-    const storedTexCoords = texCoords ?? [0, 0, 0, 1, 1, 0, 1, 1];
+    const storedTexCoords = texCoords ?? [0, 1, 0, 0, 1, 1, 1, 0];
     const original = this.originalSceneData?.sprites.find(s => s.name === metadata.name);
     if (original) {
       original.textureResource = textureResource;

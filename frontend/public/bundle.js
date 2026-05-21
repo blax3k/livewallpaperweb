@@ -68561,7 +68561,7 @@ ${e2}`);
       metadata.textureResource = textureResource;
       metadata.originalWidth = currentWidth;
       metadata.originalHeight = newHeight;
-      const storedTexCoords = texCoords ?? [0, 0, 0, 1, 1, 0, 1, 1];
+      const storedTexCoords = texCoords ?? [0, 1, 0, 0, 1, 1, 1, 0];
       const original = this.originalSceneData?.sprites.find((s2) => s2.name === metadata.name);
       if (original) {
         original.textureResource = textureResource;
@@ -69493,7 +69493,7 @@ ${e2}`);
     const handleChangeTextureWithHistory = (0, import_react11.useCallback)(async (index, textureResource) => {
       const beforeTexture = rendererRef.current?.getSpriteTextureResource(index) ?? "";
       const beforeSize = rendererRef.current?.getSpriteScale(index);
-      const beforeTexCoords = rendererRef.current?.getSpriteTexCoordinates(index) ?? [0, 0, 0, 1, 1, 0, 1, 1];
+      const beforeTexCoords = rendererRef.current?.getSpriteTexCoordinates(index) ?? [0, 1, 0, 0, 1, 1, 1, 0];
       await handleChangeTexture(index, textureResource);
       const afterSize = rendererRef.current?.getSpriteScale(index);
       history.push({
