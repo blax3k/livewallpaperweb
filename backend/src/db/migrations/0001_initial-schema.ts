@@ -15,7 +15,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     name: { type: 'text', notNull: true, unique: true },
     label: { type: 'text', notNull: true },
     data: { type: 'jsonb', notNull: true },
-    project_id: { type: 'uuid', references: '"projects"', onDelete: 'SET NULL' },
     created_at: { type: 'timestamptz', notNull: true, default: pgm.func('now()') },
     updated_at: { type: 'timestamptz', notNull: true, default: pgm.func('now()') },
   });
