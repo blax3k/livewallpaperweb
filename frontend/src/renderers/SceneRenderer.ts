@@ -237,7 +237,7 @@ export class SceneRenderer {
       width,
       height,
       parallaxMultiplier,
-      texCoordinates: [0, 0, 0, 1, 1, 0, 1, 1],
+      texCoordinates: [0, 1, 0, 0, 1, 1, 1, 0],
     };
 
     const pixiSprite = await this.createSprite(spriteData);
