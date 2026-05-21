@@ -68244,6 +68244,7 @@ ${e2}`);
         parallaxMultiplier,
         texCoordinates: [0, 1, 0, 0, 1, 1, 1, 0]
       };
+      console.log("[addSprite] spriteData.texCoordinates:", JSON.stringify(spriteData.texCoordinates));
       const pixiSprite = await this.createSprite(spriteData);
       if (!pixiSprite) return -1;
       this.sprites.push(pixiSprite);
@@ -68496,6 +68497,7 @@ ${e2}`);
       }
       sprite.width = width;
       sprite.height = height;
+      console.log("[applyTexture] texCoords:", JSON.stringify(texCoords));
       const original = this.originalSceneData?.sprites.find((s2) => s2.name === metadata.name);
       if (original) {
         original.texCoordinates = texCoords;
@@ -68562,6 +68564,7 @@ ${e2}`);
       metadata.originalWidth = currentWidth;
       metadata.originalHeight = newHeight;
       const storedTexCoords = texCoords ?? [0, 1, 0, 0, 1, 1, 1, 0];
+      console.log("[changeTexture] texCoords arg:", JSON.stringify(texCoords), "=> stored:", JSON.stringify(storedTexCoords));
       const original = this.originalSceneData?.sprites.find((s2) => s2.name === metadata.name);
       if (original) {
         original.textureResource = textureResource;
@@ -68608,6 +68611,7 @@ ${e2}`);
     getSceneData() {
       if (!this.originalSceneData) return null;
       const originalByName = new Map(this.originalSceneData.sprites.map((s2) => [s2.name, s2]));
+      console.log("[getSceneData] originalSceneData sprites texCoords:", JSON.stringify(this.originalSceneData.sprites.map((s2) => ({ name: s2.name, texCoordinates: s2.texCoordinates }))));
       return {
         ...this.originalSceneData,
         xFocus: this.currentXFocus,
