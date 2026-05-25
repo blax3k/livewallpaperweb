@@ -29,7 +29,7 @@ const MIME_TO_EXT: Record<string, string> = {
 
 // List all projects
 server.get('/api/projects', async () => {
-  const result = await pool.query('SELECT id, name FROM projects ORDER BY name ASC');
+  const result = await pool.query('SELECT id, name, version FROM projects ORDER BY name ASC');
   return result.rows;
 });
 
@@ -141,6 +141,9 @@ server.post<{ Body: { name: string; label: string; data: unknown; projectId?: st
     'INSERT INTO scenes (name, label, data, project_id) VALUES ($1, $2, $3, $4) RETURNING *',
     [name, label, data, projectId ?? null]
   );
+  if (projectId) {
+    await pool.query('UPDATE projects SET version = version + 1 WHERE id = $1', [projectId]);
+  }
   return reply.status(201).send(result.rows[0]);
 });
 
@@ -155,7 +158,11 @@ server.put<{ Params: { name: string }; Body: { label: string; data: unknown } }>
      RETURNING *`,
     [name, label, data]
   );
-  return result.rows[0];
+  const scene = result.rows[0];
+  if (scene.project_id) {
+    await pool.query('UPDATE projects SET version = version + 1 WHERE id = $1', [scene.project_id]);
+  }
+  return scene;
 });
 
 // Save or overwrite a scene thumbnail
