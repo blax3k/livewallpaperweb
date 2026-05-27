@@ -35,6 +35,32 @@
   line-height: 1;
 }
 
+.project-card-collage {
+  width: 80px;
+  height: 80px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #111;
+  flex-shrink: 0;
+}
+
+.project-card-collage-cell {
+  background: #111;
+  position: relative;
+  overflow: hidden;
+
+  img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
 .project-card-name {
   font-size: 13px;
   color: #ccc;

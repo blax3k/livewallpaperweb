@@ -29,7 +29,13 @@ const MIME_TO_EXT: Record<string, string> = {
 
 // List all projects
 server.get('/api/projects', async () => {
-  const result = await pool.query('SELECT id, name, version FROM projects ORDER BY name ASC');
+  const result = await pool.query(`
+    SELECT p.id, p.name, p.version,
+      ARRAY(
+        SELECT s.name FROM scenes s WHERE s.project_id = p.id ORDER BY s.label ASC LIMIT 4
+      ) AS scene_names
+    FROM projects p ORDER BY p.name ASC
+  `);
   return result.rows;
 });
 

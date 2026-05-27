@@ -7,10 +7,38 @@ import { PageLayout, PageHeader, PageBody } from './components/PageLayout';
 interface ProjectRecord {
   id: string;
   name: string;
+  scene_names: string[];
 }
 
 interface ProjectListPageProps {
   onSelect: (project: ProjectRecord) => void;
+}
+
+function ProjectCollage({ sceneNames }: { sceneNames: string[] }) {
+  const [failedThumbs, setFailedThumbs] = useState<Set<string>>(new Set());
+
+  if (!sceneNames || sceneNames.length === 0) {
+    return <div className="project-card-icon">📁</div>;
+  }
+
+  const cells = [...sceneNames.slice(0, 4)];
+  while (cells.length < 4) cells.push('');
+
+  return (
+    <div className="project-card-collage">
+      {cells.map((name, i) => (
+        <div key={i} className="project-card-collage-cell">
+          {name && !failedThumbs.has(name) && (
+            <img
+              src={`/thumbnails/${name}.jpg`}
+              alt=""
+              onError={() => setFailedThumbs(prev => new Set(prev).add(name))}
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export function ProjectListPage({ onSelect }: ProjectListPageProps) {
@@ -52,7 +80,7 @@ export function ProjectListPage({ onSelect }: ProjectListPageProps) {
           <div className="project-list-grid">
             {projects.map(project => (
               <div key={project.id} className="project-card" onClick={() => onSelect(project)}>
-                <div className="project-card-icon">📁</div>
+                <ProjectCollage sceneNames={project.scene_names} />
                 <div className="project-card-name">{project.name}</div>
               </div>
             ))}

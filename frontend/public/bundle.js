@@ -69767,6 +69767,22 @@ ${e2}`);
 
   // src/ProjectListPage.tsx
   var import_jsx_runtime18 = __toESM(require_jsx_runtime());
+  function ProjectCollage({ sceneNames }) {
+    const [failedThumbs, setFailedThumbs] = (0, import_react14.useState)(/* @__PURE__ */ new Set());
+    if (!sceneNames || sceneNames.length === 0) {
+      return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-icon", children: "\u{1F4C1}" });
+    }
+    const cells = [...sceneNames.slice(0, 4)];
+    while (cells.length < 4) cells.push("");
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-collage", children: cells.map((name, i2) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-collage-cell", children: name && !failedThumbs.has(name) && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+      "img",
+      {
+        src: `/thumbnails/${name}.jpg`,
+        alt: "",
+        onError: () => setFailedThumbs((prev) => new Set(prev).add(name))
+      }
+    ) }, i2)) });
+  }
   function ProjectListPage({ onSelect }) {
     const [projects, setProjects] = (0, import_react14.useState)([]);
     const [loading, setLoading] = (0, import_react14.useState)(true);
@@ -69793,7 +69809,7 @@ ${e2}`);
         loading && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-list-empty", children: "Loading\u2026" }),
         !loading && projects.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-list-empty", children: "No projects yet. Create one to get started." }),
         !loading && projects.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-list-grid", children: projects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "project-card", onClick: () => onSelect(project), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-icon", children: "\u{1F4C1}" }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ProjectCollage, { sceneNames: project.scene_names }),
           /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-name", children: project.name })
         ] }, project.id)) })
       ] }),
