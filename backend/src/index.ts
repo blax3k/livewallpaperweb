@@ -143,14 +143,24 @@ server.get<{ Params: { name: string } }>('/api/scenes/:name', async (req, reply)
 // Create a new scene
 server.post<{ Body: { name: string; label: string; data: unknown; projectId?: string } }>('/api/scenes', async (req, reply) => {
   const { name, label, data, projectId } = req.body;
-  const result = await pool.query(
-    'INSERT INTO scenes (name, label, data, project_id) VALUES ($1, $2, $3, $4) RETURNING *',
-    [name, label, data, projectId ?? null]
-  );
-  if (projectId) {
-    await pool.query('UPDATE projects SET version = version + 1 WHERE id = $1', [projectId]);
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const result = await client.query(
+      'INSERT INTO scenes (name, label, data, project_id) VALUES ($1, $2, $3, $4) RETURNING *',
+      [name, label, data, projectId ?? null]
+    );
+    if (projectId) {
+      await client.query('UPDATE projects SET version = version + 1 WHERE id = $1', [projectId]);
+    }
+    await client.query('COMMIT');
+    return reply.status(201).send(result.rows[0]);
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
   }
-  return reply.status(201).send(result.rows[0]);
 });
 
 // Upsert a scene — updates if name exists, creates if not

@@ -69684,9 +69684,22 @@ ${e2}`);
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, label: label.trim(), data: { sprites: [], xFocus: 0 }, projectId })
-      }).then((r2) => r2.json()).then((scene) => {
+      }).then(async (r2) => {
+        const payload = await r2.json().catch(() => ({}));
+        if (!r2.ok) {
+          const err = payload;
+          throw new Error(err.error ?? err.message ?? "Failed to create scene");
+        }
+        return payload;
+      }).then((scene) => {
+        if (!scene?.id || !scene?.name) {
+          throw new Error("Invalid scene response from server");
+        }
         setShowDialog(false);
         onSelect(scene);
+      }).catch((err) => {
+        const message = err instanceof Error ? err.message : "Failed to create scene";
+        window.alert(message);
       });
     };
     return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(PageLayout, { children: [

@@ -10,6 +10,11 @@ interface SceneRecord {
   label: string;
 }
 
+interface ApiError {
+  error?: string;
+  message?: string;
+}
+
 interface SceneListPageProps {
   onSelect: (scene: SceneRecord) => void;
   onBack?: () => void;
@@ -45,10 +50,24 @@ export function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }: 
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, label: label.trim(), data: { sprites: [], xFocus: 0 }, projectId }),
     })
-      .then(r => r.json())
-      .then((scene: SceneRecord) => {
+      .then(async (r) => {
+        const payload = await r.json().catch(() => ({} as ApiError));
+        if (!r.ok) {
+          const err = payload as ApiError;
+          throw new Error(err.error ?? err.message ?? 'Failed to create scene');
+        }
+        return payload as SceneRecord;
+      })
+      .then((scene) => {
+        if (!scene?.id || !scene?.name) {
+          throw new Error('Invalid scene response from server');
+        }
         setShowDialog(false);
         onSelect(scene);
+      })
+      .catch((err: unknown) => {
+        const message = err instanceof Error ? err.message : 'Failed to create scene';
+        window.alert(message);
       });
   };
 
