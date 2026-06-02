@@ -26,7 +26,7 @@ export function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }: 
   const [scenes, setScenes] = useState<SceneRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [failedThumbs, setFailedThumbs] = useState<Set<string>>(new Set());
-  const [showDialog, setShowDialog] = useState(false);
+  const [showNewSceneDialog, setShowNewSceneDialog] = useState(false);
   const prevBusterRef = useRef(thumbBuster);
 
   useEffect(() => {
@@ -62,7 +62,7 @@ export function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }: 
         if (!scene?.id || !scene?.name) {
           throw new Error('Invalid scene response from server');
         }
-        setShowDialog(false);
+        setShowNewSceneDialog(false);
         onSelect(scene);
       })
       .catch((err: unknown) => {
@@ -74,7 +74,7 @@ export function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }: 
   return (
     <PageLayout>
       <PageHeader title="Scenes" left={onBack && <Button onClick={onBack}>←</Button>}>
-        <Button onClick={() => setShowDialog(true)}>+ Scene</Button>
+        <Button onClick={() => setShowNewSceneDialog(true)}>+ Scene</Button>
       </PageHeader>
       <PageBody>
         {loading && <div className="scene-list-empty">Loading…</div>}
@@ -100,10 +100,10 @@ export function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }: 
           </div>
         )}
       </PageBody>
-      {showDialog && (
+      {showNewSceneDialog && (
         <NewSceneDialog
           onConfirm={handleCreate}
-          onCancel={() => setShowDialog(false)}
+          onCancel={() => setShowNewSceneDialog(false)}
         />
       )}
     </PageLayout>

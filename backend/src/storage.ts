@@ -20,7 +20,13 @@ export class LocalStorage implements ImageStorage {
   }
 
   async delete(filename: string): Promise<void> {
-    await unlink(path.join(this.dir, filename));
+    try {
+      await unlink(path.join(this.dir, filename));
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
+        throw err;
+      }
+    }
   }
 
   getUrl(filename: string): string {
