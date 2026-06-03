@@ -1,6 +1,5 @@
-export const OBJECT_STATUSES = ['ACTIVE', 'ARCHIVED', 'DELETED'] as const;
-
-export type ObjectStatus = (typeof OBJECT_STATUSES)[number];
+import type { ObjectStatus } from '@livewallpaper/types';
+export type { ObjectStatus } from '@livewallpaper/types';
 
 export abstract class ObjectModel {
   protected constructor(

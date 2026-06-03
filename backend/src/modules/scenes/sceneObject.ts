@@ -1,3 +1,4 @@
+import type { Scene } from '@livewallpaper/types';
 import { ObjectModel, type ObjectStatus } from '../common/objectModel';
 
 type SceneSummaryRow = {
@@ -8,7 +9,7 @@ type SceneSummaryRow = {
 };
 
 type SceneRow = SceneSummaryRow & {
-  data: unknown;
+  scene: Scene;
   project_id: string | null;
   created_at: string;
   updated_at: string;
@@ -22,7 +23,7 @@ export class SceneObject extends ObjectModel {
     status: ObjectStatus,
     created_at?: string,
     updated_at?: string,
-    public readonly data?: unknown,
+    public readonly data?: Scene,
     public readonly project_id?: string | null,
   ) {
     super(id, status, created_at, updated_at);
@@ -40,7 +41,7 @@ export class SceneObject extends ObjectModel {
       row.status,
       row.created_at,
       row.updated_at,
-      row.data,
+      row.scene,
       row.project_id,
     );
   }

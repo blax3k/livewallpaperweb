@@ -1,3 +1,4 @@
+import type { Scene } from '@livewallpaper/types';
 import { pool } from '../../db';
 import { type ObjectStatus } from '../common/objectModel';
 import { SceneObject } from './sceneObject';
@@ -39,7 +40,7 @@ export async function selectSceneByName(name: string) {
     name: string;
     label: string;
     status: ObjectStatus;
-    data: unknown;
+    scene: Scene;
     project_id: string | null;
     created_at: string;
     updated_at: string;
@@ -50,7 +51,7 @@ export async function selectSceneByName(name: string) {
 export async function insertScene(input: {
   name: string;
   label: string;
-  data: unknown;
+  scene: Scene;
   projectId?: string;
 }) {
   const client = await pool.connect();
@@ -61,13 +62,13 @@ export async function insertScene(input: {
       name: string;
       label: string;
       status: ObjectStatus;
-      data: unknown;
+      scene: Scene;
       project_id: string | null;
       created_at: string;
       updated_at: string;
     }>(
       'INSERT INTO scenes (name, label, data, project_id, status) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [input.name, input.label, input.data, input.projectId ?? null, 'ACTIVE'],
+      [input.name, input.label, input.scene, input.projectId ?? null, 'ACTIVE'],
     );
 
     if (input.projectId) {
@@ -90,7 +91,7 @@ export async function upsertSceneRecord(name: string, label: string, data: unkno
     name: string;
     label: string;
     status: ObjectStatus;
-    data: unknown;
+    scene: Scene;
     project_id: string | null;
     created_at: string;
     updated_at: string;
