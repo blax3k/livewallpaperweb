@@ -7,6 +7,7 @@ import type { ImageStorage } from './storage';
 import { registerImageRoutes } from './modules/images';
 import { registerProjectRoutes } from './modules/projects';
 import { registerSceneRoutes } from './modules/scenes';
+import { registerThumbnailRoutes } from './modules/thumbnails/thumbnailRoutes';
 
 interface BuildServerDeps {
   uploadsDir: string;
@@ -50,7 +51,8 @@ export async function buildServer(deps: BuildServerDeps) {
 
   await registerProjectRoutes(server);
   await registerImageRoutes(server, { storage: deps.imageStorage });
-  await registerSceneRoutes(server, { thumbnailStorage: deps.thumbnailStorage });
+  await registerSceneRoutes(server);
+  await registerThumbnailRoutes(server, { thumbnailStorage: deps.thumbnailStorage });
 
   // SPA catch-all: serve index.html for /project/* (covers /project/:id and /project/:id/scene/:sceneId)
   server.get('/project/*', (req, reply) => {

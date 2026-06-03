@@ -6,7 +6,6 @@ export {
   getSceneSummaryById,
   listScenes,
   saveSceneByName,
-  saveSceneThumbnail,
 } from './sceneService';
 export {
   deleteSceneRecordByName,

@@ -1,4 +1,3 @@
-import type { ImageStorage } from '../../storage';
 import { incrementProjectVersion } from '../projects';
 import {
   deleteSceneRecordByName,
@@ -38,17 +37,6 @@ export async function saveSceneByName(name: string, label: string, data: unknown
   }
 
   return scene;
-}
-
-export async function saveSceneThumbnail(name: string, dataUrl: string, thumbnailStorage: ImageStorage) {
-  const match = dataUrl.match(/^data:image\/(jpeg|jpg);base64,(.+)$/);
-  if (!match) {
-    return false;
-  }
-
-  const buffer = Buffer.from(match[2], 'base64');
-  await thumbnailStorage.save(`${name}.jpg`, buffer);
-  return true;
 }
 
 export async function deleteSceneByName(name: string) {
