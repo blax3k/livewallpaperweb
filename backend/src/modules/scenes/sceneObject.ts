@@ -23,7 +23,7 @@ export class SceneObject extends ObjectModel {
     status: ObjectStatus,
     created_at?: string,
     updated_at?: string,
-    public readonly data?: Scene,
+    public readonly scene?: Scene,
     public readonly project_id?: string | null,
   ) {
     super(id, status, created_at, updated_at);
