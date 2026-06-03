@@ -1,25 +1,19 @@
 import { incrementProjectVersion } from '../projects';
-import { attachSceneThumbnailUrl, attachSceneThumbnailUrls } from '../thumbnails';
+import { attachSceneThumbnailUrls } from '../thumbnails';
 import {
-  deleteSceneRecordByName,
+  deleteSceneRecordById,
   insertScene,
-  selectSceneByName,
+  selectSceneById,
   selectSceneSummaries,
-  selectSceneSummaryById,
-  upsertSceneRecord,
+  updateSceneRecord,
 } from './sceneRepository';
 
 export async function listScenes(projectId?: string) {
   return attachSceneThumbnailUrls(await selectSceneSummaries(projectId));
 }
 
-export async function getSceneSummaryById(id: string) {
-  const scene = await selectSceneSummaryById(id);
-  return scene ? attachSceneThumbnailUrl(scene) : null;
-}
-
-export async function getSceneByName(name: string) {
-  return selectSceneByName(name);
+export async function getSceneById(id: string) {
+  return selectSceneById(id);
 }
 
 export async function createScene(input: {
@@ -31,8 +25,9 @@ export async function createScene(input: {
   return insertScene(input);
 }
 
-export async function saveSceneByName(name: string, label: string, data: unknown) {
-  const scene = await upsertSceneRecord(name, label, data);
+export async function saveSceneById(id: string, label: string, data: unknown) {
+  const scene = await updateSceneRecord(id, label, data);
+  if (!scene) return null;
 
   if (scene.project_id) {
     await incrementProjectVersion(scene.project_id);
@@ -41,8 +36,8 @@ export async function saveSceneByName(name: string, label: string, data: unknown
   return scene;
 }
 
-export async function deleteSceneByName(name: string) {
-  const deleted = await deleteSceneRecordByName(name);
+export async function deleteSceneById(id: string) {
+  const deleted = await deleteSceneRecordById(id);
 
   if (deleted?.project_id) {
     await incrementProjectVersion(deleted.project_id);

@@ -10,12 +10,12 @@ import { useSpriteDrag } from './hooks/useSpriteDrag';
 import { useKeyboardControls } from './hooks/useKeyboardControls';
 
 interface ScenePageProps {
-  initialScene?: string;
+  initialSceneId?: string;
   onBack?: () => void;
   onSaved?: () => void;
 }
 
-export function ScenePage({ initialScene, onBack, onSaved }: ScenePageProps) {
+export function ScenePage({ initialSceneId, onBack, onSaved }: ScenePageProps) {
   const [scenes, setScenes] = useState<SceneOption[]>([]);
   const history = useUndoHistory();
   const { notifications, notify } = useNotifications();
@@ -33,7 +33,7 @@ export function ScenePage({ initialScene, onBack, onSaved }: ScenePageProps) {
     canvasRef,
     rendererRef,
     showSceneControls,
-    currentSceneName,
+    currentSceneId,
     xFocus,
     startTime,
     endTime,
@@ -103,14 +103,14 @@ export function ScenePage({ initialScene, onBack, onSaved }: ScenePageProps) {
   useEffect(() => {
     fetch('/api/scenes')
       .then(r => r.json())
-      .then((data: { name: string; label: string }[]) =>
-        setScenes(data.map(s => ({ value: s.name, label: s.label })))
+      .then((data: { id: string; label: string }[]) =>
+        setScenes(data.map(s => ({ value: s.id, label: s.label })))
       )
       .catch(() => {});
   }, []);
 
   useEffect(() => {
-    if (initialScene) loadScene(initialScene);
+    if (initialSceneId) loadScene(initialSceneId);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -284,8 +284,9 @@ export function ScenePage({ initialScene, onBack, onSaved }: ScenePageProps) {
         notify((err as { error?: string }).error ?? 'Failed to create scene');
         return;
       }
-      setScenes(prev => [...prev, { value: name, label }].sort((a, b) => a.label.localeCompare(b.label)));
-      loadScene(name);
+      const scene: { id: string; label: string } = await response.json();
+      setScenes(prev => [...prev, { value: scene.id, label: scene.label }].sort((a, b) => a.label.localeCompare(b.label)));
+      loadScene(scene.id);
     } catch {
       notify('Failed to create scene');
     }
@@ -295,7 +296,7 @@ export function ScenePage({ initialScene, onBack, onSaved }: ScenePageProps) {
     <>
       <TopBar
         scenes={scenes}
-        currentSceneName={currentSceneName}
+        currentSceneName={currentSceneId}
         sceneLoaded={showSceneControls}
         isSaving={isSaving}
         phoneGuideVisible={phoneGuideVisible}

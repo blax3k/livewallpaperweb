@@ -7,7 +7,7 @@ type ProjectSummaryRow = {
   status: ObjectStatus;
   created_at?: string;
   updated_at?: string;
-  scene_names: string[] | null;
+  scene_ids: string[] | null;
 };
 
 type CreatedProjectRow = {
@@ -26,7 +26,7 @@ export class ProjectObject extends ObjectModel {
     status: ObjectStatus,
     created_at?: string,
     updated_at?: string,
-    public readonly scene_names: string[] = [],
+    public readonly scene_ids: string[] = [],
   ) {
     super(id, status, created_at, updated_at);
   }
@@ -39,7 +39,7 @@ export class ProjectObject extends ObjectModel {
       row.status,
       row.created_at,
       row.updated_at,
-      row.scene_names ?? [],
+      row.scene_ids ?? [],
     );
   }
 

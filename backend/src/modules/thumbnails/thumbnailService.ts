@@ -1,33 +1,33 @@
 import type { ImageStorage } from '../../storage';
 
-export function getSceneThumbnailUrl(sceneName: string) {
-  return `/thumbnails/${sceneName}.jpg`;
+export function getSceneThumbnailUrl(sceneId: string) {
+  return `/thumbnails/${sceneId}.jpg`;
 }
 
-export function attachSceneThumbnailUrl<T extends { name: string }>(scene: T) {
+export function attachSceneThumbnailUrl<T extends { id: string }>(scene: T) {
   return {
     ...scene,
-    thumbnail_url: getSceneThumbnailUrl(scene.name),
+    thumbnail_url: getSceneThumbnailUrl(scene.id),
   };
 }
 
-export function attachSceneThumbnailUrls<T extends { name: string }>(scenes: T[]) {
+export function attachSceneThumbnailUrls<T extends { id: string }>(scenes: T[]) {
   return scenes.map(attachSceneThumbnailUrl);
 }
 
-export function attachProjectThumbnailUrls<T extends { scene_names?: string[] | null }>(project: T) {
+export function attachProjectThumbnailUrls<T extends { scene_ids?: string[] | null }>(project: T) {
   return {
     ...project,
-    scene_thumbnail_urls: (project.scene_names ?? []).map(getSceneThumbnailUrl),
+    scene_thumbnail_urls: (project.scene_ids ?? []).map(getSceneThumbnailUrl),
   };
 }
 
-export function attachProjectsThumbnailUrls<T extends { scene_names?: string[] | null }>(projects: T[]) {
+export function attachProjectsThumbnailUrls<T extends { scene_ids?: string[] | null }>(projects: T[]) {
   return projects.map(attachProjectThumbnailUrls);
 }
 
 export async function saveSceneThumbnail(
-  sceneName: string,
+  sceneId: string,
   dataUrl: string,
   thumbnailStorage: ImageStorage,
 ) {
@@ -37,6 +37,6 @@ export async function saveSceneThumbnail(
   }
 
   const buffer = Buffer.from(match[2], 'base64');
-  await thumbnailStorage.save(`${sceneName}.jpg`, buffer);
+  await thumbnailStorage.save(`${sceneId}.jpg`, buffer);
   return true;
 }

@@ -34,13 +34,8 @@ export const scenesApi = {
     return request<SceneSummary[]>(url);
   },
 
-  get(sceneName: string): Promise<SceneDetail> {
-    return request<SceneDetail>(`/api/scenes/${sceneName}`);
-  },
-
-  getById(sceneId: string): Promise<SceneSummary | null> {
-    return request<SceneSummary>(`/api/scenes/id/${encodeURIComponent(sceneId)}`)
-      .catch(() => null);
+  get(sceneId: string): Promise<SceneDetail> {
+    return request<SceneDetail>(`/api/scenes/${sceneId}`);
   },
 
   create(name: string, label: string, data: object, projectId?: string): Promise<SceneSummary> {
@@ -51,16 +46,16 @@ export const scenesApi = {
     });
   },
 
-  update(sceneName: string, label: string, data: object): Promise<void> {
-    return request<void>(`/api/scenes/${sceneName}`, {
+  update(sceneId: string, label: string, data: object): Promise<void> {
+    return request<void>(`/api/scenes/${sceneId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ label, data }),
     });
   },
 
-  updateThumbnail(sceneName: string, dataUrl: string): Promise<void> {
-    return request<void>(`/api/scenes/${sceneName}/thumbnail`, {
+  updateThumbnail(sceneId: string, dataUrl: string): Promise<void> {
+    return request<void>(`/api/scenes/${sceneId}/thumbnail`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ dataUrl }),

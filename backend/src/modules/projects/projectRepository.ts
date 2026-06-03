@@ -10,12 +10,12 @@ export async function selectProjects() {
     status: ObjectStatus;
     created_at: string;
     updated_at: string;
-    scene_names: string[] | null;
+    scene_ids: string[] | null;
   }>(`
     SELECT p.id, p.name, p.version, p.status, p.created_at, p.updated_at,
       ARRAY(
-        SELECT s.name FROM scenes s WHERE s.project_id = p.id AND s.status <> 'DELETED' ORDER BY s.label ASC LIMIT 4
-      ) AS scene_names
+        SELECT s.id FROM scenes s WHERE s.project_id = p.id AND s.status <> 'DELETED' ORDER BY s.label ASC LIMIT 4
+      ) AS scene_ids
     FROM projects p
     WHERE p.status <> 'DELETED'
     ORDER BY p.name ASC
@@ -31,12 +31,12 @@ export async function selectProjectById(projectId: string) {
     status: ObjectStatus;
     created_at: string;
     updated_at: string;
-    scene_names: string[] | null;
+    scene_ids: string[] | null;
   }>(`
     SELECT p.id, p.name, p.version, p.status, p.created_at, p.updated_at,
       ARRAY(
-        SELECT s.name FROM scenes s WHERE s.project_id = p.id AND s.status <> 'DELETED' ORDER BY s.label ASC LIMIT 4
-      ) AS scene_names
+        SELECT s.id FROM scenes s WHERE s.project_id = p.id AND s.status <> 'DELETED' ORDER BY s.label ASC LIMIT 4
+      ) AS scene_ids
     FROM projects p
     WHERE p.id = $1 AND p.status <> 'DELETED'
   `, [projectId]);

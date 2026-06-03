@@ -68907,7 +68907,7 @@ ${e2}`);
   // src/hooks/useSceneRenderer.ts
   function useSceneRenderer(onNotify, onSaved) {
     const [showSceneControls, setShowSceneControls] = (0, import_react8.useState)(false);
-    const [currentSceneName, setCurrentSceneName] = (0, import_react8.useState)(null);
+    const [currentSceneId, setCurrentSceneId] = (0, import_react8.useState)(null);
     const [xFocus, setXFocus] = (0, import_react8.useState)(0.5);
     const [startTime, setStartTime] = (0, import_react8.useState)(0);
     const [endTime, setEndTime] = (0, import_react8.useState)(1439);
@@ -68924,20 +68924,18 @@ ${e2}`);
     const canvasRef = (0, import_react8.useRef)(null);
     const rendererRef = (0, import_react8.useRef)(null);
     const sceneIdRef = (0, import_react8.useRef)(null);
-    const sceneNameRef = (0, import_react8.useRef)(null);
     const sceneLabelRef = (0, import_react8.useRef)(null);
     const refreshSpriteList = (0, import_react8.useCallback)((r2) => {
       setSpriteEntries([...r2.getSpriteEntries()]);
     }, []);
-    const loadScene = (0, import_react8.useCallback)(async (sceneName) => {
+    const loadScene = (0, import_react8.useCallback)(async (sceneId) => {
       try {
-        const response = await fetch(`/api/scenes/${sceneName}`);
+        const response = await fetch(`/api/scenes/${sceneId}`);
         const scene = await response.json();
         const sceneData = scene.data;
         sceneIdRef.current = scene.id;
-        sceneNameRef.current = scene.name;
         sceneLabelRef.current = scene.label;
-        setCurrentSceneName(scene.name);
+        setCurrentSceneId(scene.id);
         rendererRef.current?.destroy();
         if (!canvasRef.current) return;
         const renderer = new SceneRenderer(canvasRef.current);
@@ -68966,20 +68964,20 @@ ${e2}`);
       }
     }, [refreshSpriteList]);
     const saveScene = (0, import_react8.useCallback)(async () => {
-      const name = sceneNameRef.current;
+      const sceneId = sceneIdRef.current;
       const label = sceneLabelRef.current;
       const data = rendererRef.current?.getSceneData();
-      if (!name || !label || !data) return;
+      if (!sceneId || !label || !data) return;
       setIsSaving(true);
       try {
-        await fetch(`/api/scenes/${name}`, {
+        await fetch(`/api/scenes/${sceneId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ label, data })
         });
         const dataUrl = rendererRef.current?.captureSnapshot();
         if (dataUrl) {
-          fetch(`/api/scenes/${name}/thumbnail`, {
+          fetch(`/api/scenes/${sceneId}/thumbnail`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ dataUrl })
@@ -69128,7 +69126,7 @@ ${e2}`);
       canvasRef,
       rendererRef,
       showSceneControls,
-      currentSceneName,
+      currentSceneId,
       xFocus,
       startTime,
       endTime,
@@ -69320,7 +69318,7 @@ ${e2}`);
 
   // src/ScenePage.tsx
   var import_jsx_runtime14 = __toESM(require_jsx_runtime());
-  function ScenePage({ initialScene, onBack, onSaved }) {
+  function ScenePage({ initialSceneId, onBack, onSaved }) {
     const [scenes, setScenes] = (0, import_react11.useState)([]);
     const history = useUndoHistory();
     const { notifications, notify } = useNotifications();
@@ -69337,7 +69335,7 @@ ${e2}`);
       canvasRef,
       rendererRef,
       showSceneControls,
-      currentSceneName,
+      currentSceneId,
       xFocus,
       startTime,
       endTime,
@@ -69400,12 +69398,12 @@ ${e2}`);
     });
     (0, import_react11.useEffect)(() => {
       fetch("/api/scenes").then((r2) => r2.json()).then(
-        (data) => setScenes(data.map((s2) => ({ value: s2.name, label: s2.label })))
+        (data) => setScenes(data.map((s2) => ({ value: s2.id, label: s2.label })))
       ).catch(() => {
       });
     }, []);
     (0, import_react11.useEffect)(() => {
-      if (initialScene) loadScene(initialScene);
+      if (initialSceneId) loadScene(initialSceneId);
     }, []);
     (0, import_react11.useEffect)(() => {
       const el = canvasRef.current;
@@ -69557,8 +69555,9 @@ ${e2}`);
           notify(err.error ?? "Failed to create scene");
           return;
         }
-        setScenes((prev) => [...prev, { value: name, label }].sort((a2, b2) => a2.label.localeCompare(b2.label)));
-        loadScene(name);
+        const scene = await response.json();
+        setScenes((prev) => [...prev, { value: scene.id, label: scene.label }].sort((a2, b2) => a2.label.localeCompare(b2.label)));
+        loadScene(scene.id);
       } catch {
         notify("Failed to create scene");
       }
@@ -69568,7 +69567,7 @@ ${e2}`);
         TopBar,
         {
           scenes,
-          currentSceneName,
+          currentSceneName: currentSceneId,
           sceneLoaded: showSceneControls,
           isSaving,
           phoneGuideVisible,
@@ -69934,7 +69933,7 @@ ${e2}`);
     if (sceneMatch) {
       const projectId = decodeURIComponent(sceneMatch[1]);
       const sceneId = decodeURIComponent(sceneMatch[2]);
-      return { type: "scene", sceneId, sceneName: "", project: { id: projectId, name: "" } };
+      return { type: "scene", sceneId, project: { id: projectId, name: "" } };
     }
     const projectMatch = window.location.pathname.match(/^\/project\/([^/]+)$/);
     if (projectMatch) {
@@ -69950,25 +69949,13 @@ ${e2}`);
       window.addEventListener("popstate", onPopState);
       return () => window.removeEventListener("popstate", onPopState);
     }, []);
-    const sceneIdToResolve = page.type === "scene" && !page.sceneName ? page.sceneId : null;
-    (0, import_react15.useEffect)(() => {
-      if (!sceneIdToResolve) return;
-      fetch(`/api/scenes/id/${encodeURIComponent(sceneIdToResolve)}`).then((r2) => r2.ok ? r2.json() : null).then((data) => {
-        if (data?.name) {
-          setPage(
-            (prev) => prev.type === "scene" && prev.sceneId === sceneIdToResolve ? { ...prev, sceneName: data.name } : prev
-          );
-        }
-      }).catch(() => {
-      });
-    }, [sceneIdToResolve]);
     const navigateToProject = (0, import_react15.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
       setPage({ type: "scenes", project });
     }, []);
     const navigateToScene = (0, import_react15.useCallback)((scene, project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/scene/${encodeURIComponent(scene.id)}`);
-      setPage({ type: "scene", sceneId: scene.id, sceneName: scene.name, project });
+      setPage({ type: "scene", sceneId: scene.id, project });
     }, []);
     const navigateBackToProjects = (0, import_react15.useCallback)(() => {
       window.history.pushState(null, "", "/");
@@ -69980,13 +69967,10 @@ ${e2}`);
     }, []);
     const handleSaved = (0, import_react15.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
     if (page.type === "scene") {
-      if (!page.sceneName) {
-        return null;
-      }
       return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
         ScenePage,
         {
-          initialScene: page.sceneName,
+          initialSceneId: page.sceneId,
           onBack: () => navigateBackToScenes(page.project),
           onSaved: handleSaved
         }

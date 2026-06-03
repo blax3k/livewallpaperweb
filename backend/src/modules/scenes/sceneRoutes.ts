@@ -1,11 +1,10 @@
 import type { FastifyInstance } from 'fastify';
 import {
   createScene,
-  getSceneByName,
-  getSceneSummaryById,
+  getSceneById,
   listScenes,
-  deleteSceneByName,
-  saveSceneByName,
+  deleteSceneById,
+  saveSceneById,
 } from './sceneService';
 
 export async function registerSceneRoutes(
@@ -15,17 +14,8 @@ export async function registerSceneRoutes(
     return listScenes(req.query.projectId);
   });
 
-  server.get<{ Params: { id: string } }>('/api/scenes/id/:id', async (req, reply) => {
-    const scene = await getSceneSummaryById(req.params.id);
-    if (!scene) {
-      return reply.status(404).send({ error: 'Scene not found' });
-    }
-
-    return scene;
-  });
-
-  server.get<{ Params: { name: string } }>('/api/scenes/:name', async (req, reply) => {
-    const scene = await getSceneByName(req.params.name);
+  server.get<{ Params: { id: string } }>('/api/scenes/:id', async (req, reply) => {
+    const scene = await getSceneById(req.params.id);
     if (!scene) {
       return reply.status(404).send({ error: 'Scene not found' });
     }
@@ -41,15 +31,20 @@ export async function registerSceneRoutes(
     },
   );
 
-  server.put<{ Params: { name: string }; Body: { label: string; data: unknown } }>(
-    '/api/scenes/:name',
-    async (req) => {
-      return saveSceneByName(req.params.name, req.body.label, req.body.data);
+  server.put<{ Params: { id: string }; Body: { label: string; data: unknown } }>(
+    '/api/scenes/:id',
+    async (req, reply) => {
+      const scene = await saveSceneById(req.params.id, req.body.label, req.body.data);
+      if (!scene) {
+        return reply.status(404).send({ error: 'Scene not found' });
+      }
+
+      return scene;
     },
   );
 
-  server.delete<{ Params: { name: string } }>('/api/scenes/:name', async (req, reply) => {
-    const deleted = await deleteSceneByName(req.params.name);
+  server.delete<{ Params: { id: string } }>('/api/scenes/:id', async (req, reply) => {
+    const deleted = await deleteSceneById(req.params.id);
     if (!deleted) {
       return reply.status(404).send({ error: 'Scene not found' });
     }

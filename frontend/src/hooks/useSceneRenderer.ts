@@ -15,7 +15,7 @@ export interface SelectedSprite {
 
 export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?: () => void) {
   const [showSceneControls, setShowSceneControls] = useState(false);
-  const [currentSceneName, setCurrentSceneName] = useState<string | null>(null);
+  const [currentSceneId, setCurrentSceneId] = useState<string | null>(null);
   const [xFocus, setXFocus] = useState(0.5);
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(1439);
@@ -32,23 +32,21 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
   const canvasRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<SceneRenderer | null>(null);
   const sceneIdRef = useRef<string | null>(null);
-  const sceneNameRef = useRef<string | null>(null);
   const sceneLabelRef = useRef<string | null>(null);
 
   const refreshSpriteList = useCallback((r: SceneRenderer) => {
     setSpriteEntries([...r.getSpriteEntries()]);
   }, []);
 
-  const loadScene = useCallback(async (sceneName: string) => {
+  const loadScene = useCallback(async (sceneId: string) => {
     try {
-      const response = await fetch(`/api/scenes/${sceneName}`);
+      const response = await fetch(`/api/scenes/${sceneId}`);
       const scene: { id: string; name: string; label: string; data: Scene } = await response.json();
       const sceneData: Scene = scene.data;
 
       sceneIdRef.current = scene.id;
-      sceneNameRef.current = scene.name;
       sceneLabelRef.current = scene.label;
-      setCurrentSceneName(scene.name);
+      setCurrentSceneId(scene.id);
 
       rendererRef.current?.destroy();
 
@@ -84,21 +82,21 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
   }, [refreshSpriteList]);
 
   const saveScene = useCallback(async () => {
-    const name = sceneNameRef.current;
+    const sceneId = sceneIdRef.current;
     const label = sceneLabelRef.current;
     const data = rendererRef.current?.getSceneData();
-    if (!name || !label || !data) return;
+    if (!sceneId || !label || !data) return;
 
     setIsSaving(true);
     try {
-      await fetch(`/api/scenes/${name}`, {
+      await fetch(`/api/scenes/${sceneId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ label, data }),
       });
       const dataUrl = rendererRef.current?.captureSnapshot();
       if (dataUrl) {
-        fetch(`/api/scenes/${name}/thumbnail`, {
+        fetch(`/api/scenes/${sceneId}/thumbnail`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ dataUrl }),
@@ -270,7 +268,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     canvasRef,
     rendererRef,
     showSceneControls,
-    currentSceneName,
+    currentSceneId,
     xFocus,
     startTime,
     endTime,

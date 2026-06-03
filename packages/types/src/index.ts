@@ -28,7 +28,7 @@ export interface ProjectSummary {
   status: ObjectStatus;
   created_at?: string;
   updated_at?: string;
-  scene_names: string[];
+  scene_ids: string[];
   scene_thumbnail_urls: string[];
 }
 

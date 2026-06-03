@@ -11,29 +11,28 @@ interface ProjectRecord {
   name: string;
 }
 
-interface SceneRecord {
-  id: string;
-  name: string;
-}
-
 type Page =
   | { type: 'projects' }
   | { type: 'scenes'; project: ProjectRecord }
-  | { type: 'scene'; sceneId: string; sceneName: string; project: ProjectRecord };
+  | { type: 'scene'; sceneId: string; project: ProjectRecord };
 
 function pageFromPath(): Page {
   const sceneMatch = window.location.pathname.match(/^\/project\/([^/]+)\/scene\/([^/]+)$/);
   if (sceneMatch) {
     const projectId = decodeURIComponent(sceneMatch[1]);
     const sceneId = decodeURIComponent(sceneMatch[2]);
-    // sceneName resolved asynchronously in App when empty
-    return { type: 'scene', sceneId, sceneName: '', project: { id: projectId, name: '' } };
+    return { type: 'scene', sceneId, project: { id: projectId, name: '' } };
   }
   const projectMatch = window.location.pathname.match(/^\/project\/([^/]+)$/);
   if (projectMatch) {
     return { type: 'scenes', project: { id: decodeURIComponent(projectMatch[1]), name: '' } };
   }
   return { type: 'projects' };
+}
+
+interface SceneRecord {
+  id: string;
+  name: string;
 }
 
 function App() {
@@ -46,24 +45,6 @@ function App() {
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
-  // Resolve sceneName from sceneId for deep links (e.g. browser forward/back or direct URL)
-  const sceneIdToResolve = page.type === 'scene' && !page.sceneName ? page.sceneId : null;
-  useEffect(() => {
-    if (!sceneIdToResolve) return;
-    fetch(`/api/scenes/id/${encodeURIComponent(sceneIdToResolve)}`)
-      .then(r => r.ok ? r.json() : null)
-      .then((data: SceneRecord | null) => {
-        if (data?.name) {
-          setPage(prev =>
-            prev.type === 'scene' && prev.sceneId === sceneIdToResolve
-              ? { ...prev, sceneName: data.name }
-              : prev
-          );
-        }
-      })
-      .catch(() => {});
-  }, [sceneIdToResolve]);
-
   const navigateToProject = useCallback((project: ProjectRecord) => {
     window.history.pushState(null, '', `/project/${encodeURIComponent(project.id)}`);
     setPage({ type: 'scenes', project });
@@ -71,7 +52,7 @@ function App() {
 
   const navigateToScene = useCallback((scene: SceneRecord, project: ProjectRecord) => {
     window.history.pushState(null, '', `/project/${encodeURIComponent(project.id)}/scene/${encodeURIComponent(scene.id)}`);
-    setPage({ type: 'scene', sceneId: scene.id, sceneName: scene.name, project });
+    setPage({ type: 'scene', sceneId: scene.id, project });
   }, []);
 
   const navigateBackToProjects = useCallback(() => {
@@ -87,12 +68,9 @@ function App() {
   const handleSaved = useCallback(() => setThumbBuster(b => b + 1), []);
 
   if (page.type === 'scene') {
-    if (!page.sceneName) {
-      return null; // Waiting for sceneName resolution from deep link
-    }
     return (
       <ScenePage
-        initialScene={page.sceneName}
+        initialSceneId={page.sceneId}
         onBack={() => navigateBackToScenes(page.project)}
         onSaved={handleSaved}
       />
