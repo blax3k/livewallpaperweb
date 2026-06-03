@@ -9,7 +9,7 @@ type SceneSummaryRow = {
 };
 
 type SceneRow = SceneSummaryRow & {
-  scene: Scene;
+  data: Scene;
   project_id: string | null;
   created_at: string;
   updated_at: string;
@@ -23,7 +23,7 @@ export class SceneObject extends ObjectModel {
     status: ObjectStatus,
     created_at?: string,
     updated_at?: string,
-    public readonly scene?: Scene,
+    public readonly data?: Scene,
     public readonly project_id?: string | null,
   ) {
     super(id, status, created_at, updated_at);
@@ -41,7 +41,7 @@ export class SceneObject extends ObjectModel {
       row.status,
       row.created_at,
       row.updated_at,
-      row.scene,
+      row.data,
       row.project_id,
     );
   }
