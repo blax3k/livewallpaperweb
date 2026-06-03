@@ -69707,21 +69707,25 @@ ${e2}`);
       /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(PageBody, { children: [
         loading && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "scene-list-empty", children: "Loading\u2026" }),
         !loading && scenes.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "scene-list-empty", children: "No scenes found. Create one from within the editor." }),
-        !loading && scenes.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "scene-list-grid", children: scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "scene-card", onClick: () => onSelect(scene), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "scene-card-preview", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
-              "img",
-              {
-                src: `/thumbnails/${scene.name}.jpg?v=${thumbBuster}`,
-                alt: scene.label,
-                className: "scene-card-thumb",
-                onError: () => setFailedThumbs((prev) => new Set(prev).add(scene.name))
-              }
-            ),
-            failedThumbs.has(scene.name) && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "scene-card-icon", children: "\u{1F3AC}" })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "scene-card-label", children: scene.label })
-        ] }, scene.id)) })
+        !loading && scenes.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "scene-list-grid", children: scenes.map((scene) => {
+          const busterJoin = scene.thumbnail_url.includes("?") ? "&" : "?";
+          const thumbnailSrc = `${scene.thumbnail_url}${busterJoin}v=${thumbBuster}`;
+          return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "scene-card", onClick: () => onSelect(scene), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "scene-card-preview", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+                "img",
+                {
+                  src: thumbnailSrc,
+                  alt: scene.label,
+                  className: "scene-card-thumb",
+                  onError: () => setFailedThumbs((prev) => new Set(prev).add(scene.name))
+                }
+              ),
+              failedThumbs.has(scene.name) && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "scene-card-icon", children: "\u{1F3AC}" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "scene-card-label", children: scene.label })
+          ] }, scene.id);
+        }) })
       ] }),
       showNewSceneDialog && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
         NewSceneDialog,
@@ -69780,21 +69784,25 @@ ${e2}`);
 
   // src/ProjectListPage.tsx
   var import_jsx_runtime18 = __toESM(require_jsx_runtime());
-  function ProjectCollage({ sceneNames }) {
+  function ProjectCollage({ sceneNames, sceneThumbnailUrls }) {
     const [failedThumbs, setFailedThumbs] = (0, import_react14.useState)(/* @__PURE__ */ new Set());
     if (!sceneNames || sceneNames.length === 0) {
       return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-icon", children: "\u{1F4C1}" });
     }
     const cells = [...sceneNames.slice(0, 4)];
     while (cells.length < 4) cells.push("");
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-collage", children: cells.map((name, i2) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-collage-cell", children: name && !failedThumbs.has(name) && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
-      "img",
-      {
-        src: `/thumbnails/${name}.jpg`,
-        alt: "",
-        onError: () => setFailedThumbs((prev) => new Set(prev).add(name))
-      }
-    ) }, i2)) });
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-collage", children: cells.map((name, i2) => {
+      const thumbnailSrc = name ? sceneThumbnailUrls[i2] ?? "" : "";
+      const thumbKey = thumbnailSrc || name;
+      return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-collage-cell", children: thumbnailSrc && !failedThumbs.has(thumbKey) && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+        "img",
+        {
+          src: thumbnailSrc,
+          alt: "",
+          onError: () => setFailedThumbs((prev) => new Set(prev).add(thumbKey))
+        }
+      ) }, i2);
+    }) });
   }
   function ProjectListPage({ onSelect }) {
     const [projects, setProjects] = (0, import_react14.useState)([]);
@@ -69822,7 +69830,13 @@ ${e2}`);
         loading && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-list-empty", children: "Loading\u2026" }),
         !loading && projects.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-list-empty", children: "No projects yet. Create one to get started." }),
         !loading && projects.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-list-grid", children: projects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "project-card", onClick: () => onSelect(project), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ProjectCollage, { sceneNames: project.scene_names }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+            ProjectCollage,
+            {
+              sceneNames: project.scene_names,
+              sceneThumbnailUrls: project.scene_thumbnail_urls
+            }
+          ),
           /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-name", children: project.name })
         ] }, project.id)) })
       ] }),

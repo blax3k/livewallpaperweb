@@ -1,4 +1,5 @@
 import { incrementProjectVersion } from '../projects';
+import { attachSceneThumbnailUrl, attachSceneThumbnailUrls } from '../thumbnails';
 import {
   deleteSceneRecordByName,
   insertScene,
@@ -9,11 +10,12 @@ import {
 } from './sceneRepository';
 
 export async function listScenes(projectId?: string) {
-  return selectSceneSummaries(projectId);
+  return attachSceneThumbnailUrls(await selectSceneSummaries(projectId));
 }
 
 export async function getSceneSummaryById(id: string) {
-  return selectSceneSummaryById(id);
+  const scene = await selectSceneSummaryById(id);
+  return scene ? attachSceneThumbnailUrl(scene) : null;
 }
 
 export async function getSceneByName(name: string) {

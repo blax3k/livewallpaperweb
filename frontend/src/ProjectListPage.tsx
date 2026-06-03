@@ -8,13 +8,14 @@ interface ProjectRecord {
   id: string;
   name: string;
   scene_names: string[];
+  scene_thumbnail_urls: string[];
 }
 
 interface ProjectListPageProps {
   onSelect: (project: ProjectRecord) => void;
 }
 
-function ProjectCollage({ sceneNames }: { sceneNames: string[] }) {
+function ProjectCollage({ sceneNames, sceneThumbnailUrls }: { sceneNames: string[]; sceneThumbnailUrls: string[] }) {
   const [failedThumbs, setFailedThumbs] = useState<Set<string>>(new Set());
 
   if (!sceneNames || sceneNames.length === 0) {
@@ -26,17 +27,22 @@ function ProjectCollage({ sceneNames }: { sceneNames: string[] }) {
 
   return (
     <div className="project-card-collage">
-      {cells.map((name, i) => (
-        <div key={i} className="project-card-collage-cell">
-          {name && !failedThumbs.has(name) && (
-            <img
-              src={`/thumbnails/${name}.jpg`}
-              alt=""
-              onError={() => setFailedThumbs(prev => new Set(prev).add(name))}
-            />
-          )}
-        </div>
-      ))}
+      {cells.map((name, i) => {
+        const thumbnailSrc = name ? (sceneThumbnailUrls[i] ?? '') : '';
+        const thumbKey = thumbnailSrc || name;
+
+        return (
+          <div key={i} className="project-card-collage-cell">
+            {thumbnailSrc && !failedThumbs.has(thumbKey) && (
+              <img
+                src={thumbnailSrc}
+                alt=""
+                onError={() => setFailedThumbs(prev => new Set(prev).add(thumbKey))}
+              />
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -80,7 +86,10 @@ export function ProjectListPage({ onSelect }: ProjectListPageProps) {
           <div className="project-list-grid">
             {projects.map(project => (
               <div key={project.id} className="project-card" onClick={() => onSelect(project)}>
-                <ProjectCollage sceneNames={project.scene_names} />
+                <ProjectCollage
+                  sceneNames={project.scene_names}
+                  sceneThumbnailUrls={project.scene_thumbnail_urls}
+                />
                 <div className="project-card-name">{project.name}</div>
               </div>
             ))}

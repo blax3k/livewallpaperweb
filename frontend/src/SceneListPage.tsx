@@ -8,6 +8,7 @@ interface SceneRecord {
   id: string;
   name: string;
   label: string;
+  thumbnail_url: string;
 }
 
 interface ApiError {
@@ -83,20 +84,25 @@ export function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }: 
         )}
         {!loading && scenes.length > 0 && (
           <div className="scene-list-grid">
-            {scenes.map(scene => (
-              <div key={scene.id} className="scene-card" onClick={() => onSelect(scene)}>
-                <div className="scene-card-preview">
-                  <img
-                    src={`/thumbnails/${scene.name}.jpg?v=${thumbBuster}`}
-                    alt={scene.label}
-                    className="scene-card-thumb"
-                    onError={() => setFailedThumbs(prev => new Set(prev).add(scene.name))}
-                  />
-                  {failedThumbs.has(scene.name) && <span className="scene-card-icon">🎬</span>}
+            {scenes.map(scene => {
+              const busterJoin = scene.thumbnail_url.includes('?') ? '&' : '?';
+              const thumbnailSrc = `${scene.thumbnail_url}${busterJoin}v=${thumbBuster}`;
+
+              return (
+                <div key={scene.id} className="scene-card" onClick={() => onSelect(scene)}>
+                  <div className="scene-card-preview">
+                    <img
+                      src={thumbnailSrc}
+                      alt={scene.label}
+                      className="scene-card-thumb"
+                      onError={() => setFailedThumbs(prev => new Set(prev).add(scene.name))}
+                    />
+                    {failedThumbs.has(scene.name) && <span className="scene-card-icon">🎬</span>}
+                  </div>
+                  <div className="scene-card-label">{scene.label}</div>
                 </div>
-                <div className="scene-card-label">{scene.label}</div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </PageBody>
