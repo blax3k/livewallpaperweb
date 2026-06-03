@@ -69806,7 +69806,7 @@ ${e2}`);
     const cells = [...sceneNames.slice(0, 4)];
     while (cells.length < 4) cells.push("");
     return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-collage", children: cells.map((name, i2) => {
-      const thumbnailSrc = name ? sceneThumbnailUrls[i2] ?? "" : "";
+      const thumbnailSrc = name ? sceneThumbnailUrls?.[i2] ?? "" : "";
       const thumbKey = thumbnailSrc || name;
       return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-collage-cell", children: thumbnailSrc && !failedThumbs.has(thumbKey) && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
         "img",
@@ -69822,12 +69822,15 @@ ${e2}`);
     const [projects, setProjects] = (0, import_react14.useState)([]);
     const [loading, setLoading] = (0, import_react14.useState)(true);
     const [showDialog, setShowDialog] = (0, import_react14.useState)(false);
+    const [showArchived, setShowArchived] = (0, import_react14.useState)(false);
     (0, import_react14.useEffect)(() => {
       fetch("/api/projects").then((r2) => r2.json()).then((records) => {
         setProjects(records);
         setLoading(false);
       }).catch(() => setLoading(false));
     }, []);
+    const activeProjects = projects.filter((project) => project.status === "ACTIVE");
+    const archivedProjects = projects.filter((project) => project.status === "ARCHIVED");
     const handleCreate = (name) => {
       fetch("/api/projects", {
         method: "POST",
@@ -69838,12 +69841,32 @@ ${e2}`);
         setShowDialog(false);
       });
     };
+    const handleArchive = async (projectId, e2) => {
+      e2.stopPropagation();
+      const res = await fetch(`/api/projects/${projectId}/archive`, { method: "PATCH" });
+      if (!res.ok) {
+        window.alert("Failed to archive project");
+        return;
+      }
+      const archivedProject = await res.json();
+      setProjects((prev) => prev.map((project) => project.id === archivedProject.id ? archivedProject : project));
+    };
+    const handleUnarchive = async (projectId, e2) => {
+      e2.stopPropagation();
+      const res = await fetch(`/api/projects/${projectId}/unarchive`, { method: "PATCH" });
+      if (!res.ok) {
+        window.alert("Failed to unarchive project");
+        return;
+      }
+      const unarchivedProject = await res.json();
+      setProjects((prev) => prev.map((project) => project.id === unarchivedProject.id ? unarchivedProject : project));
+    };
     return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(PageLayout, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(PageHeader, { title: "Projects", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Button, { onClick: () => setShowDialog(true), children: "+ Project" }) }),
       /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(PageBody, { children: [
         loading && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-list-empty", children: "Loading\u2026" }),
         !loading && projects.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-list-empty", children: "No projects yet. Create one to get started." }),
-        !loading && projects.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-list-grid", children: projects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "project-card", onClick: () => onSelect(project), children: [
+        !loading && activeProjects.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-list-grid", children: activeProjects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "project-card", onClick: () => onSelect(project), children: [
           /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
             ProjectCollage,
             {
@@ -69851,8 +69874,47 @@ ${e2}`);
               sceneThumbnailUrls: project.scene_thumbnail_urls
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-name", children: project.name })
-        ] }, project.id)) })
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-name", children: project.name }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-actions", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+            Button,
+            {
+              className: "project-card-action",
+              onClick: (e2) => handleArchive(project.id, e2),
+              children: "Archive"
+            }
+          ) })
+        ] }, project.id)) }),
+        !loading && archivedProjects.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "project-archive-section", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(
+            Button,
+            {
+              className: "project-archive-toggle",
+              onClick: () => setShowArchived((prev) => !prev),
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: `project-archive-toggle-icon${showArchived ? " is-open" : ""}`, children: "\u25B8" }),
+                "Archived projects"
+              ]
+            }
+          ),
+          showArchived && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-list-grid project-list-grid--archived", children: archivedProjects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "project-card project-card--archived", onClick: () => onSelect(project), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+              ProjectCollage,
+              {
+                sceneNames: project.scene_names,
+                sceneThumbnailUrls: project.scene_thumbnail_urls
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-name", children: project.name }),
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-actions", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+              Button,
+              {
+                className: "project-card-action",
+                onClick: (e2) => handleUnarchive(project.id, e2),
+                children: "Unarchive"
+              }
+            ) })
+          ] }, project.id)) })
+        ] })
       ] }),
       showDialog && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
         NewProjectDialog,

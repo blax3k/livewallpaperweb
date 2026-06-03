@@ -4,9 +4,12 @@ import { NewProjectDialog } from './controls/NewProjectDialog';
 import { Button } from './components/Button';
 import { PageLayout, PageHeader, PageBody } from './components/PageLayout';
 
+type ProjectStatus = 'ACTIVE' | 'ARCHIVED' | 'DELETED';
+
 interface ProjectRecord {
   id: string;
   name: string;
+  status: ProjectStatus;
   scene_names: string[];
   scene_thumbnail_urls: string[];
 }
@@ -15,7 +18,7 @@ interface ProjectListPageProps {
   onSelect: (project: ProjectRecord) => void;
 }
 
-function ProjectCollage({ sceneNames, sceneThumbnailUrls }: { sceneNames: string[]; sceneThumbnailUrls: string[] }) {
+function ProjectCollage({ sceneNames, sceneThumbnailUrls }: { sceneNames: string[]; sceneThumbnailUrls?: string[] }) {
   const [failedThumbs, setFailedThumbs] = useState<Set<string>>(new Set());
 
   if (!sceneNames || sceneNames.length === 0) {
@@ -28,7 +31,7 @@ function ProjectCollage({ sceneNames, sceneThumbnailUrls }: { sceneNames: string
   return (
     <div className="project-card-collage">
       {cells.map((name, i) => {
-        const thumbnailSrc = name ? (sceneThumbnailUrls[i] ?? '') : '';
+        const thumbnailSrc = name ? (sceneThumbnailUrls?.[i] ?? '') : '';
         const thumbKey = thumbnailSrc || name;
 
         return (
@@ -51,6 +54,7 @@ export function ProjectListPage({ onSelect }: ProjectListPageProps) {
   const [projects, setProjects] = useState<ProjectRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
+  const [showArchived, setShowArchived] = useState(false);
 
   useEffect(() => {
     fetch('/api/projects')
@@ -58,6 +62,9 @@ export function ProjectListPage({ onSelect }: ProjectListPageProps) {
       .then((records: ProjectRecord[]) => { setProjects(records); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
+
+  const activeProjects = projects.filter(project => project.status === 'ACTIVE');
+  const archivedProjects = projects.filter(project => project.status === 'ARCHIVED');
 
   const handleCreate = (name: string) => {
     fetch('/api/projects', {
@@ -72,6 +79,32 @@ export function ProjectListPage({ onSelect }: ProjectListPageProps) {
       });
   };
 
+  const handleArchive = async (projectId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    const res = await fetch(`/api/projects/${projectId}/archive`, { method: 'PATCH' });
+    if (!res.ok) {
+      window.alert('Failed to archive project');
+      return;
+    }
+
+    const archivedProject: ProjectRecord = await res.json();
+    setProjects(prev => prev.map(project => (project.id === archivedProject.id ? archivedProject : project)));
+  };
+
+  const handleUnarchive = async (projectId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    const res = await fetch(`/api/projects/${projectId}/unarchive`, { method: 'PATCH' });
+    if (!res.ok) {
+      window.alert('Failed to unarchive project');
+      return;
+    }
+
+    const unarchivedProject: ProjectRecord = await res.json();
+    setProjects(prev => prev.map(project => (project.id === unarchivedProject.id ? unarchivedProject : project)));
+  };
+
   return (
     <PageLayout>
       <PageHeader title="Projects">
@@ -82,17 +115,57 @@ export function ProjectListPage({ onSelect }: ProjectListPageProps) {
         {!loading && projects.length === 0 && (
           <div className="project-list-empty">No projects yet. Create one to get started.</div>
         )}
-        {!loading && projects.length > 0 && (
+        {!loading && activeProjects.length > 0 && (
           <div className="project-list-grid">
-            {projects.map(project => (
+            {activeProjects.map(project => (
               <div key={project.id} className="project-card" onClick={() => onSelect(project)}>
                 <ProjectCollage
                   sceneNames={project.scene_names}
                   sceneThumbnailUrls={project.scene_thumbnail_urls}
                 />
                 <div className="project-card-name">{project.name}</div>
+                <div className="project-card-actions">
+                  <Button
+                    className="project-card-action"
+                    onClick={e => handleArchive(project.id, e)}
+                  >
+                    Archive
+                  </Button>
+                </div>
               </div>
             ))}
+          </div>
+        )}
+        {!loading && archivedProjects.length > 0 && (
+          <div className="project-archive-section">
+            <Button
+              className="project-archive-toggle"
+              onClick={() => setShowArchived(prev => !prev)}
+            >
+              <span className={`project-archive-toggle-icon${showArchived ? ' is-open' : ''}`}>▸</span>
+              Archived projects
+            </Button>
+            {showArchived && (
+              <div className="project-list-grid project-list-grid--archived">
+                {archivedProjects.map(project => (
+                  <div key={project.id} className="project-card project-card--archived" onClick={() => onSelect(project)}>
+                    <ProjectCollage
+                      sceneNames={project.scene_names}
+                      sceneThumbnailUrls={project.scene_thumbnail_urls}
+                    />
+                    <div className="project-card-name">{project.name}</div>
+                    <div className="project-card-actions">
+                      <Button
+                        className="project-card-action"
+                        onClick={e => handleUnarchive(project.id, e)}
+                      >
+                        Unarchive
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </PageBody>

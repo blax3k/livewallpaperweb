@@ -923,6 +923,9 @@ body {
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 16px;
 }
+.project-list-grid--archived {
+  margin-top: 12px;
+}
 .project-card {
   display: flex;
   flex-direction: column;
@@ -939,6 +942,12 @@ body {
 .project-card:hover {
   border-color: rgba(99, 179, 237, 0.5);
   background: #212121;
+}
+.project-card--archived {
+  opacity: 0.72;
+}
+.project-card--archived .project-card-name {
+  color: #d7d7d7;
 }
 .project-card-icon {
   font-size: 40px;
@@ -972,4 +981,30 @@ body {
   color: #ccc;
   text-align: center;
   word-break: break-word;
+}
+.project-card-actions {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+.project-card-action {
+  font-size: 12px;
+  padding: 4px 10px;
+}
+.project-archive-section {
+  margin-top: 18px;
+}
+.project-archive-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.project-archive-toggle-icon {
+  display: inline-block;
+  transition: transform 0.15s ease;
+}
+.project-archive-toggle-icon.is-open {
+  transform: rotate(90deg);
 }
