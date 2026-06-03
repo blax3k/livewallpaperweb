@@ -1,26 +1,50 @@
 import { pool } from '../../db';
+import { type ObjectStatus } from '../common/objectModel';
+import { SceneObject } from './sceneObject';
 
 export async function selectSceneSummaries(projectId?: string) {
   if (projectId) {
-    const result = await pool.query(
-      'SELECT id, name, label FROM scenes WHERE project_id = $1 ORDER BY label ASC',
+    const result = await pool.query<{ id: string; name: string; label: string; status: ObjectStatus }>(
+      `SELECT id, name, label, status
+       FROM scenes
+       WHERE project_id = $1 AND status <> 'DELETED'
+       ORDER BY label ASC`,
       [projectId],
     );
-    return result.rows;
+    return result.rows.map(SceneObject.fromSummaryRow);
   }
 
-  const result = await pool.query('SELECT id, name, label FROM scenes ORDER BY label ASC');
-  return result.rows;
+  const result = await pool.query<{ id: string; name: string; label: string; status: ObjectStatus }>(
+    `SELECT id, name, label, status
+     FROM scenes
+     WHERE status <> 'DELETED'
+     ORDER BY label ASC`,
+  );
+  return result.rows.map(SceneObject.fromSummaryRow);
 }
 
 export async function selectSceneSummaryById(id: string) {
-  const result = await pool.query('SELECT id, name, label FROM scenes WHERE id = $1', [id]);
-  return result.rows[0] ?? null;
+  const result = await pool.query<{ id: string; name: string; label: string; status: ObjectStatus }>(
+    `SELECT id, name, label, status
+     FROM scenes
+     WHERE id = $1 AND status <> 'DELETED'`,
+    [id],
+  );
+  return result.rows[0] ? SceneObject.fromSummaryRow(result.rows[0]) : null;
 }
 
 export async function selectSceneByName(name: string) {
-  const result = await pool.query('SELECT * FROM scenes WHERE name = $1', [name]);
-  return result.rows[0] ?? null;
+  const result = await pool.query<{
+    id: string;
+    name: string;
+    label: string;
+    status: ObjectStatus;
+    data: unknown;
+    project_id: string | null;
+    created_at: string;
+    updated_at: string;
+  }>('SELECT * FROM scenes WHERE name = $1 AND status <> $2', [name, 'DELETED']);
+  return result.rows[0] ? SceneObject.fromRow(result.rows[0]) : null;
 }
 
 export async function insertScene(input: {
@@ -32,9 +56,18 @@ export async function insertScene(input: {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    const result = await client.query(
-      'INSERT INTO scenes (name, label, data, project_id) VALUES ($1, $2, $3, $4) RETURNING *',
-      [input.name, input.label, input.data, input.projectId ?? null],
+    const result = await client.query<{
+      id: string;
+      name: string;
+      label: string;
+      status: ObjectStatus;
+      data: unknown;
+      project_id: string | null;
+      created_at: string;
+      updated_at: string;
+    }>(
+      'INSERT INTO scenes (name, label, data, project_id, status) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [input.name, input.label, input.data, input.projectId ?? null, 'ACTIVE'],
     );
 
     if (input.projectId) {
@@ -42,7 +75,7 @@ export async function insertScene(input: {
     }
 
     await client.query('COMMIT');
-    return result.rows[0];
+  return SceneObject.fromRow(result.rows[0]);
   } catch (err) {
     await client.query('ROLLBACK');
     throw err;
@@ -52,7 +85,16 @@ export async function insertScene(input: {
 }
 
 export async function upsertSceneRecord(name: string, label: string, data: unknown) {
-  const result = await pool.query(
+  const result = await pool.query<{
+    id: string;
+    name: string;
+    label: string;
+    status: ObjectStatus;
+    data: unknown;
+    project_id: string | null;
+    created_at: string;
+    updated_at: string;
+  }>(
     `INSERT INTO scenes (name, label, data)
      VALUES ($1, $2, $3)
      ON CONFLICT (name) DO UPDATE SET label = EXCLUDED.label, data = EXCLUDED.data
@@ -60,7 +102,7 @@ export async function upsertSceneRecord(name: string, label: string, data: unkno
     [name, label, data],
   );
 
-  return result.rows[0];
+  return SceneObject.fromRow(result.rows[0]);
 }
 
 export async function deleteSceneRecordByName(name: string) {
