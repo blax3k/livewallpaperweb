@@ -12,6 +12,14 @@ interface ImageRecord {
   created_at: string;
 }
 
+function getUploadUrl(filename: string) {
+  return `/uploads/${filename}`;
+}
+
+function getThumbnailUrl(filename: string) {
+  return `/thumbnails/${filename}`;
+}
+
 export function ImageLibraryModal({ onSelect, onClose }: { onSelect?: (textureResource: string) => void; onClose: () => void }) {
   const [images, setImages] = useState<ImageRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -40,7 +48,7 @@ export function ImageLibraryModal({ onSelect, onClose }: { onSelect?: (textureRe
     const res = await fetch(`/api/images/${confirmDelete.id}`, { method: 'DELETE' });
     if (res.ok) {
       setImages(prev => prev.filter(i => i.id !== confirmDelete.id));
-      if (selectedImage === `/uploads/${confirmDelete.filename}`) setSelectedImage(null);
+      if (selectedImage === getUploadUrl(confirmDelete.filename)) setSelectedImage(null);
     }
     setConfirmDelete(null);
   };
@@ -91,10 +99,15 @@ export function ImageLibraryModal({ onSelect, onClose }: { onSelect?: (textureRe
           {images.map(image => (
             <div
               key={image.id}
-              className={`add-sprite-image-item${selectedImage === `/uploads/${image.filename}` ? ' add-sprite-image-item--selected' : ''}`}
-              onClick={() => setSelectedImage(`/uploads/${image.filename}`)}
+              className={`add-sprite-image-item${selectedImage === getUploadUrl(image.filename) ? ' add-sprite-image-item--selected' : ''}`}
+              onClick={() => setSelectedImage(getUploadUrl(image.filename))}
             >
-              <img src={`/uploads/${image.filename}`} alt={image.original_name} className="add-sprite-thumb" />
+              <img
+                src={getThumbnailUrl(image.filename)}
+                alt={image.original_name}
+                className="add-sprite-thumb"
+                loading="lazy"
+              />
               <span className="add-sprite-image-name">{image.original_name}</span>
               <div className="image-item-overlay">
                 <button
@@ -132,7 +145,7 @@ export function ImageLibraryModal({ onSelect, onClose }: { onSelect?: (textureRe
       <div className="add-sprite-preview-overlay" onClick={() => setPreviewImage(null)}>
         <div className="add-sprite-preview-modal" onClick={e => e.stopPropagation()}>
           <button className="add-sprite-preview-close" onClick={() => setPreviewImage(null)}>✕</button>
-          <img src={`/uploads/${previewImage!.filename}`} alt={previewImage!.original_name} className="add-sprite-preview-img" />
+          <img src={getUploadUrl(previewImage!.filename)} alt={previewImage!.original_name} className="add-sprite-preview-img" />
         </div>
       </div>
     )}

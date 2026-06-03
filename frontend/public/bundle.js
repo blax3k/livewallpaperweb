@@ -64197,6 +64197,12 @@ ${parts.join("\n")}
 
   // src/controls/ImageLibraryModal.tsx
   var import_jsx_runtime2 = __toESM(require_jsx_runtime());
+  function getUploadUrl(filename) {
+    return `/uploads/${filename}`;
+  }
+  function getThumbnailUrl(filename) {
+    return `/thumbnails/${filename}`;
+  }
   function ImageLibraryModal({ onSelect, onClose }) {
     const [images, setImages] = (0, import_react.useState)([]);
     const [loading, setLoading] = (0, import_react.useState)(true);
@@ -64223,7 +64229,7 @@ ${parts.join("\n")}
       const res = await fetch(`/api/images/${confirmDelete.id}`, { method: "DELETE" });
       if (res.ok) {
         setImages((prev) => prev.filter((i2) => i2.id !== confirmDelete.id));
-        if (selectedImage === `/uploads/${confirmDelete.filename}`) setSelectedImage(null);
+        if (selectedImage === getUploadUrl(confirmDelete.filename)) setSelectedImage(null);
       }
       setConfirmDelete(null);
     };
@@ -64276,10 +64282,18 @@ ${parts.join("\n")}
             images.map((image) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
               "div",
               {
-                className: `add-sprite-image-item${selectedImage === `/uploads/${image.filename}` ? " add-sprite-image-item--selected" : ""}`,
-                onClick: () => setSelectedImage(`/uploads/${image.filename}`),
+                className: `add-sprite-image-item${selectedImage === getUploadUrl(image.filename) ? " add-sprite-image-item--selected" : ""}`,
+                onClick: () => setSelectedImage(getUploadUrl(image.filename)),
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("img", { src: `/uploads/${image.filename}`, alt: image.original_name, className: "add-sprite-thumb" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+                    "img",
+                    {
+                      src: getThumbnailUrl(image.filename),
+                      alt: image.original_name,
+                      className: "add-sprite-thumb",
+                      loading: "lazy"
+                    }
+                  ),
                   /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "add-sprite-image-name", children: image.original_name }),
                   /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "image-item-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
                     "button",
@@ -64321,7 +64335,7 @@ ${parts.join("\n")}
         ] }) }),
         previewImage && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "add-sprite-preview-overlay", onClick: () => setPreviewImage(null), children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "add-sprite-preview-modal", onClick: (e2) => e2.stopPropagation(), children: [
           /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { className: "add-sprite-preview-close", onClick: () => setPreviewImage(null), children: "\u2715" }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("img", { src: `/uploads/${previewImage.filename}`, alt: previewImage.original_name, className: "add-sprite-preview-img" })
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("img", { src: getUploadUrl(previewImage.filename), alt: previewImage.original_name, className: "add-sprite-preview-img" })
         ] }) }),
         confirmDelete && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "add-sprite-preview-overlay", onClick: () => setConfirmDelete(null), children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "add-sprite-confirm-delete-dialog", onClick: (e2) => e2.stopPropagation(), children: [
           /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("p", { children: [
