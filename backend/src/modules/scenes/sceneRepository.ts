@@ -75,7 +75,7 @@ export async function selectSceneById(id: string) {
   });
 }
 
-export async function insertSceneRow(
+export async function insertScene(
   client: PoolClient,
   input: { name: string; label: string; data: Scene; projectId?: string },
 ): Promise<{ id: string }> {
@@ -87,7 +87,7 @@ export async function insertSceneRow(
   return result.rows[0];
 }
 
-export async function updateSceneRow(
+export async function updateScene(
   client: PoolClient,
   id: string,
   label: string,

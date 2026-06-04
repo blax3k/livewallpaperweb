@@ -4,10 +4,10 @@ import { incrementProjectVersion } from '../projects';
 import { attachSceneThumbnailUrls } from '../thumbnails';
 import {
   deleteSceneRecordById,
-  insertSceneRow,
+  insertScene,
   selectSceneById,
   selectSceneSummaries,
-  updateSceneRow,
+  updateScene,
 } from './sceneRepository';
 import { replaceSpritesForScene } from './spriteRepository';
 
@@ -29,7 +29,7 @@ export async function createScene(input: {
   let sceneId: string;
   try {
     await client.query('BEGIN');
-    const { id } = await insertSceneRow(client, input);
+    const { id } = await insertScene(client, input);
     sceneId = id;
     await replaceSpritesForScene(client, sceneId, input.data.sprites);
     await client.query('COMMIT');
@@ -52,7 +52,7 @@ export async function saveSceneById(id: string, label: string, data: Scene) {
   let projectId: string | null = null;
   try {
     await client.query('BEGIN');
-    const row = await updateSceneRow(client, id, label, data);
+    const row = await updateScene(client, id, label, data);
     if (!row) {
       await client.query('ROLLBACK');
       return null;

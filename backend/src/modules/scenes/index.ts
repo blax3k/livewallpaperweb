@@ -11,5 +11,5 @@ export {
   insertScene,
   selectSceneById,
   selectSceneSummaries,
-  updateSceneRecord,
+  updateScene,
 } from './sceneRepository';
