@@ -1,6 +1,6 @@
 import type { Scene } from '@livewallpaper/types';
 import { ObjectModel, type ObjectStatus } from '../common/objectModel';
-import { SpriteObject } from './spriteObject';
+import { SpriteObject } from '../sprites/spriteObject';
 
 type SceneSummaryRow = {
   id: string;

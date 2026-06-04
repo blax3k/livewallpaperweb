@@ -1,6 +1,7 @@
 import type { Sprite } from '@livewallpaper/types';
 
 type SpriteRow = {
+  id: string;
   name: string;
   image_filename: string | null;
   width: number;
@@ -13,6 +14,7 @@ type SpriteRow = {
 
 export class SpriteObject {
   constructor(
+    public readonly id: string,
     public readonly name: string,
     public readonly textureResource: string,
     public readonly width: number,
@@ -25,6 +27,7 @@ export class SpriteObject {
 
   static fromRow(row: SpriteRow): SpriteObject {
     return new SpriteObject(
+      row.id,
       row.name,
       row.image_filename ? `/uploads/${row.image_filename}` : '',
       row.width,
@@ -38,6 +41,7 @@ export class SpriteObject {
 
   toSprite(): Sprite {
     return {
+      id: this.id,
       name: this.name,
       textureResource: this.textureResource,
       width: this.width,

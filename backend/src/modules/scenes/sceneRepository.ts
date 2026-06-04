@@ -3,7 +3,7 @@ import type { PoolClient } from 'pg';
 import { pool } from '../../db';
 import { type ObjectStatus } from '../common/objectModel';
 import { SceneObject } from './sceneObject';
-import { SpriteObject } from './spriteObject';
+import { SpriteObject } from '../sprites/spriteObject';
 
 type SceneBaseRow = {
   id: string;
@@ -19,9 +19,9 @@ type SceneBaseRow = {
 };
 
 type SpriteBaseRow = {
+  id: string;
   name: string;
   image_filename: string | null;
-  texture_resource_id: number;
   width: number;
   height: number;
   position_x: number;
@@ -60,7 +60,7 @@ export async function selectSceneById(id: string) {
   if (!sceneResult.rows[0]) return null;
 
   const spriteResult = await pool.query<SpriteBaseRow>(
-    `SELECT sp.name, img.filename AS image_filename,
+    `SELECT sp.id, sp.name, img.filename AS image_filename,
             sp.width, sp.height, sp.position_x, sp.position_y, sp.parallax_multiplier, sp.tex_coordinates
      FROM sprites sp
      LEFT JOIN images img ON img.id = sp.image_id

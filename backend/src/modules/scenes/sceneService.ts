@@ -9,7 +9,7 @@ import {
   selectSceneSummaries,
   updateScene,
 } from './sceneRepository';
-import { replaceSpritesForScene } from './spriteRepository';
+import { replaceSpritesForScene } from '../sprites/spriteRepository';
 
 export async function listScenes(projectId?: string) {
   return attachSceneThumbnailUrls(await selectSceneSummaries(projectId));

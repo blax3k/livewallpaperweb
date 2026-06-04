@@ -1,5 +1,6 @@
 import type { Sprite } from '@livewallpaper/types';
 import type { PoolClient } from 'pg';
+import { pool } from '../../db';
 
 function filenameFromTextureResource(textureResource: string): string | null {
   return textureResource.startsWith('/uploads/') ? textureResource.slice(9) : null;
@@ -12,6 +13,21 @@ async function resolveImageIds(client: PoolClient, filenames: string[]): Promise
     [filenames],
   );
   return new Map(result.rows.map(r => [r.filename, r.id]));
+}
+
+export async function updateSpriteName(
+  spriteId: string,
+  name: string,
+): Promise<{ project_id: string | null } | null> {
+  const result = await pool.query<{ project_id: string | null }>(
+    `UPDATE sprites sp
+     SET name = $2
+     FROM scenes sc
+     WHERE sp.id = $1 AND sc.id = sp.scene_id
+     RETURNING sc.project_id`,
+    [spriteId, name],
+  );
+  return result.rows[0] ?? null;
 }
 
 export async function replaceSpritesForScene(
