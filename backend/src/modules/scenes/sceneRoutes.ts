@@ -1,4 +1,5 @@
 import type { FastifyInstance } from 'fastify';
+import type { Scene } from '@livewallpaper/types';
 import {
   createScene,
   getSceneById,
@@ -23,7 +24,7 @@ export async function registerSceneRoutes(
     return scene;
   });
 
-  server.post<{ Body: { name: string; label: string; data: unknown; projectId?: string } }>(
+  server.post<{ Body: { name: string; label: string; data: Scene; projectId?: string } }>(
     '/api/scenes',
     async (req, reply) => {
       const scene = await createScene(req.body);
@@ -31,7 +32,7 @@ export async function registerSceneRoutes(
     },
   );
 
-  server.put<{ Params: { id: string }; Body: { label: string; data: unknown } }>(
+  server.put<{ Params: { id: string }; Body: { label: string; data: Scene } }>(
     '/api/scenes/:id',
     async (req, reply) => {
       const scene = await saveSceneById(req.params.id, req.body.label, req.body.data);

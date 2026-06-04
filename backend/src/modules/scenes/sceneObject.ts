@@ -1,5 +1,6 @@
 import type { Scene } from '@livewallpaper/types';
 import { ObjectModel, type ObjectStatus } from '../common/objectModel';
+import { SpriteObject } from './spriteObject';
 
 type SceneSummaryRow = {
   id: string;
@@ -9,10 +10,13 @@ type SceneSummaryRow = {
 };
 
 type SceneRow = SceneSummaryRow & {
-  data: Scene;
+  x_focus: number;
+  start_time: number | null;
+  end_time: number | null;
   project_id: string | null;
   created_at: string;
   updated_at: string;
+  sprites: SpriteObject[];
 };
 
 export class SceneObject extends ObjectModel {
@@ -34,6 +38,12 @@ export class SceneObject extends ObjectModel {
   }
 
   static fromRow(row: SceneRow): SceneObject {
+    const data: Scene = {
+      xFocus: row.x_focus,
+      ...(row.start_time != null && { startTime: row.start_time }),
+      ...(row.end_time != null && { endTime: row.end_time }),
+      sprites: row.sprites.map(s => s.toSprite()),
+    };
     return new SceneObject(
       row.id,
       row.name,
@@ -41,7 +51,7 @@ export class SceneObject extends ObjectModel {
       row.status,
       row.created_at,
       row.updated_at,
-      row.data,
+      data,
       row.project_id,
     );
   }

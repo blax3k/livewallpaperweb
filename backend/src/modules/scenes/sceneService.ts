@@ -1,12 +1,15 @@
+import type { Scene } from '@livewallpaper/types';
+import { pool } from '../../db';
 import { incrementProjectVersion } from '../projects';
 import { attachSceneThumbnailUrls } from '../thumbnails';
 import {
   deleteSceneRecordById,
-  insertScene,
+  insertSceneRow,
   selectSceneById,
   selectSceneSummaries,
-  updateSceneRecord,
+  updateSceneRow,
 } from './sceneRepository';
+import { replaceSpritesForScene } from './spriteRepository';
 
 export async function listScenes(projectId?: string) {
   return attachSceneThumbnailUrls(await selectSceneSummaries(projectId));
@@ -19,21 +22,56 @@ export async function getSceneById(id: string) {
 export async function createScene(input: {
   name: string;
   label: string;
-  data: unknown;
+  data: Scene;
   projectId?: string;
 }) {
-  return insertScene(input);
-}
-
-export async function saveSceneById(id: string, label: string, data: unknown) {
-  const scene = await updateSceneRecord(id, label, data);
-  if (!scene) return null;
-
-  if (scene.project_id) {
-    await incrementProjectVersion(scene.project_id);
+  const client = await pool.connect();
+  let sceneId: string;
+  try {
+    await client.query('BEGIN');
+    const { id } = await insertSceneRow(client, input);
+    sceneId = id;
+    await replaceSpritesForScene(client, sceneId, input.data.sprites);
+    await client.query('COMMIT');
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
   }
 
-  return scene;
+  if (input.projectId) {
+    await incrementProjectVersion(input.projectId);
+  }
+
+  return selectSceneById(sceneId);
+}
+
+export async function saveSceneById(id: string, label: string, data: Scene) {
+  const client = await pool.connect();
+  let projectId: string | null = null;
+  try {
+    await client.query('BEGIN');
+    const row = await updateSceneRow(client, id, label, data);
+    if (!row) {
+      await client.query('ROLLBACK');
+      return null;
+    }
+    projectId = row.project_id;
+    await replaceSpritesForScene(client, id, data.sprites);
+    await client.query('COMMIT');
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
+
+  if (projectId) {
+    await incrementProjectVersion(projectId);
+  }
+
+  return selectSceneById(id);
 }
 
 export async function deleteSceneById(id: string) {
