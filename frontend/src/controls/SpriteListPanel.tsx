@@ -3,6 +3,7 @@ import './SpriteListPanel.scss';
 import { ImageLibraryModal } from './ImageLibraryModal';
 
 export interface SpriteEntry {
+  id?: string;
   name: string;
   visible: boolean;
   parallaxMultiplier: number;
@@ -17,13 +18,16 @@ interface SpriteListPanelProps {
   onChangeTexture: (index: number, textureResource: string) => void;
   onDelete: (index: number) => void;
   onEditTexture: (index: number) => void;
+  onRename: (index: number, newName: string) => void;
 }
 
-export function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd, onChangeTexture, onDelete, onEditTexture }: SpriteListPanelProps) {
+export function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd, onChangeTexture, onDelete, onEditTexture, onRename }: SpriteListPanelProps) {
   const [showModal, setShowModal] = useState(false);
   const [changeTextureIndex, setChangeTextureIndex] = useState<number | null>(null);
   const [menuOpenIndex, setMenuOpenIndex] = useState<number | null>(null);
   const [confirmDeleteIndex, setConfirmDeleteIndex] = useState<number | null>(null);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editingValue, setEditingValue] = useState('');
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Close the popover when clicking outside it
@@ -37,6 +41,14 @@ export function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onA
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, [menuOpenIndex]);
+
+  const commitRename = () => {
+    if (editingIndex !== null) {
+      const trimmed = editingValue.trim();
+      if (trimmed) onRename(editingIndex, trimmed);
+    }
+    setEditingIndex(null);
+  };
 
   const handleImageSelected = (filename: string) => {
     if (changeTextureIndex !== null) {
@@ -77,7 +89,33 @@ export function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onA
             >
               {entry.visible ? '👁️' : '🚫'}
             </span>
-            <span className="sprite-label">{entry.name || `Sprite ${index}`}</span>
+            {editingIndex === index ? (
+              <input
+                className="sprite-label-input"
+                value={editingValue}
+                autoFocus
+                onClick={e => e.stopPropagation()}
+                onChange={e => setEditingValue(e.target.value)}
+                onFocus={e => e.target.select()}
+                onBlur={commitRename}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') commitRename();
+                  if (e.key === 'Escape') setEditingIndex(null);
+                }}
+              />
+            ) : (
+              <span
+                className="sprite-label"
+                title="Double-click to rename"
+                onDoubleClick={e => {
+                  e.stopPropagation();
+                  setEditingIndex(index);
+                  setEditingValue(entry.name);
+                }}
+              >
+                {entry.name || `Sprite ${index}`}
+              </span>
+            )}
             <span className="sprite-parallax">{entry.parallaxMultiplier.toFixed(2)}</span>
             <span
               className="sprite-menu-trigger"
@@ -94,6 +132,14 @@ export function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onA
                 ref={menuRef}
                 onClick={e => e.stopPropagation()}
               >
+                <button
+                className="sprite-menu-item"
+                onClick={() => {
+                  setMenuOpenIndex(null);
+                  setEditingIndex(index);
+                }}>
+                  Rename
+                </button>
                 <button
                   className="sprite-menu-item"
                   onClick={() => {

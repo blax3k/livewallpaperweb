@@ -32,6 +32,7 @@ interface SceneEditorPanelProps {
   onAddSprite: (textureResource: string) => void;
   onChangeTexture: (index: number, textureResource: string) => void;
   onDeleteSprite: (index: number) => void;
+  onRenameSprite: (index: number, newName: string) => void;
   onEditTexture: (index: number) => void;
   onSpritePositionChange: (x: number, y: number) => void;
   onSpritePositionChangeStart?: (x: number, y: number) => void;
@@ -61,6 +62,7 @@ export function SceneEditorPanel({
   onAddSprite,
   onChangeTexture,
   onDeleteSprite,
+  onRenameSprite,
   onEditTexture,
   onSpritePositionChange,
   onSpritePositionChangeStart,
@@ -121,6 +123,7 @@ export function SceneEditorPanel({
           onAdd={onAddSprite}
           onChangeTexture={onChangeTexture}
           onDelete={onDeleteSprite}
+          onRename={onRenameSprite}
           onEditTexture={onEditTexture}
         />
       </div>

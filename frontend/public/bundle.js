@@ -64356,11 +64356,13 @@ ${parts.join("\n")}
 
   // src/controls/SpriteListPanel.tsx
   var import_jsx_runtime3 = __toESM(require_jsx_runtime());
-  function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd, onChangeTexture, onDelete, onEditTexture }) {
+  function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd, onChangeTexture, onDelete, onEditTexture, onRename }) {
     const [showModal, setShowModal] = (0, import_react2.useState)(false);
     const [changeTextureIndex, setChangeTextureIndex] = (0, import_react2.useState)(null);
     const [menuOpenIndex, setMenuOpenIndex] = (0, import_react2.useState)(null);
     const [confirmDeleteIndex, setConfirmDeleteIndex] = (0, import_react2.useState)(null);
+    const [editingIndex, setEditingIndex] = (0, import_react2.useState)(null);
+    const [editingValue, setEditingValue] = (0, import_react2.useState)("");
     const menuRef = (0, import_react2.useRef)(null);
     (0, import_react2.useEffect)(() => {
       if (menuOpenIndex === null) return;
@@ -64372,6 +64374,13 @@ ${parts.join("\n")}
       document.addEventListener("mousedown", handleClick);
       return () => document.removeEventListener("mousedown", handleClick);
     }, [menuOpenIndex]);
+    const commitRename = () => {
+      if (editingIndex !== null) {
+        const trimmed = editingValue.trim();
+        if (trimmed) onRename(editingIndex, trimmed);
+      }
+      setEditingIndex(null);
+    };
     const handleImageSelected = (filename) => {
       if (changeTextureIndex !== null) {
         onChangeTexture(changeTextureIndex, filename);
@@ -64413,7 +64422,34 @@ ${parts.join("\n")}
                 children: entry.visible ? "\u{1F441}\uFE0F" : "\u{1F6AB}"
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "sprite-label", children: entry.name || `Sprite ${index}` }),
+            editingIndex === index ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+              "input",
+              {
+                className: "sprite-label-input",
+                value: editingValue,
+                autoFocus: true,
+                onClick: (e2) => e2.stopPropagation(),
+                onChange: (e2) => setEditingValue(e2.target.value),
+                onFocus: (e2) => e2.target.select(),
+                onBlur: commitRename,
+                onKeyDown: (e2) => {
+                  if (e2.key === "Enter") commitRename();
+                  if (e2.key === "Escape") setEditingIndex(null);
+                }
+              }
+            ) : /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+              "span",
+              {
+                className: "sprite-label",
+                title: "Double-click to rename",
+                onDoubleClick: (e2) => {
+                  e2.stopPropagation();
+                  setEditingIndex(index);
+                  setEditingValue(entry.name);
+                },
+                children: entry.name || `Sprite ${index}`
+              }
+            ),
             /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "sprite-parallax", children: entry.parallaxMultiplier.toFixed(2) }),
             /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
               "span",
@@ -64433,6 +64469,17 @@ ${parts.join("\n")}
                 ref: menuRef,
                 onClick: (e2) => e2.stopPropagation(),
                 children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+                    "button",
+                    {
+                      className: "sprite-menu-item",
+                      onClick: () => {
+                        setMenuOpenIndex(null);
+                        setEditingIndex(index);
+                      },
+                      children: "Rename"
+                    }
+                  ),
                   /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
                     "button",
                     {
@@ -64717,6 +64764,7 @@ ${parts.join("\n")}
     onAddSprite,
     onChangeTexture,
     onDeleteSprite,
+    onRenameSprite,
     onEditTexture,
     onSpritePositionChange,
     onSpritePositionChangeStart,
@@ -64779,6 +64827,7 @@ ${parts.join("\n")}
           onAdd: onAddSprite,
           onChangeTexture,
           onDelete: onDeleteSprite,
+          onRename: onRenameSprite,
           onEditTexture
         }
       ) }),
@@ -68170,6 +68219,7 @@ ${e2}`);
         if (sprite) {
           this.sprites.push(sprite);
           this.spriteMetadata.set(sprite, {
+            id: spriteData.id,
             x: sprite.x,
             y: sprite.y,
             parallaxMultiplier: spriteData.parallaxMultiplier,
@@ -68446,7 +68496,7 @@ ${e2}`);
     getSpriteEntries() {
       return this.sprites.map((sprite, index) => {
         const metadata = this.spriteMetadata.get(sprite);
-        return { name: metadata?.name || `Sprite ${index}`, visible: metadata?.visible ?? true, parallaxMultiplier: metadata?.parallaxMultiplier ?? 1 };
+        return { id: metadata?.id, name: metadata?.name || `Sprite ${index}`, visible: metadata?.visible ?? true, parallaxMultiplier: metadata?.parallaxMultiplier ?? 1 };
       });
     }
     getSpriteParallax(index) {
@@ -68455,6 +68505,20 @@ ${e2}`);
         if (metadata) return metadata.parallaxMultiplier;
       }
       return null;
+    }
+    renameSpriteByIndex(index, newName) {
+      if (index >= 0 && index < this.sprites.length) {
+        const metadata = this.spriteMetadata.get(this.sprites[index]);
+        if (metadata) {
+          if (this.originalSceneData) {
+            const entry = this.originalSceneData.sprites.find((s2) => s2.name === metadata.name);
+            if (entry) {
+              entry.name = newName;
+            }
+          }
+          metadata.name = newName;
+        }
+      }
     }
     setSpriteParallax(index, value) {
       if (index >= 0 && index < this.sprites.length) {
@@ -68903,6 +68967,71 @@ ${e2}`);
     }
   };
 
+  // src/api.ts
+  var ApiError = class extends Error {
+    constructor(status, message) {
+      super(message);
+      this.status = status;
+      this.name = "ApiError";
+    }
+  };
+  async function request(input, init2) {
+    const res = await fetch(input, init2);
+    if (!res.ok) {
+      let message = `HTTP ${res.status}`;
+      try {
+        const body = await res.json();
+        message = body.error ?? body.message ?? message;
+      } catch {
+      }
+      throw new ApiError(res.status, message);
+    }
+    const contentType = res.headers.get("content-type");
+    if (contentType?.includes("application/json")) {
+      return res.json();
+    }
+    return void 0;
+  }
+  var scenesApi = {
+    list(projectId) {
+      const url = projectId ? `/api/scenes?projectId=${encodeURIComponent(projectId)}` : "/api/scenes";
+      return request(url);
+    },
+    get(sceneId) {
+      return request(`/api/scenes/${sceneId}`);
+    },
+    create(name, label, data, projectId) {
+      return request("/api/scenes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, label, data, ...projectId && { projectId } })
+      });
+    },
+    update(sceneId, label, data) {
+      return request(`/api/scenes/${sceneId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ label, data })
+      });
+    },
+    updateThumbnail(sceneId, dataUrl) {
+      return request(`/api/scenes/${sceneId}/thumbnail`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ dataUrl })
+      });
+    }
+  };
+  var spritesApi = {
+    rename(spriteId, name) {
+      return request(`/api/sprites/${spriteId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name })
+      });
+    }
+  };
+
   // src/hooks/useSceneRenderer.ts
   function useSceneRenderer(onNotify, onSaved) {
     const [showSceneControls, setShowSceneControls] = (0, import_react8.useState)(false);
@@ -68929,8 +69058,7 @@ ${e2}`);
     }, []);
     const loadScene = (0, import_react8.useCallback)(async (sceneId) => {
       try {
-        const response = await fetch(`/api/scenes/${sceneId}`);
-        const scene = await response.json();
+        const scene = await scenesApi.get(sceneId);
         const sceneData = scene.data;
         sceneIdRef.current = scene.id;
         sceneLabelRef.current = scene.label;
@@ -68969,18 +69097,10 @@ ${e2}`);
       if (!sceneId || !label || !data) return;
       setIsSaving(true);
       try {
-        await fetch(`/api/scenes/${sceneId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ label, data })
-        });
+        await scenesApi.update(sceneId, label, data);
         const dataUrl = rendererRef.current?.captureSnapshot();
         if (dataUrl) {
-          fetch(`/api/scenes/${sceneId}/thumbnail`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ dataUrl })
-          }).catch(() => {
+          scenesApi.updateThumbnail(sceneId, dataUrl).catch(() => {
           });
         }
         onNotifyRef.current?.("Scene saved!");
@@ -69083,6 +69203,15 @@ ${e2}`);
         return prev;
       });
     }, [refreshSpriteList]);
+    const handleRenameSprite = (0, import_react8.useCallback)((index, newName) => {
+      if (!rendererRef.current) return;
+      rendererRef.current.renameSpriteByIndex(index, newName);
+      refreshSpriteList(rendererRef.current);
+      const spriteId = rendererRef.current.getSpriteEntries()[index]?.id;
+      if (spriteId) {
+        spritesApi.rename(spriteId, newName).catch(console.error);
+      }
+    }, [refreshSpriteList]);
     const ZOOM_FACTOR = 1.25;
     const handleZoomIn = (0, import_react8.useCallback)(() => {
       rendererRef.current?.zoomAtCenter(ZOOM_FACTOR);
@@ -69149,6 +69278,7 @@ ${e2}`);
       handleAddSprite,
       handleChangeTexture,
       handleDeleteSprite,
+      handleRenameSprite,
       handleZoomIn,
       handleZoomOut,
       handleZoomAtPoint,
@@ -69358,6 +69488,7 @@ ${e2}`);
       handleAddSprite,
       handleChangeTexture,
       handleDeleteSprite,
+      handleRenameSprite,
       handleZoomIn,
       handleZoomOut,
       handleZoomAtPoint,
@@ -69603,6 +69734,7 @@ ${e2}`);
             onAddSprite: handleAddSprite,
             onChangeTexture: handleChangeTextureWithHistory,
             onDeleteSprite: handleDeleteSprite,
+            onRenameSprite: handleRenameSprite,
             onEditTexture: setEditTextureIndex,
             onSpritePositionChange: handleSpritePositionChange,
             onSpritePositionChangeStart: handleSpritePositionChangeStart,

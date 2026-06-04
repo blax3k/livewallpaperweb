@@ -57,6 +57,7 @@ export function ScenePage({ initialSceneId, onBack, onSaved }: ScenePageProps) {
     handleAddSprite,
     handleChangeTexture,
     handleDeleteSprite,
+    handleRenameSprite,
     handleZoomIn,
     handleZoomOut,
     handleZoomAtPoint,
@@ -330,6 +331,7 @@ export function ScenePage({ initialSceneId, onBack, onSaved }: ScenePageProps) {
           onAddSprite={handleAddSprite}
           onChangeTexture={handleChangeTextureWithHistory}
           onDeleteSprite={handleDeleteSprite}
+          onRenameSprite={handleRenameSprite}
           onEditTexture={setEditTextureIndex}
           onSpritePositionChange={handleSpritePositionChange}
           onSpritePositionChangeStart={handleSpritePositionChangeStart}

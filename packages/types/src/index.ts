@@ -1,6 +1,7 @@
 export type ObjectStatus = 'ACTIVE' | 'ARCHIVED' | 'DELETED';
 
 export interface Sprite {
+  id: string;
   height: number;
   name: string;
   parallaxMultiplier: number;

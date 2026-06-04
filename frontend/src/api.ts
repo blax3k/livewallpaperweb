@@ -100,3 +100,13 @@ export const imagesApi = {
     return request<void>(`/api/images/${imageId}`, { method: 'DELETE' });
   },
 };
+
+export const spritesApi = {
+  rename(spriteId: string, name: string): Promise<void> {
+    return request<void>(`/api/sprites/${spriteId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name }),
+    });
+  },
+};

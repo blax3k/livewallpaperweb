@@ -223,6 +223,20 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+#sprite-list-panel .sprite-label-input {
+  flex: 1;
+  min-width: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 3px;
+  color: #fff;
+  font-size: 12px;
+  padding: 0 4px;
+  outline: none;
+}
+#sprite-list-panel .sprite-label-input:focus {
+  border-color: rgba(255, 255, 255, 0.7);
+}
 #sprite-list-panel .sprite-parallax {
   font-size: 11px;
   color: #888;

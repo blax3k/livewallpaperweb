@@ -4,6 +4,7 @@ import { PhoneGuide } from './PhoneGuide';
 import type { SpriteEntry } from '../controls/SpriteListPanel';
 
 interface SpriteMetadata {
+  id?: string;
   x: number;
   y: number;
   parallaxMultiplier: number;
@@ -121,6 +122,7 @@ export class SceneRenderer {
       if (sprite) {
         this.sprites.push(sprite);
         this.spriteMetadata.set(sprite, {
+          id: spriteData.id,
           x: sprite.x,
           y: sprite.y,
           parallaxMultiplier: spriteData.parallaxMultiplier,
@@ -468,7 +470,7 @@ export class SceneRenderer {
   getSpriteEntries(): SpriteEntry[] {
     return this.sprites.map((sprite, index) => {
       const metadata = this.spriteMetadata.get(sprite);
-      return { name: metadata?.name || `Sprite ${index}`, visible: metadata?.visible ?? true, parallaxMultiplier: metadata?.parallaxMultiplier ?? 1.0 };
+      return { id: metadata?.id, name: metadata?.name || `Sprite ${index}`, visible: metadata?.visible ?? true, parallaxMultiplier: metadata?.parallaxMultiplier ?? 1.0 };
     });
   }
 
@@ -478,6 +480,22 @@ export class SceneRenderer {
       if (metadata) return metadata.parallaxMultiplier;
     }
     return null;
+  }
+
+  renameSpriteByIndex(index: number, newName: string): void {
+    if (index >= 0 && index < this.sprites.length) {
+      const metadata = this.spriteMetadata.get(this.sprites[index]);
+      if (metadata) {
+        if (this.originalSceneData) {
+          const entry = this.originalSceneData.sprites.find(s => s.name === metadata.name);
+          if (entry){
+            
+            entry.name = newName;
+          }
+        }
+        metadata.name = newName;
+      }
+    }
   }
 
   setSpriteParallax(index: number, value: number): void {

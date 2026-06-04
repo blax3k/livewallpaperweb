@@ -2,6 +2,7 @@
  * Represents a sprite object in a live wallpaper scene
  */
 export interface Sprite {
+  id?: string;
   height: number;
   name: string;
   parallaxMultiplier: number;

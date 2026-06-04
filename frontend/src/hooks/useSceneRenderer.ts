@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
 import { SceneRenderer } from '../renderers/SceneRenderer';
+import { scenesApi, spritesApi } from '../api';
 import type { SpriteEntry } from '../controls/SpriteListPanel';
 import type { Scene } from '../interfaces/Scene';
 
@@ -40,8 +41,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
 
   const loadScene = useCallback(async (sceneId: string) => {
     try {
-      const response = await fetch(`/api/scenes/${sceneId}`);
-      const scene: { id: string; name: string; label: string; data: Scene } = await response.json();
+      const scene = await scenesApi.get(sceneId);
       const sceneData: Scene = scene.data;
 
       sceneIdRef.current = scene.id;
@@ -89,18 +89,10 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
 
     setIsSaving(true);
     try {
-      await fetch(`/api/scenes/${sceneId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ label, data }),
-      });
+      await scenesApi.update(sceneId, label, data);
       const dataUrl = rendererRef.current?.captureSnapshot();
       if (dataUrl) {
-        fetch(`/api/scenes/${sceneId}/thumbnail`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ dataUrl }),
-        }).catch(() => {});
+        scenesApi.updateThumbnail(sceneId, dataUrl).catch(() => {});
       }
       onNotifyRef.current?.('Scene saved!');
       onSavedRef.current?.();
@@ -216,6 +208,18 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     });
   }, [refreshSpriteList]);
 
+  const handleRenameSprite = useCallback((index: number, newName: string) => {
+    if (!rendererRef.current) return;
+
+    rendererRef.current.renameSpriteByIndex(index, newName);
+    refreshSpriteList(rendererRef.current);
+
+    const spriteId = rendererRef.current.getSpriteEntries()[index]?.id;
+    if (spriteId) {
+      spritesApi.rename(spriteId, newName).catch(console.error);
+    }
+  }, [refreshSpriteList]);
+
   const ZOOM_FACTOR = 1.25;
 
   const handleZoomIn = useCallback(() => {
@@ -292,6 +296,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     handleAddSprite,
     handleChangeTexture,
     handleDeleteSprite,
+    handleRenameSprite,
     handleZoomIn,
     handleZoomOut,
     handleZoomAtPoint,
