@@ -64200,9 +64200,6 @@ ${parts.join("\n")}
   function getUploadUrl(filename) {
     return `/uploads/${filename}`;
   }
-  function getThumbnailUrl(filename) {
-    return `/thumbnails/${filename}`;
-  }
   function ImageLibraryModal({ onSelect, onClose }) {
     const [images, setImages] = (0, import_react.useState)([]);
     const [loading, setLoading] = (0, import_react.useState)(true);
@@ -64288,7 +64285,7 @@ ${parts.join("\n")}
                   /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
                     "img",
                     {
-                      src: getThumbnailUrl(image.filename),
+                      src: getUploadUrl(image.filename),
                       alt: image.original_name,
                       className: "add-sprite-thumb",
                       loading: "lazy"

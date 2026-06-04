@@ -16,9 +16,6 @@ function getUploadUrl(filename: string) {
   return `/uploads/${filename}`;
 }
 
-function getThumbnailUrl(filename: string) {
-  return `/thumbnails/${filename}`;
-}
 
 export function ImageLibraryModal({ onSelect, onClose }: { onSelect?: (textureResource: string) => void; onClose: () => void }) {
   const [images, setImages] = useState<ImageRecord[]>([]);
@@ -103,7 +100,7 @@ export function ImageLibraryModal({ onSelect, onClose }: { onSelect?: (textureRe
               onClick={() => setSelectedImage(getUploadUrl(image.filename))}
             >
               <img
-                src={getThumbnailUrl(image.filename)}
+                src={getUploadUrl(image.filename)}
                 alt={image.original_name}
                 className="add-sprite-thumb"
                 loading="lazy"
