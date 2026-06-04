@@ -4,6 +4,7 @@ import { deleteImage, ImageUploadError, listImages, uploadImage } from './imageS
 
 interface ImageRouteDeps {
   storage: ImageStorage;
+  thumbnailStorage: ImageStorage;
 }
 
 export async function registerImageRoutes(
@@ -16,7 +17,7 @@ export async function registerImageRoutes(
 
   server.post('/api/images', async (req, reply) => {
     try {
-      const image = await uploadImage(await req.file(), deps.storage);
+      const image = await uploadImage(await req.file(), deps.storage, deps.thumbnailStorage);
 
       return reply.status(201).send(image);
     } catch (err) {
@@ -28,7 +29,7 @@ export async function registerImageRoutes(
   });
 
   server.delete<{ Params: { id: string } }>('/api/images/:id', async (req, reply) => {
-    const deleted = await deleteImage(req.params.id, deps.storage);
+    const deleted = await deleteImage(req.params.id, deps.storage, deps.thumbnailStorage);
     if (!deleted) {
       return reply.status(404).send({ error: 'Image not found' });
     }

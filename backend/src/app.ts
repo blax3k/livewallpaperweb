@@ -12,8 +12,10 @@ import { registerThumbnailRoutes } from './modules/thumbnails/thumbnailRoutes';
 interface BuildServerDeps {
   uploadsDir: string;
   thumbnailsDir: string;
+  imageThumbnailsDir: string;
   imageStorage: ImageStorage;
   thumbnailStorage: ImageStorage;
+  imageThumbnailStorage: ImageStorage;
 }
 
 export async function buildServer(deps: BuildServerDeps) {
@@ -45,12 +47,18 @@ export async function buildServer(deps: BuildServerDeps) {
     decorateReply: false,
   });
 
+  await server.register(staticFiles, {
+    root: deps.imageThumbnailsDir,
+    prefix: '/image-thumbnails/',
+    decorateReply: false,
+  });
+
   server.get('/health', async () => {
     return { status: 'ok' };
   });
 
   await registerProjectRoutes(server);
-  await registerImageRoutes(server, { storage: deps.imageStorage });
+  await registerImageRoutes(server, { storage: deps.imageStorage, thumbnailStorage: deps.imageThumbnailStorage });
   await registerSceneRoutes(server);
   await registerThumbnailRoutes(server, { thumbnailStorage: deps.thumbnailStorage });
 

@@ -1,5 +1,6 @@
 import type { MultipartFile } from '@fastify/multipart';
 import { randomUUID } from 'crypto';
+import sharp from 'sharp';
 import type { ImageStorage } from '../../storage';
 import { deleteImageRecordById, insertImageRecord, selectImages } from './imageRepository';
 
@@ -52,9 +53,22 @@ export async function listImages() {
   return selectImages();
 }
 
-export async function uploadImage(part: MultipartFile | undefined, storage: ImageStorage) {
+async function generateThumbnail(buffer: Buffer): Promise<Buffer> {
+  return sharp(buffer).resize(256, 256, { fit: 'inside', withoutEnlargement: true }).jpeg({ quality: 85 }).toBuffer();
+}
+
+export async function uploadImage(part: MultipartFile | undefined, storage: ImageStorage, thumbnailStorage: ImageStorage) {
   const upload = await buildImageUpload(part);
   await storage.save(upload.filename, upload.buffer);
+
+  let thumbFilename: string | null = null;
+  try {
+    const thumbBuffer = await generateThumbnail(upload.buffer);
+    thumbFilename = `${randomUUID()}.jpg`;
+    await thumbnailStorage.save(thumbFilename, thumbBuffer);
+  } catch {
+    // thumbnail generation is best-effort; proceed without it
+  }
 
   try {
     return await insertImageRecord({
@@ -62,19 +76,22 @@ export async function uploadImage(part: MultipartFile | undefined, storage: Imag
       originalName: upload.originalName,
       mimeType: upload.mimeType,
       sizeBytes: upload.sizeBytes,
+      thumbFilename,
     });
   } catch (err) {
     await storage.delete(upload.filename);
+    if (thumbFilename) await thumbnailStorage.delete(thumbFilename);
     throw err;
   }
 }
 
-export async function deleteImage(id: string, storage: ImageStorage) {
+export async function deleteImage(id: string, storage: ImageStorage, thumbnailStorage: ImageStorage) {
   const deleted = await deleteImageRecordById(id);
   if (!deleted) {
     return null;
   }
 
   await storage.delete(String(deleted.filename));
+  if (deleted.thumb_filename) await thumbnailStorage.delete(String(deleted.thumb_filename));
   return deleted;
 }

@@ -10,10 +10,15 @@ interface ImageRecord {
   mime_type: string;
   size_bytes: number;
   created_at: string;
+  thumb_filename: string | null;
 }
 
 function getUploadUrl(filename: string) {
   return `/uploads/${filename}`;
+}
+
+function getImageThumbnailUrl(thumbFilename: string) {
+  return `/image-thumbnails/${thumbFilename}`;
 }
 
 
@@ -100,7 +105,7 @@ export function ImageLibraryModal({ onSelect, onClose }: { onSelect?: (textureRe
               onClick={() => setSelectedImage(getUploadUrl(image.filename))}
             >
               <img
-                src={getUploadUrl(image.filename)}
+                src={image.thumb_filename ? getImageThumbnailUrl(image.thumb_filename) : getUploadUrl(image.filename)}
                 alt={image.original_name}
                 className="add-sprite-thumb"
                 loading="lazy"

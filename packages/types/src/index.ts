@@ -58,4 +58,5 @@ export interface ImageRecord {
   mime_type: string;
   size_bytes: number;
   created_at: string;
+  thumb_filename: string | null;
 }

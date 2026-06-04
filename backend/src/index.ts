@@ -9,20 +9,28 @@ const storage = new LocalStorage(uploadsDir);
 
 const thumbnailsDir = path.join(__dirname, '../data/thumbnails');
 const thumbnailStorage = new LocalStorage(thumbnailsDir);
+
+const imageThumbnailsDir = path.join(__dirname, '../data/imageThumbnails');
+const imageThumbnailStorage = new LocalStorage(imageThumbnailsDir);
+
 // Start server
 const start = async () => {
   try {
     console.log('[storage] uploadsDir:', uploadsDir);
     console.log('[storage] thumbnailsDir:', thumbnailsDir);
+    console.log('[storage] imageThumbnailsDir:', imageThumbnailsDir);
     await runMigrations();
     await storage.init();
     await thumbnailStorage.init();
+    await imageThumbnailStorage.init();
 
     const server = await buildServer({
       uploadsDir,
       thumbnailsDir,
+      imageThumbnailsDir,
       imageStorage: storage,
       thumbnailStorage,
+      imageThumbnailStorage,
     });
 
     const port = Number(process.env.PORT) || 3000;
