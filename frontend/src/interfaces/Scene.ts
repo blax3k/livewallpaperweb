@@ -9,7 +9,6 @@ export interface Sprite {
   positionY: number;
   texCoordinates: number[];
   textureResource: string;
-  textureResourceId: number;
   width: number;
 }
 

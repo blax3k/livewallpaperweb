@@ -68250,7 +68250,6 @@ ${e2}`);
       const spriteData = {
         name,
         textureResource,
-        textureResourceId: this.sprites.length,
         positionX: 0,
         positionY: 0,
         width,
