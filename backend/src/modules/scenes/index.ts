@@ -1,17 +1,15 @@
 export { registerSceneRoutes } from './sceneRoutes';
 export {
   createScene,
-  deleteSceneByName,
-  getSceneByName,
-  getSceneSummaryById,
+  deleteSceneById,
+  getSceneById,
   listScenes,
-  saveSceneByName,
+  saveSceneById,
 } from './sceneService';
 export {
-  deleteSceneRecordByName,
+  deleteSceneRecordById,
   insertScene,
-  selectSceneByName,
+  selectSceneById,
   selectSceneSummaries,
-  selectSceneSummaryById,
-  upsertSceneRecord,
+  updateSceneRecord,
 } from './sceneRepository';
