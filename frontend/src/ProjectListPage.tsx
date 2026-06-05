@@ -10,7 +10,7 @@ interface ProjectRecord {
   id: string;
   name: string;
   status: ProjectStatus;
-  scene_names: string[];
+  scene_ids: string[];
   scene_thumbnail_urls: string[];
 }
 
@@ -18,29 +18,28 @@ interface ProjectListPageProps {
   onSelect: (project: ProjectRecord) => void;
 }
 
-function ProjectCollage({ sceneNames, sceneThumbnailUrls }: { sceneNames: string[]; sceneThumbnailUrls?: string[] }) {
+function ProjectCollage({ sceneIds, sceneThumbnailUrls }: { sceneIds: string[]; sceneThumbnailUrls?: string[] }) {
   const [failedThumbs, setFailedThumbs] = useState<Set<string>>(new Set());
 
-  if (!sceneNames || sceneNames.length === 0) {
+  if (!sceneIds || sceneIds.length === 0) {
     return <div className="project-card-icon">📁</div>;
   }
 
-  const cells = [...sceneNames.slice(0, 4)];
+  const cells = [...sceneIds.slice(0, 4)];
   while (cells.length < 4) cells.push('');
 
   return (
     <div className="project-card-collage">
-      {cells.map((name, i) => {
-        const thumbnailSrc = name ? (sceneThumbnailUrls?.[i] ?? '') : '';
-        const thumbKey = thumbnailSrc || name;
+      {cells.map((id, i) => {
+        const thumbnailSrc = id ? (sceneThumbnailUrls?.[i] ?? '') : '';
 
         return (
           <div key={i} className="project-card-collage-cell">
-            {thumbnailSrc && !failedThumbs.has(thumbKey) && (
+            {thumbnailSrc && !failedThumbs.has(thumbnailSrc) && (
               <img
                 src={thumbnailSrc}
                 alt=""
-                onError={() => setFailedThumbs(prev => new Set(prev).add(thumbKey))}
+                onError={() => setFailedThumbs(prev => new Set(prev).add(thumbnailSrc))}
               />
             )}
           </div>
@@ -120,7 +119,7 @@ export function ProjectListPage({ onSelect }: ProjectListPageProps) {
             {activeProjects.map(project => (
               <div key={project.id} className="project-card" onClick={() => onSelect(project)}>
                 <ProjectCollage
-                  sceneNames={project.scene_names}
+                  sceneIds={project.scene_ids}
                   sceneThumbnailUrls={project.scene_thumbnail_urls}
                 />
                 <div className="project-card-name">{project.name}</div>
@@ -150,7 +149,7 @@ export function ProjectListPage({ onSelect }: ProjectListPageProps) {
                 {archivedProjects.map(project => (
                   <div key={project.id} className="project-card project-card--archived" onClick={() => onSelect(project)}>
                     <ProjectCollage
-                      sceneNames={project.scene_names}
+                      sceneIds={project.scene_ids}
                       sceneThumbnailUrls={project.scene_thumbnail_urls}
                     />
                     <div className="project-card-name">{project.name}</div>

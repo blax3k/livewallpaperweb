@@ -69928,22 +69928,21 @@ ${e2}`);
 
   // src/ProjectListPage.tsx
   var import_jsx_runtime18 = __toESM(require_jsx_runtime());
-  function ProjectCollage({ sceneNames, sceneThumbnailUrls }) {
+  function ProjectCollage({ sceneIds, sceneThumbnailUrls }) {
     const [failedThumbs, setFailedThumbs] = (0, import_react14.useState)(/* @__PURE__ */ new Set());
-    if (!sceneNames || sceneNames.length === 0) {
+    if (!sceneIds || sceneIds.length === 0) {
       return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-icon", children: "\u{1F4C1}" });
     }
-    const cells = [...sceneNames.slice(0, 4)];
+    const cells = [...sceneIds.slice(0, 4)];
     while (cells.length < 4) cells.push("");
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-collage", children: cells.map((name, i2) => {
-      const thumbnailSrc = name ? sceneThumbnailUrls?.[i2] ?? "" : "";
-      const thumbKey = thumbnailSrc || name;
-      return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-collage-cell", children: thumbnailSrc && !failedThumbs.has(thumbKey) && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-collage", children: cells.map((id, i2) => {
+      const thumbnailSrc = id ? sceneThumbnailUrls?.[i2] ?? "" : "";
+      return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-collage-cell", children: thumbnailSrc && !failedThumbs.has(thumbnailSrc) && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
         "img",
         {
           src: thumbnailSrc,
           alt: "",
-          onError: () => setFailedThumbs((prev) => new Set(prev).add(thumbKey))
+          onError: () => setFailedThumbs((prev) => new Set(prev).add(thumbnailSrc))
         }
       ) }, i2);
     }) });
@@ -70000,7 +69999,7 @@ ${e2}`);
           /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
             ProjectCollage,
             {
-              sceneNames: project.scene_names,
+              sceneIds: project.scene_ids,
               sceneThumbnailUrls: project.scene_thumbnail_urls
             }
           ),
@@ -70030,7 +70029,7 @@ ${e2}`);
             /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
               ProjectCollage,
               {
-                sceneNames: project.scene_names,
+                sceneIds: project.scene_ids,
                 sceneThumbnailUrls: project.scene_thumbnail_urls
               }
             ),
