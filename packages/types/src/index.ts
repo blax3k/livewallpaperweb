@@ -37,6 +37,7 @@ export interface SceneSummary {
   name: string;
   label: string;
   status: ObjectStatus;
+  updated_at?: string;
   thumbnail_url: string;
 }
 

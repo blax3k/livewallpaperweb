@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import type { ImageStorage } from '../../storage';
+import { pool } from '../../db';
 import { saveSceneThumbnail } from './thumbnailService';
 
 interface ThumbnailRouteDeps {
@@ -17,6 +18,8 @@ export async function registerThumbnailRoutes(
       if (!ok) {
         return reply.status(400).send({ error: 'Invalid dataUrl' });
       }
+
+      await pool.query(`UPDATE scenes SET updated_at = NOW() WHERE id = $1`, [req.params.id]);
 
       return reply.status(204).send();
     },

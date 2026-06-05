@@ -32,8 +32,8 @@ type SpriteBaseRow = {
 
 export async function selectSceneSummaries(projectId?: string) {
   if (projectId) {
-    const result = await pool.query<{ id: string; name: string; label: string; status: ObjectStatus }>(
-      `SELECT id, name, label, status
+    const result = await pool.query<{ id: string; name: string; label: string; status: ObjectStatus; updated_at: string }>(
+      `SELECT id, name, label, status, updated_at
        FROM scenes
        WHERE project_id = $1 AND status <> 'DELETED'
        ORDER BY label ASC`,
@@ -42,8 +42,8 @@ export async function selectSceneSummaries(projectId?: string) {
     return result.rows.map(SceneObject.fromSummaryRow);
   }
 
-  const result = await pool.query<{ id: string; name: string; label: string; status: ObjectStatus }>(
-    `SELECT id, name, label, status
+  const result = await pool.query<{ id: string; name: string; label: string; status: ObjectStatus; updated_at: string }>(
+    `SELECT id, name, label, status, updated_at
      FROM scenes
      WHERE status <> 'DELETED'
      ORDER BY label ASC`,

@@ -7,6 +7,7 @@ type SceneSummaryRow = {
   name: string;
   label: string;
   status: ObjectStatus;
+  updated_at: string;
 };
 
 type SceneRow = SceneSummaryRow & {
@@ -34,7 +35,7 @@ export class SceneObject extends ObjectModel {
   }
 
   static fromSummaryRow(row: SceneSummaryRow): SceneObject {
-    return new SceneObject(row.id, row.name, row.label, row.status);
+    return new SceneObject(row.id, row.name, row.label, row.status, undefined, row.updated_at);
   }
 
   static fromRow(row: SceneRow): SceneObject {
