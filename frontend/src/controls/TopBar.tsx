@@ -38,7 +38,6 @@ export function TopBar({ scenes, currentSceneName, sceneLoaded, isSaving, phoneG
       {onBack && (
         <Button onClick={onBack} title="Back to scenes">← Scenes</Button>
       )}
-      <SceneSelectorControl scenes={scenes} currentScene={currentSceneName} onSelect={onSceneSelect} />
       <Button onClick={() => setDialogOpen(true)}>+ New Scene</Button>
       {dialogOpen && (
         <NewSceneDialog
