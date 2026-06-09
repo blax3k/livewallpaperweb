@@ -2,7 +2,8 @@ import { pool } from '../../db';
 import { type ObjectStatus } from '../common/objectModel';
 import { ProjectObject } from './projectObject';
 
-export async function selectProjects() {
+export async function selectProjects(opts: { activeOnly?: boolean } = {}) {
+  const statusFilter = opts.activeOnly ? `p.status = 'ACTIVE'` : `p.status <> 'DELETED'`;
   const result = await pool.query<{
     id: string;
     name: string;
@@ -17,7 +18,7 @@ export async function selectProjects() {
         SELECT s.id FROM scenes s WHERE s.project_id = p.id AND s.status <> 'DELETED' ORDER BY s.label ASC LIMIT 4
       ) AS scene_ids
     FROM projects p
-    WHERE p.status <> 'DELETED'
+    WHERE ${statusFilter}
     ORDER BY p.name ASC
   `);
   return result.rows.map(ProjectObject.fromSummaryRow);

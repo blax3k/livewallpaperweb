@@ -2,8 +2,8 @@ import type { FastifyInstance } from 'fastify';
 import { archiveProject, createProject, listProjects, unarchiveProject } from './projectService';
 
 export async function registerProjectRoutes(server: FastifyInstance): Promise<void> {
-  server.get('/api/projects', async () => {
-    return listProjects();
+  server.get<{ Querystring: { activeOnly?: string } }>('/api/projects', async (req) => {
+    return listProjects({ activeOnly: req.query.activeOnly === 'true' });
   });
 
   server.post<{ Body: { name: string } }>('/api/projects', async (req, reply) => {

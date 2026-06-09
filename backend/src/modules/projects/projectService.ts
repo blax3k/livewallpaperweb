@@ -1,8 +1,8 @@
 import { insertProject, selectProjects, setProjectStatus } from './projectRepository';
 import { attachProjectThumbnailUrls, attachProjectsThumbnailUrls } from '../thumbnails';
 
-export async function listProjects() {
-  return attachProjectsThumbnailUrls(await selectProjects());
+export async function listProjects(opts: { activeOnly?: boolean } = {}) {
+  return attachProjectsThumbnailUrls(await selectProjects(opts));
 }
 
 export async function createProject(name: string) {
