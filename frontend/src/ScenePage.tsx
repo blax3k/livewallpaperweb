@@ -13,9 +13,10 @@ interface ScenePageProps {
   initialSceneId?: string;
   onBack?: () => void;
   onSaved?: () => void;
+  onDirtyChange?: (isDirty: boolean) => void;
 }
 
-export function ScenePage({ initialSceneId, onBack, onSaved }: ScenePageProps) {
+export function ScenePage({ initialSceneId, onBack, onSaved, onDirtyChange }: ScenePageProps) {
   const [scenes, setScenes] = useState<SceneOption[]>([]);
   const history = useUndoHistory();
   const { notifications, notify } = useNotifications();
@@ -41,6 +42,8 @@ export function ScenePage({ initialSceneId, onBack, onSaved }: ScenePageProps) {
     selectedSprite,
     setSelectedSprite,
     isSaving,
+    isDirty,
+    markDirty,
     phoneGuideVisible,
     loadScene,
     saveScene,
@@ -68,6 +71,27 @@ export function ScenePage({ initialSceneId, onBack, onSaved }: ScenePageProps) {
     handleGyroOffset,
   } = useSceneRenderer(notify, onSaved);
 
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
+
+  useEffect(() => {
+    if (!isDirty) return;
+    const onBeforeUnload = (e: BeforeUnloadEvent) => { e.preventDefault(); };
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, [isDirty]);
+
+  const handleBack = useCallback(() => {
+    if (isDirty && !window.confirm('You have unsaved changes. Leave without saving?')) return;
+    onBack?.();
+  }, [isDirty, onBack]);
+
+  const handleSceneSelect = useCallback((sceneId: string) => {
+    if (isDirty && !window.confirm('You have unsaved changes. Switch scenes without saving?')) return;
+    loadScene(sceneId);
+  }, [isDirty, loadScene]);
+
   const applySelectedSpriteMove = useCallback((x: number, y: number) => {
     setSelectedSprite(prev => prev ? { ...prev, x, y } : null);
   }, [setSelectedSprite]);
@@ -79,7 +103,8 @@ export function ScenePage({ initialSceneId, onBack, onSaved }: ScenePageProps) {
   const handleTextureApply = useCallback((index: number, textureResource: string, width: number, height: number, texCoordinates: number[]) => {
     rendererRef.current?.changeTexture(index, textureResource, { width, height }, texCoordinates);
     setSelectedSprite(prev => prev?.index === index ? { ...prev, width, height } : prev);
-  }, [rendererRef, setSelectedSprite]);
+    markDirty();
+  }, [rendererRef, setSelectedSprite, markDirty]);
 
   const { handleCanvasMouseDown, cancelDrag } = useSpriteDrag({
     selectedSprite,
@@ -272,6 +297,7 @@ export function ScenePage({ initialSceneId, onBack, onSaved }: ScenePageProps) {
   }, [selectedSprite, history]);
 
   const handleNewScene = useCallback(async (label: string) => {
+    if (isDirty && !window.confirm('You have unsaved changes. Switch scenes without saving?')) return;
     const name = label.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
     const emptyScene = { sprites: [], xFocus: 0.5 };
     try {
@@ -291,7 +317,7 @@ export function ScenePage({ initialSceneId, onBack, onSaved }: ScenePageProps) {
     } catch {
       notify('Failed to create scene');
     }
-  }, [loadScene, notify]);
+  }, [isDirty, loadScene, notify]);
 
   return (
     <>
@@ -301,8 +327,8 @@ export function ScenePage({ initialSceneId, onBack, onSaved }: ScenePageProps) {
         sceneLoaded={showSceneControls}
         isSaving={isSaving}
         phoneGuideVisible={phoneGuideVisible}
-        onBack={onBack}
-        onSceneSelect={loadScene}
+        onBack={handleBack}
+        onSceneSelect={handleSceneSelect}
         onNewScene={handleNewScene}
         onPhoneGuideToggle={handlePhoneGuideToggle}
         onSave={saveScene}

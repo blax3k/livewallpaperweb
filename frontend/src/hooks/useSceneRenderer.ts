@@ -23,12 +23,25 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
   const [spriteEntries, setSpriteEntries] = useState<SpriteEntry[]>([]);
   const [selectedSprite, setSelectedSprite] = useState<SelectedSprite | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+  const isDirtyRef = useRef(false);
   const [phoneGuideVisible, setPhoneGuideVisible] = useState(true);
   const [zoom, setZoom] = useState(1.0);
   const onNotifyRef = useRef(onNotify);
   onNotifyRef.current = onNotify;
   const onSavedRef = useRef(onSaved);
   onSavedRef.current = onSaved;
+
+  const markDirty = useCallback(() => {
+    if (isDirtyRef.current) return;
+    isDirtyRef.current = true;
+    setIsDirty(true);
+  }, []);
+
+  const markClean = useCallback(() => {
+    isDirtyRef.current = false;
+    setIsDirty(false);
+  }, []);
   const phoneGuideVisibleRef = useRef(true);
   const canvasRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<SceneRenderer | null>(null);
@@ -76,10 +89,11 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
         setSelectedSprite(null);
         renderer.setSelectedSpriteHighlight(null);
       }
+      markClean();
     } catch (error) {
       console.error('Failed to load scene:', error);
     }
-  }, [refreshSpriteList]);
+  }, [refreshSpriteList, markClean]);
 
   const saveScene = useCallback(async () => {
     const sceneId = sceneIdRef.current;
@@ -96,27 +110,31 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
       }
       onNotifyRef.current?.('Scene saved!');
       onSavedRef.current?.();
+      markClean();
     } catch (error) {
       console.error('Failed to save scene:', error);
     } finally {
       setIsSaving(false);
     }
-  }, []);
+  }, [markClean]);
 
   const handleXFocusChange = useCallback((value: number) => {
     setXFocus(value);
     rendererRef.current?.setScrollOffset(value);
-  }, []);
+    markDirty();
+  }, [markDirty]);
 
   const handleStartTimeChange = useCallback((value: number) => {
     setStartTime(value);
     rendererRef.current?.setStartTime(value);
-  }, []);
+    markDirty();
+  }, [markDirty]);
 
   const handleEndTimeChange = useCallback((value: number) => {
     setEndTime(value);
     rendererRef.current?.setEndTime(value);
-  }, []);
+    markDirty();
+  }, [markDirty]);
 
   const handlePhoneGuideToggle = useCallback((visible: boolean) => {
     phoneGuideVisibleRef.current = visible;
@@ -128,7 +146,8 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
   const handleSpriteToggle = useCallback((index: number) => {
     rendererRef.current?.toggleSpriteByIndex(index);
     if (rendererRef.current) refreshSpriteList(rendererRef.current);
-  }, [refreshSpriteList]);
+    markDirty();
+  }, [refreshSpriteList, markDirty]);
 
   const handleSpriteSelect = useCallback((index: number) => {
     const pos = rendererRef.current?.getSpritePosition(index);
@@ -147,7 +166,8 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
       rendererRef.current!.setSpritePosition(prev.index, x, y);
       return { ...prev, x, y };
     });
-  }, []);
+    markDirty();
+  }, [markDirty]);
 
   const handleSpriteSizeChange = useCallback((width: number, height: number) => {
     setSelectedSprite(prev => {
@@ -155,7 +175,8 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
       rendererRef.current?.setSpriteSize(prev.index, width, height);
       return { ...prev, width, height };
     });
-  }, []);
+    markDirty();
+  }, [markDirty]);
 
   const handleSpriteDepthChange = useCallback((depth: number) => {
     setSelectedSprite(prev => {
@@ -165,7 +186,8 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
       if (rendererRef.current) refreshSpriteList(rendererRef.current);
       return { ...prev, index: newIndex, depth };
     });
-  }, [refreshSpriteList]);
+    markDirty();
+  }, [refreshSpriteList, markDirty]);
 
   const handleSpriteDepthApply = useCallback((depth: number, spriteIndex: number) => {
     if (!rendererRef.current) return;
@@ -173,7 +195,8 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     const newIndex = rendererRef.current.sortSpritesByParallax(spriteIndex);
     refreshSpriteList(rendererRef.current);
     setSelectedSprite(prev => prev ? { ...prev, index: newIndex, depth } : null);
-  }, [refreshSpriteList]);
+    markDirty();
+  }, [refreshSpriteList, markDirty]);
 
   const handleAddSprite = useCallback(async (textureResource: string) => {
     if (!rendererRef.current) return;
@@ -186,7 +209,8 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     const name = entries[newIndex]?.name || textureResource;
     setSelectedSprite({ index: newIndex, name, x: pos?.x ?? 0, y: pos?.y ?? 0, depth: 1.0, width: scaleInfo?.width ?? 5, height: scaleInfo?.height ?? 5 });
     rendererRef.current.setSelectedSpriteHighlight(newIndex);
-  }, [refreshSpriteList]);
+    markDirty();
+  }, [refreshSpriteList, markDirty]);
 
   const handleChangeTexture = useCallback(async (index: number, textureResource: string) => {
     await rendererRef.current?.changeTexture(index, textureResource);
@@ -194,7 +218,8 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     if (scaleInfo) {
       setSelectedSprite(prev => prev?.index === index ? { ...prev, width: scaleInfo.width, height: scaleInfo.height } : prev);
     }
-  }, []);
+    markDirty();
+  }, [markDirty]);
 
   const handleDeleteSprite = useCallback((index: number) => {
     if (!rendererRef.current) return;
@@ -206,7 +231,8 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
       if (prev.index > index) return { ...prev, index: prev.index - 1 };
       return prev;
     });
-  }, [refreshSpriteList]);
+    markDirty();
+  }, [refreshSpriteList, markDirty]);
 
   const handleRenameSprite = useCallback((index: number, newName: string) => {
     if (!rendererRef.current) return;
@@ -280,6 +306,8 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     selectedSprite,
     setSelectedSprite,
     isSaving,
+    isDirty,
+    markDirty,
     phoneGuideVisible,
     loadScene,
     saveScene,

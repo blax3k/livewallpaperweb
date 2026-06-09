@@ -1,6 +1,6 @@
 import './styles/main.scss';
 console.log('[bundle] loaded — build b85774b');
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ScenePage } from './ScenePage';
 import { SceneListPage } from './SceneListPage';
@@ -38,9 +38,31 @@ interface SceneRecord {
 function App() {
   const [page, setPage] = useState<Page>(pageFromPath);
   const [thumbBuster, setThumbBuster] = useState(0);
+  const isDirtyRef = useRef(false);
+  const pageRef = useRef(page);
+  useEffect(() => { pageRef.current = page; }, [page]);
+
+  const handleDirtyChange = useCallback((dirty: boolean) => {
+    isDirtyRef.current = dirty;
+  }, []);
 
   useEffect(() => {
-    const onPopState = () => setPage(pageFromPath());
+    const onPopState = () => {
+      const currentPage = pageRef.current;
+
+      if (currentPage.type !== 'scene' || !isDirtyRef.current) {
+        setPage(pageFromPath());
+        return;
+      }
+
+      if (!window.confirm('You have unsaved changes. Leave without saving?')) {
+        window.history.pushState(null, '', `/project/${encodeURIComponent(currentPage.project.id)}/scene/${encodeURIComponent(currentPage.sceneId)}`);
+        return;
+      }
+
+      isDirtyRef.current = false;
+      setPage(pageFromPath());
+    };
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
@@ -73,6 +95,7 @@ function App() {
         initialSceneId={page.sceneId}
         onBack={() => navigateBackToScenes(page.project)}
         onSaved={handleSaved}
+        onDirtyChange={handleDirtyChange}
       />
     );
   }

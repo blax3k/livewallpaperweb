@@ -69018,12 +69018,23 @@ ${e2}`);
     const [spriteEntries, setSpriteEntries] = (0, import_react8.useState)([]);
     const [selectedSprite, setSelectedSprite] = (0, import_react8.useState)(null);
     const [isSaving, setIsSaving] = (0, import_react8.useState)(false);
+    const [isDirty, setIsDirty] = (0, import_react8.useState)(false);
+    const isDirtyRef = (0, import_react8.useRef)(false);
     const [phoneGuideVisible, setPhoneGuideVisible] = (0, import_react8.useState)(true);
     const [zoom, setZoom] = (0, import_react8.useState)(1);
     const onNotifyRef = (0, import_react8.useRef)(onNotify);
     onNotifyRef.current = onNotify;
     const onSavedRef = (0, import_react8.useRef)(onSaved);
     onSavedRef.current = onSaved;
+    const markDirty = (0, import_react8.useCallback)(() => {
+      if (isDirtyRef.current) return;
+      isDirtyRef.current = true;
+      setIsDirty(true);
+    }, []);
+    const markClean = (0, import_react8.useCallback)(() => {
+      isDirtyRef.current = false;
+      setIsDirty(false);
+    }, []);
     const phoneGuideVisibleRef = (0, import_react8.useRef)(true);
     const canvasRef = (0, import_react8.useRef)(null);
     const rendererRef = (0, import_react8.useRef)(null);
@@ -69062,10 +69073,11 @@ ${e2}`);
           setSelectedSprite(null);
           renderer.setSelectedSpriteHighlight(null);
         }
+        markClean();
       } catch (error) {
         console.error("Failed to load scene:", error);
       }
-    }, [refreshSpriteList]);
+    }, [refreshSpriteList, markClean]);
     const saveScene = (0, import_react8.useCallback)(async () => {
       const sceneId = sceneIdRef.current;
       const label = sceneLabelRef.current;
@@ -69081,24 +69093,28 @@ ${e2}`);
         }
         onNotifyRef.current?.("Scene saved!");
         onSavedRef.current?.();
+        markClean();
       } catch (error) {
         console.error("Failed to save scene:", error);
       } finally {
         setIsSaving(false);
       }
-    }, []);
+    }, [markClean]);
     const handleXFocusChange = (0, import_react8.useCallback)((value) => {
       setXFocus(value);
       rendererRef.current?.setScrollOffset(value);
-    }, []);
+      markDirty();
+    }, [markDirty]);
     const handleStartTimeChange = (0, import_react8.useCallback)((value) => {
       setStartTime(value);
       rendererRef.current?.setStartTime(value);
-    }, []);
+      markDirty();
+    }, [markDirty]);
     const handleEndTimeChange = (0, import_react8.useCallback)((value) => {
       setEndTime(value);
       rendererRef.current?.setEndTime(value);
-    }, []);
+      markDirty();
+    }, [markDirty]);
     const handlePhoneGuideToggle = (0, import_react8.useCallback)((visible) => {
       phoneGuideVisibleRef.current = visible;
       setPhoneGuideVisible(visible);
@@ -69108,7 +69124,8 @@ ${e2}`);
     const handleSpriteToggle = (0, import_react8.useCallback)((index) => {
       rendererRef.current?.toggleSpriteByIndex(index);
       if (rendererRef.current) refreshSpriteList(rendererRef.current);
-    }, [refreshSpriteList]);
+      markDirty();
+    }, [refreshSpriteList, markDirty]);
     const handleSpriteSelect = (0, import_react8.useCallback)((index) => {
       const pos = rendererRef.current?.getSpritePosition(index);
       const scaleInfo = rendererRef.current?.getSpriteScale(index);
@@ -69125,14 +69142,16 @@ ${e2}`);
         rendererRef.current.setSpritePosition(prev.index, x2, y2);
         return { ...prev, x: x2, y: y2 };
       });
-    }, []);
+      markDirty();
+    }, [markDirty]);
     const handleSpriteSizeChange = (0, import_react8.useCallback)((width, height) => {
       setSelectedSprite((prev) => {
         if (!prev) return null;
         rendererRef.current?.setSpriteSize(prev.index, width, height);
         return { ...prev, width, height };
       });
-    }, []);
+      markDirty();
+    }, [markDirty]);
     const handleSpriteDepthChange = (0, import_react8.useCallback)((depth) => {
       setSelectedSprite((prev) => {
         if (!prev) return null;
@@ -69141,14 +69160,16 @@ ${e2}`);
         if (rendererRef.current) refreshSpriteList(rendererRef.current);
         return { ...prev, index: newIndex, depth };
       });
-    }, [refreshSpriteList]);
+      markDirty();
+    }, [refreshSpriteList, markDirty]);
     const handleSpriteDepthApply = (0, import_react8.useCallback)((depth, spriteIndex) => {
       if (!rendererRef.current) return;
       rendererRef.current.setSpriteParallax(spriteIndex, depth);
       const newIndex = rendererRef.current.sortSpritesByParallax(spriteIndex);
       refreshSpriteList(rendererRef.current);
       setSelectedSprite((prev) => prev ? { ...prev, index: newIndex, depth } : null);
-    }, [refreshSpriteList]);
+      markDirty();
+    }, [refreshSpriteList, markDirty]);
     const handleAddSprite = (0, import_react8.useCallback)(async (textureResource) => {
       if (!rendererRef.current) return;
       const newIndex = await rendererRef.current.addSprite(textureResource, 5, 5, 1);
@@ -69160,14 +69181,16 @@ ${e2}`);
       const name = entries[newIndex]?.name || textureResource;
       setSelectedSprite({ index: newIndex, name, x: pos?.x ?? 0, y: pos?.y ?? 0, depth: 1, width: scaleInfo?.width ?? 5, height: scaleInfo?.height ?? 5 });
       rendererRef.current.setSelectedSpriteHighlight(newIndex);
-    }, [refreshSpriteList]);
+      markDirty();
+    }, [refreshSpriteList, markDirty]);
     const handleChangeTexture = (0, import_react8.useCallback)(async (index, textureResource) => {
       await rendererRef.current?.changeTexture(index, textureResource);
       const scaleInfo = rendererRef.current?.getSpriteScale(index);
       if (scaleInfo) {
         setSelectedSprite((prev) => prev?.index === index ? { ...prev, width: scaleInfo.width, height: scaleInfo.height } : prev);
       }
-    }, []);
+      markDirty();
+    }, [markDirty]);
     const handleDeleteSprite = (0, import_react8.useCallback)((index) => {
       if (!rendererRef.current) return;
       rendererRef.current.removeSpriteByIndex(index);
@@ -69178,7 +69201,8 @@ ${e2}`);
         if (prev.index > index) return { ...prev, index: prev.index - 1 };
         return prev;
       });
-    }, [refreshSpriteList]);
+      markDirty();
+    }, [refreshSpriteList, markDirty]);
     const handleRenameSprite = (0, import_react8.useCallback)((index, newName) => {
       if (!rendererRef.current) return;
       rendererRef.current.renameSpriteByIndex(index, newName);
@@ -69238,6 +69262,8 @@ ${e2}`);
       selectedSprite,
       setSelectedSprite,
       isSaving,
+      isDirty,
+      markDirty,
       phoneGuideVisible,
       loadScene,
       saveScene,
@@ -69423,7 +69449,7 @@ ${e2}`);
 
   // src/ScenePage.tsx
   var import_jsx_runtime13 = __toESM(require_jsx_runtime());
-  function ScenePage({ initialSceneId, onBack, onSaved }) {
+  function ScenePage({ initialSceneId, onBack, onSaved, onDirtyChange }) {
     const [scenes, setScenes] = (0, import_react11.useState)([]);
     const history = useUndoHistory();
     const { notifications, notify } = useNotifications();
@@ -69448,6 +69474,8 @@ ${e2}`);
       selectedSprite,
       setSelectedSprite,
       isSaving,
+      isDirty,
+      markDirty,
       phoneGuideVisible,
       loadScene,
       saveScene,
@@ -69474,6 +69502,25 @@ ${e2}`);
       handleGyroModeToggle,
       handleGyroOffset
     } = useSceneRenderer(notify, onSaved);
+    (0, import_react11.useEffect)(() => {
+      onDirtyChange?.(isDirty);
+    }, [isDirty, onDirtyChange]);
+    (0, import_react11.useEffect)(() => {
+      if (!isDirty) return;
+      const onBeforeUnload = (e2) => {
+        e2.preventDefault();
+      };
+      window.addEventListener("beforeunload", onBeforeUnload);
+      return () => window.removeEventListener("beforeunload", onBeforeUnload);
+    }, [isDirty]);
+    const handleBack = (0, import_react11.useCallback)(() => {
+      if (isDirty && !window.confirm("You have unsaved changes. Leave without saving?")) return;
+      onBack?.();
+    }, [isDirty, onBack]);
+    const handleSceneSelect = (0, import_react11.useCallback)((sceneId) => {
+      if (isDirty && !window.confirm("You have unsaved changes. Switch scenes without saving?")) return;
+      loadScene(sceneId);
+    }, [isDirty, loadScene]);
     const applySelectedSpriteMove = (0, import_react11.useCallback)((x2, y2) => {
       setSelectedSprite((prev) => prev ? { ...prev, x: x2, y: y2 } : null);
     }, [setSelectedSprite]);
@@ -69483,7 +69530,8 @@ ${e2}`);
     const handleTextureApply = (0, import_react11.useCallback)((index, textureResource, width, height, texCoordinates) => {
       rendererRef.current?.changeTexture(index, textureResource, { width, height }, texCoordinates);
       setSelectedSprite((prev) => prev?.index === index ? { ...prev, width, height } : prev);
-    }, [rendererRef, setSelectedSprite]);
+      markDirty();
+    }, [rendererRef, setSelectedSprite, markDirty]);
     const { handleCanvasMouseDown, cancelDrag } = useSpriteDrag({
       selectedSprite,
       rendererRef,
@@ -69648,6 +69696,7 @@ ${e2}`);
       }
     }, [selectedSprite, history]);
     const handleNewScene = (0, import_react11.useCallback)(async (label) => {
+      if (isDirty && !window.confirm("You have unsaved changes. Switch scenes without saving?")) return;
       const name = label.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
       const emptyScene = { sprites: [], xFocus: 0.5 };
       try {
@@ -69667,7 +69716,7 @@ ${e2}`);
       } catch {
         notify("Failed to create scene");
       }
-    }, [loadScene, notify]);
+    }, [isDirty, loadScene, notify]);
     return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_jsx_runtime13.Fragment, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
         TopBar,
@@ -69677,8 +69726,8 @@ ${e2}`);
           sceneLoaded: showSceneControls,
           isSaving,
           phoneGuideVisible,
-          onBack,
-          onSceneSelect: loadScene,
+          onBack: handleBack,
+          onSceneSelect: handleSceneSelect,
           onNewScene: handleNewScene,
           onPhoneGuideToggle: handlePhoneGuideToggle,
           onSave: saveScene,
@@ -70050,8 +70099,28 @@ ${e2}`);
   function App() {
     const [page, setPage] = (0, import_react15.useState)(pageFromPath);
     const [thumbBuster, setThumbBuster] = (0, import_react15.useState)(0);
+    const isDirtyRef = (0, import_react15.useRef)(false);
+    const pageRef = (0, import_react15.useRef)(page);
     (0, import_react15.useEffect)(() => {
-      const onPopState = () => setPage(pageFromPath());
+      pageRef.current = page;
+    }, [page]);
+    const handleDirtyChange = (0, import_react15.useCallback)((dirty) => {
+      isDirtyRef.current = dirty;
+    }, []);
+    (0, import_react15.useEffect)(() => {
+      const onPopState = () => {
+        const currentPage = pageRef.current;
+        if (currentPage.type !== "scene" || !isDirtyRef.current) {
+          setPage(pageFromPath());
+          return;
+        }
+        if (!window.confirm("You have unsaved changes. Leave without saving?")) {
+          window.history.pushState(null, "", `/project/${encodeURIComponent(currentPage.project.id)}/scene/${encodeURIComponent(currentPage.sceneId)}`);
+          return;
+        }
+        isDirtyRef.current = false;
+        setPage(pageFromPath());
+      };
       window.addEventListener("popstate", onPopState);
       return () => window.removeEventListener("popstate", onPopState);
     }, []);
@@ -70078,7 +70147,8 @@ ${e2}`);
         {
           initialSceneId: page.sceneId,
           onBack: () => navigateBackToScenes(page.project),
-          onSaved: handleSaved
+          onSaved: handleSaved,
+          onDirtyChange: handleDirtyChange
         }
       );
     }
