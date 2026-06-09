@@ -1,4 +1,4 @@
-import { insertProject, selectProjects, setProjectStatus } from './projectRepository';
+import { insertProject, selectProjectById, selectProjects, setProjectStatus } from './projectRepository';
 import { attachProjectThumbnailUrls, attachProjectsThumbnailUrls } from '../thumbnails';
 
 export async function listProjects(opts: { activeOnly?: boolean } = {}) {
@@ -16,5 +16,10 @@ export async function archiveProject(projectId: string) {
 
 export async function unarchiveProject(projectId: string) {
   const project = await setProjectStatus(projectId, 'ACTIVE');
+  return project ? attachProjectThumbnailUrls(project) : null;
+}
+
+export async function getProject(projectId: string) {
+  const project = await selectProjectById(projectId);
   return project ? attachProjectThumbnailUrls(project) : null;
 }
