@@ -9,9 +9,17 @@ export class ApiError extends Error {
   }
 }
 
+let unauthorizedHandler: (() => void) | null = null;
+export function setUnauthorizedHandler(handler: () => void) {
+  unauthorizedHandler = handler;
+}
+
 async function request<T>(input: string, init?: RequestInit): Promise<T> {
   const res = await fetch(input, init);
   if (!res.ok) {
+    if (res.status === 401) {
+      unauthorizedHandler?.();
+    }
     let message = `HTTP ${res.status}`;
     try {
       const body = await res.json();
@@ -108,5 +116,31 @@ export const spritesApi = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name }),
     });
+  },
+};
+
+export const authApi = {
+  me(): Promise<{ id: string; email: string }> {
+    return request<{ id: string; email: string }>('/api/auth/me');
+  },
+
+  login(email: string, password: string): Promise<{ id: string; email: string }> {
+    return request<{ id: string; email: string }>('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+  },
+
+  register(email: string, password: string): Promise<{ id: string; email: string }> {
+    return request<{ id: string; email: string }>('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+  },
+
+  logout(): Promise<void> {
+    return request<void>('/api/auth/logout', { method: 'POST' });
   },
 };

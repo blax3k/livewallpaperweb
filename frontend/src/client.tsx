@@ -5,6 +5,13 @@ import { createRoot } from 'react-dom/client';
 import { ScenePage } from './ScenePage';
 import { SceneListPage } from './SceneListPage';
 import { ProjectListPage } from './ProjectListPage';
+import { LoginPage } from './LoginPage';
+import { authApi, setUnauthorizedHandler } from './api';
+
+type AuthState =
+  | { status: 'loading' }
+  | { status: 'unauthenticated' }
+  | { status: 'authenticated'; user: { id: string; email: string } };
 
 interface ProjectRecord {
   id: string;
@@ -36,11 +43,24 @@ interface SceneRecord {
 }
 
 function App() {
+  const [authState, setAuthState] = useState<AuthState>({ status: 'loading' });
   const [page, setPage] = useState<Page>(pageFromPath);
   const [thumbBuster, setThumbBuster] = useState(0);
   const isDirtyRef = useRef(false);
   const pageRef = useRef(page);
   useEffect(() => { pageRef.current = page; }, [page]);
+
+  useEffect(() => {
+    setUnauthorizedHandler(() => setAuthState({ status: 'unauthenticated' }));
+    authApi.me()
+      .then(user => setAuthState({ status: 'authenticated', user }))
+      .catch(() => {});
+  }, []);
+
+  const handleLogout = useCallback(async () => {
+    await authApi.logout().catch(() => {});
+    setAuthState({ status: 'unauthenticated' });
+  }, []);
 
   const handleDirtyChange = useCallback((dirty: boolean) => {
     isDirtyRef.current = dirty;
@@ -89,6 +109,14 @@ function App() {
 
   const handleSaved = useCallback(() => setThumbBuster(b => b + 1), []);
 
+  if (authState.status === 'loading') {
+    return null;
+  }
+
+  if (authState.status === 'unauthenticated') {
+    return <LoginPage onAuthenticated={user => setAuthState({ status: 'authenticated', user })} />;
+  }
+
   if (page.type === 'scene') {
     return (
       <ScenePage
@@ -111,7 +139,7 @@ function App() {
     );
   }
 
-  return <ProjectListPage onSelect={navigateToProject} />;
+  return <ProjectListPage onSelect={navigateToProject} onLogout={handleLogout} />;
 }
 
 window.addEventListener('DOMContentLoaded', () => {

@@ -3,6 +3,7 @@ import './ProjectListPage.scss';
 import { NewProjectDialog } from './controls/NewProjectDialog';
 import { Button } from './components/Button';
 import { PageLayout, PageHeader, PageBody } from './components/PageLayout';
+import { projectsApi } from './api';
 
 type ProjectStatus = 'ACTIVE' | 'ARCHIVED' | 'DELETED';
 
@@ -16,6 +17,7 @@ interface ProjectRecord {
 
 interface ProjectListPageProps {
   onSelect: (project: ProjectRecord) => void;
+  onLogout?: () => void;
 }
 
 function ProjectCollage({ sceneIds, sceneThumbnailUrls }: { sceneIds: string[]; sceneThumbnailUrls?: string[] }) {
@@ -49,16 +51,15 @@ function ProjectCollage({ sceneIds, sceneThumbnailUrls }: { sceneIds: string[]; 
   );
 }
 
-export function ProjectListPage({ onSelect }: ProjectListPageProps) {
+export function ProjectListPage({ onSelect, onLogout }: ProjectListPageProps) {
   const [projects, setProjects] = useState<ProjectRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
   const [showArchived, setShowArchived] = useState(false);
 
   useEffect(() => {
-    fetch('/api/projects')
-      .then(r => r.json())
-      .then((records: ProjectRecord[]) => { setProjects(records); setLoading(false); })
+    projectsApi.list()
+      .then(records => { setProjects(records); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
 
@@ -66,48 +67,39 @@ export function ProjectListPage({ onSelect }: ProjectListPageProps) {
   const archivedProjects = projects.filter(project => project.status === 'ARCHIVED');
 
   const handleCreate = (name: string) => {
-    fetch('/api/projects', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name }),
-    })
-      .then(r => r.json())
-      .then((project: ProjectRecord) => {
-        setProjects(prev => [...prev, project].sort((a, b) => a.name.localeCompare(b.name)));
+    projectsApi.create(name)
+      .then(project => {
+        setProjects(prev => [...prev, project as ProjectRecord].sort((a, b) => a.name.localeCompare(b.name)));
         setShowDialog(false);
-      });
+      })
+      .catch(() => {});
   };
 
   const handleArchive = async (projectId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-
-    const res = await fetch(`/api/projects/${projectId}/archive`, { method: 'PATCH' });
-    if (!res.ok) {
+    try {
+      const updated = await projectsApi.archive(projectId);
+      setProjects(prev => prev.map(p => (p.id === updated.id ? updated as ProjectRecord : p)));
+    } catch {
       window.alert('Failed to archive project');
-      return;
     }
-
-    const archivedProject: ProjectRecord = await res.json();
-    setProjects(prev => prev.map(project => (project.id === archivedProject.id ? archivedProject : project)));
   };
 
   const handleUnarchive = async (projectId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-
-    const res = await fetch(`/api/projects/${projectId}/unarchive`, { method: 'PATCH' });
-    if (!res.ok) {
+    try {
+      const updated = await projectsApi.unarchive(projectId);
+      setProjects(prev => prev.map(p => (p.id === updated.id ? updated as ProjectRecord : p)));
+    } catch {
       window.alert('Failed to unarchive project');
-      return;
     }
-
-    const unarchivedProject: ProjectRecord = await res.json();
-    setProjects(prev => prev.map(project => (project.id === unarchivedProject.id ? unarchivedProject : project)));
   };
 
   return (
     <PageLayout>
       <PageHeader title="Projects">
         <Button onClick={() => setShowDialog(true)}>+ Project</Button>
+        {onLogout && <Button onClick={onLogout}>Log out</Button>}
       </PageHeader>
       <PageBody>
         {loading && <div className="project-list-empty">Loading…</div>}

@@ -1337,7 +1337,7 @@
           return dispatcher;
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var React13 = require_react(), Internals = {
+        var React14 = require_react(), Internals = {
           d: {
             f: noop,
             r: function() {
@@ -1355,7 +1355,7 @@
           },
           p: 0,
           findDOMNode: null
-        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React13.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React14.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
         "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
           "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
         );
@@ -2890,7 +2890,7 @@
           "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
         }
         function validateOptionProps(element, props) {
-          null == props.value && ("object" === typeof props.children && null !== props.children ? React13.Children.forEach(props.children, function(child) {
+          null == props.value && ("object" === typeof props.children && null !== props.children ? React14.Children.forEach(props.children, function(child) {
             null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
               "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
             ));
@@ -18522,14 +18522,14 @@
           ));
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var Scheduler = require_scheduler(), React13 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+        var Scheduler = require_scheduler(), React14 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
         /* @__PURE__ */ Symbol.for("react.scope");
         var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity");
         /* @__PURE__ */ Symbol.for("react.legacy_hidden");
         /* @__PURE__ */ Symbol.for("react.tracing_marker");
         var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel");
         /* @__PURE__ */ Symbol.for("react.view_transition");
-        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React13.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React14.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
           pending: false,
           data: null,
           method: null,
@@ -21317,7 +21317,7 @@
           }
         };
         (function() {
-          var isomorphicReactPackageVersion = React13.version;
+          var isomorphicReactPackageVersion = React14.version;
           if ("19.2.5" !== isomorphicReactPackageVersion)
             throw Error(
               'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.5\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21671,18 +21671,18 @@
         function isValidElement(object) {
           return "object" === typeof object && null !== object && object.$$typeof === REACT_ELEMENT_TYPE;
         }
-        var React13 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React13.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
+        var React14 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React14.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
           return null;
         };
-        React13 = {
+        React14 = {
           react_stack_bottom_frame: function(callStackForError) {
             return callStackForError();
           }
         };
         var specialPropKeyWarningShown;
         var didWarnAboutElementRef = {};
-        var unknownOwnerDebugStack = React13.react_stack_bottom_frame.bind(
-          React13,
+        var unknownOwnerDebugStack = React14.react_stack_bottom_frame.bind(
+          React14,
           UnknownOwner
         )();
         var unknownOwnerDebugTask = createTask(getTaskName(UnknownOwner));
@@ -64176,7 +64176,7 @@ ${parts.join("\n")}
   });
 
   // src/client.tsx
-  var import_react15 = __toESM(require_react());
+  var import_react16 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/ScenePage.tsx
@@ -68951,9 +68951,16 @@ ${e2}`);
       this.name = "ApiError";
     }
   };
+  var unauthorizedHandler = null;
+  function setUnauthorizedHandler(handler) {
+    unauthorizedHandler = handler;
+  }
   async function request(input, init2) {
     const res = await fetch(input, init2);
     if (!res.ok) {
+      if (res.status === 401) {
+        unauthorizedHandler?.();
+      }
       let message = `HTTP ${res.status}`;
       try {
         const body = await res.json();
@@ -68998,6 +69005,24 @@ ${e2}`);
       });
     }
   };
+  var projectsApi = {
+    list() {
+      return request("/api/projects");
+    },
+    create(name) {
+      return request("/api/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name })
+      });
+    },
+    archive(projectId) {
+      return request(`/api/projects/${projectId}/archive`, { method: "PATCH" });
+    },
+    unarchive(projectId) {
+      return request(`/api/projects/${projectId}/unarchive`, { method: "PATCH" });
+    }
+  };
   var spritesApi = {
     rename(spriteId, name) {
       return request(`/api/sprites/${spriteId}`, {
@@ -69005,6 +69030,28 @@ ${e2}`);
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name })
       });
+    }
+  };
+  var authApi = {
+    me() {
+      return request("/api/auth/me");
+    },
+    login(email, password) {
+      return request("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+    },
+    register(email, password) {
+      return request("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+    },
+    logout() {
+      return request("/api/auth/logout", { method: "POST" });
     }
   };
 
@@ -69972,13 +70019,13 @@ ${e2}`);
       ) }, i2);
     }) });
   }
-  function ProjectListPage({ onSelect }) {
+  function ProjectListPage({ onSelect, onLogout }) {
     const [projects, setProjects] = (0, import_react14.useState)([]);
     const [loading, setLoading] = (0, import_react14.useState)(true);
     const [showDialog, setShowDialog] = (0, import_react14.useState)(false);
     const [showArchived, setShowArchived] = (0, import_react14.useState)(false);
     (0, import_react14.useEffect)(() => {
-      fetch("/api/projects").then((r2) => r2.json()).then((records) => {
+      projectsApi.list().then((records) => {
         setProjects(records);
         setLoading(false);
       }).catch(() => setLoading(false));
@@ -69986,37 +70033,35 @@ ${e2}`);
     const activeProjects = projects.filter((project) => project.status === "ACTIVE");
     const archivedProjects = projects.filter((project) => project.status === "ARCHIVED");
     const handleCreate = (name) => {
-      fetch("/api/projects", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name })
-      }).then((r2) => r2.json()).then((project) => {
+      projectsApi.create(name).then((project) => {
         setProjects((prev) => [...prev, project].sort((a2, b2) => a2.name.localeCompare(b2.name)));
         setShowDialog(false);
+      }).catch(() => {
       });
     };
     const handleArchive = async (projectId, e2) => {
       e2.stopPropagation();
-      const res = await fetch(`/api/projects/${projectId}/archive`, { method: "PATCH" });
-      if (!res.ok) {
+      try {
+        const updated = await projectsApi.archive(projectId);
+        setProjects((prev) => prev.map((p2) => p2.id === updated.id ? updated : p2));
+      } catch {
         window.alert("Failed to archive project");
-        return;
       }
-      const archivedProject = await res.json();
-      setProjects((prev) => prev.map((project) => project.id === archivedProject.id ? archivedProject : project));
     };
     const handleUnarchive = async (projectId, e2) => {
       e2.stopPropagation();
-      const res = await fetch(`/api/projects/${projectId}/unarchive`, { method: "PATCH" });
-      if (!res.ok) {
+      try {
+        const updated = await projectsApi.unarchive(projectId);
+        setProjects((prev) => prev.map((p2) => p2.id === updated.id ? updated : p2));
+      } catch {
         window.alert("Failed to unarchive project");
-        return;
       }
-      const unarchivedProject = await res.json();
-      setProjects((prev) => prev.map((project) => project.id === unarchivedProject.id ? unarchivedProject : project));
     };
     return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(PageLayout, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(PageHeader, { title: "Projects", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button, { onClick: () => setShowDialog(true), children: "+ Project" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(PageHeader, { title: "Projects", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button, { onClick: () => setShowDialog(true), children: "+ Project" }),
+        onLogout && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button, { onClick: onLogout, children: "Log out" })
+      ] }),
       /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(PageBody, { children: [
         loading && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "project-list-empty", children: "Loading\u2026" }),
         !loading && projects.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "project-list-empty", children: "No projects yet. Create one to get started." }),
@@ -70080,8 +70125,82 @@ ${e2}`);
     ] });
   }
 
-  // src/client.tsx
+  // src/LoginPage.tsx
+  var import_react15 = __toESM(require_react());
   var import_jsx_runtime18 = __toESM(require_jsx_runtime());
+  function LoginPage({ onAuthenticated }) {
+    const [mode, setMode] = (0, import_react15.useState)("login");
+    const [email, setEmail] = (0, import_react15.useState)("");
+    const [password, setPassword] = (0, import_react15.useState)("");
+    const [error, setError] = (0, import_react15.useState)("");
+    const [loading, setLoading] = (0, import_react15.useState)(false);
+    const handleSubmit = async (e2) => {
+      e2.preventDefault();
+      setError("");
+      setLoading(true);
+      try {
+        const user = mode === "login" ? await authApi.login(email, password) : await authApi.register(email, password);
+        onAuthenticated(user);
+      } catch (err) {
+        if (err instanceof ApiError) {
+          setError(err.message);
+        } else {
+          setError("Something went wrong. Please try again.");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "login-page", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("form", { className: "login-card", onSubmit: handleSubmit, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "login-title", children: "Live Wallpaper Editor" }),
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "login-field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("label", { htmlFor: "email", children: "Email" }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+          "input",
+          {
+            id: "email",
+            type: "email",
+            value: email,
+            onChange: (e2) => setEmail(e2.target.value),
+            autoComplete: "email",
+            required: true
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "login-field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("label", { htmlFor: "password", children: "Password" }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+          "input",
+          {
+            id: "password",
+            type: "password",
+            value: password,
+            onChange: (e2) => setPassword(e2.target.value),
+            autoComplete: mode === "login" ? "current-password" : "new-password",
+            required: true
+          }
+        )
+      ] }),
+      error && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "login-error", children: error }),
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "login-submit", type: "submit", disabled: loading, children: loading ? "Please wait\u2026" : mode === "login" ? "Log in" : "Create account" }),
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "login-toggle", children: mode === "login" ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
+        "No account? ",
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { type: "button", onClick: () => {
+          setMode("register");
+          setError("");
+        }, children: "Register" })
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
+        "Already have an account? ",
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { type: "button", onClick: () => {
+          setMode("login");
+          setError("");
+        }, children: "Log in" })
+      ] }) })
+    ] }) });
+  }
+
+  // src/client.tsx
+  var import_jsx_runtime19 = __toESM(require_jsx_runtime());
   console.log("[bundle] loaded \u2014 build b85774b");
   function pageFromPath() {
     const sceneMatch = window.location.pathname.match(/^\/project\/([^/]+)\/scene\/([^/]+)$/);
@@ -70097,17 +70216,28 @@ ${e2}`);
     return { type: "projects" };
   }
   function App() {
-    const [page, setPage] = (0, import_react15.useState)(pageFromPath);
-    const [thumbBuster, setThumbBuster] = (0, import_react15.useState)(0);
-    const isDirtyRef = (0, import_react15.useRef)(false);
-    const pageRef = (0, import_react15.useRef)(page);
-    (0, import_react15.useEffect)(() => {
+    const [authState, setAuthState] = (0, import_react16.useState)({ status: "loading" });
+    const [page, setPage] = (0, import_react16.useState)(pageFromPath);
+    const [thumbBuster, setThumbBuster] = (0, import_react16.useState)(0);
+    const isDirtyRef = (0, import_react16.useRef)(false);
+    const pageRef = (0, import_react16.useRef)(page);
+    (0, import_react16.useEffect)(() => {
       pageRef.current = page;
     }, [page]);
-    const handleDirtyChange = (0, import_react15.useCallback)((dirty) => {
+    (0, import_react16.useEffect)(() => {
+      setUnauthorizedHandler(() => setAuthState({ status: "unauthenticated" }));
+      authApi.me().then((user) => setAuthState({ status: "authenticated", user })).catch(() => {
+      });
+    }, []);
+    const handleLogout = (0, import_react16.useCallback)(async () => {
+      await authApi.logout().catch(() => {
+      });
+      setAuthState({ status: "unauthenticated" });
+    }, []);
+    const handleDirtyChange = (0, import_react16.useCallback)((dirty) => {
       isDirtyRef.current = dirty;
     }, []);
-    (0, import_react15.useEffect)(() => {
+    (0, import_react16.useEffect)(() => {
       const onPopState = () => {
         const currentPage = pageRef.current;
         if (currentPage.type !== "scene" || !isDirtyRef.current) {
@@ -70124,25 +70254,31 @@ ${e2}`);
       window.addEventListener("popstate", onPopState);
       return () => window.removeEventListener("popstate", onPopState);
     }, []);
-    const navigateToProject = (0, import_react15.useCallback)((project) => {
+    const navigateToProject = (0, import_react16.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
       setPage({ type: "scenes", project });
     }, []);
-    const navigateToScene = (0, import_react15.useCallback)((scene, project) => {
+    const navigateToScene = (0, import_react16.useCallback)((scene, project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/scene/${encodeURIComponent(scene.id)}`);
       setPage({ type: "scene", sceneId: scene.id, project });
     }, []);
-    const navigateBackToProjects = (0, import_react15.useCallback)(() => {
+    const navigateBackToProjects = (0, import_react16.useCallback)(() => {
       window.history.pushState(null, "", "/");
       setPage({ type: "projects" });
     }, []);
-    const navigateBackToScenes = (0, import_react15.useCallback)((project) => {
+    const navigateBackToScenes = (0, import_react16.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
       setPage({ type: "scenes", project });
     }, []);
-    const handleSaved = (0, import_react15.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
+    const handleSaved = (0, import_react16.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
+    if (authState.status === "loading") {
+      return null;
+    }
+    if (authState.status === "unauthenticated") {
+      return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(LoginPage, { onAuthenticated: (user) => setAuthState({ status: "authenticated", user }) });
+    }
     if (page.type === "scene") {
-      return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
         ScenePage,
         {
           initialSceneId: page.sceneId,
@@ -70153,7 +70289,7 @@ ${e2}`);
       );
     }
     if (page.type === "scenes") {
-      return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
         SceneListPage,
         {
           onSelect: (scene) => navigateToScene(scene, page.project),
@@ -70163,11 +70299,11 @@ ${e2}`);
         }
       );
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ProjectListPage, { onSelect: navigateToProject });
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ProjectListPage, { onSelect: navigateToProject, onLogout: handleLogout });
   }
   window.addEventListener("DOMContentLoaded", () => {
     const root = (0, import_client.createRoot)(document.body);
-    root.render(/* @__PURE__ */ (0, import_jsx_runtime18.jsx)(App, {}));
+    root.render(/* @__PURE__ */ (0, import_jsx_runtime19.jsx)(App, {}));
   });
 })();
 /*! Bundled license information:
