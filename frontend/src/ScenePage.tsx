@@ -129,8 +129,8 @@ export function ScenePage({ initialSceneId, onBack, onSaved, onDirtyChange }: Sc
   useEffect(() => {
     fetch('/api/scenes')
       .then(r => r.json())
-      .then((data: { id: string; label: string }[]) =>
-        setScenes(data.map(s => ({ value: s.id, label: s.label })))
+      .then((data: { id: string; label: string; thumbnail_url?: string }[]) =>
+        setScenes(data.map(s => ({ value: s.id, label: s.label, thumbnail_url: s.thumbnail_url })))
       )
       .catch(() => {});
   }, []);
@@ -296,7 +296,7 @@ export function ScenePage({ initialSceneId, onBack, onSaved, onDirtyChange }: Sc
     }
   }, [selectedSprite, history]);
 
-  const handleNewScene = useCallback(async (label: string) => {
+  const handleNewScene = useCallback(async (label: string, copyFromSceneId?: string) => {
     if (isDirty && !window.confirm('You have unsaved changes. Switch scenes without saving?')) return;
     const name = label.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
     const emptyScene = { sprites: [], xFocus: 0.5 };
@@ -304,15 +304,15 @@ export function ScenePage({ initialSceneId, onBack, onSaved, onDirtyChange }: Sc
       const response = await fetch('/api/scenes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, label, data: emptyScene }),
+        body: JSON.stringify({ name, label, data: emptyScene, copyFromSceneId }),
       });
       if (!response.ok) {
         const err = await response.json().catch(() => ({}));
         notify((err as { error?: string }).error ?? 'Failed to create scene');
         return;
       }
-      const scene: { id: string; label: string } = await response.json();
-      setScenes(prev => [...prev, { value: scene.id, label: scene.label }].sort((a, b) => a.label.localeCompare(b.label)));
+      const scene: { id: string; label: string; thumbnail_url?: string } = await response.json();
+      setScenes(prev => [...prev, { value: scene.id, label: scene.label, thumbnail_url: scene.thumbnail_url }].sort((a, b) => a.label.localeCompare(b.label)));
       loadScene(scene.id);
     } catch {
       notify('Failed to create scene');

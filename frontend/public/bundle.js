@@ -1337,7 +1337,7 @@
           return dispatcher;
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var React14 = require_react(), Internals = {
+        var React15 = require_react(), Internals = {
           d: {
             f: noop,
             r: function() {
@@ -1355,7 +1355,7 @@
           },
           p: 0,
           findDOMNode: null
-        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React14.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React15.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
         "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
           "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
         );
@@ -2890,7 +2890,7 @@
           "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
         }
         function validateOptionProps(element, props) {
-          null == props.value && ("object" === typeof props.children && null !== props.children ? React14.Children.forEach(props.children, function(child) {
+          null == props.value && ("object" === typeof props.children && null !== props.children ? React15.Children.forEach(props.children, function(child) {
             null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
               "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
             ));
@@ -18522,14 +18522,14 @@
           ));
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var Scheduler = require_scheduler(), React14 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+        var Scheduler = require_scheduler(), React15 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
         /* @__PURE__ */ Symbol.for("react.scope");
         var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity");
         /* @__PURE__ */ Symbol.for("react.legacy_hidden");
         /* @__PURE__ */ Symbol.for("react.tracing_marker");
         var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel");
         /* @__PURE__ */ Symbol.for("react.view_transition");
-        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React14.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React15.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
           pending: false,
           data: null,
           method: null,
@@ -21317,7 +21317,7 @@
           }
         };
         (function() {
-          var isomorphicReactPackageVersion = React14.version;
+          var isomorphicReactPackageVersion = React15.version;
           if ("19.2.5" !== isomorphicReactPackageVersion)
             throw Error(
               'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.5\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21671,18 +21671,18 @@
         function isValidElement(object) {
           return "object" === typeof object && null !== object && object.$$typeof === REACT_ELEMENT_TYPE;
         }
-        var React14 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React14.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
+        var React15 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React15.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
           return null;
         };
-        React14 = {
+        React15 = {
           react_stack_bottom_frame: function(callStackForError) {
             return callStackForError();
           }
         };
         var specialPropKeyWarningShown;
         var didWarnAboutElementRef = {};
-        var unknownOwnerDebugStack = React14.react_stack_bottom_frame.bind(
-          React14,
+        var unknownOwnerDebugStack = React15.react_stack_bottom_frame.bind(
+          React15,
           UnknownOwner
         )();
         var unknownOwnerDebugTask = createTask(getTaskName(UnknownOwner));
@@ -64176,11 +64176,11 @@ ${parts.join("\n")}
   });
 
   // src/client.tsx
-  var import_react16 = __toESM(require_react());
+  var import_react17 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/ScenePage.tsx
-  var import_react11 = __toESM(require_react());
+  var import_react12 = __toESM(require_react());
 
   // src/controls/SpriteListPanel.tsx
   var import_react2 = __toESM(require_react());
@@ -64857,7 +64857,7 @@ ${parts.join("\n")}
   }
 
   // src/controls/TopBar.tsx
-  var import_react4 = __toESM(require_react());
+  var import_react5 = __toESM(require_react());
 
   // src/controls/PhoneGuideControl.tsx
   var import_jsx_runtime8 = __toESM(require_jsx_runtime());
@@ -64878,28 +64878,61 @@ ${parts.join("\n")}
   }
 
   // src/controls/NewSceneDialog.tsx
+  var import_react4 = __toESM(require_react());
+
+  // src/components/SceneCard.tsx
   var import_react3 = __toESM(require_react());
   var import_jsx_runtime9 = __toESM(require_jsx_runtime());
-  function NewSceneDialog({ onConfirm, onCancel }) {
-    const [name, setName] = (0, import_react3.useState)("");
-    const inputRef = (0, import_react3.useRef)(null);
+  function SceneCard({ label, thumbnail_url, selected, onClick, thumbBuster = 0 }) {
+    const [thumbFailed, setThumbFailed] = (0, import_react3.useState)(false);
     (0, import_react3.useEffect)(() => {
+      setThumbFailed(false);
+    }, [thumbnail_url, thumbBuster]);
+    const thumbnailSrc = thumbnail_url ? `${thumbnail_url}${thumbnail_url.includes("?") ? "&" : "?"}v=${thumbBuster}` : null;
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(
+      "div",
+      {
+        className: `scene-card${selected ? " scene-card--selected" : ""}`,
+        onClick,
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "scene-card-preview", children: thumbnailSrc && !thumbFailed ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+            "img",
+            {
+              src: thumbnailSrc,
+              alt: label,
+              className: "scene-card-thumb",
+              onError: () => setThumbFailed(true)
+            }
+          ) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "scene-card-icon", children: "\u{1F3AC}" }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "scene-card-label", children: label })
+        ]
+      }
+    );
+  }
+
+  // src/controls/NewSceneDialog.tsx
+  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
+  function NewSceneDialog({ onConfirm, onCancel, scenes = [] }) {
+    const [name, setName] = (0, import_react4.useState)("");
+    const [copyFromId, setCopyFromId] = (0, import_react4.useState)(void 0);
+    const inputRef = (0, import_react4.useRef)(null);
+    (0, import_react4.useEffect)(() => {
       inputRef.current?.focus();
     }, []);
     const handleSubmit = (e2) => {
       e2.preventDefault();
       const trimmed = name.trim();
-      if (trimmed) onConfirm(trimmed);
+      if (trimmed) onConfirm(trimmed, copyFromId);
     };
     const handleKeyDown = (e2) => {
       if (e2.key === "Escape") onCancel();
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "new-scene-overlay", onKeyDown: handleKeyDown, children: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "new-scene-dialog", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h2", { className: "new-scene-title", children: "New Scene" }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("form", { onSubmit: handleSubmit, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "new-scene-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("label", { htmlFor: "new-scene-name", children: "Scene name" }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "new-scene-overlay", onKeyDown: handleKeyDown, children: /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "new-scene-dialog", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h2", { className: "new-scene-title", children: "New Scene" }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("form", { onSubmit: handleSubmit, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "new-scene-field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("label", { htmlFor: "new-scene-name", children: "Scene name" }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
             "input",
             {
               id: "new-scene-name",
@@ -64911,41 +64944,65 @@ ${parts.join("\n")}
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "new-scene-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Button, { type: "button", onClick: onCancel, children: "Cancel" }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Button, { type: "submit", variant: "primary", disabled: !name.trim(), children: "OK" })
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "new-scene-field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("label", { children: "Copy from" }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "new-scene-copy-grid", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+              SceneCard,
+              {
+                label: "Blank",
+                selected: copyFromId === void 0,
+                onClick: () => setCopyFromId(void 0)
+              }
+            ),
+            scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+              SceneCard,
+              {
+                label: scene.label,
+                thumbnail_url: scene.thumbnail_url,
+                selected: copyFromId === scene.id,
+                onClick: () => setCopyFromId(scene.id)
+              },
+              scene.id
+            ))
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "new-scene-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Button, { type: "button", onClick: onCancel, children: "Cancel" }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Button, { type: "submit", variant: "primary", disabled: !name.trim(), children: "OK" })
         ] })
       ] })
     ] }) });
   }
 
   // src/controls/TopBar.tsx
-  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime11 = __toESM(require_jsx_runtime());
   function TopBar({ scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, onBack, onSceneSelect, onNewScene, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }) {
-    const [dialogOpen, setDialogOpen] = (0, import_react4.useState)(false);
-    const [libraryOpen, setLibraryOpen] = (0, import_react4.useState)(false);
-    const handleConfirm = (label) => {
+    const [dialogOpen, setDialogOpen] = (0, import_react5.useState)(false);
+    const [libraryOpen, setLibraryOpen] = (0, import_react5.useState)(false);
+    const handleConfirm = (label, copyFromSceneId) => {
       setDialogOpen(false);
-      onNewScene(label);
+      onNewScene(label, copyFromSceneId);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "top-bar", children: [
-      onBack && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Button, { onClick: onBack, title: "Back to scenes", children: "\u2190 Scenes" }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Button, { onClick: () => setDialogOpen(true), children: "+ New Scene" }),
-      dialogOpen && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "top-bar", children: [
+      onBack && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Button, { onClick: onBack, title: "Back to scenes", children: "\u2190 Scenes" }),
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Button, { onClick: () => setDialogOpen(true), children: "+ New Scene" }),
+      dialogOpen && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
         NewSceneDialog,
         {
           onConfirm: handleConfirm,
-          onCancel: () => setDialogOpen(false)
+          onCancel: () => setDialogOpen(false),
+          scenes: scenes.map((s2) => ({ id: s2.value, label: s2.label, thumbnail_url: s2.thumbnail_url }))
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Button, { onClick: () => setLibraryOpen(true), title: "Browse and upload images", children: "Image Library" }),
-      libraryOpen && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Button, { onClick: () => setLibraryOpen(true), title: "Browse and upload images", children: "Image Library" }),
+      libraryOpen && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
         ImageLibraryModal,
         {
           onClose: () => setLibraryOpen(false)
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
         PhoneGuideControl,
         {
           checked: phoneGuideVisible,
@@ -64953,14 +65010,14 @@ ${parts.join("\n")}
           onChange: onPhoneGuideToggle
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Button, { onClick: onZoomOut, disabled: !sceneLoaded, title: "Zoom out", children: "\uFF0D" }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { className: "zoom-indicator", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Button, { onClick: onZoomOut, disabled: !sceneLoaded, title: "Zoom out", children: "\uFF0D" }),
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { className: "zoom-indicator", children: [
         Math.round(zoom * 100),
         "%"
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Button, { onClick: onZoomIn, disabled: !sceneLoaded, title: "Zoom in", children: "\uFF0B" }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Button, { onClick: onCenter, disabled: !sceneLoaded, children: "Center" }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Button, { onClick: onZoomIn, disabled: !sceneLoaded, title: "Zoom in", children: "\uFF0B" }),
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Button, { onClick: onCenter, disabled: !sceneLoaded, children: "Center" }),
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
         Button,
         {
           onClick: onGyroModeToggle,
@@ -64970,19 +65027,19 @@ ${parts.join("\n")}
           children: gyroMode ? "\u{1F4F1} Gyro" : "\u{1F5B1} Default"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Button, { onClick: onSave, disabled: isSaving || !sceneLoaded, children: isSaving ? "Saving..." : "Save Scene" })
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Button, { onClick: onSave, disabled: isSaving || !sceneLoaded, children: isSaving ? "Saving..." : "Save Scene" })
     ] });
   }
 
   // src/controls/NotificationStack.tsx
-  var import_jsx_runtime11 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
   function NotificationStack({ notifications }) {
     if (notifications.length === 0) return null;
-    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "notification-stack", children: notifications.map((n2) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "notification-card", children: n2.message }, n2.id)) });
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "notification-stack", children: notifications.map((n2) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "notification-card", children: n2.message }, n2.id)) });
   }
 
   // src/controls/EditTextureModal.tsx
-  var import_react5 = __toESM(require_react());
+  var import_react6 = __toESM(require_react());
 
   // ../node_modules/pixi.js/lib/environment-browser/browserExt.mjs
   init_Extensions();
@@ -67729,7 +67786,7 @@ ${e2}`);
   }
 
   // src/controls/EditTextureModal.tsx
-  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
   function imageUrlFromResource(textureResource) {
     if (textureResource.startsWith("/")) return textureResource;
     return /\.(png|jpg|jpeg|gif|webp)$/i.test(textureResource) ? `/images/${textureResource}` : `/images/${textureResource}.png`;
@@ -67750,26 +67807,26 @@ ${e2}`);
     onApply,
     onClose
   }) {
-    const originalTexCoords = (0, import_react5.useRef)(texCoordinates);
-    const originalWidth = (0, import_react5.useRef)(initWidth);
-    const originalHeight = (0, import_react5.useRef)(initHeight);
-    const [state, setState] = (0, import_react5.useState)(() => ({
+    const originalTexCoords = (0, import_react6.useRef)(texCoordinates);
+    const originalWidth = (0, import_react6.useRef)(initWidth);
+    const originalHeight = (0, import_react6.useRef)(initHeight);
+    const [state, setState] = (0, import_react6.useState)(() => ({
       width: initWidth,
       height: initHeight,
       textureScale: extractInitialScale(texCoordinates),
       offsetU: 0,
       offsetV: 0
     }));
-    const stateRef = (0, import_react5.useRef)(state);
+    const stateRef = (0, import_react6.useRef)(state);
     stateRef.current = state;
-    const containerRef = (0, import_react5.useRef)(null);
-    const pixiAppRef = (0, import_react5.useRef)(null);
-    const pixiSpriteRef = (0, import_react5.useRef)(null);
-    const pixiHighlightRef = (0, import_react5.useRef)(null);
-    const baseTextureRef = (0, import_react5.useRef)(null);
-    const dragging = (0, import_react5.useRef)(false);
-    const lastMousePos = (0, import_react5.useRef)({ x: 0, y: 0 });
-    const updatePixiSprite = (0, import_react5.useCallback)((s2) => {
+    const containerRef = (0, import_react6.useRef)(null);
+    const pixiAppRef = (0, import_react6.useRef)(null);
+    const pixiSpriteRef = (0, import_react6.useRef)(null);
+    const pixiHighlightRef = (0, import_react6.useRef)(null);
+    const baseTextureRef = (0, import_react6.useRef)(null);
+    const dragging = (0, import_react6.useRef)(false);
+    const lastMousePos = (0, import_react6.useRef)({ x: 0, y: 0 });
+    const updatePixiSprite = (0, import_react6.useCallback)((s2) => {
       const sprite = pixiSpriteRef.current;
       const highlight = pixiHighlightRef.current;
       const baseTexture = baseTextureRef.current;
@@ -67811,7 +67868,7 @@ ${e2}`);
         highlight.moveTo(left, top).lineTo(left + sprite.width, top).lineTo(left + sprite.width, top + sprite.height).lineTo(left, top + sprite.height).lineTo(left, top).stroke({ color: 65280, width: 2, alpha: 0.85 });
       }
     }, []);
-    (0, import_react5.useEffect)(() => {
+    (0, import_react6.useEffect)(() => {
       let app = null;
       let cancelled = false;
       const init2 = async () => {
@@ -67863,10 +67920,10 @@ ${e2}`);
         }
       };
     }, [textureResource]);
-    (0, import_react5.useEffect)(() => {
+    (0, import_react6.useEffect)(() => {
       updatePixiSprite(state);
     }, [state, updatePixiSprite]);
-    (0, import_react5.useEffect)(() => {
+    (0, import_react6.useEffect)(() => {
       const onMove = (e2) => {
         if (!dragging.current || !containerRef.current) return;
         const dx = e2.clientX - lastMousePos.current.x;
@@ -67916,18 +67973,18 @@ ${e2}`);
       );
       onApply(buildTexCoordArray(win), s2.width, s2.height);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "edit-texture-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "edit-texture-modal", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "edit-texture-header", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "edit-texture-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "edit-texture-modal", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "edit-texture-header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { children: [
           "Edit Texture \u2014 ",
           spriteName
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { className: "edit-texture-close", onClick: onClose, children: "\u2715" })
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("button", { className: "edit-texture-close", onClick: onClose, children: "\u2715" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "edit-texture-body", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "edit-texture-controls", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { className: "edit-texture-hint", children: "Drag the preview to pan the texture" }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "edit-texture-body", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "edit-texture-controls", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { className: "edit-texture-hint", children: "Drag the preview to pan the texture" }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
             SliderRow,
             {
               label: "Width",
@@ -67941,7 +67998,7 @@ ${e2}`);
               onChange: (v2) => setState((prev) => ({ ...prev, width: Math.max(WIDTH_MIN, Math.min(WIDTH_MAX, v2)) }))
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
             SliderRow,
             {
               label: "Height",
@@ -67955,7 +68012,7 @@ ${e2}`);
               onChange: (v2) => setState((prev) => ({ ...prev, height: Math.max(WIDTH_MIN, Math.min(WIDTH_MAX, v2)) }))
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
             SliderRow,
             {
               label: "Tex Scale",
@@ -67970,7 +68027,7 @@ ${e2}`);
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
           "div",
           {
             className: "edit-texture-preview",
@@ -67979,18 +68036,18 @@ ${e2}`);
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "edit-texture-footer", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Button, { onClick: onClose, children: "Cancel" }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Button, { variant: "primary", onClick: handleApply, children: "Apply" })
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "edit-texture-footer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Button, { onClick: onClose, children: "Cancel" }),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Button, { variant: "primary", onClick: handleApply, children: "Apply" })
       ] })
     ] }) });
   }
 
   // src/hooks/useUndoHistory.ts
-  var import_react6 = __toESM(require_react());
+  var import_react7 = __toESM(require_react());
   function useUndoHistory() {
-    const past = (0, import_react6.useRef)([]);
-    const future = (0, import_react6.useRef)([]);
+    const past = (0, import_react7.useRef)([]);
+    const future = (0, import_react7.useRef)([]);
     function push(action) {
       past.current = [...past.current, action];
       future.current = [];
@@ -68017,10 +68074,10 @@ ${e2}`);
   }
 
   // src/hooks/useNotifications.ts
-  var import_react7 = __toESM(require_react());
+  var import_react8 = __toESM(require_react());
   function useNotifications() {
-    const [notifications, setNotifications] = (0, import_react7.useState)([]);
-    const notify = (0, import_react7.useCallback)((message) => {
+    const [notifications, setNotifications] = (0, import_react8.useState)([]);
+    const notify = (0, import_react8.useCallback)((message) => {
       const id = Date.now();
       setNotifications((prev) => [...prev, { id, message }]);
       setTimeout(() => {
@@ -68031,7 +68088,7 @@ ${e2}`);
   }
 
   // src/hooks/useSceneRenderer.ts
-  var import_react8 = __toESM(require_react());
+  var import_react9 = __toESM(require_react());
 
   // src/renderers/PhoneGuide.ts
   var PhoneGuide = class {
@@ -69057,40 +69114,40 @@ ${e2}`);
 
   // src/hooks/useSceneRenderer.ts
   function useSceneRenderer(onNotify, onSaved) {
-    const [showSceneControls, setShowSceneControls] = (0, import_react8.useState)(false);
-    const [currentSceneId, setCurrentSceneId] = (0, import_react8.useState)(null);
-    const [xFocus, setXFocus] = (0, import_react8.useState)(0.5);
-    const [startTime, setStartTime] = (0, import_react8.useState)(0);
-    const [endTime, setEndTime] = (0, import_react8.useState)(1439);
-    const [spriteEntries, setSpriteEntries] = (0, import_react8.useState)([]);
-    const [selectedSprite, setSelectedSprite] = (0, import_react8.useState)(null);
-    const [isSaving, setIsSaving] = (0, import_react8.useState)(false);
-    const [isDirty, setIsDirty] = (0, import_react8.useState)(false);
-    const isDirtyRef = (0, import_react8.useRef)(false);
-    const [phoneGuideVisible, setPhoneGuideVisible] = (0, import_react8.useState)(true);
-    const [zoom, setZoom] = (0, import_react8.useState)(1);
-    const onNotifyRef = (0, import_react8.useRef)(onNotify);
+    const [showSceneControls, setShowSceneControls] = (0, import_react9.useState)(false);
+    const [currentSceneId, setCurrentSceneId] = (0, import_react9.useState)(null);
+    const [xFocus, setXFocus] = (0, import_react9.useState)(0.5);
+    const [startTime, setStartTime] = (0, import_react9.useState)(0);
+    const [endTime, setEndTime] = (0, import_react9.useState)(1439);
+    const [spriteEntries, setSpriteEntries] = (0, import_react9.useState)([]);
+    const [selectedSprite, setSelectedSprite] = (0, import_react9.useState)(null);
+    const [isSaving, setIsSaving] = (0, import_react9.useState)(false);
+    const [isDirty, setIsDirty] = (0, import_react9.useState)(false);
+    const isDirtyRef = (0, import_react9.useRef)(false);
+    const [phoneGuideVisible, setPhoneGuideVisible] = (0, import_react9.useState)(true);
+    const [zoom, setZoom] = (0, import_react9.useState)(1);
+    const onNotifyRef = (0, import_react9.useRef)(onNotify);
     onNotifyRef.current = onNotify;
-    const onSavedRef = (0, import_react8.useRef)(onSaved);
+    const onSavedRef = (0, import_react9.useRef)(onSaved);
     onSavedRef.current = onSaved;
-    const markDirty = (0, import_react8.useCallback)(() => {
+    const markDirty = (0, import_react9.useCallback)(() => {
       if (isDirtyRef.current) return;
       isDirtyRef.current = true;
       setIsDirty(true);
     }, []);
-    const markClean = (0, import_react8.useCallback)(() => {
+    const markClean = (0, import_react9.useCallback)(() => {
       isDirtyRef.current = false;
       setIsDirty(false);
     }, []);
-    const phoneGuideVisibleRef = (0, import_react8.useRef)(true);
-    const canvasRef = (0, import_react8.useRef)(null);
-    const rendererRef = (0, import_react8.useRef)(null);
-    const sceneIdRef = (0, import_react8.useRef)(null);
-    const sceneLabelRef = (0, import_react8.useRef)(null);
-    const refreshSpriteList = (0, import_react8.useCallback)((r2) => {
+    const phoneGuideVisibleRef = (0, import_react9.useRef)(true);
+    const canvasRef = (0, import_react9.useRef)(null);
+    const rendererRef = (0, import_react9.useRef)(null);
+    const sceneIdRef = (0, import_react9.useRef)(null);
+    const sceneLabelRef = (0, import_react9.useRef)(null);
+    const refreshSpriteList = (0, import_react9.useCallback)((r2) => {
       setSpriteEntries([...r2.getSpriteEntries()]);
     }, []);
-    const loadScene = (0, import_react8.useCallback)(async (sceneId) => {
+    const loadScene = (0, import_react9.useCallback)(async (sceneId) => {
       try {
         const scene = await scenesApi.get(sceneId);
         const sceneData = scene.data;
@@ -69125,7 +69182,7 @@ ${e2}`);
         console.error("Failed to load scene:", error);
       }
     }, [refreshSpriteList, markClean]);
-    const saveScene = (0, import_react8.useCallback)(async () => {
+    const saveScene = (0, import_react9.useCallback)(async () => {
       const sceneId = sceneIdRef.current;
       const label = sceneLabelRef.current;
       const data = rendererRef.current?.getSceneData();
@@ -69147,33 +69204,33 @@ ${e2}`);
         setIsSaving(false);
       }
     }, [markClean]);
-    const handleXFocusChange = (0, import_react8.useCallback)((value) => {
+    const handleXFocusChange = (0, import_react9.useCallback)((value) => {
       setXFocus(value);
       rendererRef.current?.setScrollOffset(value);
       markDirty();
     }, [markDirty]);
-    const handleStartTimeChange = (0, import_react8.useCallback)((value) => {
+    const handleStartTimeChange = (0, import_react9.useCallback)((value) => {
       setStartTime(value);
       rendererRef.current?.setStartTime(value);
       markDirty();
     }, [markDirty]);
-    const handleEndTimeChange = (0, import_react8.useCallback)((value) => {
+    const handleEndTimeChange = (0, import_react9.useCallback)((value) => {
       setEndTime(value);
       rendererRef.current?.setEndTime(value);
       markDirty();
     }, [markDirty]);
-    const handlePhoneGuideToggle = (0, import_react8.useCallback)((visible) => {
+    const handlePhoneGuideToggle = (0, import_react9.useCallback)((visible) => {
       phoneGuideVisibleRef.current = visible;
       setPhoneGuideVisible(visible);
       if (visible) rendererRef.current?.showGuide();
       else rendererRef.current?.hideGuide();
     }, []);
-    const handleSpriteToggle = (0, import_react8.useCallback)((index) => {
+    const handleSpriteToggle = (0, import_react9.useCallback)((index) => {
       rendererRef.current?.toggleSpriteByIndex(index);
       if (rendererRef.current) refreshSpriteList(rendererRef.current);
       markDirty();
     }, [refreshSpriteList, markDirty]);
-    const handleSpriteSelect = (0, import_react8.useCallback)((index) => {
+    const handleSpriteSelect = (0, import_react9.useCallback)((index) => {
       const pos = rendererRef.current?.getSpritePosition(index);
       const scaleInfo = rendererRef.current?.getSpriteScale(index);
       const name = spriteEntries[index]?.name || `Sprite ${index}`;
@@ -69182,7 +69239,7 @@ ${e2}`);
         rendererRef.current?.setSelectedSpriteHighlight(index);
       }
     }, [spriteEntries]);
-    const handleSpritePositionChange = (0, import_react8.useCallback)((x2, y2) => {
+    const handleSpritePositionChange = (0, import_react9.useCallback)((x2, y2) => {
       if (!rendererRef.current) return;
       setSelectedSprite((prev) => {
         if (!prev) return null;
@@ -69191,7 +69248,7 @@ ${e2}`);
       });
       markDirty();
     }, [markDirty]);
-    const handleSpriteSizeChange = (0, import_react8.useCallback)((width, height) => {
+    const handleSpriteSizeChange = (0, import_react9.useCallback)((width, height) => {
       setSelectedSprite((prev) => {
         if (!prev) return null;
         rendererRef.current?.setSpriteSize(prev.index, width, height);
@@ -69199,7 +69256,7 @@ ${e2}`);
       });
       markDirty();
     }, [markDirty]);
-    const handleSpriteDepthChange = (0, import_react8.useCallback)((depth) => {
+    const handleSpriteDepthChange = (0, import_react9.useCallback)((depth) => {
       setSelectedSprite((prev) => {
         if (!prev) return null;
         rendererRef.current?.setSpriteParallax(prev.index, depth);
@@ -69209,7 +69266,7 @@ ${e2}`);
       });
       markDirty();
     }, [refreshSpriteList, markDirty]);
-    const handleSpriteDepthApply = (0, import_react8.useCallback)((depth, spriteIndex) => {
+    const handleSpriteDepthApply = (0, import_react9.useCallback)((depth, spriteIndex) => {
       if (!rendererRef.current) return;
       rendererRef.current.setSpriteParallax(spriteIndex, depth);
       const newIndex = rendererRef.current.sortSpritesByParallax(spriteIndex);
@@ -69217,7 +69274,7 @@ ${e2}`);
       setSelectedSprite((prev) => prev ? { ...prev, index: newIndex, depth } : null);
       markDirty();
     }, [refreshSpriteList, markDirty]);
-    const handleAddSprite = (0, import_react8.useCallback)(async (textureResource) => {
+    const handleAddSprite = (0, import_react9.useCallback)(async (textureResource) => {
       if (!rendererRef.current) return;
       const newIndex = await rendererRef.current.addSprite(textureResource, 5, 5, 1);
       if (newIndex < 0) return;
@@ -69230,7 +69287,7 @@ ${e2}`);
       rendererRef.current.setSelectedSpriteHighlight(newIndex);
       markDirty();
     }, [refreshSpriteList, markDirty]);
-    const handleChangeTexture = (0, import_react8.useCallback)(async (index, textureResource) => {
+    const handleChangeTexture = (0, import_react9.useCallback)(async (index, textureResource) => {
       await rendererRef.current?.changeTexture(index, textureResource);
       const scaleInfo = rendererRef.current?.getSpriteScale(index);
       if (scaleInfo) {
@@ -69238,7 +69295,7 @@ ${e2}`);
       }
       markDirty();
     }, [markDirty]);
-    const handleDeleteSprite = (0, import_react8.useCallback)((index) => {
+    const handleDeleteSprite = (0, import_react9.useCallback)((index) => {
       if (!rendererRef.current) return;
       rendererRef.current.removeSpriteByIndex(index);
       refreshSpriteList(rendererRef.current);
@@ -69250,7 +69307,7 @@ ${e2}`);
       });
       markDirty();
     }, [refreshSpriteList, markDirty]);
-    const handleRenameSprite = (0, import_react8.useCallback)((index, newName) => {
+    const handleRenameSprite = (0, import_react9.useCallback)((index, newName) => {
       if (!rendererRef.current) return;
       rendererRef.current.renameSpriteByIndex(index, newName);
       refreshSpriteList(rendererRef.current);
@@ -69260,15 +69317,15 @@ ${e2}`);
       }
     }, [refreshSpriteList]);
     const ZOOM_FACTOR = 1.25;
-    const handleZoomIn = (0, import_react8.useCallback)(() => {
+    const handleZoomIn = (0, import_react9.useCallback)(() => {
       rendererRef.current?.zoomAtCenter(ZOOM_FACTOR);
       setZoom(rendererRef.current?.getZoom() ?? 1);
     }, []);
-    const handleZoomOut = (0, import_react8.useCallback)(() => {
+    const handleZoomOut = (0, import_react9.useCallback)(() => {
       rendererRef.current?.zoomAtCenter(1 / ZOOM_FACTOR);
       setZoom(rendererRef.current?.getZoom() ?? 1);
     }, []);
-    const handleZoomAtPoint = (0, import_react8.useCallback)((cssX, cssY, factor) => {
+    const handleZoomAtPoint = (0, import_react9.useCallback)((cssX, cssY, factor) => {
       if (factor >= 1) {
         rendererRef.current?.zoomAt(cssX, cssY, factor);
       } else {
@@ -69276,12 +69333,12 @@ ${e2}`);
       }
       setZoom(rendererRef.current?.getZoom() ?? 1);
     }, []);
-    const handleCenter = (0, import_react8.useCallback)(() => {
+    const handleCenter = (0, import_react9.useCallback)(() => {
       rendererRef.current?.resetView();
       setZoom(1);
     }, []);
-    const [gyroMode, setGyroMode] = (0, import_react8.useState)(false);
-    const handleGyroModeToggle = (0, import_react8.useCallback)(() => {
+    const [gyroMode, setGyroMode] = (0, import_react9.useState)(false);
+    const handleGyroModeToggle = (0, import_react9.useCallback)(() => {
       setGyroMode((prev) => {
         if (prev) {
           rendererRef.current?.clearGyroOffset();
@@ -69292,7 +69349,7 @@ ${e2}`);
         return !prev;
       });
     }, []);
-    const handleGyroOffset = (0, import_react8.useCallback)((deltaX, deltaY, canvasWidth, canvasHeight) => {
+    const handleGyroOffset = (0, import_react9.useCallback)((deltaX, deltaY, canvasWidth, canvasHeight) => {
       const gyroX = deltaX / canvasWidth * 2;
       const gyroY = deltaY / canvasHeight * 2;
       rendererRef.current?.setGyroOffset(gyroX, gyroY);
@@ -69340,15 +69397,15 @@ ${e2}`);
   }
 
   // src/hooks/useSpriteDrag.ts
-  var import_react9 = __toESM(require_react());
+  var import_react10 = __toESM(require_react());
   function useSpriteDrag({
     selectedSprite,
     rendererRef,
     onSpriteMove,
     onDragCommit
   }) {
-    const canvasDragState = (0, import_react9.useRef)(null);
-    const handleCanvasMouseDown = (0, import_react9.useCallback)((event) => {
+    const canvasDragState = (0, import_react10.useRef)(null);
+    const handleCanvasMouseDown = (0, import_react10.useCallback)((event) => {
       if (event.button !== 0) return;
       if (!selectedSprite || !rendererRef.current) return;
       const canvas = rendererRef.current.getCanvas();
@@ -69367,9 +69424,9 @@ ${e2}`);
         startSpriteY: selectedSprite.y
       };
     }, [selectedSprite, rendererRef]);
-    const dragCallbacksRef = (0, import_react9.useRef)({ onSpriteMove, onDragCommit });
+    const dragCallbacksRef = (0, import_react10.useRef)({ onSpriteMove, onDragCommit });
     dragCallbacksRef.current = { onSpriteMove, onDragCommit };
-    (0, import_react9.useEffect)(() => {
+    (0, import_react10.useEffect)(() => {
       const handleMouseMove = (event) => {
         const drag = canvasDragState.current;
         if (!drag || !rendererRef.current) return;
@@ -69408,14 +69465,14 @@ ${e2}`);
         window.removeEventListener("mouseup", handleMouseUp);
       };
     }, [rendererRef]);
-    const cancelDrag = (0, import_react9.useCallback)(() => {
+    const cancelDrag = (0, import_react10.useCallback)(() => {
       canvasDragState.current = null;
     }, []);
     return { handleCanvasMouseDown, cancelDrag };
   }
 
   // src/hooks/useKeyboardControls.ts
-  var import_react10 = __toESM(require_react());
+  var import_react11 = __toESM(require_react());
   var ARROW_STEP = 0.05;
   function useKeyboardControls({
     selectedSprite,
@@ -69429,7 +69486,7 @@ ${e2}`);
     onXFocusApply,
     onTextureApply
   }) {
-    (0, import_react10.useEffect)(() => {
+    (0, import_react11.useEffect)(() => {
       const handleKeyDown = (e2) => {
         if ((e2.ctrlKey || e2.metaKey) && e2.key === "z" && !e2.shiftKey) {
           e2.preventDefault();
@@ -69495,20 +69552,20 @@ ${e2}`);
   }
 
   // src/ScenePage.tsx
-  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
   function ScenePage({ initialSceneId, onBack, onSaved, onDirtyChange }) {
-    const [scenes, setScenes] = (0, import_react11.useState)([]);
+    const [scenes, setScenes] = (0, import_react12.useState)([]);
     const history = useUndoHistory();
     const { notifications, notify } = useNotifications();
-    const dragStartPos = (0, import_react11.useRef)(null);
-    const dragStartSize = (0, import_react11.useRef)(null);
-    const dragStartDepth = (0, import_react11.useRef)(null);
-    const dragStartXFocus = (0, import_react11.useRef)(null);
-    const midDragStart = (0, import_react11.useRef)(null);
-    const [isPanning, setIsPanning] = (0, import_react11.useState)(false);
-    const isGyroDragging = (0, import_react11.useRef)(false);
-    const gyroOrigin = (0, import_react11.useRef)(null);
-    const [editTextureIndex, setEditTextureIndex] = (0, import_react11.useState)(null);
+    const dragStartPos = (0, import_react12.useRef)(null);
+    const dragStartSize = (0, import_react12.useRef)(null);
+    const dragStartDepth = (0, import_react12.useRef)(null);
+    const dragStartXFocus = (0, import_react12.useRef)(null);
+    const midDragStart = (0, import_react12.useRef)(null);
+    const [isPanning, setIsPanning] = (0, import_react12.useState)(false);
+    const isGyroDragging = (0, import_react12.useRef)(false);
+    const gyroOrigin = (0, import_react12.useRef)(null);
+    const [editTextureIndex, setEditTextureIndex] = (0, import_react12.useState)(null);
     const {
       canvasRef,
       rendererRef,
@@ -69549,10 +69606,10 @@ ${e2}`);
       handleGyroModeToggle,
       handleGyroOffset
     } = useSceneRenderer(notify, onSaved);
-    (0, import_react11.useEffect)(() => {
+    (0, import_react12.useEffect)(() => {
       onDirtyChange?.(isDirty);
     }, [isDirty, onDirtyChange]);
-    (0, import_react11.useEffect)(() => {
+    (0, import_react12.useEffect)(() => {
       if (!isDirty) return;
       const onBeforeUnload = (e2) => {
         e2.preventDefault();
@@ -69560,21 +69617,21 @@ ${e2}`);
       window.addEventListener("beforeunload", onBeforeUnload);
       return () => window.removeEventListener("beforeunload", onBeforeUnload);
     }, [isDirty]);
-    const handleBack = (0, import_react11.useCallback)(() => {
+    const handleBack = (0, import_react12.useCallback)(() => {
       if (isDirty && !window.confirm("You have unsaved changes. Leave without saving?")) return;
       onBack?.();
     }, [isDirty, onBack]);
-    const handleSceneSelect = (0, import_react11.useCallback)((sceneId) => {
+    const handleSceneSelect = (0, import_react12.useCallback)((sceneId) => {
       if (isDirty && !window.confirm("You have unsaved changes. Switch scenes without saving?")) return;
       loadScene(sceneId);
     }, [isDirty, loadScene]);
-    const applySelectedSpriteMove = (0, import_react11.useCallback)((x2, y2) => {
+    const applySelectedSpriteMove = (0, import_react12.useCallback)((x2, y2) => {
       setSelectedSprite((prev) => prev ? { ...prev, x: x2, y: y2 } : null);
     }, [setSelectedSprite]);
-    const applySelectedSpriteSize = (0, import_react11.useCallback)((width, height) => {
+    const applySelectedSpriteSize = (0, import_react12.useCallback)((width, height) => {
       setSelectedSprite((prev) => prev ? { ...prev, width, height } : null);
     }, [setSelectedSprite]);
-    const handleTextureApply = (0, import_react11.useCallback)((index, textureResource, width, height, texCoordinates) => {
+    const handleTextureApply = (0, import_react12.useCallback)((index, textureResource, width, height, texCoordinates) => {
       rendererRef.current?.changeTexture(index, textureResource, { width, height }, texCoordinates);
       setSelectedSprite((prev) => prev?.index === index ? { ...prev, width, height } : prev);
       markDirty();
@@ -69597,16 +69654,16 @@ ${e2}`);
       onXFocusApply: handleXFocusChange,
       onTextureApply: handleTextureApply
     });
-    (0, import_react11.useEffect)(() => {
+    (0, import_react12.useEffect)(() => {
       fetch("/api/scenes").then((r2) => r2.json()).then(
-        (data) => setScenes(data.map((s2) => ({ value: s2.id, label: s2.label })))
+        (data) => setScenes(data.map((s2) => ({ value: s2.id, label: s2.label, thumbnail_url: s2.thumbnail_url })))
       ).catch(() => {
       });
     }, []);
-    (0, import_react11.useEffect)(() => {
+    (0, import_react12.useEffect)(() => {
       if (initialSceneId) loadScene(initialSceneId);
     }, []);
-    (0, import_react11.useEffect)(() => {
+    (0, import_react12.useEffect)(() => {
       const el = canvasRef.current;
       if (!el) return;
       const onWheel = (e2) => {
@@ -69620,7 +69677,7 @@ ${e2}`);
       el.addEventListener("wheel", onWheel, { passive: false });
       return () => el.removeEventListener("wheel", onWheel);
     }, [canvasRef, rendererRef, handleZoomAtPoint]);
-    (0, import_react11.useEffect)(() => {
+    (0, import_react12.useEffect)(() => {
       const el = canvasRef.current;
       if (!el) return;
       const onMouseDown = (e2) => {
@@ -69652,7 +69709,7 @@ ${e2}`);
         window.removeEventListener("mouseup", onMouseUp);
       };
     }, [canvasRef, rendererRef, cancelDrag]);
-    (0, import_react11.useEffect)(() => {
+    (0, import_react12.useEffect)(() => {
       const el = canvasRef.current;
       if (!el) return;
       const onMouseDown = (e2) => {
@@ -69685,10 +69742,10 @@ ${e2}`);
         window.removeEventListener("mouseup", onMouseUp);
       };
     }, [canvasRef, rendererRef, gyroMode, handleGyroOffset, cancelDrag]);
-    const handleSpritePositionChangeStart = (0, import_react11.useCallback)((x2, y2) => {
+    const handleSpritePositionChangeStart = (0, import_react12.useCallback)((x2, y2) => {
       dragStartPos.current = { x: x2, y: y2 };
     }, []);
-    const handleSpritePositionCommit = (0, import_react11.useCallback)((x2, y2) => {
+    const handleSpritePositionCommit = (0, import_react12.useCallback)((x2, y2) => {
       if (!selectedSprite || !dragStartPos.current) return;
       const before = dragStartPos.current;
       dragStartPos.current = null;
@@ -69696,10 +69753,10 @@ ${e2}`);
         history.push({ type: "position", spriteIndex: selectedSprite.index, before, after: { x: x2, y: y2 } });
       }
     }, [selectedSprite, history]);
-    const handleSpriteSizeChangeStart = (0, import_react11.useCallback)(() => {
+    const handleSpriteSizeChangeStart = (0, import_react12.useCallback)(() => {
       if (selectedSprite) dragStartSize.current = { width: selectedSprite.width, height: selectedSprite.height };
     }, [selectedSprite]);
-    const handleSpriteSizeCommit = (0, import_react11.useCallback)((width, height) => {
+    const handleSpriteSizeCommit = (0, import_react12.useCallback)((width, height) => {
       if (!selectedSprite || !dragStartSize.current) return;
       const before = dragStartSize.current;
       dragStartSize.current = null;
@@ -69707,7 +69764,7 @@ ${e2}`);
         history.push({ type: "scale", spriteIndex: selectedSprite.index, before, after: { width, height } });
       }
     }, [selectedSprite, history]);
-    const handleChangeTextureWithHistory = (0, import_react11.useCallback)(async (index, textureResource) => {
+    const handleChangeTextureWithHistory = (0, import_react12.useCallback)(async (index, textureResource) => {
       const beforeTexture = rendererRef.current?.getSpriteTextureResource(index) ?? "";
       const beforeSize = rendererRef.current?.getSpriteScale(index);
       const beforeTexCoords = rendererRef.current?.getSpriteTexCoordinates(index) ?? [0, 1, 0, 0, 1, 1, 1, 0];
@@ -69720,13 +69777,13 @@ ${e2}`);
         after: { textureResource, width: afterSize?.width ?? 0, height: afterSize?.height ?? 0, texCoordinates: [0, 1, 0, 0, 1, 1, 1, 0] }
       });
     }, [handleChangeTexture, rendererRef, history]);
-    const handleSpriteDepthChangeStart = (0, import_react11.useCallback)((depth) => {
+    const handleSpriteDepthChangeStart = (0, import_react12.useCallback)((depth) => {
       dragStartDepth.current = depth;
     }, []);
-    const handleXFocusChangeStart = (0, import_react11.useCallback)((value) => {
+    const handleXFocusChangeStart = (0, import_react12.useCallback)((value) => {
       dragStartXFocus.current = value;
     }, []);
-    const handleXFocusCommit = (0, import_react11.useCallback)((value) => {
+    const handleXFocusCommit = (0, import_react12.useCallback)((value) => {
       if (dragStartXFocus.current === null) return;
       const before = dragStartXFocus.current;
       dragStartXFocus.current = null;
@@ -69734,7 +69791,7 @@ ${e2}`);
         history.push({ type: "xFocus", before, after: value });
       }
     }, [history]);
-    const handleSpriteDepthCommit = (0, import_react11.useCallback)((depth) => {
+    const handleSpriteDepthCommit = (0, import_react12.useCallback)((depth) => {
       if (!selectedSprite || dragStartDepth.current === null) return;
       const before = dragStartDepth.current;
       dragStartDepth.current = null;
@@ -69742,7 +69799,7 @@ ${e2}`);
         history.push({ type: "depth", spriteIndex: selectedSprite.index, before, after: depth });
       }
     }, [selectedSprite, history]);
-    const handleNewScene = (0, import_react11.useCallback)(async (label) => {
+    const handleNewScene = (0, import_react12.useCallback)(async (label, copyFromSceneId) => {
       if (isDirty && !window.confirm("You have unsaved changes. Switch scenes without saving?")) return;
       const name = label.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
       const emptyScene = { sprites: [], xFocus: 0.5 };
@@ -69750,7 +69807,7 @@ ${e2}`);
         const response = await fetch("/api/scenes", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, label, data: emptyScene })
+          body: JSON.stringify({ name, label, data: emptyScene, copyFromSceneId })
         });
         if (!response.ok) {
           const err = await response.json().catch(() => ({}));
@@ -69758,14 +69815,14 @@ ${e2}`);
           return;
         }
         const scene = await response.json();
-        setScenes((prev) => [...prev, { value: scene.id, label: scene.label }].sort((a2, b2) => a2.label.localeCompare(b2.label)));
+        setScenes((prev) => [...prev, { value: scene.id, label: scene.label, thumbnail_url: scene.thumbnail_url }].sort((a2, b2) => a2.label.localeCompare(b2.label)));
         loadScene(scene.id);
       } catch {
         notify("Failed to create scene");
       }
     }, [isDirty, loadScene, notify]);
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_jsx_runtime13.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
         TopBar,
         {
           scenes,
@@ -69786,8 +69843,8 @@ ${e2}`);
           onGyroModeToggle: handleGyroModeToggle
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "app-content", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "app-content", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
           SceneEditorPanel,
           {
             sceneLoaded: showSceneControls,
@@ -69819,7 +69876,7 @@ ${e2}`);
             onSpriteSizeCommit: handleSpriteSizeCommit
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "main-content", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "main-content", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
           "div",
           {
             id: "canvas-container",
@@ -69829,11 +69886,11 @@ ${e2}`);
           }
         ) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(NotificationStack, { notifications }),
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(NotificationStack, { notifications }),
       editTextureIndex !== null && (() => {
         const texData = rendererRef.current?.getSpriteTexData(editTextureIndex);
         if (!texData) return null;
-        return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+        return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
           EditTextureModal,
           {
             spriteName: spriteEntries[editTextureIndex]?.name ?? `Sprite ${editTextureIndex}`,
@@ -69856,50 +69913,42 @@ ${e2}`);
   }
 
   // src/SceneListPage.tsx
-  var import_react12 = __toESM(require_react());
+  var import_react13 = __toESM(require_react());
 
   // src/components/PageLayout.tsx
-  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
   function PageLayout({ children }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "page-layout", children });
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "page-layout", children });
   }
   function PageHeader({ title, left, children }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "page-header", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "page-header", children: [
       left,
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "page-header-title", children: title }),
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "page-header-title", children: title }),
       children
     ] });
   }
   function PageBody({ children }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "page-body", children });
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "page-body", children });
   }
 
   // src/SceneListPage.tsx
-  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
   function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }) {
-    const [scenes, setScenes] = (0, import_react12.useState)([]);
-    const [loading, setLoading] = (0, import_react12.useState)(true);
-    const [failedThumbs, setFailedThumbs] = (0, import_react12.useState)(/* @__PURE__ */ new Set());
-    const [showNewSceneDialog, setShowNewSceneDialog] = (0, import_react12.useState)(false);
-    const prevBusterRef = (0, import_react12.useRef)(thumbBuster);
-    (0, import_react12.useEffect)(() => {
-      if (thumbBuster !== prevBusterRef.current) {
-        prevBusterRef.current = thumbBuster;
-        setFailedThumbs(/* @__PURE__ */ new Set());
-      }
-    }, [thumbBuster]);
-    (0, import_react12.useEffect)(() => {
+    const [scenes, setScenes] = (0, import_react13.useState)([]);
+    const [loading, setLoading] = (0, import_react13.useState)(true);
+    const [showNewSceneDialog, setShowNewSceneDialog] = (0, import_react13.useState)(false);
+    (0, import_react13.useEffect)(() => {
       fetch(`/api/scenes${projectId ? `?projectId=${encodeURIComponent(projectId)}` : ""}`).then((r2) => r2.json()).then((records) => {
         setScenes(records);
         setLoading(false);
       }).catch(() => setLoading(false));
     }, []);
-    const handleCreate = (label) => {
+    const handleCreate = (label, copyFromSceneId) => {
       const name = label.trim().toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
       fetch("/api/scenes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, label: label.trim(), data: { sprites: [], xFocus: 0 }, projectId })
+        body: JSON.stringify({ name, label: label.trim(), data: { sprites: [], xFocus: 0 }, projectId, copyFromSceneId })
       }).then(async (r2) => {
         const payload = await r2.json().catch(() => ({}));
         if (!r2.ok) {
@@ -69918,51 +69967,43 @@ ${e2}`);
         window.alert(message);
       });
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(PageLayout, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(PageHeader, { title: "Scenes", left: onBack && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button, { onClick: onBack, children: "\u2190" }), children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button, { onClick: () => setShowNewSceneDialog(true), children: "+ Scene" }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(PageBody, { children: [
-        loading && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "scene-list-empty", children: "Loading\u2026" }),
-        !loading && scenes.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "scene-list-empty", children: "No scenes found. Create one from within the editor." }),
-        !loading && scenes.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "scene-list-grid", children: scenes.map((scene) => {
-          const busterJoin = scene.thumbnail_url.includes("?") ? "&" : "?";
-          const thumbnailSrc = `${scene.thumbnail_url}${busterJoin}v=${thumbBuster}`;
-          return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "scene-card", onClick: () => onSelect(scene), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "scene-card-preview", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-                "img",
-                {
-                  src: thumbnailSrc,
-                  alt: scene.label,
-                  className: "scene-card-thumb",
-                  onError: () => setFailedThumbs((prev) => new Set(prev).add(scene.name))
-                }
-              ),
-              failedThumbs.has(scene.name) && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "scene-card-icon", children: "\u{1F3AC}" })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "scene-card-label", children: scene.label })
-          ] }, scene.id);
-        }) })
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(PageLayout, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(PageHeader, { title: "Scenes", left: onBack && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Button, { onClick: onBack, children: "\u2190" }), children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Button, { onClick: () => setShowNewSceneDialog(true), children: "+ Scene" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(PageBody, { children: [
+        loading && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "scene-list-empty", children: "Loading\u2026" }),
+        !loading && scenes.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "scene-list-empty", children: "No scenes found. Create one from within the editor." }),
+        !loading && scenes.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "scene-list-grid", children: scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+          SceneCard,
+          {
+            label: scene.label,
+            thumbnail_url: scene.thumbnail_url,
+            thumbBuster,
+            onClick: () => onSelect(scene)
+          },
+          scene.id
+        )) })
       ] }),
-      showNewSceneDialog && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+      showNewSceneDialog && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
         NewSceneDialog,
         {
           onConfirm: handleCreate,
-          onCancel: () => setShowNewSceneDialog(false)
+          onCancel: () => setShowNewSceneDialog(false),
+          scenes: scenes.map((s2) => ({ id: s2.id, label: s2.label, thumbnail_url: s2.thumbnail_url }))
         }
       )
     ] });
   }
 
   // src/ProjectListPage.tsx
-  var import_react14 = __toESM(require_react());
+  var import_react15 = __toESM(require_react());
 
   // src/controls/NewProjectDialog.tsx
-  var import_react13 = __toESM(require_react());
-  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
+  var import_react14 = __toESM(require_react());
+  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
   function NewProjectDialog({ onConfirm, onCancel }) {
-    const [name, setName] = (0, import_react13.useState)("");
-    const inputRef = (0, import_react13.useRef)(null);
-    (0, import_react13.useEffect)(() => {
+    const [name, setName] = (0, import_react14.useState)("");
+    const inputRef = (0, import_react14.useRef)(null);
+    (0, import_react14.useEffect)(() => {
       inputRef.current?.focus();
     }, []);
     const handleSubmit = (e2) => {
@@ -69973,12 +70014,12 @@ ${e2}`);
     const handleKeyDown = (e2) => {
       if (e2.key === "Escape") onCancel();
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "new-scene-overlay", onKeyDown: handleKeyDown, children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "new-scene-dialog", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h2", { className: "new-scene-title", children: "New Project" }),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("form", { onSubmit: handleSubmit, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "new-scene-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("label", { htmlFor: "new-project-name", children: "Project name" }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "new-scene-overlay", onKeyDown: handleKeyDown, children: /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "new-scene-dialog", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h2", { className: "new-scene-title", children: "New Project" }),
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("form", { onSubmit: handleSubmit, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "new-scene-field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("label", { htmlFor: "new-project-name", children: "Project name" }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
             "input",
             {
               id: "new-project-name",
@@ -69990,26 +70031,26 @@ ${e2}`);
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "new-scene-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Button, { type: "button", onClick: onCancel, children: "Cancel" }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Button, { type: "submit", variant: "primary", disabled: !name.trim(), children: "OK" })
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "new-scene-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button, { type: "button", onClick: onCancel, children: "Cancel" }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button, { type: "submit", variant: "primary", disabled: !name.trim(), children: "OK" })
         ] })
       ] })
     ] }) });
   }
 
   // src/ProjectListPage.tsx
-  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
   function ProjectCollage({ sceneIds, sceneThumbnailUrls }) {
-    const [failedThumbs, setFailedThumbs] = (0, import_react14.useState)(/* @__PURE__ */ new Set());
+    const [failedThumbs, setFailedThumbs] = (0, import_react15.useState)(/* @__PURE__ */ new Set());
     if (!sceneIds || sceneIds.length === 0) {
-      return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "project-card-icon", children: "\u{1F4C1}" });
+      return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-icon", children: "\u{1F4C1}" });
     }
     const cells = [...sceneIds.slice(0, 4)];
     while (cells.length < 4) cells.push("");
-    return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "project-card-collage", children: cells.map((id, i2) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-collage", children: cells.map((id, i2) => {
       const thumbnailSrc = id ? sceneThumbnailUrls?.[i2] ?? "" : "";
-      return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "project-card-collage-cell", children: thumbnailSrc && !failedThumbs.has(thumbnailSrc) && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-collage-cell", children: thumbnailSrc && !failedThumbs.has(thumbnailSrc) && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
         "img",
         {
           src: thumbnailSrc,
@@ -70020,11 +70061,11 @@ ${e2}`);
     }) });
   }
   function ProjectListPage({ onSelect, onLogout }) {
-    const [projects, setProjects] = (0, import_react14.useState)([]);
-    const [loading, setLoading] = (0, import_react14.useState)(true);
-    const [showDialog, setShowDialog] = (0, import_react14.useState)(false);
-    const [showArchived, setShowArchived] = (0, import_react14.useState)(false);
-    (0, import_react14.useEffect)(() => {
+    const [projects, setProjects] = (0, import_react15.useState)([]);
+    const [loading, setLoading] = (0, import_react15.useState)(true);
+    const [showDialog, setShowDialog] = (0, import_react15.useState)(false);
+    const [showArchived, setShowArchived] = (0, import_react15.useState)(false);
+    (0, import_react15.useEffect)(() => {
       projectsApi.list().then((records) => {
         setProjects(records);
         setLoading(false);
@@ -70057,24 +70098,24 @@ ${e2}`);
         window.alert("Failed to unarchive project");
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(PageLayout, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(PageHeader, { title: "Projects", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button, { onClick: () => setShowDialog(true), children: "+ Project" }),
-        onLogout && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button, { onClick: onLogout, children: "Log out" })
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(PageLayout, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(PageHeader, { title: "Projects", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Button, { onClick: () => setShowDialog(true), children: "+ Project" }),
+        onLogout && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Button, { onClick: onLogout, children: "Log out" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(PageBody, { children: [
-        loading && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "project-list-empty", children: "Loading\u2026" }),
-        !loading && projects.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "project-list-empty", children: "No projects yet. Create one to get started." }),
-        !loading && activeProjects.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "project-list-grid", children: activeProjects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "project-card", onClick: () => onSelect(project), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(PageBody, { children: [
+        loading && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-list-empty", children: "Loading\u2026" }),
+        !loading && projects.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-list-empty", children: "No projects yet. Create one to get started." }),
+        !loading && activeProjects.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-list-grid", children: activeProjects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "project-card", onClick: () => onSelect(project), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
             ProjectCollage,
             {
               sceneIds: project.scene_ids,
               sceneThumbnailUrls: project.scene_thumbnail_urls
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "project-card-name", children: project.name }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "project-card-actions", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-name", children: project.name }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-actions", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
             Button,
             {
               className: "project-card-action",
@@ -70083,28 +70124,28 @@ ${e2}`);
             }
           ) })
         ] }, project.id)) }),
-        !loading && archivedProjects.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "project-archive-section", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(
+        !loading && archivedProjects.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "project-archive-section", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(
             Button,
             {
               className: "project-archive-toggle",
               onClick: () => setShowArchived((prev) => !prev),
               children: [
-                /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: `project-archive-toggle-icon${showArchived ? " is-open" : ""}`, children: "\u25B8" }),
+                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: `project-archive-toggle-icon${showArchived ? " is-open" : ""}`, children: "\u25B8" }),
                 "Archived projects"
               ]
             }
           ),
-          showArchived && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "project-list-grid project-list-grid--archived", children: archivedProjects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "project-card project-card--archived", onClick: () => onSelect(project), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+          showArchived && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-list-grid project-list-grid--archived", children: archivedProjects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "project-card project-card--archived", onClick: () => onSelect(project), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
               ProjectCollage,
               {
                 sceneIds: project.scene_ids,
                 sceneThumbnailUrls: project.scene_thumbnail_urls
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "project-card-name", children: project.name }),
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "project-card-actions", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-name", children: project.name }),
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "project-card-actions", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
               Button,
               {
                 className: "project-card-action",
@@ -70115,7 +70156,7 @@ ${e2}`);
           ] }, project.id)) })
         ] })
       ] }),
-      showDialog && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+      showDialog && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
         NewProjectDialog,
         {
           onConfirm: handleCreate,
@@ -70126,14 +70167,14 @@ ${e2}`);
   }
 
   // src/LoginPage.tsx
-  var import_react15 = __toESM(require_react());
-  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
+  var import_react16 = __toESM(require_react());
+  var import_jsx_runtime19 = __toESM(require_jsx_runtime());
   function LoginPage({ onAuthenticated }) {
-    const [mode, setMode] = (0, import_react15.useState)("login");
-    const [email, setEmail] = (0, import_react15.useState)("");
-    const [password, setPassword] = (0, import_react15.useState)("");
-    const [error, setError] = (0, import_react15.useState)("");
-    const [loading, setLoading] = (0, import_react15.useState)(false);
+    const [mode, setMode] = (0, import_react16.useState)("login");
+    const [email, setEmail] = (0, import_react16.useState)("");
+    const [password, setPassword] = (0, import_react16.useState)("");
+    const [error, setError] = (0, import_react16.useState)("");
+    const [loading, setLoading] = (0, import_react16.useState)(false);
     const handleSubmit = async (e2) => {
       e2.preventDefault();
       setError("");
@@ -70151,11 +70192,11 @@ ${e2}`);
         setLoading(false);
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "login-page", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("form", { className: "login-card", onSubmit: handleSubmit, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "login-title", children: "Live Wallpaper Editor" }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "login-field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("label", { htmlFor: "email", children: "Email" }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "login-page", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("form", { className: "login-card", onSubmit: handleSubmit, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "login-title", children: "Live Wallpaper Editor" }),
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "login-field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("label", { htmlFor: "email", children: "Email" }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
           "input",
           {
             id: "email",
@@ -70167,9 +70208,9 @@ ${e2}`);
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "login-field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("label", { htmlFor: "password", children: "Password" }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "login-field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("label", { htmlFor: "password", children: "Password" }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
           "input",
           {
             id: "password",
@@ -70181,17 +70222,17 @@ ${e2}`);
           }
         )
       ] }),
-      error && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "login-error", children: error }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "login-submit", type: "submit", disabled: loading, children: loading ? "Please wait\u2026" : mode === "login" ? "Log in" : "Create account" }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "login-toggle", children: mode === "login" ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
+      error && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "login-error", children: error }),
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "login-submit", type: "submit", disabled: loading, children: loading ? "Please wait\u2026" : mode === "login" ? "Log in" : "Create account" }),
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "login-toggle", children: mode === "login" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(import_jsx_runtime19.Fragment, { children: [
         "No account? ",
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { type: "button", onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { type: "button", onClick: () => {
           setMode("register");
           setError("");
         }, children: "Register" })
-      ] }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(import_jsx_runtime19.Fragment, { children: [
         "Already have an account? ",
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { type: "button", onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { type: "button", onClick: () => {
           setMode("login");
           setError("");
         }, children: "Log in" })
@@ -70200,7 +70241,7 @@ ${e2}`);
   }
 
   // src/client.tsx
-  var import_jsx_runtime19 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime20 = __toESM(require_jsx_runtime());
   console.log("[bundle] loaded \u2014 build b85774b");
   function pageFromPath() {
     const sceneMatch = window.location.pathname.match(/^\/project\/([^/]+)\/scene\/([^/]+)$/);
@@ -70216,28 +70257,28 @@ ${e2}`);
     return { type: "projects" };
   }
   function App() {
-    const [authState, setAuthState] = (0, import_react16.useState)({ status: "loading" });
-    const [page, setPage] = (0, import_react16.useState)(pageFromPath);
-    const [thumbBuster, setThumbBuster] = (0, import_react16.useState)(0);
-    const isDirtyRef = (0, import_react16.useRef)(false);
-    const pageRef = (0, import_react16.useRef)(page);
-    (0, import_react16.useEffect)(() => {
+    const [authState, setAuthState] = (0, import_react17.useState)({ status: "loading" });
+    const [page, setPage] = (0, import_react17.useState)(pageFromPath);
+    const [thumbBuster, setThumbBuster] = (0, import_react17.useState)(0);
+    const isDirtyRef = (0, import_react17.useRef)(false);
+    const pageRef = (0, import_react17.useRef)(page);
+    (0, import_react17.useEffect)(() => {
       pageRef.current = page;
     }, [page]);
-    (0, import_react16.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       setUnauthorizedHandler(() => setAuthState({ status: "unauthenticated" }));
       authApi.me().then((user) => setAuthState({ status: "authenticated", user })).catch(() => {
       });
     }, []);
-    const handleLogout = (0, import_react16.useCallback)(async () => {
+    const handleLogout = (0, import_react17.useCallback)(async () => {
       await authApi.logout().catch(() => {
       });
       setAuthState({ status: "unauthenticated" });
     }, []);
-    const handleDirtyChange = (0, import_react16.useCallback)((dirty) => {
+    const handleDirtyChange = (0, import_react17.useCallback)((dirty) => {
       isDirtyRef.current = dirty;
     }, []);
-    (0, import_react16.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       const onPopState = () => {
         const currentPage = pageRef.current;
         if (currentPage.type !== "scene" || !isDirtyRef.current) {
@@ -70254,31 +70295,31 @@ ${e2}`);
       window.addEventListener("popstate", onPopState);
       return () => window.removeEventListener("popstate", onPopState);
     }, []);
-    const navigateToProject = (0, import_react16.useCallback)((project) => {
+    const navigateToProject = (0, import_react17.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
       setPage({ type: "scenes", project });
     }, []);
-    const navigateToScene = (0, import_react16.useCallback)((scene, project) => {
+    const navigateToScene = (0, import_react17.useCallback)((scene, project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/scene/${encodeURIComponent(scene.id)}`);
       setPage({ type: "scene", sceneId: scene.id, project });
     }, []);
-    const navigateBackToProjects = (0, import_react16.useCallback)(() => {
+    const navigateBackToProjects = (0, import_react17.useCallback)(() => {
       window.history.pushState(null, "", "/");
       setPage({ type: "projects" });
     }, []);
-    const navigateBackToScenes = (0, import_react16.useCallback)((project) => {
+    const navigateBackToScenes = (0, import_react17.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
       setPage({ type: "scenes", project });
     }, []);
-    const handleSaved = (0, import_react16.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
+    const handleSaved = (0, import_react17.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
     if (authState.status === "loading") {
       return null;
     }
     if (authState.status === "unauthenticated") {
-      return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(LoginPage, { onAuthenticated: (user) => setAuthState({ status: "authenticated", user }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(LoginPage, { onAuthenticated: (user) => setAuthState({ status: "authenticated", user }) });
     }
     if (page.type === "scene") {
-      return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
         ScenePage,
         {
           initialSceneId: page.sceneId,
@@ -70289,7 +70330,7 @@ ${e2}`);
       );
     }
     if (page.type === "scenes") {
-      return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
         SceneListPage,
         {
           onSelect: (scene) => navigateToScene(scene, page.project),
@@ -70299,11 +70340,11 @@ ${e2}`);
         }
       );
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ProjectListPage, { onSelect: navigateToProject, onLogout: handleLogout });
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(ProjectListPage, { onSelect: navigateToProject, onLogout: handleLogout });
   }
   window.addEventListener("DOMContentLoaded", () => {
     const root = (0, import_client.createRoot)(document.body);
-    root.render(/* @__PURE__ */ (0, import_jsx_runtime19.jsx)(App, {}));
+    root.render(/* @__PURE__ */ (0, import_jsx_runtime20.jsx)(App, {}));
   });
 })();
 /*! Bundled license information:

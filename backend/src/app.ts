@@ -79,7 +79,7 @@ export async function buildServer(deps: BuildServerDeps) {
 
     await registerProjectRoutes(protected_);
     await registerImageRoutes(protected_, { storage: deps.imageStorage, thumbnailStorage: deps.imageThumbnailStorage });
-    await registerSceneRoutes(protected_);
+    await registerSceneRoutes(protected_, { thumbnailStorage: deps.thumbnailStorage });
     await registerThumbnailRoutes(protected_, { thumbnailStorage: deps.thumbnailStorage });
   });
 

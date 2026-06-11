@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import type { Scene } from '@livewallpaper/types';
+import type { ImageStorage } from '../../storage';
 import {
   createScene,
   getSceneById,
@@ -9,8 +10,13 @@ import {
 } from './sceneService';
 import { renameSpriteById } from '../sprites/spriteService';
 
+interface SceneRouteDeps {
+  thumbnailStorage: ImageStorage;
+}
+
 export async function registerSceneRoutes(
   server: FastifyInstance,
+  deps: SceneRouteDeps,
 ): Promise<void> {
   server.get<{ Querystring: { projectId?: string } }>('/api/scenes', async (req) => {
     return listScenes(req.query.projectId);
@@ -25,10 +31,10 @@ export async function registerSceneRoutes(
     return scene;
   });
 
-  server.post<{ Body: { name: string; label: string; data: Scene; projectId?: string } }>(
+  server.post<{ Body: { name: string; label: string; data: Scene; projectId?: string; copyFromSceneId?: string } }>(
     '/api/scenes',
     async (req, reply) => {
-      const scene = await createScene(req.body);
+      const scene = await createScene(req.body, deps.thumbnailStorage);
       return reply.status(201).send(scene);
     },
   );

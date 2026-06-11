@@ -1,4 +1,5 @@
 import type { Scene } from '@livewallpaper/types';
+import type { ImageStorage } from '../../storage';
 import { pool } from '../../db';
 import { incrementProjectVersion } from '../projects';
 import { attachSceneThumbnailUrls } from '../thumbnails';
@@ -19,25 +20,42 @@ export async function getSceneById(id: string) {
   return selectSceneById(id);
 }
 
-export async function createScene(input: {
-  name: string;
-  label: string;
-  data: Scene;
-  projectId?: string;
-}) {
+export async function createScene(
+  input: {
+    name: string;
+    label: string;
+    data: Scene;
+    projectId?: string;
+    copyFromSceneId?: string;
+  },
+  thumbnailStorage: ImageStorage,
+) {
+  let sceneData = input.data;
+  if (input.copyFromSceneId) {
+    const source = await selectSceneById(input.copyFromSceneId);
+    if (source?.data) sceneData = source.data;
+  }
+
   const client = await pool.connect();
   let sceneId: string;
   try {
     await client.query('BEGIN');
-    const { id } = await insertScene(client, input);
+    const { id } = await insertScene(client, { ...input, data: sceneData });
     sceneId = id;
-    await replaceSpritesForScene(client, sceneId, input.data.sprites);
+    await replaceSpritesForScene(client, sceneId, sceneData.sprites);
     await client.query('COMMIT');
   } catch (err) {
     await client.query('ROLLBACK');
     throw err;
   } finally {
     client.release();
+  }
+
+  if (input.copyFromSceneId) {
+    const thumbBuffer = await thumbnailStorage.read(`${input.copyFromSceneId}.jpg`);
+    if (thumbBuffer) {
+      await thumbnailStorage.save(`${sceneId}.jpg`, thumbBuffer);
+    }
   }
 
   if (input.projectId) {

@@ -15,7 +15,7 @@ interface TopBarProps {
   gyroMode: boolean;
   onBack?: () => void;
   onSceneSelect: (sceneName: string) => void;
-  onNewScene: (label: string) => void;
+  onNewScene: (label: string, copyFromSceneId?: string) => void;
   onPhoneGuideToggle: (visible: boolean) => void;
   onSave: () => void;
   onZoomIn: () => void;
@@ -28,9 +28,9 @@ export function TopBar({ scenes, currentSceneName, sceneLoaded, isSaving, phoneG
   const [dialogOpen, setDialogOpen] = useState(false);
   const [libraryOpen, setLibraryOpen] = useState(false);
 
-  const handleConfirm = (label: string) => {
+  const handleConfirm = (label: string, copyFromSceneId?: string) => {
     setDialogOpen(false);
-    onNewScene(label);
+    onNewScene(label, copyFromSceneId);
   };
 
   return (
@@ -43,6 +43,7 @@ export function TopBar({ scenes, currentSceneName, sceneLoaded, isSaving, phoneG
         <NewSceneDialog
           onConfirm={handleConfirm}
           onCancel={() => setDialogOpen(false)}
+          scenes={scenes.map(s => ({ id: s.value, label: s.label, thumbnail_url: s.thumbnail_url }))}
         />
       )}
       <Button onClick={() => setLibraryOpen(true)} title="Browse and upload images">Image Library</Button>

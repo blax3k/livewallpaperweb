@@ -3,6 +3,7 @@ import React from 'react';
 export interface SceneOption {
   value: string;
   label: string;
+  thumbnail_url?: string;
 }
 
 interface SceneSelectorControlProps {

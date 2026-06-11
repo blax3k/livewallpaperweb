@@ -1,8 +1,9 @@
-import { mkdir, writeFile, unlink } from 'fs/promises';
+import { mkdir, readFile, writeFile, unlink } from 'fs/promises';
 import path from 'path';
 
 export interface ImageStorage {
   init(): Promise<void>;
+  read(filename: string): Promise<Buffer | null>;
   save(filename: string, buffer: Buffer): Promise<void>;
   delete(filename: string): Promise<void>;
   getUrl(filename: string): string;
@@ -13,6 +14,15 @@ export class LocalStorage implements ImageStorage {
 
   async init(): Promise<void> {
     await mkdir(this.dir, { recursive: true });
+  }
+
+  async read(filename: string): Promise<Buffer | null> {
+    try {
+      return await readFile(path.join(this.dir, filename));
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code === 'ENOENT') return null;
+      throw err;
+    }
   }
 
   async save(filename: string, buffer: Buffer): Promise<void> {

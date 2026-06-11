@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import './SceneListPage.scss';
 import { Button } from './components/Button';
+import { SceneCard } from './components/SceneCard';
 import { PageLayout, PageHeader, PageBody } from './components/PageLayout';
 import { NewSceneDialog } from './controls/NewSceneDialog';
 
@@ -26,16 +27,7 @@ interface SceneListPageProps {
 export function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }: SceneListPageProps) {
   const [scenes, setScenes] = useState<SceneRecord[]>([]);
   const [loading, setLoading] = useState(true);
-  const [failedThumbs, setFailedThumbs] = useState<Set<string>>(new Set());
   const [showNewSceneDialog, setShowNewSceneDialog] = useState(false);
-  const prevBusterRef = useRef(thumbBuster);
-
-  useEffect(() => {
-    if (thumbBuster !== prevBusterRef.current) {
-      prevBusterRef.current = thumbBuster;
-      setFailedThumbs(new Set());
-    }
-  }, [thumbBuster]);
 
   useEffect(() => {
     fetch(`/api/scenes${projectId ? `?projectId=${encodeURIComponent(projectId)}` : ''}`)
@@ -44,12 +36,12 @@ export function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }: 
       .catch(() => setLoading(false));
   }, []);
 
-  const handleCreate = (label: string) => {
+  const handleCreate = (label: string, copyFromSceneId?: string) => {
     const name = label.trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
     fetch('/api/scenes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, label: label.trim(), data: { sprites: [], xFocus: 0 }, projectId }),
+      body: JSON.stringify({ name, label: label.trim(), data: { sprites: [], xFocus: 0 }, projectId, copyFromSceneId }),
     })
       .then(async (r) => {
         const payload = await r.json().catch(() => ({} as ApiError));
@@ -84,25 +76,15 @@ export function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }: 
         )}
         {!loading && scenes.length > 0 && (
           <div className="scene-list-grid">
-            {scenes.map(scene => {
-              const busterJoin = scene.thumbnail_url.includes('?') ? '&' : '?';
-              const thumbnailSrc = `${scene.thumbnail_url}${busterJoin}v=${thumbBuster}`;
-
-              return (
-                <div key={scene.id} className="scene-card" onClick={() => onSelect(scene)}>
-                  <div className="scene-card-preview">
-                    <img
-                      src={thumbnailSrc}
-                      alt={scene.label}
-                      className="scene-card-thumb"
-                      onError={() => setFailedThumbs(prev => new Set(prev).add(scene.name))}
-                    />
-                    {failedThumbs.has(scene.name) && <span className="scene-card-icon">🎬</span>}
-                  </div>
-                  <div className="scene-card-label">{scene.label}</div>
-                </div>
-              );
-            })}
+            {scenes.map(scene => (
+              <SceneCard
+                key={scene.id}
+                label={scene.label}
+                thumbnail_url={scene.thumbnail_url}
+                thumbBuster={thumbBuster}
+                onClick={() => onSelect(scene)}
+              />
+            ))}
           </div>
         )}
       </PageBody>
@@ -110,6 +92,7 @@ export function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }: 
         <NewSceneDialog
           onConfirm={handleCreate}
           onCancel={() => setShowNewSceneDialog(false)}
+          scenes={scenes.map(s => ({ id: s.id, label: s.label, thumbnail_url: s.thumbnail_url }))}
         />
       )}
     </PageLayout>

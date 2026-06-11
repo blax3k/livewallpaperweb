@@ -710,10 +710,20 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
   padding: 24px;
-  width: 360px;
+  width: 560px;
+  max-height: 80vh;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  overflow: hidden;
+}
+.new-scene-dialog form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow: hidden;
+  min-height: 0;
+  flex: 1;
 }
 .new-scene-title {
   font-size: 15px;
@@ -724,13 +734,19 @@ body {
 .new-scene-field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  min-height: 0;
 }
-.new-scene-field label {
+.new-scene-field:has(.new-scene-copy-grid) {
+  flex: 1;
+  overflow: hidden;
+}
+.new-scene-field > label {
   font-size: 12px;
   color: #aaa;
+  flex-shrink: 0;
 }
-.new-scene-field input {
+.new-scene-field input[type=text] {
   padding: 8px;
   border: 1px solid #444;
   background: #333;
@@ -738,14 +754,76 @@ body {
   border-radius: 4px;
   font-size: 13px;
 }
-.new-scene-field input:focus {
+.new-scene-field input[type=text]:focus {
   outline: none;
   border-color: #666;
+}
+.new-scene-copy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+  overflow-y: auto;
+  padding: 4px;
+  flex: 1;
 }
 .new-scene-actions {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
+  flex-shrink: 0;
+}
+
+/* src/components/SceneCard.scss */
+.scene-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: #1a1a1a;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.15s, background 0.15s;
+}
+.scene-card:hover {
+  border-color: rgba(99, 179, 237, 0.5);
+  background: #212121;
+}
+.scene-card--selected {
+  border-color: #5b9bd5;
+  background: #1a2d42;
+}
+.scene-card--selected:hover {
+  border-color: #7bb5e8;
+  background: #1e3450;
+}
+.scene-card-preview {
+  aspect-ratio: 1/1;
+  background: #111;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+}
+.scene-card-thumb {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.scene-card-icon {
+  font-size: 36px;
+  opacity: 0.35;
+}
+.scene-card-label {
+  padding: 10px 12px;
+  font-size: 12px;
+  color: #ccc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* src/controls/EditTextureModal.scss */
@@ -850,49 +928,6 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 16px;
-}
-.scene-card {
-  display: flex;
-  flex-direction: column;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: #1a1a1a;
-  cursor: pointer;
-  overflow: hidden;
-  transition: border-color 0.15s, background 0.15s;
-}
-.scene-card:hover {
-  border-color: rgba(99, 179, 237, 0.5);
-  background: #212121;
-}
-.scene-card-preview {
-  aspect-ratio: 1/1;
-  background: #111;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  overflow: hidden;
-}
-.scene-card-thumb {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.scene-card-icon {
-  font-size: 36px;
-  opacity: 0.35;
-}
-.scene-card-label {
-  padding: 10px 12px;
-  font-size: 12px;
-  color: #ccc;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 /* src/components/PageLayout.scss */
