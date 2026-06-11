@@ -68966,6 +68966,7 @@ ${e2}`);
       const savedGuideVisible = guideGraphics?.visible ?? false;
       this.setScrollOffset(0.5);
       if (guideGraphics) guideGraphics.visible = false;
+      if (this.selectionHighlight) this.selectionHighlight.visible = false;
       this.app.renderer.render(this.app.stage);
       const src = this.app.canvas;
       const size = 256;
@@ -68977,6 +68978,7 @@ ${e2}`);
       const result = ctx ? offscreen.toDataURL("image/jpeg", 0.85) : null;
       this.setScrollOffset(savedXFocus);
       if (guideGraphics) guideGraphics.visible = savedGuideVisible;
+      if (this.selectionHighlight) this.selectionHighlight.visible = true;
       return result;
     }
     /**

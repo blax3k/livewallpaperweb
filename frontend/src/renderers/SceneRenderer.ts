@@ -988,9 +988,10 @@ export class SceneRenderer {
     const guideGraphics = this.phoneGuide?.getGraphics() ?? null;
     const savedGuideVisible = guideGraphics?.visible ?? false;
 
-    // Apply thumbnail state: center the scene, hide guide
+    // Apply thumbnail state: center the scene, hide overlay graphics
     this.setScrollOffset(0.5);
     if (guideGraphics) guideGraphics.visible = false;
+    if (this.selectionHighlight) this.selectionHighlight.visible = false;
 
     // Force a synchronous render so the canvas reflects the temp state
     this.app.renderer.render(this.app.stage);
@@ -1008,6 +1009,7 @@ export class SceneRenderer {
     // Restore original state
     this.setScrollOffset(savedXFocus);
     if (guideGraphics) guideGraphics.visible = savedGuideVisible;
+    if (this.selectionHighlight) this.selectionHighlight.visible = true;
 
     return result;
   }
