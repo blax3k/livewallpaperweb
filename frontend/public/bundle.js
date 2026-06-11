@@ -69933,7 +69933,7 @@ ${e2}`);
 
   // src/SceneListPage.tsx
   var import_jsx_runtime16 = __toESM(require_jsx_runtime());
-  function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }) {
+  function SceneListPage({ onSelect, onBack, projectId, projectname, thumbBuster = 0 }) {
     const [scenes, setScenes] = (0, import_react13.useState)([]);
     const [loading, setLoading] = (0, import_react13.useState)(true);
     const [showNewSceneDialog, setShowNewSceneDialog] = (0, import_react13.useState)(false);
@@ -69968,7 +69968,7 @@ ${e2}`);
       });
     };
     return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(PageLayout, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(PageHeader, { title: "Scenes", left: onBack && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Button, { onClick: onBack, children: "\u2190" }), children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Button, { onClick: () => setShowNewSceneDialog(true), children: "+ Scene" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(PageHeader, { title: projectname, left: onBack && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Button, { onClick: onBack, children: "\u2190" }), children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Button, { onClick: () => setShowNewSceneDialog(true), children: "+ Scene" }) }),
       /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(PageBody, { children: [
         loading && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "scene-list-empty", children: "Loading\u2026" }),
         !loading && scenes.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "scene-list-empty", children: "No scenes found. Create one from within the editor." }),
@@ -70335,6 +70335,7 @@ ${e2}`);
         {
           onSelect: (scene) => navigateToScene(scene, page.project),
           onBack: navigateBackToProjects,
+          projectname: page.project.name,
           projectId: page.project.id,
           thumbBuster
         }

@@ -20,11 +20,12 @@ interface ApiError {
 interface SceneListPageProps {
   onSelect: (scene: SceneRecord) => void;
   onBack?: () => void;
+  projectname: string;
   projectId?: string;
   thumbBuster?: number;
 }
 
-export function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }: SceneListPageProps) {
+export function SceneListPage({ onSelect, onBack, projectId, projectname, thumbBuster = 0 }: SceneListPageProps) {
   const [scenes, setScenes] = useState<SceneRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [showNewSceneDialog, setShowNewSceneDialog] = useState(false);
@@ -66,7 +67,7 @@ export function SceneListPage({ onSelect, onBack, projectId, thumbBuster = 0 }: 
 
   return (
     <PageLayout>
-      <PageHeader title="Scenes" left={onBack && <Button onClick={onBack}>←</Button>}>
+      <PageHeader title={projectname} left={onBack && <Button onClick={onBack}>←</Button>}>
         <Button onClick={() => setShowNewSceneDialog(true)}>+ Scene</Button>
       </PageHeader>
       <PageBody>

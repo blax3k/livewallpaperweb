@@ -133,6 +133,7 @@ function App() {
       <SceneListPage
         onSelect={(scene) => navigateToScene(scene, page.project)}
         onBack={navigateBackToProjects}
+        projectname={page.project.name}
         projectId={page.project.id}
         thumbBuster={thumbBuster}
       />
