@@ -68578,6 +68578,26 @@ ${e2}`);
       return newIndex;
     }
     /**
+     * Build a texture cropped to the given UV quad (8 floats: 4 corners) from a base texture.
+     */
+    cropTexture(baseTexture, texCoords) {
+      const uValues = [texCoords[0], texCoords[2], texCoords[4], texCoords[6]];
+      const vValues = [texCoords[1], texCoords[3], texCoords[5], texCoords[7]];
+      const minU = Math.min(...uValues);
+      const maxU = Math.max(...uValues);
+      const minV = Math.min(...vValues);
+      const maxV = Math.max(...vValues);
+      return new Texture({
+        source: baseTexture.source,
+        frame: new Rectangle(
+          minU * baseTexture.width,
+          minV * baseTexture.height,
+          (maxU - minU) * baseTexture.width,
+          (maxV - minV) * baseTexture.height
+        )
+      });
+    }
+    /**
      * Create a PixiJS sprite from sprite data with UV texture mapping
      */
     async createSprite(spriteData) {
@@ -68587,23 +68607,7 @@ ${e2}`);
         return null;
       }
       if (spriteData.texCoordinates?.length === 8) {
-        const [u0, v0, u1, v1, u2, v2, u3, v3] = spriteData.texCoordinates;
-        const uValues = [u0, u1, u2, u3];
-        const vValues = [v0, v1, v2, v3];
-        const minU = Math.min(...uValues);
-        const maxU = Math.max(...uValues);
-        const minV = Math.min(...vValues);
-        const maxV = Math.max(...vValues);
-        const frame = new Rectangle(
-          minU * texture.width,
-          minV * texture.height,
-          (maxU - minU) * texture.width,
-          (maxV - minV) * texture.height
-        );
-        texture = new Texture({
-          source: texture.source,
-          frame
-        });
+        texture = this.cropTexture(texture, spriteData.texCoordinates);
       }
       const sprite = new Sprite(texture);
       sprite.x = spriteData.positionX;
@@ -68795,8 +68799,14 @@ ${e2}`);
       const metadata = this.spriteMetadata.get(sprite);
       if (!metadata) return null;
       const original = this.originalSceneData?.sprites.find((s2) => s2.name === metadata.name);
+      let texCoordinates = original?.texCoordinates ? [...original.texCoordinates] : [0, 1, 0, 0, 1, 1, 1, 0];
+      if (this.activeConditionPreview?.spriteIndex === index) {
+        const block = original?.conditions?.[this.activeConditionPreview.conditionIndex];
+        const mod = block?.modifications.find((m2) => m2.type === "texture_coordinates");
+        if (mod?.texCoordinates) texCoordinates = [...mod.texCoordinates];
+      }
       return {
-        texCoordinates: original?.texCoordinates ? [...original.texCoordinates] : [0, 1, 0, 0, 1, 1, 1, 0],
+        texCoordinates,
         textureResource: metadata.textureResource,
         width: sprite.width,
         height: sprite.height
@@ -68804,6 +68814,8 @@ ${e2}`);
     }
     /**
      * Apply new texture coordinates, width, and height to a sprite (from the texture editor).
+     * While a condition set is being previewed, this is stored as an override on that condition
+     * (matching how position/parallax/size already behave) instead of mutating the base sprite.
      * Updates the PIXI sprite's texture frame and dimensions, and syncs originalSceneData.
      */
     applyTexture(index, texCoords, width, height) {
@@ -68811,27 +68823,18 @@ ${e2}`);
       const sprite = this.sprites[index];
       const metadata = this.spriteMetadata.get(sprite);
       if (!metadata) return;
+      if (this.activeConditionPreview?.spriteIndex === index) {
+        const conditionIndex = this.activeConditionPreview.conditionIndex;
+        this.setConditionTexCoordMod(index, conditionIndex, texCoords);
+        this.setConditionSizeMod(index, conditionIndex, width, height);
+        return;
+      }
       const baseTexture = this.textures.get(metadata.textureResource);
       if (baseTexture) {
-        const uValues = [texCoords[0], texCoords[2], texCoords[4], texCoords[6]];
-        const vValues = [texCoords[1], texCoords[3], texCoords[5], texCoords[7]];
-        const minU = Math.min(...uValues);
-        const maxU = Math.max(...uValues);
-        const minV = Math.min(...vValues);
-        const maxV = Math.max(...vValues);
-        sprite.texture = new Texture({
-          source: baseTexture.source,
-          frame: new Rectangle(
-            minU * baseTexture.width,
-            minV * baseTexture.height,
-            (maxU - minU) * baseTexture.width,
-            (maxV - minV) * baseTexture.height
-          )
-        });
+        sprite.texture = this.cropTexture(baseTexture, texCoords);
       }
       sprite.width = width;
       sprite.height = height;
-      console.log("[applyTexture] texCoords:", JSON.stringify(texCoords));
       const original = this.originalSceneData?.sprites.find((s2) => s2.name === metadata.name);
       if (original) {
         original.texCoordinates = texCoords;
@@ -68961,7 +68964,8 @@ ${e2}`);
             positionY: preview ? preview.baseY : metadata?.y ?? original.positionY,
             width: preview ? preview.baseWidth : sprite.width,
             height: preview ? preview.baseHeight : sprite.height,
-            parallaxMultiplier: preview ? preview.baseParallax : metadata?.parallaxMultiplier ?? original.parallaxMultiplier
+            parallaxMultiplier: preview ? preview.baseParallax : metadata?.parallaxMultiplier ?? original.parallaxMultiplier,
+            texCoordinates: preview ? preview.baseTexCoordinates : original.texCoordinates
           };
         })
       };
@@ -69044,6 +69048,7 @@ ${e2}`);
       let x2 = preview.baseX, y2 = preview.baseY;
       let parallax = preview.baseParallax;
       let width = preview.baseWidth, height = preview.baseHeight;
+      let texCoordinates = preview.baseTexCoordinates;
       for (const mod of modifications) {
         if (mod.type === "position") {
           if (mod.positionX !== void 0) x2 = mod.positionX;
@@ -69053,6 +69058,8 @@ ${e2}`);
         } else if (mod.type === "size") {
           if (mod.width !== void 0) width = mod.width;
           if (mod.height !== void 0) height = mod.height;
+        } else if (mod.type === "texture_coordinates") {
+          if (mod.texCoordinates) texCoordinates = mod.texCoordinates;
         }
       }
       metadata.x = x2;
@@ -69060,6 +69067,8 @@ ${e2}`);
       metadata.parallaxMultiplier = parallax;
       sprite.width = width;
       sprite.height = height;
+      const baseTexture = this.textures.get(metadata.textureResource);
+      if (baseTexture) sprite.texture = this.cropTexture(baseTexture, texCoordinates);
       this.applyAllPositions();
       this.updateSelectionHighlight();
     }
@@ -69069,12 +69078,14 @@ ${e2}`);
       const metadata = this.spriteMetadata.get(sprite);
       if (!metadata) return;
       if (!this.conditionPreviewState.has(sprite)) {
+        const original2 = this.getOriginalSpriteData(spriteIndex);
         this.conditionPreviewState.set(sprite, {
           baseX: metadata.x,
           baseY: metadata.y,
           baseParallax: metadata.parallaxMultiplier,
           baseWidth: sprite.width,
-          baseHeight: sprite.height
+          baseHeight: sprite.height,
+          baseTexCoordinates: original2?.texCoordinates ?? [0, 1, 0, 0, 1, 1, 1, 0]
         });
       } else {
         const saved = this.conditionPreviewState.get(sprite);
@@ -69083,6 +69094,8 @@ ${e2}`);
         metadata.parallaxMultiplier = saved.baseParallax;
         sprite.width = saved.baseWidth;
         sprite.height = saved.baseHeight;
+        const baseTexture = this.textures.get(metadata.textureResource);
+        if (baseTexture) sprite.texture = this.cropTexture(baseTexture, saved.baseTexCoordinates);
       }
       this.activeConditionPreview = { spriteIndex, conditionIndex };
       const original = this.getOriginalSpriteData(spriteIndex);
@@ -69099,6 +69112,8 @@ ${e2}`);
         metadata.x = saved.baseX;
         metadata.y = saved.baseY;
         metadata.parallaxMultiplier = saved.baseParallax;
+        const baseTexture = this.textures.get(metadata.textureResource);
+        if (baseTexture) sprite.texture = this.cropTexture(baseTexture, saved.baseTexCoordinates);
       }
       sprite.width = saved.baseWidth;
       sprite.height = saved.baseHeight;
@@ -69150,6 +69165,19 @@ ${e2}`);
       sprite.width = width;
       sprite.height = height;
       this.updateSelectionHighlight();
+    }
+    setConditionTexCoordMod(spriteIndex, conditionIndex, texCoordinates) {
+      const original = this.getOriginalSpriteData(spriteIndex);
+      if (!original?.conditions?.[conditionIndex]) return;
+      const mods = original.conditions[conditionIndex].modifications;
+      const existing = mods.find((m2) => m2.type === "texture_coordinates");
+      if (existing) {
+        existing.texCoordinates = texCoordinates;
+      } else mods.push({ type: "texture_coordinates", texCoordinates });
+      const sprite = this.sprites[spriteIndex];
+      const metadata = this.spriteMetadata.get(sprite);
+      const baseTexture = metadata ? this.textures.get(metadata.textureResource) : void 0;
+      if (baseTexture) sprite.texture = this.cropTexture(baseTexture, texCoordinates);
     }
     addConditionBlock(spriteIndex) {
       const original = this.getOriginalSpriteData(spriteIndex);
@@ -69599,15 +69627,17 @@ ${e2}`);
         if (firstPos && entries.length > 0) {
           setSelectedSprite({ index: 0, name: entries[0].name || "Sprite 0", x: firstPos.x, y: firstPos.y, depth: entries[0].parallaxMultiplier ?? 1, width: firstScale?.width ?? 0, height: firstScale?.height ?? 0 });
           renderer.setSelectedSpriteHighlight(0);
+          refreshSelectedSpriteConditions(0);
         } else {
           setSelectedSprite(null);
           renderer.setSelectedSpriteHighlight(null);
+          setSelectedSpriteConditions([]);
         }
         markClean();
       } catch (error) {
         console.error("Failed to load scene:", error);
       }
-    }, [refreshSpriteList, markClean]);
+    }, [refreshSpriteList, markClean, refreshSelectedSpriteConditions]);
     const saveScene = (0, import_react10.useCallback)(async () => {
       const sceneId = sceneIdRef.current;
       const label = sceneLabelRef.current;

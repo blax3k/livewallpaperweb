@@ -96,15 +96,17 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
       if (firstPos && entries.length > 0) {
         setSelectedSprite({ index: 0, name: entries[0].name || 'Sprite 0', x: firstPos.x, y: firstPos.y, depth: entries[0].parallaxMultiplier ?? 1.0, width: firstScale?.width ?? 0, height: firstScale?.height ?? 0 });
         renderer.setSelectedSpriteHighlight(0);
+        refreshSelectedSpriteConditions(0);
       } else {
         setSelectedSprite(null);
         renderer.setSelectedSpriteHighlight(null);
+        setSelectedSpriteConditions([]);
       }
       markClean();
     } catch (error) {
       console.error('Failed to load scene:', error);
     }
-  }, [refreshSpriteList, markClean]);
+  }, [refreshSpriteList, markClean, refreshSelectedSpriteConditions]);
 
   const saveScene = useCallback(async () => {
     const sceneId = sceneIdRef.current;

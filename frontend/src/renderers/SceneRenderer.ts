@@ -51,6 +51,7 @@ export class SceneRenderer {
   // Keyed by PIXI sprite object — stores base state while condition preview is active
   private conditionPreviewState: Map<PIXI.Sprite, {
     baseX: number; baseY: number; baseParallax: number; baseWidth: number; baseHeight: number;
+    baseTexCoordinates: number[];
   }> = new Map();
   // Which sprite+condition is currently being previewed (null = base mode)
   private activeConditionPreview: { spriteIndex: number; conditionIndex: number } | null = null;
@@ -277,6 +278,28 @@ export class SceneRenderer {
   }
 
   /**
+   * Build a texture cropped to the given UV quad (8 floats: 4 corners) from a base texture.
+   */
+  private cropTexture(baseTexture: PIXI.Texture, texCoords: number[]): PIXI.Texture {
+    const uValues = [texCoords[0], texCoords[2], texCoords[4], texCoords[6]];
+    const vValues = [texCoords[1], texCoords[3], texCoords[5], texCoords[7]];
+    const minU = Math.min(...uValues);
+    const maxU = Math.max(...uValues);
+    const minV = Math.min(...vValues);
+    const maxV = Math.max(...vValues);
+
+    return new PIXI.Texture({
+      source: baseTexture.source,
+      frame: new PIXI.Rectangle(
+        minU * baseTexture.width,
+        minV * baseTexture.height,
+        (maxU - minU) * baseTexture.width,
+        (maxV - minV) * baseTexture.height,
+      ),
+    });
+  }
+
+  /**
    * Create a PixiJS sprite from sprite data with UV texture mapping
    */
   private async createSprite(spriteData: Sprite): Promise<PIXI.Sprite | null> {
@@ -288,26 +311,7 @@ export class SceneRenderer {
 
     // Apply texture coordinates (UV mapping)
     if (spriteData.texCoordinates?.length === 8) {
-      const [u0, v0, u1, v1, u2, v2, u3, v3] = spriteData.texCoordinates;
-      const uValues = [u0, u1, u2, u3];
-      const vValues = [v0, v1, v2, v3];
-
-      const minU = Math.min(...uValues);
-      const maxU = Math.max(...uValues);
-      const minV = Math.min(...vValues);
-      const maxV = Math.max(...vValues);
-
-      const frame = new PIXI.Rectangle(
-        minU * texture.width,
-        minV * texture.height,
-        (maxU - minU) * texture.width,
-        (maxV - minV) * texture.height
-      );
-
-      texture = new PIXI.Texture({
-        source: texture.source,
-        frame,
-      });
+      texture = this.cropTexture(texture, spriteData.texCoordinates);
     }
 
     const sprite = new PIXI.Sprite(texture);
@@ -540,8 +544,14 @@ export class SceneRenderer {
     if (!metadata) return null;
 
     const original = this.originalSceneData?.sprites.find(s => s.name === metadata.name);
+    let texCoordinates = original?.texCoordinates ? [...original.texCoordinates] : [0, 1, 0, 0, 1, 1, 1, 0];
+    if (this.activeConditionPreview?.spriteIndex === index) {
+      const block = original?.conditions?.[this.activeConditionPreview.conditionIndex];
+      const mod = block?.modifications.find(m => m.type === 'texture_coordinates');
+      if (mod?.texCoordinates) texCoordinates = [...mod.texCoordinates];
+    }
     return {
-      texCoordinates: original?.texCoordinates ? [...original.texCoordinates] : [0, 1, 0, 0, 1, 1, 1, 0],
+      texCoordinates,
       textureResource: metadata.textureResource,
       width: sprite.width,
       height: sprite.height,
@@ -550,6 +560,8 @@ export class SceneRenderer {
 
   /**
    * Apply new texture coordinates, width, and height to a sprite (from the texture editor).
+   * While a condition set is being previewed, this is stored as an override on that condition
+   * (matching how position/parallax/size already behave) instead of mutating the base sprite.
    * Updates the PIXI sprite's texture frame and dimensions, and syncs originalSceneData.
    */
   applyTexture(index: number, texCoords: number[], width: number, height: number): void {
@@ -558,31 +570,22 @@ export class SceneRenderer {
     const metadata = this.spriteMetadata.get(sprite);
     if (!metadata) return;
 
+    if (this.activeConditionPreview?.spriteIndex === index) {
+      const conditionIndex = this.activeConditionPreview.conditionIndex;
+      this.setConditionTexCoordMod(index, conditionIndex, texCoords);
+      this.setConditionSizeMod(index, conditionIndex, width, height);
+      return;
+    }
+
     const baseTexture = this.textures.get(metadata.textureResource);
     if (baseTexture) {
-      const uValues = [texCoords[0], texCoords[2], texCoords[4], texCoords[6]];
-      const vValues = [texCoords[1], texCoords[3], texCoords[5], texCoords[7]];
-      const minU = Math.min(...uValues);
-      const maxU = Math.max(...uValues);
-      const minV = Math.min(...vValues);
-      const maxV = Math.max(...vValues);
-
-      sprite.texture = new PIXI.Texture({
-        source: baseTexture.source,
-        frame: new PIXI.Rectangle(
-          minU * baseTexture.width,
-          minV * baseTexture.height,
-          (maxU - minU) * baseTexture.width,
-          (maxV - minV) * baseTexture.height,
-        ),
-      });
+      sprite.texture = this.cropTexture(baseTexture, texCoords);
     }
 
     sprite.width = width;
     sprite.height = height;
 
     // Sync originalSceneData
-    console.log('[applyTexture] texCoords:', JSON.stringify(texCoords));
     const original = this.originalSceneData?.sprites.find(s => s.name === metadata.name);
     if (original) {
       original.texCoordinates = texCoords;
@@ -737,6 +740,7 @@ export class SceneRenderer {
           width: preview ? preview.baseWidth : sprite.width,
           height: preview ? preview.baseHeight : sprite.height,
           parallaxMultiplier: preview ? preview.baseParallax : (metadata?.parallaxMultiplier ?? original.parallaxMultiplier),
+          texCoordinates: preview ? preview.baseTexCoordinates : original.texCoordinates,
         };
       }),
     };
@@ -837,6 +841,7 @@ export class SceneRenderer {
     let x = preview.baseX, y = preview.baseY;
     let parallax = preview.baseParallax;
     let width = preview.baseWidth, height = preview.baseHeight;
+    let texCoordinates = preview.baseTexCoordinates;
 
     for (const mod of modifications) {
       if (mod.type === 'position') {
@@ -847,12 +852,16 @@ export class SceneRenderer {
       } else if (mod.type === 'size') {
         if (mod.width !== undefined) width = mod.width;
         if (mod.height !== undefined) height = mod.height;
+      } else if (mod.type === 'texture_coordinates') {
+        if (mod.texCoordinates) texCoordinates = mod.texCoordinates;
       }
     }
 
     metadata.x = x; metadata.y = y;
     metadata.parallaxMultiplier = parallax;
     sprite.width = width; sprite.height = height;
+    const baseTexture = this.textures.get(metadata.textureResource);
+    if (baseTexture) sprite.texture = this.cropTexture(baseTexture, texCoordinates);
     this.applyAllPositions();
     this.updateSelectionHighlight();
   }
@@ -865,10 +874,12 @@ export class SceneRenderer {
 
     if (!this.conditionPreviewState.has(sprite)) {
       // First entry — save the current base state
+      const original = this.getOriginalSpriteData(spriteIndex);
       this.conditionPreviewState.set(sprite, {
         baseX: metadata.x, baseY: metadata.y,
         baseParallax: metadata.parallaxMultiplier,
         baseWidth: sprite.width, baseHeight: sprite.height,
+        baseTexCoordinates: original?.texCoordinates ?? [0, 1, 0, 0, 1, 1, 1, 0],
       });
     } else {
       // Switching condition sets — restore to base before applying new mods
@@ -876,6 +887,8 @@ export class SceneRenderer {
       metadata.x = saved.baseX; metadata.y = saved.baseY;
       metadata.parallaxMultiplier = saved.baseParallax;
       sprite.width = saved.baseWidth; sprite.height = saved.baseHeight;
+      const baseTexture = this.textures.get(metadata.textureResource);
+      if (baseTexture) sprite.texture = this.cropTexture(baseTexture, saved.baseTexCoordinates);
     }
 
     this.activeConditionPreview = { spriteIndex, conditionIndex };
@@ -894,6 +907,8 @@ export class SceneRenderer {
     if (metadata) {
       metadata.x = saved.baseX; metadata.y = saved.baseY;
       metadata.parallaxMultiplier = saved.baseParallax;
+      const baseTexture = this.textures.get(metadata.textureResource);
+      if (baseTexture) sprite.texture = this.cropTexture(baseTexture, saved.baseTexCoordinates);
     }
     sprite.width = saved.baseWidth; sprite.height = saved.baseHeight;
     this.conditionPreviewState.delete(sprite);
@@ -939,6 +954,20 @@ export class SceneRenderer {
     const sprite = this.sprites[spriteIndex];
     sprite.width = width; sprite.height = height;
     this.updateSelectionHighlight();
+  }
+
+  private setConditionTexCoordMod(spriteIndex: number, conditionIndex: number, texCoordinates: number[]): void {
+    const original = this.getOriginalSpriteData(spriteIndex);
+    if (!original?.conditions?.[conditionIndex]) return;
+    const mods = original.conditions[conditionIndex].modifications;
+    const existing = mods.find(m => m.type === 'texture_coordinates');
+    if (existing) { existing.texCoordinates = texCoordinates; }
+    else mods.push({ type: 'texture_coordinates', texCoordinates });
+
+    const sprite = this.sprites[spriteIndex];
+    const metadata = this.spriteMetadata.get(sprite);
+    const baseTexture = metadata ? this.textures.get(metadata.textureResource) : undefined;
+    if (baseTexture) sprite.texture = this.cropTexture(baseTexture, texCoordinates);
   }
 
   addConditionBlock(spriteIndex: number): number {
