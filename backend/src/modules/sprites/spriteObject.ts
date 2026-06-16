@@ -1,4 +1,4 @@
-import type { Sprite } from '@livewallpaper/types';
+import type { Sprite, SpriteConditionBlock } from '@livewallpaper/types';
 
 type SpriteRow = {
   id: string;
@@ -10,6 +10,7 @@ type SpriteRow = {
   position_y: number;
   parallax_multiplier: number;
   tex_coordinates: number[];
+  conditions: SpriteConditionBlock[] | null;
 };
 
 export class SpriteObject {
@@ -23,6 +24,7 @@ export class SpriteObject {
     public readonly positionY: number,
     public readonly parallaxMultiplier: number,
     public readonly texCoordinates: number[],
+    public readonly conditions: SpriteConditionBlock[] | null = null,
   ) {}
 
   static fromRow(row: SpriteRow): SpriteObject {
@@ -36,6 +38,7 @@ export class SpriteObject {
       row.position_y,
       row.parallax_multiplier,
       row.tex_coordinates,
+      row.conditions ?? null,
     );
   }
 
@@ -50,6 +53,7 @@ export class SpriteObject {
       positionY: this.positionY,
       parallaxMultiplier: this.parallaxMultiplier,
       texCoordinates: this.texCoordinates,
+      ...(this.conditions && this.conditions.length > 0 && { conditions: this.conditions }),
     };
   }
 }

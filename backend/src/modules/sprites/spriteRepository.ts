@@ -47,9 +47,9 @@ export async function replaceSpritesForScene(
     const filename = filenameFromTextureResource(sp.textureResource);
     const imageId = filename ? (imageIdMap.get(filename) ?? null) : null;
     await client.query(
-      `INSERT INTO sprites (scene_id, sort_order, name, image_id, width, height, position_x, position_y, parallax_multiplier, tex_coordinates)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
-      [sceneId, i, sp.name, imageId, sp.width, sp.height, sp.positionX, sp.positionY, sp.parallaxMultiplier, sp.texCoordinates],
+      `INSERT INTO sprites (scene_id, sort_order, name, image_id, width, height, position_x, position_y, parallax_multiplier, tex_coordinates, conditions)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+      [sceneId, i, sp.name, imageId, sp.width, sp.height, sp.positionX, sp.positionY, sp.parallaxMultiplier, sp.texCoordinates, sp.conditions ? JSON.stringify(sp.conditions) : null],
     );
   }
 }

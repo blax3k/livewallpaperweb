@@ -16,6 +16,7 @@ type SceneBaseRow = {
   x_focus: number;
   start_time: number | null;
   end_time: number | null;
+  flag_declarations: import('@livewallpaper/types').SceneFlagDeclarations | null;
 };
 
 type SpriteBaseRow = {
@@ -28,6 +29,7 @@ type SpriteBaseRow = {
   position_y: number;
   parallax_multiplier: number;
   tex_coordinates: number[];
+  conditions: import('@livewallpaper/types').SpriteConditionBlock[] | null;
 };
 
 export async function selectSceneSummaries(projectId?: string) {
@@ -53,7 +55,7 @@ export async function selectSceneSummaries(projectId?: string) {
 
 export async function selectSceneById(id: string) {
   const sceneResult = await pool.query<SceneBaseRow>(
-    `SELECT id, name, label, status, project_id, created_at, updated_at, x_focus, start_time, end_time
+    `SELECT id, name, label, status, project_id, created_at, updated_at, x_focus, start_time, end_time, flag_declarations
      FROM scenes WHERE id = $1 AND status <> 'DELETED'`,
     [id],
   );
@@ -61,7 +63,7 @@ export async function selectSceneById(id: string) {
 
   const spriteResult = await pool.query<SpriteBaseRow>(
     `SELECT sp.id, sp.name, img.filename AS image_filename,
-            sp.width, sp.height, sp.position_x, sp.position_y, sp.parallax_multiplier, sp.tex_coordinates
+            sp.width, sp.height, sp.position_x, sp.position_y, sp.parallax_multiplier, sp.tex_coordinates, sp.conditions
      FROM sprites sp
      LEFT JOIN images img ON img.id = sp.image_id
      WHERE sp.scene_id = $1
@@ -80,9 +82,9 @@ export async function insertScene(
   input: { name: string; label: string; data: Scene; projectId?: string },
 ): Promise<{ id: string }> {
   const result = await client.query<{ id: string }>(
-    `INSERT INTO scenes (name, label, project_id, status, x_focus, start_time, end_time)
-     VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
-    [input.name, input.label, input.projectId ?? null, 'ACTIVE', input.data.xFocus ?? 0, input.data.startTime ?? null, input.data.endTime ?? null],
+    `INSERT INTO scenes (name, label, project_id, status, x_focus, start_time, end_time, flag_declarations)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`,
+    [input.name, input.label, input.projectId ?? null, 'ACTIVE', input.data.xFocus ?? 0, input.data.startTime ?? null, input.data.endTime ?? null, input.data.flags ? JSON.stringify(input.data.flags) : null],
   );
   return result.rows[0];
 }
@@ -94,10 +96,10 @@ export async function updateScene(
   data: Scene,
 ): Promise<{ id: string; project_id: string | null } | null> {
   const result = await client.query<{ id: string; project_id: string | null }>(
-    `UPDATE scenes SET label = $2, x_focus = $3, start_time = $4, end_time = $5, updated_at = NOW()
+    `UPDATE scenes SET label = $2, x_focus = $3, start_time = $4, end_time = $5, flag_declarations = $6, updated_at = NOW()
      WHERE id = $1 AND status <> 'DELETED'
      RETURNING id, project_id`,
-    [id, label, data.xFocus ?? 0, data.startTime ?? null, data.endTime ?? null],
+    [id, label, data.xFocus ?? 0, data.startTime ?? null, data.endTime ?? null, data.flags ? JSON.stringify(data.flags) : null],
   );
   return result.rows[0] ?? null;
 }
