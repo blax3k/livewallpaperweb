@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import { Scene, Sprite } from '../interfaces/Scene';
 import { PhoneGuide } from './PhoneGuide';
 import type { SpriteEntry } from '../controls/SpriteListPanel';
+import type { SpriteConditionBlock, SpriteModification, RuleConditionGroup } from '@livewallpaper/types';
 
 interface SpriteMetadata {
   id?: string;
@@ -46,6 +47,13 @@ export class SceneRenderer {
   private gyroOffsetY: number = 0;
   private isGyroScaled: boolean = false;
   private originalSceneData: Scene | null = null;
+
+  // Keyed by PIXI sprite object — stores base state while condition preview is active
+  private conditionPreviewState: Map<PIXI.Sprite, {
+    baseX: number; baseY: number; baseParallax: number; baseWidth: number; baseHeight: number;
+  }> = new Map();
+  // Which sprite+condition is currently being previewed (null = base mode)
+  private activeConditionPreview: { spriteIndex: number; conditionIndex: number } | null = null;
 
   constructor(container: HTMLElement) {
     this.container = container;
@@ -345,13 +353,16 @@ export class SceneRenderer {
   }
 
   setSpriteSize(index: number, width: number, height: number): void {
-    if (index >= 0 && index < this.sprites.length) {
-      const sprite = this.sprites[index];
-      sprite.width = width;
-      sprite.height = height;
-      this.setScrollOffset(this.currentXFocus);
-      this.updateSelectionHighlight();
+    if (index < 0 || index >= this.sprites.length) return;
+    if (this.activeConditionPreview?.spriteIndex === index) {
+      this.setConditionSizeMod(index, this.activeConditionPreview.conditionIndex, width, height);
+      return;
     }
+    const sprite = this.sprites[index];
+    sprite.width = width;
+    sprite.height = height;
+    this.setScrollOffset(this.currentXFocus);
+    this.updateSelectionHighlight();
   }
 
   getSpriteScale(index: number): { scale: number; width: number; height: number } | null {
@@ -378,14 +389,17 @@ export class SceneRenderer {
   }
 
   setSpritePosition(index: number, x: number, y: number): void {
-    if (index >= 0 && index < this.sprites.length) {
-      const sprite = this.sprites[index];
-      const metadata = this.spriteMetadata.get(sprite);
-      if (metadata) {
-        metadata.x = x;
-        metadata.y = y;
-        this.applyAllPositions();
-      }
+    if (index < 0 || index >= this.sprites.length) return;
+    if (this.activeConditionPreview?.spriteIndex === index) {
+      this.setConditionPositionMod(index, this.activeConditionPreview.conditionIndex, x, y);
+      return;
+    }
+    const sprite = this.sprites[index];
+    const metadata = this.spriteMetadata.get(sprite);
+    if (metadata) {
+      metadata.x = x;
+      metadata.y = y;
+      this.applyAllPositions();
     }
   }
 
@@ -499,12 +513,15 @@ export class SceneRenderer {
   }
 
   setSpriteParallax(index: number, value: number): void {
-    if (index >= 0 && index < this.sprites.length) {
-      const metadata = this.spriteMetadata.get(this.sprites[index]);
-      if (metadata) {
-        metadata.parallaxMultiplier = value;
-        this.setScrollOffset(this.currentXFocus);
-      }
+    if (index < 0 || index >= this.sprites.length) return;
+    if (this.activeConditionPreview?.spriteIndex === index) {
+      this.setConditionParallaxMod(index, this.activeConditionPreview.conditionIndex, value);
+      return;
+    }
+    const metadata = this.spriteMetadata.get(this.sprites[index]);
+    if (metadata) {
+      metadata.parallaxMultiplier = value;
+      this.setScrollOffset(this.currentXFocus);
     }
   }
 
@@ -712,13 +729,14 @@ export class SceneRenderer {
       sprites: this.sprites.map((sprite) => {
         const metadata = this.spriteMetadata.get(sprite);
         const original = originalByName.get(metadata?.name ?? '') ?? this.originalSceneData!.sprites[0];
+        const preview = this.conditionPreviewState.get(sprite);
         return {
           ...original,
-          positionX: metadata?.x ?? original.positionX,
-          positionY: metadata?.y ?? original.positionY,
-          width: sprite.width,
-          height: sprite.height,
-          parallaxMultiplier: metadata?.parallaxMultiplier ?? original.parallaxMultiplier,
+          positionX: preview ? preview.baseX : (metadata?.x ?? original.positionX),
+          positionY: preview ? preview.baseY : (metadata?.y ?? original.positionY),
+          width: preview ? preview.baseWidth : sprite.width,
+          height: preview ? preview.baseHeight : sprite.height,
+          parallaxMultiplier: preview ? preview.baseParallax : (metadata?.parallaxMultiplier ?? original.parallaxMultiplier),
         };
       }),
     };
@@ -781,6 +799,181 @@ export class SceneRenderer {
 
   getCanvas(): HTMLCanvasElement | null {
     return this.app ? (this.app.canvas as HTMLCanvasElement) : null;
+  }
+
+  getSpriteConditions(index: number): import('@livewallpaper/types').SpriteConditionBlock[] {
+    if (!this.originalSceneData || index < 0 || index >= this.originalSceneData.sprites.length) return [];
+    const sprite = this.sprites[index];
+    const metadata = this.spriteMetadata.get(sprite);
+    const original = this.originalSceneData.sprites.find(s => s.name === metadata?.name);
+    return original?.conditions ? [...original.conditions] : [];
+  }
+
+  setSpriteConditions(index: number, conditions: SpriteConditionBlock[]): void {
+    if (!this.originalSceneData) return;
+    const sprite = this.sprites[index];
+    const metadata = this.spriteMetadata.get(sprite);
+    if (!metadata) return;
+    const original = this.originalSceneData.sprites.find(s => s.name === metadata.name);
+    if (original) {
+      original.conditions = conditions.length > 0 ? conditions : undefined;
+    }
+  }
+
+  // ── Condition preview ──────────────────────────────────────────────────────
+
+  private getOriginalSpriteData(spriteIndex: number): Sprite | null {
+    if (!this.originalSceneData || spriteIndex < 0 || spriteIndex >= this.sprites.length) return null;
+    const metadata = this.spriteMetadata.get(this.sprites[spriteIndex]);
+    return this.originalSceneData.sprites.find(s => s.name === metadata?.name) ?? null;
+  }
+
+  private applyConditionMods(spriteIndex: number, modifications: SpriteModification[]): void {
+    const sprite = this.sprites[spriteIndex];
+    const metadata = this.spriteMetadata.get(sprite);
+    const preview = this.conditionPreviewState.get(sprite);
+    if (!metadata || !preview) return;
+
+    let x = preview.baseX, y = preview.baseY;
+    let parallax = preview.baseParallax;
+    let width = preview.baseWidth, height = preview.baseHeight;
+
+    for (const mod of modifications) {
+      if (mod.type === 'position') {
+        if (mod.positionX !== undefined) x = mod.positionX;
+        if (mod.positionY !== undefined) y = mod.positionY;
+      } else if (mod.type === 'parallax') {
+        if (mod.parallaxMultiplier !== undefined) parallax = mod.parallaxMultiplier;
+      } else if (mod.type === 'size') {
+        if (mod.width !== undefined) width = mod.width;
+        if (mod.height !== undefined) height = mod.height;
+      }
+    }
+
+    metadata.x = x; metadata.y = y;
+    metadata.parallaxMultiplier = parallax;
+    sprite.width = width; sprite.height = height;
+    this.applyAllPositions();
+    this.updateSelectionHighlight();
+  }
+
+  enterConditionPreview(spriteIndex: number, conditionIndex: number): void {
+    if (spriteIndex < 0 || spriteIndex >= this.sprites.length) return;
+    const sprite = this.sprites[spriteIndex];
+    const metadata = this.spriteMetadata.get(sprite);
+    if (!metadata) return;
+
+    if (!this.conditionPreviewState.has(sprite)) {
+      // First entry — save the current base state
+      this.conditionPreviewState.set(sprite, {
+        baseX: metadata.x, baseY: metadata.y,
+        baseParallax: metadata.parallaxMultiplier,
+        baseWidth: sprite.width, baseHeight: sprite.height,
+      });
+    } else {
+      // Switching condition sets — restore to base before applying new mods
+      const saved = this.conditionPreviewState.get(sprite)!;
+      metadata.x = saved.baseX; metadata.y = saved.baseY;
+      metadata.parallaxMultiplier = saved.baseParallax;
+      sprite.width = saved.baseWidth; sprite.height = saved.baseHeight;
+    }
+
+    this.activeConditionPreview = { spriteIndex, conditionIndex };
+    const original = this.getOriginalSpriteData(spriteIndex);
+    const block = original?.conditions?.[conditionIndex];
+    this.applyConditionMods(spriteIndex, block?.modifications ?? []);
+  }
+
+  exitConditionPreview(spriteIndex: number): void {
+    if (spriteIndex < 0 || spriteIndex >= this.sprites.length) return;
+    const sprite = this.sprites[spriteIndex];
+    const saved = this.conditionPreviewState.get(sprite);
+    if (!saved) return;
+
+    const metadata = this.spriteMetadata.get(sprite);
+    if (metadata) {
+      metadata.x = saved.baseX; metadata.y = saved.baseY;
+      metadata.parallaxMultiplier = saved.baseParallax;
+    }
+    sprite.width = saved.baseWidth; sprite.height = saved.baseHeight;
+    this.conditionPreviewState.delete(sprite);
+    this.activeConditionPreview = null;
+    this.applyAllPositions();
+    this.updateSelectionHighlight();
+  }
+
+  private setConditionPositionMod(spriteIndex: number, conditionIndex: number, x: number, y: number): void {
+    const original = this.getOriginalSpriteData(spriteIndex);
+    if (!original?.conditions?.[conditionIndex]) return;
+    const mods = original.conditions[conditionIndex].modifications;
+    const existing = mods.find(m => m.type === 'position');
+    if (existing) { existing.positionX = x; existing.positionY = y; }
+    else mods.push({ type: 'position', positionX: x, positionY: y });
+
+    const metadata = this.spriteMetadata.get(this.sprites[spriteIndex]);
+    if (metadata) { metadata.x = x; metadata.y = y; }
+    this.applyAllPositions();
+  }
+
+  private setConditionParallaxMod(spriteIndex: number, conditionIndex: number, parallax: number): void {
+    const original = this.getOriginalSpriteData(spriteIndex);
+    if (!original?.conditions?.[conditionIndex]) return;
+    const mods = original.conditions[conditionIndex].modifications;
+    const existing = mods.find(m => m.type === 'parallax');
+    if (existing) { existing.parallaxMultiplier = parallax; }
+    else mods.push({ type: 'parallax', parallaxMultiplier: parallax });
+
+    const metadata = this.spriteMetadata.get(this.sprites[spriteIndex]);
+    if (metadata) { metadata.parallaxMultiplier = parallax; }
+    this.applyAllPositions();
+  }
+
+  private setConditionSizeMod(spriteIndex: number, conditionIndex: number, width: number, height: number): void {
+    const original = this.getOriginalSpriteData(spriteIndex);
+    if (!original?.conditions?.[conditionIndex]) return;
+    const mods = original.conditions[conditionIndex].modifications;
+    const existing = mods.find(m => m.type === 'size');
+    if (existing) { existing.width = width; existing.height = height; }
+    else mods.push({ type: 'size', width, height });
+
+    const sprite = this.sprites[spriteIndex];
+    sprite.width = width; sprite.height = height;
+    this.updateSelectionHighlight();
+  }
+
+  addConditionBlock(spriteIndex: number): number {
+    const original = this.getOriginalSpriteData(spriteIndex);
+    if (!original) return -1;
+    if (!original.conditions) original.conditions = [];
+    original.conditions.push({
+      name: `Set ${original.conditions.length + 1}`,
+      conditions: { operator: 'AND', checks: [] },
+      modifications: [],
+    });
+    return original.conditions.length - 1;
+  }
+
+  removeConditionBlock(spriteIndex: number, conditionIndex: number): void {
+    const original = this.getOriginalSpriteData(spriteIndex);
+    if (!original?.conditions) return;
+    original.conditions.splice(conditionIndex, 1);
+    if (original.conditions.length === 0) original.conditions = undefined;
+  }
+
+  setConditionBlockName(spriteIndex: number, conditionIndex: number, name: string): void {
+    const original = this.getOriginalSpriteData(spriteIndex);
+    if (!original?.conditions?.[conditionIndex]) return;
+    original.conditions[conditionIndex].name = name;
+  }
+
+  setConditionBlockFlags(spriteIndex: number, conditionIndex: number, conditions: RuleConditionGroup): void {
+    const original = this.getOriginalSpriteData(spriteIndex);
+    if (!original?.conditions?.[conditionIndex]) return;
+    original.conditions[conditionIndex].conditions = conditions;
+  }
+
+  getActiveConditionPreview(): { spriteIndex: number; conditionIndex: number } | null {
+    return this.activeConditionPreview;
   }
 
   private static readonly MIN_ZOOM = 0.2;

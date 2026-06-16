@@ -1,6 +1,6 @@
-import type { SceneSummary, SceneDetail, ProjectSummary, ImageRecord } from '@livewallpaper/types';
+import type { SceneSummary, SceneDetail, ProjectSummary, ImageRecord, FlagDefinition, RuleDefinition } from '@livewallpaper/types';
 
-export type { SceneSummary, SceneDetail, ProjectSummary, ImageRecord };
+export type { SceneSummary, SceneDetail, ProjectSummary, ImageRecord, FlagDefinition, RuleDefinition };
 
 export class ApiError extends Error {
   constructor(public readonly status: number, message: string) {
@@ -106,6 +106,34 @@ export const imagesApi = {
 
   delete(imageId: string): Promise<void> {
     return request<void>(`/api/images/${imageId}`, { method: 'DELETE' });
+  },
+};
+
+export const flagsApi = {
+  list(projectId: string): Promise<FlagDefinition[]> {
+    return request<FlagDefinition[]>(`/api/projects/${projectId}/flags`);
+  },
+
+  save(projectId: string, flags: FlagDefinition[]): Promise<void> {
+    return request<void>(`/api/projects/${projectId}/flags`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(flags),
+    });
+  },
+};
+
+export const rulesApi = {
+  list(projectId: string): Promise<RuleDefinition[]> {
+    return request<RuleDefinition[]>(`/api/projects/${projectId}/rules`);
+  },
+
+  save(projectId: string, rules: RuleDefinition[]): Promise<void> {
+    return request<void>(`/api/projects/${projectId}/rules`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(rules),
+    });
   },
 };
 

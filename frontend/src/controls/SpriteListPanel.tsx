@@ -19,9 +19,10 @@ interface SpriteListPanelProps {
   onDelete: (index: number) => void;
   onEditTexture: (index: number) => void;
   onRename: (index: number, newName: string) => void;
+  onEditConditions?: (index: number) => void;
 }
 
-export function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd, onChangeTexture, onDelete, onEditTexture, onRename }: SpriteListPanelProps) {
+export function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd, onChangeTexture, onDelete, onEditTexture, onRename, onEditConditions }: SpriteListPanelProps) {
   const [showModal, setShowModal] = useState(false);
   const [changeTextureIndex, setChangeTextureIndex] = useState<number | null>(null);
   const [menuOpenIndex, setMenuOpenIndex] = useState<number | null>(null);
@@ -159,6 +160,17 @@ export function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onA
                 >
                   Edit Texture
                 </button>
+                {onEditConditions && (
+                  <button
+                    className="sprite-menu-item"
+                    onClick={() => {
+                      setMenuOpenIndex(null);
+                      onEditConditions(index);
+                    }}
+                  >
+                    Conditions
+                  </button>
+                )}
                 <button
                   className="sprite-menu-item sprite-menu-item--danger"
                   onClick={() => {

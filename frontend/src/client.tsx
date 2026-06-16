@@ -5,6 +5,8 @@ import { createRoot } from 'react-dom/client';
 import { ScenePage } from './ScenePage';
 import { SceneListPage } from './SceneListPage';
 import { ProjectListPage } from './ProjectListPage';
+import { FlagsPage } from './FlagsPage';
+import { RulesPage } from './RulesPage';
 import { LoginPage } from './LoginPage';
 import { authApi, setUnauthorizedHandler } from './api';
 
@@ -21,7 +23,9 @@ interface ProjectRecord {
 type Page =
   | { type: 'projects' }
   | { type: 'scenes'; project: ProjectRecord }
-  | { type: 'scene'; sceneId: string; project: ProjectRecord };
+  | { type: 'scene'; sceneId: string; project: ProjectRecord }
+  | { type: 'flags'; project: ProjectRecord }
+  | { type: 'rules'; project: ProjectRecord };
 
 function pageFromPath(): Page {
   const sceneMatch = window.location.pathname.match(/^\/project\/([^/]+)\/scene\/([^/]+)$/);
@@ -107,6 +111,16 @@ function App() {
     setPage({ type: 'scenes', project });
   }, []);
 
+  const navigateToFlags = useCallback((project: ProjectRecord) => {
+    window.history.pushState(null, '', `/project/${encodeURIComponent(project.id)}/flags`);
+    setPage({ type: 'flags', project });
+  }, []);
+
+  const navigateToRules = useCallback((project: ProjectRecord) => {
+    window.history.pushState(null, '', `/project/${encodeURIComponent(project.id)}/rules`);
+    setPage({ type: 'rules', project });
+  }, []);
+
   const handleSaved = useCallback(() => setThumbBuster(b => b + 1), []);
 
   if (authState.status === 'loading') {
@@ -121,9 +135,30 @@ function App() {
     return (
       <ScenePage
         initialSceneId={page.sceneId}
+        projectId={page.project.id}
         onBack={() => navigateBackToScenes(page.project)}
         onSaved={handleSaved}
         onDirtyChange={handleDirtyChange}
+      />
+    );
+  }
+
+  if (page.type === 'flags') {
+    return (
+      <FlagsPage
+        projectId={page.project.id}
+        projectName={page.project.name}
+        onBack={() => navigateBackToScenes(page.project)}
+      />
+    );
+  }
+
+  if (page.type === 'rules') {
+    return (
+      <RulesPage
+        projectId={page.project.id}
+        projectName={page.project.name}
+        onBack={() => navigateBackToScenes(page.project)}
       />
     );
   }
@@ -133,6 +168,8 @@ function App() {
       <SceneListPage
         onSelect={(scene) => navigateToScene(scene, page.project)}
         onBack={navigateBackToProjects}
+        onFlags={() => navigateToFlags(page.project)}
+        onRules={() => navigateToRules(page.project)}
         projectname={page.project.name}
         projectId={page.project.id}
         thumbBuster={thumbBuster}

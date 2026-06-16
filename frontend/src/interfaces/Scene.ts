@@ -1,3 +1,5 @@
+import type { SpriteConditionBlock, SceneFlagDeclarations } from '@livewallpaper/types';
+
 /**
  * Represents a sprite object in a live wallpaper scene
  */
@@ -11,6 +13,7 @@ export interface Sprite {
   texCoordinates: number[];
   textureResource: string;
   width: number;
+  conditions?: SpriteConditionBlock[];
 }
 
 /**
@@ -20,6 +23,7 @@ export interface Sprite {
 export interface Scene {
   sprites: Sprite[];
   xFocus: number;
+  flags?: SceneFlagDeclarations;
   /** Start time as minutes-of-day (0–1439) when this scene becomes available. Defaults to 0 (00:00). */
   startTime?: number;
   /** End time as minutes-of-day (0–1439) until which this scene is available. Defaults to 1439 (23:59). */

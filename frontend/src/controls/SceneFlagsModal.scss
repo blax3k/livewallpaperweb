@@ -1,0 +1,88 @@
+.sfm-modal {
+  width: 540px;
+}
+
+.sfm-section {
+  margin-bottom: 1rem;
+}
+
+.sfm-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  max-height: 160px;
+  overflow-y: auto;
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 0.5rem;
+}
+
+.sfm-check-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #ddd;
+
+  &:hover { color: #fff; }
+}
+
+.sfm-flag-name {
+  flex: 1;
+}
+
+.sfm-flag-id {
+  font-size: 0.75rem;
+  color: #8bc;
+  font-family: monospace;
+}
+
+.sfm-empty {
+  font-size: 0.82rem;
+  color: #666;
+  padding: 0.25rem 0;
+}
+
+.sfm-scored-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+  background: #252525;
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 0.35rem 0.5rem;
+
+  select {
+    flex: 1;
+    background: #1e1e1e;
+    border: 1px solid #555;
+    border-radius: 4px;
+    color: #eee;
+    padding: 0.25rem 0.4rem;
+    font-size: 0.82rem;
+
+    &:focus { outline: none; border-color: #888; }
+  }
+
+  label {
+    font-size: 0.8rem;
+    color: #aaa;
+    white-space: nowrap;
+  }
+
+  input[type='number'] {
+    width: 64px;
+    background: #1e1e1e;
+    border: 1px solid #555;
+    border-radius: 4px;
+    color: #eee;
+    padding: 0.25rem 0.4rem;
+    font-size: 0.82rem;
+    text-align: right;
+
+    &:focus { outline: none; border-color: #888; }
+  }
+}

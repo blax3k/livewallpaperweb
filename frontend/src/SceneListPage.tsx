@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './SceneListPage.scss';
 import { Button } from './components/Button';
 import { SceneCard } from './components/SceneCard';
 import { PageLayout, PageHeader, PageBody } from './components/PageLayout';
 import { NewSceneDialog } from './controls/NewSceneDialog';
+import { SceneFlagsModal } from './controls/SceneFlagsModal';
+import { scenesApi, flagsApi } from './api';
+import type { FlagDefinition, SceneFlagDeclarations } from '@livewallpaper/types';
 
 interface SceneRecord {
   id: string;
@@ -20,15 +23,23 @@ interface ApiError {
 interface SceneListPageProps {
   onSelect: (scene: SceneRecord) => void;
   onBack?: () => void;
+  onFlags?: () => void;
+  onRules?: () => void;
   projectname: string;
   projectId?: string;
   thumbBuster?: number;
 }
 
-export function SceneListPage({ onSelect, onBack, projectId, projectname, thumbBuster = 0 }: SceneListPageProps) {
+export function SceneListPage({ onSelect, onBack, onFlags, onRules, projectId, projectname, thumbBuster = 0 }: SceneListPageProps) {
   const [scenes, setScenes] = useState<SceneRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [showNewSceneDialog, setShowNewSceneDialog] = useState(false);
+
+  // Scene flags modal state
+  const [flagsScene, setFlagsScene] = useState<SceneRecord | null>(null);
+  const [flagsModalData, setFlagsModalData] = useState<{ declarations: SceneFlagDeclarations; label: string } | null>(null);
+  const [availableFlags, setAvailableFlags] = useState<FlagDefinition[]>([]);
+  const [flagsModalLoading, setFlagsModalLoading] = useState(false);
 
   useEffect(() => {
     fetch(`/api/scenes${projectId ? `?projectId=${encodeURIComponent(projectId)}` : ''}`)
@@ -65,9 +76,42 @@ export function SceneListPage({ onSelect, onBack, projectId, projectname, thumbB
       });
   };
 
+  const openSceneFlags = useCallback(async (scene: SceneRecord) => {
+    setFlagsScene(scene);
+    setFlagsModalLoading(true);
+    try {
+      const [sceneDetail, flags] = await Promise.all([
+        scenesApi.get(scene.id),
+        projectId ? flagsApi.list(projectId) : Promise.resolve<FlagDefinition[]>([]),
+      ]);
+      setAvailableFlags(flags);
+      setFlagsModalData({ declarations: sceneDetail.data.flags ?? {}, label: sceneDetail.label });
+    } catch {
+      window.alert('Failed to load scene flags.');
+      setFlagsScene(null);
+    } finally {
+      setFlagsModalLoading(false);
+    }
+  }, [projectId]);
+
+  const handleSaveSceneFlags = useCallback(async (declarations: SceneFlagDeclarations) => {
+    if (!flagsScene || !flagsModalData) return;
+    try {
+      const sceneDetail = await scenesApi.get(flagsScene.id);
+      await scenesApi.update(flagsScene.id, flagsModalData.label, { ...sceneDetail.data, flags: declarations });
+    } catch {
+      window.alert('Failed to save scene flags.');
+    } finally {
+      setFlagsScene(null);
+      setFlagsModalData(null);
+    }
+  }, [flagsScene, flagsModalData]);
+
   return (
     <PageLayout>
       <PageHeader title={projectname} left={onBack && <Button onClick={onBack}>←</Button>}>
+        {onFlags && <Button onClick={onFlags}>Flags</Button>}
+        {onRules && <Button onClick={onRules}>Rules</Button>}
         <Button onClick={() => setShowNewSceneDialog(true)}>+ Scene</Button>
       </PageHeader>
       <PageBody>
@@ -78,13 +122,21 @@ export function SceneListPage({ onSelect, onBack, projectId, projectname, thumbB
         {!loading && scenes.length > 0 && (
           <div className="scene-list-grid">
             {scenes.map(scene => (
-              <SceneCard
-                key={scene.id}
-                label={scene.label}
-                thumbnail_url={scene.thumbnail_url}
-                thumbBuster={thumbBuster}
-                onClick={() => onSelect(scene)}
-              />
+              <div key={scene.id} className="scene-card-wrapper">
+                <SceneCard
+                  label={scene.label}
+                  thumbnail_url={scene.thumbnail_url}
+                  thumbBuster={thumbBuster}
+                  onClick={() => onSelect(scene)}
+                />
+                <button
+                  className="scene-flags-btn"
+                  title="Edit scene flag declarations"
+                  onClick={e => { e.stopPropagation(); openSceneFlags(scene); }}
+                >
+                  🚩
+                </button>
+              </div>
             ))}
           </div>
         )}
@@ -94,6 +146,20 @@ export function SceneListPage({ onSelect, onBack, projectId, projectname, thumbB
           onConfirm={handleCreate}
           onCancel={() => setShowNewSceneDialog(false)}
           scenes={scenes.map(s => ({ id: s.id, label: s.label, thumbnail_url: s.thumbnail_url }))}
+        />
+      )}
+      {flagsScene && flagsModalLoading && (
+        <div className="modal-overlay">
+          <div className="modal-box" style={{ minWidth: 200, textAlign: 'center' }}>Loading…</div>
+        </div>
+      )}
+      {flagsScene && !flagsModalLoading && flagsModalData && (
+        <SceneFlagsModal
+          sceneName={flagsScene.label}
+          flags={availableFlags}
+          declarations={flagsModalData.declarations}
+          onSave={handleSaveSceneFlags}
+          onClose={() => { setFlagsScene(null); setFlagsModalData(null); }}
         />
       )}
     </PageLayout>

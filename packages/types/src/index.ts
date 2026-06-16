@@ -160,10 +160,12 @@ export interface RuleDefinition {
  * "texture"             textureResource
  * "texture_coordinates" texCoordinates  (8 floats, UV quad)
  * "position"            positionX, positionY
+ * "parallax"            parallaxMultiplier
+ * "size"                width, height
  * ```
  */
 export interface SpriteModification {
-  type: 'visible' | 'texture' | 'texture_coordinates' | 'position';
+  type: 'visible' | 'texture' | 'texture_coordinates' | 'position' | 'parallax' | 'size';
   /** Show or hide. Used by: visible */
   visible?: boolean;
   /** Texture resource name to swap in. Used by: texture */
@@ -174,6 +176,12 @@ export interface SpriteModification {
   positionX?: number;
   /** Replacement Y position. Used by: position */
   positionY?: number;
+  /** Replacement parallax/depth multiplier. Used by: parallax */
+  parallaxMultiplier?: number;
+  /** Replacement width. Used by: size */
+  width?: number;
+  /** Replacement height. Used by: size */
+  height?: number;
 }
 
 /**
@@ -184,6 +192,8 @@ export interface SpriteModification {
  * A null/empty conditions group always matches (use for default overrides).
  */
 export interface SpriteConditionBlock {
+  /** Human-readable label shown in the editor. */
+  name?: string;
   conditions?: RuleConditionGroup;
   modifications: SpriteModification[];
 }

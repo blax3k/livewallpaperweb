@@ -8,16 +8,20 @@ import { useNotifications } from './hooks/useNotifications';
 import { useSceneRenderer } from './hooks/useSceneRenderer';
 import { useSpriteDrag } from './hooks/useSpriteDrag';
 import { useKeyboardControls } from './hooks/useKeyboardControls';
+import { flagsApi } from './api';
+import type { FlagDefinition } from '@livewallpaper/types';
 
 interface ScenePageProps {
   initialSceneId?: string;
+  projectId?: string;
   onBack?: () => void;
   onSaved?: () => void;
   onDirtyChange?: (isDirty: boolean) => void;
 }
 
-export function ScenePage({ initialSceneId, onBack, onSaved, onDirtyChange }: ScenePageProps) {
+export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyChange }: ScenePageProps) {
   const [scenes, setScenes] = useState<SceneOption[]>([]);
+  const [availableFlags, setAvailableFlags] = useState<FlagDefinition[]>([]);
   const history = useUndoHistory();
   const { notifications, notify } = useNotifications();
   const dragStartPos = useRef<{ x: number; y: number } | null>(null);
@@ -61,6 +65,13 @@ export function ScenePage({ initialSceneId, onBack, onSaved, onDirtyChange }: Sc
     handleChangeTexture,
     handleDeleteSprite,
     handleRenameSprite,
+    activeConditionSet,
+    selectedSpriteConditions,
+    handleSelectConditionSet,
+    handleAddConditionSet,
+    handleRemoveConditionSet,
+    handleRenameConditionSet,
+    handleSetConditionSetFlags,
     handleZoomIn,
     handleZoomOut,
     handleZoomAtPoint,
@@ -110,7 +121,7 @@ export function ScenePage({ initialSceneId, onBack, onSaved, onDirtyChange }: Sc
     selectedSprite,
     rendererRef,
     onSpriteMove: applySelectedSpriteMove,
-    onDragCommit: (action) => history.push(action),
+    onDragCommit: (action) => { if (activeConditionSet === null) history.push(action); },
   });
 
   useKeyboardControls({
@@ -134,6 +145,11 @@ export function ScenePage({ initialSceneId, onBack, onSaved, onDirtyChange }: Sc
       )
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (!projectId) return;
+    flagsApi.list(projectId).then(setAvailableFlags).catch(() => {});
+  }, [projectId]);
 
   useEffect(() => {
     if (initialSceneId) loadScene(initialSceneId);
@@ -235,26 +251,26 @@ export function ScenePage({ initialSceneId, onBack, onSaved, onDirtyChange }: Sc
   }, []);
 
   const handleSpritePositionCommit = useCallback((x: number, y: number) => {
-    if (!selectedSprite || !dragStartPos.current) return;
+    if (!selectedSprite || !dragStartPos.current || activeConditionSet !== null) return;
     const before = dragStartPos.current;
     dragStartPos.current = null;
     if (before.x !== x || before.y !== y) {
       history.push({ type: 'position', spriteIndex: selectedSprite.index, before, after: { x, y } });
     }
-  }, [selectedSprite, history]);
+  }, [selectedSprite, history, activeConditionSet]);
 
   const handleSpriteSizeChangeStart = useCallback(() => {
     if (selectedSprite) dragStartSize.current = { width: selectedSprite.width, height: selectedSprite.height };
   }, [selectedSprite]);
 
   const handleSpriteSizeCommit = useCallback((width: number, height: number) => {
-    if (!selectedSprite || !dragStartSize.current) return;
+    if (!selectedSprite || !dragStartSize.current || activeConditionSet !== null) return;
     const before = dragStartSize.current;
     dragStartSize.current = null;
     if (before.width !== width || before.height !== height) {
       history.push({ type: 'scale', spriteIndex: selectedSprite.index, before, after: { width, height } });
     }
-  }, [selectedSprite, history]);
+  }, [selectedSprite, history, activeConditionSet]);
 
   const handleChangeTextureWithHistory = useCallback(async (index: number, textureResource: string) => {
     const beforeTexture = rendererRef.current?.getSpriteTextureResource(index) ?? '';
@@ -288,13 +304,13 @@ export function ScenePage({ initialSceneId, onBack, onSaved, onDirtyChange }: Sc
   }, [history]);
 
   const handleSpriteDepthCommit = useCallback((depth: number) => {
-    if (!selectedSprite || dragStartDepth.current === null) return;
+    if (!selectedSprite || dragStartDepth.current === null || activeConditionSet !== null) return;
     const before = dragStartDepth.current;
     dragStartDepth.current = null;
     if (before !== depth) {
       history.push({ type: 'depth', spriteIndex: selectedSprite.index, before, after: depth });
     }
-  }, [selectedSprite, history]);
+  }, [selectedSprite, history, activeConditionSet]);
 
   const handleNewScene = useCallback(async (label: string, copyFromSceneId?: string) => {
     if (isDirty && !window.confirm('You have unsaved changes. Switch scenes without saving?')) return;
@@ -359,6 +375,14 @@ export function ScenePage({ initialSceneId, onBack, onSaved, onDirtyChange }: Sc
           onDeleteSprite={handleDeleteSprite}
           onRenameSprite={handleRenameSprite}
           onEditTexture={setEditTextureIndex}
+          selectedSpriteConditions={selectedSpriteConditions}
+          availableFlags={availableFlags}
+          activeConditionIndex={activeConditionSet?.spriteIndex === selectedSprite?.index ? activeConditionSet?.conditionIndex ?? null : null}
+          onSelectConditionSet={handleSelectConditionSet}
+          onAddConditionSet={handleAddConditionSet}
+          onRemoveConditionSet={handleRemoveConditionSet}
+          onRenameConditionSet={handleRenameConditionSet}
+          onSetConditionSetFlags={handleSetConditionSetFlags}
           onSpritePositionChange={handleSpritePositionChange}
           onSpritePositionChangeStart={handleSpritePositionChangeStart}
           onSpritePositionCommit={handleSpritePositionCommit}

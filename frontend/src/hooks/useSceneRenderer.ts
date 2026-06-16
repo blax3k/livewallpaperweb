@@ -3,6 +3,7 @@ import { SceneRenderer } from '../renderers/SceneRenderer';
 import { scenesApi, spritesApi } from '../api';
 import type { SpriteEntry } from '../controls/SpriteListPanel';
 import type { Scene } from '../interfaces/Scene';
+import type { SpriteConditionBlock, RuleConditionGroup } from '@livewallpaper/types';
 
 export interface SelectedSprite {
   index: number;
@@ -31,6 +32,16 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
   onNotifyRef.current = onNotify;
   const onSavedRef = useRef(onSaved);
   onSavedRef.current = onSaved;
+
+  const [activeConditionSet, setActiveConditionSet] = useState<{ spriteIndex: number; conditionIndex: number } | null>(null);
+  const activeConditionSetRef = useRef<{ spriteIndex: number; conditionIndex: number } | null>(null);
+  activeConditionSetRef.current = activeConditionSet;
+
+  const [selectedSpriteConditions, setSelectedSpriteConditions] = useState<SpriteConditionBlock[]>([]);
+
+  const refreshSelectedSpriteConditions = useCallback((spriteIndex: number) => {
+    setSelectedSpriteConditions(rendererRef.current?.getSpriteConditions(spriteIndex) ?? []);
+  }, []);
 
   const markDirty = useCallback(() => {
     if (isDirtyRef.current) return;
@@ -150,6 +161,12 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
   }, [refreshSpriteList, markDirty]);
 
   const handleSpriteSelect = useCallback((index: number) => {
+    // Exit any active condition preview before switching sprites
+    const acs = activeConditionSetRef.current;
+    if (acs !== null) {
+      rendererRef.current?.exitConditionPreview(acs.spriteIndex);
+      setActiveConditionSet(null);
+    }
     const pos = rendererRef.current?.getSpritePosition(index);
     const scaleInfo = rendererRef.current?.getSpriteScale(index);
     const name = spriteEntries[index]?.name || `Sprite ${index}`;
@@ -157,7 +174,8 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
       setSelectedSprite({ index, name, x: pos.x, y: pos.y, depth: rendererRef.current?.getSpriteParallax(index) ?? 1.0, width: scaleInfo?.width ?? 0, height: scaleInfo?.height ?? 0 });
       rendererRef.current?.setSelectedSpriteHighlight(index);
     }
-  }, [spriteEntries]);
+    refreshSelectedSpriteConditions(index);
+  }, [spriteEntries, refreshSelectedSpriteConditions]);
 
   const handleSpritePositionChange = useCallback((x: number, y: number) => {
     if (!rendererRef.current) return;
@@ -182,9 +200,13 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     setSelectedSprite(prev => {
       if (!prev) return null;
       rendererRef.current?.setSpriteParallax(prev.index, depth);
-      const newIndex = rendererRef.current?.sortSpritesByParallax(prev.index) ?? prev.index;
-      if (rendererRef.current) refreshSpriteList(rendererRef.current);
-      return { ...prev, index: newIndex, depth };
+      // Don't re-sort when in condition preview — the parallax change is only an override
+      if (!activeConditionSetRef.current) {
+        const newIndex = rendererRef.current?.sortSpritesByParallax(prev.index) ?? prev.index;
+        if (rendererRef.current) refreshSpriteList(rendererRef.current);
+        return { ...prev, index: newIndex, depth };
+      }
+      return { ...prev, depth };
     });
     markDirty();
   }, [refreshSpriteList, markDirty]);
@@ -233,6 +255,82 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     });
     markDirty();
   }, [refreshSpriteList, markDirty]);
+
+  const handleSpriteConditions = useCallback((index: number): SpriteConditionBlock[] => {
+    return rendererRef.current?.getSpriteConditions(index) ?? [];
+  }, []);
+
+  const handleSaveSpriteConditions = useCallback((index: number, conditions: SpriteConditionBlock[]) => {
+    rendererRef.current?.setSpriteConditions(index, conditions);
+    markDirty();
+  }, [markDirty]);
+
+  const handleSelectConditionSet = useCallback((spriteIndex: number, conditionIndex: number | null) => {
+    const renderer = rendererRef.current;
+    if (!renderer) return;
+
+    if (conditionIndex === null) {
+      renderer.exitConditionPreview(spriteIndex);
+      setActiveConditionSet(null);
+      // Restore UI position to base values
+      const pos = renderer.getSpritePosition(spriteIndex);
+      const scale = renderer.getSpriteScale(spriteIndex);
+      const parallax = renderer.getSpriteParallax(spriteIndex);
+      if (pos && scale && parallax !== null) {
+        setSelectedSprite(prev => prev ? { ...prev, x: pos.x, y: pos.y, width: scale.width, height: scale.height, depth: parallax } : null);
+      }
+      return;
+    }
+
+    renderer.enterConditionPreview(spriteIndex, conditionIndex);
+    setActiveConditionSet({ spriteIndex, conditionIndex });
+    // Update UI to show condition override values
+    const pos = renderer.getSpritePosition(spriteIndex);
+    const scale = renderer.getSpriteScale(spriteIndex);
+    const parallax = renderer.getSpriteParallax(spriteIndex);
+    if (pos && scale && parallax !== null) {
+      setSelectedSprite(prev => prev ? { ...prev, x: pos.x, y: pos.y, width: scale.width, height: scale.height, depth: parallax } : null);
+    }
+  }, []);
+
+  const handleAddConditionSet = useCallback((spriteIndex: number) => {
+    const renderer = rendererRef.current;
+    if (!renderer) return;
+    renderer.addConditionBlock(spriteIndex);
+    refreshSelectedSpriteConditions(spriteIndex);
+    markDirty();
+  }, [refreshSelectedSpriteConditions, markDirty]);
+
+  const handleRemoveConditionSet = useCallback((spriteIndex: number, conditionIndex: number) => {
+    const renderer = rendererRef.current;
+    if (!renderer) return;
+    // If removing the active condition, exit preview first
+    const acs = activeConditionSetRef.current;
+    if (acs?.spriteIndex === spriteIndex && acs?.conditionIndex === conditionIndex) {
+      renderer.exitConditionPreview(spriteIndex);
+      setActiveConditionSet(null);
+      const pos = renderer.getSpritePosition(spriteIndex);
+      const scale = renderer.getSpriteScale(spriteIndex);
+      const parallax = renderer.getSpriteParallax(spriteIndex);
+      if (pos && scale && parallax !== null) {
+        setSelectedSprite(prev => prev ? { ...prev, x: pos.x, y: pos.y, width: scale.width, height: scale.height, depth: parallax } : null);
+      }
+    }
+    renderer.removeConditionBlock(spriteIndex, conditionIndex);
+    refreshSelectedSpriteConditions(spriteIndex);
+    markDirty();
+  }, [refreshSelectedSpriteConditions, markDirty]);
+
+  const handleRenameConditionSet = useCallback((spriteIndex: number, conditionIndex: number, name: string) => {
+    rendererRef.current?.setConditionBlockName(spriteIndex, conditionIndex, name);
+    refreshSelectedSpriteConditions(spriteIndex);
+  }, [refreshSelectedSpriteConditions]);
+
+  const handleSetConditionSetFlags = useCallback((spriteIndex: number, conditionIndex: number, conditions: RuleConditionGroup) => {
+    rendererRef.current?.setConditionBlockFlags(spriteIndex, conditionIndex, conditions);
+    refreshSelectedSpriteConditions(spriteIndex);
+    markDirty();
+  }, [refreshSelectedSpriteConditions, markDirty]);
 
   const handleRenameSprite = useCallback((index: number, newName: string) => {
     if (!rendererRef.current) return;
@@ -325,6 +423,15 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     handleChangeTexture,
     handleDeleteSprite,
     handleRenameSprite,
+    handleSpriteConditions,
+    handleSaveSpriteConditions,
+    activeConditionSet,
+    selectedSpriteConditions,
+    handleSelectConditionSet,
+    handleAddConditionSet,
+    handleRemoveConditionSet,
+    handleRenameConditionSet,
+    handleSetConditionSetFlags,
     handleZoomIn,
     handleZoomOut,
     handleZoomAtPoint,
