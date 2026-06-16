@@ -864,6 +864,86 @@ body {
   color: #4a9eff;
 }
 
+/* src/controls/AllConditionsPanel.scss */
+.all-conditions-panel {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  height: 100%;
+  border: 1px solid #444;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+.all-conditions-panel h2 {
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+.acp-empty {
+  font-size: 12px;
+  color: #888;
+}
+.acp-section {
+  border: 1px solid #333;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.acp-section--selected {
+  border-color: #4a9eff;
+}
+.acp-section-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #1a1a1a;
+  border: none;
+  color: #ddd;
+  cursor: pointer;
+  font-size: 13px;
+  text-align: left;
+}
+.acp-section-header:hover {
+  background: #232323;
+}
+.acp-chevron {
+  display: inline-block;
+  font-size: 10px;
+  color: #888;
+  transition: transform 0.15s ease;
+}
+.acp-chevron--open {
+  transform: rotate(90deg);
+}
+.acp-sprite-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.acp-set-count {
+  font-size: 11px;
+  color: #777;
+  background: #2a2a2a;
+  border-radius: 10px;
+  padding: 1px 7px;
+  min-width: 16px;
+  text-align: center;
+}
+.acp-section-body {
+  padding: 8px 10px 10px;
+  background: #0d0d0d;
+}
+.acp-section-body .csp {
+  margin-top: 0;
+  border-top: none;
+  padding-top: 0;
+}
+
 /* src/controls/PhoneGuideControl.scss */
 .guide-label {
   display: flex;

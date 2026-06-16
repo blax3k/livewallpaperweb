@@ -2,8 +2,6 @@ import React from 'react';
 import { SpriteListPanel, SpriteEntry } from './SpriteListPanel';
 import { XFocusControl } from './XFocusControl';
 import { SpritePanelControl } from './SpritePanelControl';
-import { ConditionSetsPanel } from './ConditionSetsPanel';
-import type { SpriteConditionBlock, RuleConditionGroup, FlagDefinition } from '@livewallpaper/types';
 
 export type { SceneOption } from './SceneSelectorControl';
 
@@ -37,15 +35,9 @@ interface SceneEditorPanelProps {
   onRenameSprite: (index: number, newName: string) => void;
   onEditTexture: (index: number) => void;
   onEditConditions?: (index: number) => void;
-  // Condition sets (inline panel)
-  selectedSpriteConditions?: SpriteConditionBlock[];
-  availableFlags?: FlagDefinition[];
-  activeConditionIndex?: number | null;
-  onSelectConditionSet?: (spriteIndex: number, conditionIndex: number | null) => void;
-  onAddConditionSet?: (spriteIndex: number) => void;
-  onRemoveConditionSet?: (spriteIndex: number, conditionIndex: number) => void;
-  onRenameConditionSet?: (spriteIndex: number, conditionIndex: number, name: string) => void;
-  onSetConditionSetFlags?: (spriteIndex: number, conditionIndex: number, conditions: RuleConditionGroup) => void;
+  // Name of the condition set currently being previewed for this sprite, if any.
+  // Condition sets themselves live in the AllConditionsPanel on the right.
+  activeConditionLabel?: string | null;
   onSpritePositionChange: (x: number, y: number) => void;
   onSpritePositionChangeStart?: (x: number, y: number) => void;
   onSpritePositionCommit?: (x: number, y: number) => void;
@@ -77,14 +69,7 @@ export function SceneEditorPanel({
   onRenameSprite,
   onEditTexture,
   onEditConditions,
-  selectedSpriteConditions,
-  availableFlags,
-  activeConditionIndex,
-  onSelectConditionSet,
-  onAddConditionSet,
-  onRemoveConditionSet,
-  onRenameConditionSet,
-  onSetConditionSetFlags,
+  activeConditionLabel,
   onSpritePositionChange,
   onSpritePositionChangeStart,
   onSpritePositionCommit,
@@ -151,9 +136,9 @@ export function SceneEditorPanel({
       </div>
       <h2 style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
         Sprite
-        {activeConditionIndex !== null && activeConditionIndex !== undefined && selectedSprite && (
+        {activeConditionLabel && selectedSprite && (
           <span style={{ fontSize: 10, fontWeight: 400, background: '#143050', color: '#4a9eff', border: '1px solid #224', borderRadius: 3, padding: '1px 5px' }}>
-            {selectedSpriteConditions?.[activeConditionIndex]?.name ?? `Set ${activeConditionIndex + 1}`}
+            {activeConditionLabel}
           </span>
         )}
       </h2>
@@ -177,21 +162,6 @@ export function SceneEditorPanel({
           onSizeCommit={onSpriteSizeCommit}
         />
       </div>
-      {selectedSprite !== null && onSelectConditionSet && onAddConditionSet && onRemoveConditionSet && onRenameConditionSet && onSetConditionSetFlags && (
-        <div className="control-group">
-          <ConditionSetsPanel
-            spriteIndex={selectedSprite.index}
-            conditionBlocks={selectedSpriteConditions ?? []}
-            availableFlags={availableFlags ?? []}
-            activeConditionIndex={activeConditionIndex ?? null}
-            onSelectCondition={onSelectConditionSet}
-            onAdd={onAddConditionSet}
-            onRemove={onRemoveConditionSet}
-            onRename={onRenameConditionSet}
-            onSetFlags={onSetConditionSetFlags}
-          />
-        </div>
-      )}
     </div>
   );
 }

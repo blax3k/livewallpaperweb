@@ -1,5 +1,6 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
 import { SceneEditorPanel, SceneOption } from './controls/SceneEditorPanel';
+import { AllConditionsPanel } from './controls/AllConditionsPanel';
 import { TopBar } from './controls/TopBar';
 import { NotificationStack } from './controls/NotificationStack';
 import { EditTextureModal } from './controls/EditTextureModal';
@@ -9,7 +10,7 @@ import { useSceneRenderer } from './hooks/useSceneRenderer';
 import { useSpriteDrag } from './hooks/useSpriteDrag';
 import { useKeyboardControls } from './hooks/useKeyboardControls';
 import { flagsApi } from './api';
-import type { FlagDefinition } from '@livewallpaper/types';
+import type { FlagDefinition, RuleConditionGroup } from '@livewallpaper/types';
 
 interface ScenePageProps {
   initialSceneId?: string;
@@ -65,8 +66,6 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     handleChangeTexture,
     handleDeleteSprite,
     handleRenameSprite,
-    activeConditionSet,
-    selectedSpriteConditions,
     handleSelectConditionSet,
     handleAddConditionSet,
     handleRemoveConditionSet,
@@ -102,6 +101,62 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     if (isDirty && !window.confirm('You have unsaved changes. Switch scenes without saving?')) return;
     loadScene(sceneId);
   }, [isDirty, loadScene]);
+
+  // The AllConditionsPanel lets the user act on any sprite's conditions, not just the one
+  // currently selected on canvas — make sure that sprite becomes selected first so the preview
+  // (and the Sprite panel's X/Y/Z/W/H fields) end up reflecting the right sprite.
+  const ensureSpriteSelected = useCallback((spriteIndex: number) => {
+    if (selectedSprite?.index !== spriteIndex) {
+      handleSpriteSelect(spriteIndex);
+    }
+  }, [selectedSprite, handleSpriteSelect]);
+
+  const handleSelectConditionSetForSprite = useCallback((spriteIndex: number, conditionIndex: number) => {
+    ensureSpriteSelected(spriteIndex);
+    handleSelectConditionSet(spriteIndex, conditionIndex);
+  }, [ensureSpriteSelected, handleSelectConditionSet]);
+
+  const handleAddConditionSetForSprite = useCallback((spriteIndex: number) => {
+    ensureSpriteSelected(spriteIndex);
+    handleAddConditionSet(spriteIndex);
+  }, [ensureSpriteSelected, handleAddConditionSet]);
+
+  const handleRemoveConditionSetForSprite = useCallback((spriteIndex: number, conditionIndex: number) => {
+    ensureSpriteSelected(spriteIndex);
+    handleRemoveConditionSet(spriteIndex, conditionIndex);
+  }, [ensureSpriteSelected, handleRemoveConditionSet]);
+
+  const handleRenameConditionSetForSprite = useCallback((spriteIndex: number, conditionIndex: number, name: string) => {
+    ensureSpriteSelected(spriteIndex);
+    handleRenameConditionSet(spriteIndex, conditionIndex, name);
+  }, [ensureSpriteSelected, handleRenameConditionSet]);
+
+  const handleSetConditionSetFlagsForSprite = useCallback((spriteIndex: number, conditionIndex: number, conditions: RuleConditionGroup) => {
+    ensureSpriteSelected(spriteIndex);
+    handleSetConditionSetFlags(spriteIndex, conditionIndex, conditions);
+  }, [ensureSpriteSelected, handleSetConditionSetFlags]);
+
+  const getConditionsForSprite = useCallback((spriteIndex: number) => {
+    return rendererRef.current?.getSpriteConditions(spriteIndex) ?? [];
+  }, [rendererRef]);
+
+  // A sprite with condition sets always has one selected inside the renderer itself — this just
+  // reads that back, per sprite, rather than tracking it as separate React state.
+  const getActiveConditionIndexForSprite = useCallback((spriteIndex: number) => {
+    return rendererRef.current?.getSelectedConditionIndex(spriteIndex) ?? null;
+  }, [rendererRef]);
+
+  const activeConditionSet = selectedSprite !== null
+    ? (() => {
+        const conditionIndex = getActiveConditionIndexForSprite(selectedSprite.index);
+        return conditionIndex !== null ? { spriteIndex: selectedSprite.index, conditionIndex } : null;
+      })()
+    : null;
+
+  const activeConditionLabel = activeConditionSet
+    ? (getConditionsForSprite(activeConditionSet.spriteIndex)[activeConditionSet.conditionIndex]?.name
+        ?? `Set ${activeConditionSet.conditionIndex + 1}`)
+    : null;
 
   const applySelectedSpriteMove = useCallback((x: number, y: number) => {
     setSelectedSprite(prev => prev ? { ...prev, x, y } : null);
@@ -375,14 +430,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
           onDeleteSprite={handleDeleteSprite}
           onRenameSprite={handleRenameSprite}
           onEditTexture={setEditTextureIndex}
-          selectedSpriteConditions={selectedSpriteConditions}
-          availableFlags={availableFlags}
-          activeConditionIndex={activeConditionSet?.spriteIndex === selectedSprite?.index ? activeConditionSet?.conditionIndex ?? null : null}
-          onSelectConditionSet={handleSelectConditionSet}
-          onAddConditionSet={handleAddConditionSet}
-          onRemoveConditionSet={handleRemoveConditionSet}
-          onRenameConditionSet={handleRenameConditionSet}
-          onSetConditionSetFlags={handleSetConditionSetFlags}
+          activeConditionLabel={activeConditionLabel}
           onSpritePositionChange={handleSpritePositionChange}
           onSpritePositionChangeStart={handleSpritePositionChangeStart}
           onSpritePositionCommit={handleSpritePositionCommit}
@@ -409,6 +457,20 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
             }
           />
         </div>
+        {showSceneControls && (
+          <AllConditionsPanel
+            spriteEntries={spriteEntries}
+            getConditionsForSprite={getConditionsForSprite}
+            availableFlags={availableFlags}
+            selectedSpriteIndex={selectedSprite?.index ?? null}
+            getActiveConditionIndexForSprite={getActiveConditionIndexForSprite}
+            onSelectConditionSet={handleSelectConditionSetForSprite}
+            onAddConditionSet={handleAddConditionSetForSprite}
+            onRemoveConditionSet={handleRemoveConditionSetForSprite}
+            onRenameConditionSet={handleRenameConditionSetForSprite}
+            onSetConditionSetFlags={handleSetConditionSetFlagsForSprite}
+          />
+        )}
       </div>
       <NotificationStack notifications={notifications} />
       {editTextureIndex !== null && (() => {

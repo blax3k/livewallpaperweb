@@ -48,13 +48,17 @@ export class SceneRenderer {
   private isGyroScaled: boolean = false;
   private originalSceneData: Scene | null = null;
 
-  // Keyed by PIXI sprite object — stores base state while condition preview is active
+  // Keyed by PIXI sprite object — stores the sprite's true base values for as long as it has
+  // at least one condition set selected (see selectedConditionBlockBySprite below).
   private conditionPreviewState: Map<PIXI.Sprite, {
     baseX: number; baseY: number; baseParallax: number; baseWidth: number; baseHeight: number;
     baseTexCoordinates: number[];
   }> = new Map();
-  // Which sprite+condition is currently being previewed (null = base mode)
-  private activeConditionPreview: { spriteIndex: number; conditionIndex: number } | null = null;
+  // Every sprite that has condition sets always has exactly one selected — there is no
+  // "base mode" for such a sprite, independent of which sprite is focused for editing.
+  // Stores the block object itself (not an index) so removing/reordering other conditions
+  // never invalidates it.
+  private selectedConditionBlockBySprite: Map<PIXI.Sprite, SpriteConditionBlock> = new Map();
 
   constructor(container: HTMLElement) {
     this.container = container;
@@ -119,6 +123,8 @@ export class SceneRenderer {
     this.sprites.forEach(sprite => sprite.destroy());
     this.sprites = [];
     this.spriteMetadata.clear();
+    this.conditionPreviewState.clear();
+    this.selectedConditionBlockBySprite.clear();
     this.selectionHighlight = null;
     this.selectedHighlightIndex = null;
     this.app.stage.removeChildren();
@@ -157,6 +163,14 @@ export class SceneRenderer {
     this.originalSceneData = sceneData;
     this.currentStartTime = sceneData.startTime ?? 0;
     this.currentEndTime = sceneData.endTime ?? 1439;
+
+    // Any sprite with condition sets always has one selected — never an ambiguous "none
+    // active" state, regardless of which sprite (if any) ends up focused for editing.
+    this.sprites.forEach((_, i) => {
+      if ((this.getOriginalSpriteData(i)?.conditions?.length ?? 0) > 0) {
+        this.selectCondition(i, 0);
+      }
+    });
 
     // Sort sprites by parallax so list and draw order are consistent
     this.sortSpritesByParallax();
@@ -358,11 +372,12 @@ export class SceneRenderer {
 
   setSpriteSize(index: number, width: number, height: number): void {
     if (index < 0 || index >= this.sprites.length) return;
-    if (this.activeConditionPreview?.spriteIndex === index) {
-      this.setConditionSizeMod(index, this.activeConditionPreview.conditionIndex, width, height);
+    const sprite = this.sprites[index];
+    const block = this.selectedConditionBlockBySprite.get(sprite);
+    if (block) {
+      this.setBlockSizeMod(block, index, width, height);
       return;
     }
-    const sprite = this.sprites[index];
     sprite.width = width;
     sprite.height = height;
     this.setScrollOffset(this.currentXFocus);
@@ -394,11 +409,12 @@ export class SceneRenderer {
 
   setSpritePosition(index: number, x: number, y: number): void {
     if (index < 0 || index >= this.sprites.length) return;
-    if (this.activeConditionPreview?.spriteIndex === index) {
-      this.setConditionPositionMod(index, this.activeConditionPreview.conditionIndex, x, y);
+    const sprite = this.sprites[index];
+    const block = this.selectedConditionBlockBySprite.get(sprite);
+    if (block) {
+      this.setBlockPositionMod(block, index, x, y);
       return;
     }
-    const sprite = this.sprites[index];
     const metadata = this.spriteMetadata.get(sprite);
     if (metadata) {
       metadata.x = x;
@@ -518,8 +534,9 @@ export class SceneRenderer {
 
   setSpriteParallax(index: number, value: number): void {
     if (index < 0 || index >= this.sprites.length) return;
-    if (this.activeConditionPreview?.spriteIndex === index) {
-      this.setConditionParallaxMod(index, this.activeConditionPreview.conditionIndex, value);
+    const block = this.selectedConditionBlockBySprite.get(this.sprites[index]);
+    if (block) {
+      this.setBlockParallaxMod(block, index, value);
       return;
     }
     const metadata = this.spriteMetadata.get(this.sprites[index]);
@@ -545,9 +562,9 @@ export class SceneRenderer {
 
     const original = this.originalSceneData?.sprites.find(s => s.name === metadata.name);
     let texCoordinates = original?.texCoordinates ? [...original.texCoordinates] : [0, 1, 0, 0, 1, 1, 1, 0];
-    if (this.activeConditionPreview?.spriteIndex === index) {
-      const block = original?.conditions?.[this.activeConditionPreview.conditionIndex];
-      const mod = block?.modifications.find(m => m.type === 'texture_coordinates');
+    const block = this.selectedConditionBlockBySprite.get(sprite);
+    if (block) {
+      const mod = block.modifications.find(m => m.type === 'texture_coordinates');
       if (mod?.texCoordinates) texCoordinates = [...mod.texCoordinates];
     }
     return {
@@ -570,10 +587,10 @@ export class SceneRenderer {
     const metadata = this.spriteMetadata.get(sprite);
     if (!metadata) return;
 
-    if (this.activeConditionPreview?.spriteIndex === index) {
-      const conditionIndex = this.activeConditionPreview.conditionIndex;
-      this.setConditionTexCoordMod(index, conditionIndex, texCoords);
-      this.setConditionSizeMod(index, conditionIndex, width, height);
+    const block = this.selectedConditionBlockBySprite.get(sprite);
+    if (block) {
+      this.setBlockTexCoordMod(block, index, texCoords);
+      this.setBlockSizeMod(block, index, width, height);
       return;
     }
 
@@ -866,38 +883,54 @@ export class SceneRenderer {
     this.updateSelectionHighlight();
   }
 
-  enterConditionPreview(spriteIndex: number, conditionIndex: number): void {
+  /**
+   * Select which condition set is currently shown for a sprite. Unlike the old "preview" model,
+   * this is permanent (per sprite) rather than something that gets exited — a sprite with one or
+   * more condition sets always has exactly one selected, regardless of which sprite is focused
+   * for editing. Only a sprite with zero condition sets ever shows its plain base values.
+   */
+  selectCondition(spriteIndex: number, conditionIndex: number): void {
     if (spriteIndex < 0 || spriteIndex >= this.sprites.length) return;
     const sprite = this.sprites[spriteIndex];
     const metadata = this.spriteMetadata.get(sprite);
-    if (!metadata) return;
+    const original = this.getOriginalSpriteData(spriteIndex);
+    const block = original?.conditions?.[conditionIndex];
+    if (!metadata || !block) return;
 
     if (!this.conditionPreviewState.has(sprite)) {
-      // First entry — save the current base state
-      const original = this.getOriginalSpriteData(spriteIndex);
+      // First time this sprite gets a condition selected — capture its true base state.
       this.conditionPreviewState.set(sprite, {
         baseX: metadata.x, baseY: metadata.y,
         baseParallax: metadata.parallaxMultiplier,
         baseWidth: sprite.width, baseHeight: sprite.height,
         baseTexCoordinates: original?.texCoordinates ?? [0, 1, 0, 0, 1, 1, 1, 0],
       });
-    } else {
-      // Switching condition sets — restore to base before applying new mods
-      const saved = this.conditionPreviewState.get(sprite)!;
-      metadata.x = saved.baseX; metadata.y = saved.baseY;
-      metadata.parallaxMultiplier = saved.baseParallax;
-      sprite.width = saved.baseWidth; sprite.height = saved.baseHeight;
-      const baseTexture = this.textures.get(metadata.textureResource);
-      if (baseTexture) sprite.texture = this.cropTexture(baseTexture, saved.baseTexCoordinates);
     }
 
-    this.activeConditionPreview = { spriteIndex, conditionIndex };
-    const original = this.getOriginalSpriteData(spriteIndex);
-    const block = original?.conditions?.[conditionIndex];
-    this.applyConditionMods(spriteIndex, block?.modifications ?? []);
+    this.selectedConditionBlockBySprite.set(sprite, block);
+    this.applyConditionMods(spriteIndex, block.modifications);
   }
 
-  exitConditionPreview(spriteIndex: number): void {
+  /**
+   * Returns the index of the currently selected condition set for a sprite, or null if it has
+   * none selected (i.e. it has no condition sets at all, so its plain base values are shown).
+   * Looked up by the block's identity rather than a stored index, so it stays correct even after
+   * other condition sets on the same sprite are added, removed, or reordered.
+   */
+  getSelectedConditionIndex(spriteIndex: number): number | null {
+    if (spriteIndex < 0 || spriteIndex >= this.sprites.length) return null;
+    const block = this.selectedConditionBlockBySprite.get(this.sprites[spriteIndex]);
+    if (!block) return null;
+    const original = this.getOriginalSpriteData(spriteIndex);
+    const index = original?.conditions?.indexOf(block) ?? -1;
+    return index >= 0 ? index : null;
+  }
+
+  /**
+   * Restore a sprite to its plain base values and clear its condition selection. Only called
+   * once a sprite's last condition set is removed — for as long as it has any, one stays selected.
+   */
+  private restoreSpriteToBase(spriteIndex: number): void {
     if (spriteIndex < 0 || spriteIndex >= this.sprites.length) return;
     const sprite = this.sprites[spriteIndex];
     const saved = this.conditionPreviewState.get(sprite);
@@ -912,57 +945,45 @@ export class SceneRenderer {
     }
     sprite.width = saved.baseWidth; sprite.height = saved.baseHeight;
     this.conditionPreviewState.delete(sprite);
-    this.activeConditionPreview = null;
+    this.selectedConditionBlockBySprite.delete(sprite);
     this.applyAllPositions();
     this.updateSelectionHighlight();
   }
 
-  private setConditionPositionMod(spriteIndex: number, conditionIndex: number, x: number, y: number): void {
-    const original = this.getOriginalSpriteData(spriteIndex);
-    if (!original?.conditions?.[conditionIndex]) return;
-    const mods = original.conditions[conditionIndex].modifications;
-    const existing = mods.find(m => m.type === 'position');
+  private setBlockPositionMod(block: SpriteConditionBlock, spriteIndex: number, x: number, y: number): void {
+    const existing = block.modifications.find(m => m.type === 'position');
     if (existing) { existing.positionX = x; existing.positionY = y; }
-    else mods.push({ type: 'position', positionX: x, positionY: y });
+    else block.modifications.push({ type: 'position', positionX: x, positionY: y });
 
     const metadata = this.spriteMetadata.get(this.sprites[spriteIndex]);
     if (metadata) { metadata.x = x; metadata.y = y; }
     this.applyAllPositions();
   }
 
-  private setConditionParallaxMod(spriteIndex: number, conditionIndex: number, parallax: number): void {
-    const original = this.getOriginalSpriteData(spriteIndex);
-    if (!original?.conditions?.[conditionIndex]) return;
-    const mods = original.conditions[conditionIndex].modifications;
-    const existing = mods.find(m => m.type === 'parallax');
+  private setBlockParallaxMod(block: SpriteConditionBlock, spriteIndex: number, parallax: number): void {
+    const existing = block.modifications.find(m => m.type === 'parallax');
     if (existing) { existing.parallaxMultiplier = parallax; }
-    else mods.push({ type: 'parallax', parallaxMultiplier: parallax });
+    else block.modifications.push({ type: 'parallax', parallaxMultiplier: parallax });
 
     const metadata = this.spriteMetadata.get(this.sprites[spriteIndex]);
     if (metadata) { metadata.parallaxMultiplier = parallax; }
     this.applyAllPositions();
   }
 
-  private setConditionSizeMod(spriteIndex: number, conditionIndex: number, width: number, height: number): void {
-    const original = this.getOriginalSpriteData(spriteIndex);
-    if (!original?.conditions?.[conditionIndex]) return;
-    const mods = original.conditions[conditionIndex].modifications;
-    const existing = mods.find(m => m.type === 'size');
+  private setBlockSizeMod(block: SpriteConditionBlock, spriteIndex: number, width: number, height: number): void {
+    const existing = block.modifications.find(m => m.type === 'size');
     if (existing) { existing.width = width; existing.height = height; }
-    else mods.push({ type: 'size', width, height });
+    else block.modifications.push({ type: 'size', width, height });
 
     const sprite = this.sprites[spriteIndex];
     sprite.width = width; sprite.height = height;
     this.updateSelectionHighlight();
   }
 
-  private setConditionTexCoordMod(spriteIndex: number, conditionIndex: number, texCoordinates: number[]): void {
-    const original = this.getOriginalSpriteData(spriteIndex);
-    if (!original?.conditions?.[conditionIndex]) return;
-    const mods = original.conditions[conditionIndex].modifications;
-    const existing = mods.find(m => m.type === 'texture_coordinates');
+  private setBlockTexCoordMod(block: SpriteConditionBlock, spriteIndex: number, texCoordinates: number[]): void {
+    const existing = block.modifications.find(m => m.type === 'texture_coordinates');
     if (existing) { existing.texCoordinates = texCoordinates; }
-    else mods.push({ type: 'texture_coordinates', texCoordinates });
+    else block.modifications.push({ type: 'texture_coordinates', texCoordinates });
 
     const sprite = this.sprites[spriteIndex];
     const metadata = this.spriteMetadata.get(sprite);
@@ -982,11 +1003,27 @@ export class SceneRenderer {
     return original.conditions.length - 1;
   }
 
+  /**
+   * Remove a condition set. If it was the sprite's selected one, another remaining set is
+   * selected in its place — or, if none are left, the sprite falls back to its base values.
+   */
   removeConditionBlock(spriteIndex: number, conditionIndex: number): void {
     const original = this.getOriginalSpriteData(spriteIndex);
     if (!original?.conditions) return;
+    const sprite = this.sprites[spriteIndex];
+    const removedBlock = original.conditions[conditionIndex];
+    const wasSelected = sprite ? this.selectedConditionBlockBySprite.get(sprite) === removedBlock : false;
+
     original.conditions.splice(conditionIndex, 1);
     if (original.conditions.length === 0) original.conditions = undefined;
+
+    if (!sprite || !wasSelected) return;
+
+    if (original.conditions && original.conditions.length > 0) {
+      this.selectCondition(spriteIndex, Math.min(conditionIndex, original.conditions.length - 1));
+    } else {
+      this.restoreSpriteToBase(spriteIndex);
+    }
   }
 
   setConditionBlockName(spriteIndex: number, conditionIndex: number, name: string): void {
@@ -999,10 +1036,6 @@ export class SceneRenderer {
     const original = this.getOriginalSpriteData(spriteIndex);
     if (!original?.conditions?.[conditionIndex]) return;
     original.conditions[conditionIndex].conditions = conditions;
-  }
-
-  getActiveConditionPreview(): { spriteIndex: number; conditionIndex: number } | null {
-    return this.activeConditionPreview;
   }
 
   private static readonly MIN_ZOOM = 0.2;

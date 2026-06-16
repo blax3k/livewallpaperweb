@@ -7,7 +7,7 @@ interface ConditionSetsPanelProps {
   conditionBlocks: SpriteConditionBlock[];
   availableFlags: FlagDefinition[];
   activeConditionIndex: number | null;
-  onSelectCondition: (spriteIndex: number, conditionIndex: number | null) => void;
+  onSelectCondition: (spriteIndex: number, conditionIndex: number) => void;
   onAdd: (spriteIndex: number) => void;
   onRemove: (spriteIndex: number, conditionIndex: number) => void;
   onRename: (spriteIndex: number, conditionIndex: number, name: string) => void;
@@ -35,11 +35,10 @@ export function ConditionSetsPanel({
   };
 
   const handleRowClick = (conditionIndex: number) => {
-    if (activeConditionIndex === conditionIndex) {
-      onSelectCondition(spriteIndex, null);
-    } else {
-      onSelectCondition(spriteIndex, conditionIndex);
-    }
+    // Once a sprite has condition sets, exactly one must always stay selected — clicking the
+    // already-active row is a no-op rather than deselecting to an ambiguous "none active" state.
+    if (activeConditionIndex === conditionIndex) return;
+    onSelectCondition(spriteIndex, conditionIndex);
   };
 
   return (
