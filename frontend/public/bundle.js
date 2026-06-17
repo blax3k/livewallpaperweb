@@ -64630,12 +64630,12 @@ ${parts.join("\n")}
         min: 0,
         max: DISPLAY_SCALE,
         step: 1,
-        value: Math.round(value * DISPLAY_SCALE),
+        value: Math.round(toDisplay(value)),
         disabled,
         decimalPlaces: 0,
-        onChange: (v2) => onChange(v2 / DISPLAY_SCALE),
+        onChange: (v2) => onChange(toInternal(v2)),
         onPointerDown: () => onChangeStart?.(value),
-        onPointerUp: (v2) => onChangeCommit?.(v2 / DISPLAY_SCALE)
+        onPointerUp: (v2) => onChangeCommit?.(toInternal(v2))
       }
     ) });
   }

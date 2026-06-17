@@ -12,6 +12,8 @@ import {
 } from './sceneRepository';
 import { replaceSpritesForScene } from '../sprites/spriteRepository';
 
+const DEFAULT_XFOCUS = 0.5;
+
 export async function listScenes(projectId?: string) {
   return attachSceneThumbnailUrls(await selectSceneSummaries(projectId));
 }
@@ -34,6 +36,9 @@ export async function createScene(
   if (input.copyFromSceneId) {
     const source = await selectSceneById(input.copyFromSceneId);
     if (source?.data) sceneData = source.data;
+  }else{
+    //set default values
+    sceneData.xFocus = DEFAULT_XFOCUS;
   }
 
   const client = await pool.connect();
