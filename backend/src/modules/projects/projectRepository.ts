@@ -47,11 +47,11 @@ export async function selectProjectById(projectId: string) {
 }
 
 export async function insertProject(name: string, status: ObjectStatus = 'ACTIVE') {
-  const result = await pool.query<{ id: string; name: string; status: ObjectStatus; created_at: string; updated_at: string }>(
-    'INSERT INTO projects (name, status) VALUES ($1, $2) RETURNING id, name, status, created_at, updated_at',
+  const result = await pool.query<{ id: string; name: string; version: number; status: ObjectStatus; created_at: string; updated_at: string }>(
+    'INSERT INTO projects (name, status) VALUES ($1, $2) RETURNING id, name, version, status, created_at, updated_at',
     [name, status],
   );
-  return ProjectObject.fromCreatedRow(result.rows[0]);
+  return ProjectObject.fromSummaryRow({ ...result.rows[0], scene_ids: null });
 }
 
 export async function setProjectStatus(projectId: string, status: ObjectStatus) {

@@ -10,14 +10,6 @@ type ProjectSummaryRow = {
   scene_ids: string[] | null;
 };
 
-type CreatedProjectRow = {
-  id: string;
-  name: string;
-  status: ObjectStatus;
-  created_at?: string;
-  updated_at?: string;
-};
-
 export class ProjectObject extends ObjectModel {
   constructor(
     id: string,
@@ -43,7 +35,4 @@ export class ProjectObject extends ObjectModel {
     );
   }
 
-  static fromCreatedRow(row: CreatedProjectRow): ProjectObject {
-    return new ProjectObject(row.id, row.name, 1, row.status, row.created_at, row.updated_at, []);
-  }
 }
