@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { registerUser, loginUser, logoutSession } from './authService';
 import { COOKIE_NAME, COOKIE_MAX_AGE } from './constants';
+import { HttpStatus } from '../../utils/httpStatus';
 
 function cookieOptions() {
   return {
@@ -18,19 +19,19 @@ export async function registerAuthRoutes(server: FastifyInstance): Promise<void>
     '/api/auth/register',
     async (req, reply) => {
       if (!req.body) {
-        return reply.status(400).send({ error: 'Email and password are required' });
+        return reply.status(HttpStatus.BAD_REQUEST).send({ error: 'Email and password are required' });
       }
       const { email, password } = req.body;
       if (!email || !password) {
-        return reply.status(400).send({ error: 'Email and password are required' });
+        return reply.status(HttpStatus.BAD_REQUEST).send({ error: 'Email and password are required' });
       }
       try {
         const { user, sessionId } = await registerUser(email, password);
         reply.setCookie(COOKIE_NAME, sessionId, cookieOptions());
-        return reply.status(201).send({ id: user.id, email: user.email });
+        return reply.status(HttpStatus.CREATED).send({ id: user.id, email: user.email });
       } catch (err: unknown) {
         if (err instanceof Error && (err as NodeJS.ErrnoException).code === 'EMAIL_TAKEN') {
-          return reply.status(409).send({ error: 'Email already in use' });
+          return reply.status(HttpStatus.CONFLICT).send({ error: 'Email already in use' });
         }
         throw err;
       }
@@ -41,11 +42,11 @@ export async function registerAuthRoutes(server: FastifyInstance): Promise<void>
     '/api/auth/login',
     async (req, reply) => {
       if (!req.body) {
-        return reply.status(400).send({ error: 'Email and password are required' });
+        return reply.status(HttpStatus.BAD_REQUEST).send({ error: 'Email and password are required' });
       }
       const { email, password } = req.body;
       if (!email || !password) {
-        return reply.status(400).send({ error: 'Email and password are required' });
+        return reply.status(HttpStatus.BAD_REQUEST).send({ error: 'Email and password are required' });
       }
       try {
         const { user, sessionId } = await loginUser(email, password);
@@ -53,7 +54,7 @@ export async function registerAuthRoutes(server: FastifyInstance): Promise<void>
         return { id: user.id, email: user.email };
       } catch (err: unknown) {
         if (err instanceof Error && (err as NodeJS.ErrnoException).code === 'INVALID_CREDENTIALS') {
-          return reply.status(401).send({ error: 'Invalid credentials' });
+          return reply.status(HttpStatus.UNAUTHORIZED).send({ error: 'Invalid credentials' });
         }
         throw err;
       }
@@ -68,7 +69,7 @@ export async function registerAuthRoutes(server: FastifyInstance): Promise<void>
         await logoutSession(req.sessionId);
       }
       reply.clearCookie(COOKIE_NAME, { path: '/' });
-      return reply.status(204).send();
+      return reply.status(HttpStatus.NO_CONTENT).send();
     },
   );
 

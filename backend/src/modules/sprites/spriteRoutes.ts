@@ -1,5 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { renameSpriteById } from "./spriteService";
+import { HttpStatus } from '../../utils/httpStatus';
 
 
 
@@ -12,10 +13,10 @@ export async function registerSceneRoutes(
     async (req, reply) => {
       const renamed = await renameSpriteById(req.params.id, req.body.name);
       if (!renamed) {
-        return reply.status(404).send({ error: 'Sprite not found' });
+        return reply.status(HttpStatus.NOT_FOUND).send({ error: 'Sprite not found' });
       }
 
-      return reply.status(204).send();
+      return reply.status(HttpStatus.NO_CONTENT).send();
     },
   );
 }
