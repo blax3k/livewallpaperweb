@@ -69547,6 +69547,9 @@ ${e2}`);
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ dataUrl })
       });
+    },
+    delete(sceneId) {
+      return request(`/api/scenes/${sceneId}`, { method: "DELETE" });
     }
   };
   var projectsApi = {
@@ -70706,6 +70709,7 @@ ${e2}`);
     const [scenes, setScenes] = (0, import_react16.useState)([]);
     const [loading, setLoading] = (0, import_react16.useState)(true);
     const [showNewSceneDialog, setShowNewSceneDialog] = (0, import_react16.useState)(false);
+    const [deleteScene, setDeleteScene] = (0, import_react16.useState)(null);
     const [flagsScene, setFlagsScene] = (0, import_react16.useState)(null);
     const [flagsModalData, setFlagsModalData] = (0, import_react16.useState)(null);
     const [availableFlags, setAvailableFlags] = (0, import_react16.useState)([]);
@@ -70740,6 +70744,17 @@ ${e2}`);
         window.alert(message);
       });
     };
+    const handleDeleteScene = (0, import_react16.useCallback)(async () => {
+      if (!deleteScene) return;
+      try {
+        await scenesApi.delete(deleteScene.id);
+        setScenes((prev) => prev.filter((s2) => s2.id !== deleteScene.id));
+      } catch {
+        window.alert("Failed to delete scene.");
+      } finally {
+        setDeleteScene(null);
+      }
+    }, [deleteScene]);
     const openSceneFlags = (0, import_react16.useCallback)(async (scene) => {
       setFlagsScene(scene);
       setFlagsModalLoading(true);
@@ -70799,6 +70814,18 @@ ${e2}`);
               },
               children: "\u{1F6A9}"
             }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+            "button",
+            {
+              className: "scene-delete-btn",
+              title: "Delete scene",
+              onClick: (e2) => {
+                e2.stopPropagation();
+                setDeleteScene(scene);
+              },
+              children: "\u{1F5D1}\uFE0F"
+            }
           )
         ] }, scene.id)) })
       ] }),
@@ -70810,6 +70837,17 @@ ${e2}`);
           scenes: scenes.map((s2) => ({ id: s2.id, label: s2.label, thumbnail_url: s2.thumbnail_url }))
         }
       ),
+      deleteScene && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "modal-box", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("p", { children: [
+          "Delete scene ",
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("strong", { children: deleteScene.label }),
+          "? This cannot be undone."
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "modal-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Button, { onClick: () => setDeleteScene(null), children: "Cancel" }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Button, { onClick: handleDeleteScene, variant: "danger", children: "Delete" })
+        ] })
+      ] }) }),
       flagsScene && flagsModalLoading && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "modal-box", style: { minWidth: 200, textAlign: "center" }, children: "Loading\u2026" }) }),
       flagsScene && !flagsModalLoading && flagsModalData && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
         SceneFlagsModal,

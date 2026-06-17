@@ -1198,10 +1198,10 @@ body {
 .scene-card-wrapper {
   position: relative;
 }
-.scene-flags-btn {
+.scene-flags-btn,
+.scene-delete-btn {
   position: absolute;
   top: 6px;
-  right: 6px;
   background: rgba(0, 0, 0, 0.55);
   border: none;
   border-radius: 4px;
@@ -1212,8 +1212,26 @@ body {
   opacity: 0;
   transition: opacity 0.15s;
 }
-.scene-card-wrapper:hover .scene-flags-btn {
+.scene-card-wrapper:hover .scene-flags-btn,
+.scene-card-wrapper:hover .scene-delete-btn {
   opacity: 1;
+}
+.scene-flags-btn {
+  right: 6px;
+}
+.scene-delete-btn {
+  right: 34px;
+  color: #ff6b6b;
+}
+.scene-delete-btn:hover {
+  background: rgba(180, 40, 40, 0.75);
+  color: #fff;
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
 }
 
 /* src/components/PageLayout.scss */

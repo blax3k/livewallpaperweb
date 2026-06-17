@@ -36,6 +36,9 @@ export function SceneListPage({ onSelect, onBack, onFlags, onRules, projectId, p
   const [showNewSceneDialog, setShowNewSceneDialog] = useState(false);
 
   // Scene flags modal state
+  const [deleteScene, setDeleteScene] = useState<SceneRecord | null>(null);
+
+  // Scene flags modal state
   const [flagsScene, setFlagsScene] = useState<SceneRecord | null>(null);
   const [flagsModalData, setFlagsModalData] = useState<{ declarations: SceneFlagDeclarations; label: string } | null>(null);
   const [availableFlags, setAvailableFlags] = useState<FlagDefinition[]>([]);
@@ -75,6 +78,18 @@ export function SceneListPage({ onSelect, onBack, onFlags, onRules, projectId, p
         window.alert(message);
       });
   };
+
+  const handleDeleteScene = useCallback(async () => {
+    if (!deleteScene) return;
+    try {
+      await scenesApi.delete(deleteScene.id);
+      setScenes(prev => prev.filter(s => s.id !== deleteScene.id));
+    } catch {
+      window.alert('Failed to delete scene.');
+    } finally {
+      setDeleteScene(null);
+    }
+  }, [deleteScene]);
 
   const openSceneFlags = useCallback(async (scene: SceneRecord) => {
     setFlagsScene(scene);
@@ -136,6 +151,13 @@ export function SceneListPage({ onSelect, onBack, onFlags, onRules, projectId, p
                 >
                   🚩
                 </button>
+                <button
+                  className="scene-delete-btn"
+                  title="Delete scene"
+                  onClick={e => { e.stopPropagation(); setDeleteScene(scene); }}
+                >
+                  🗑️
+                </button>
               </div>
             ))}
           </div>
@@ -147,6 +169,17 @@ export function SceneListPage({ onSelect, onBack, onFlags, onRules, projectId, p
           onCancel={() => setShowNewSceneDialog(false)}
           scenes={scenes.map(s => ({ id: s.id, label: s.label, thumbnail_url: s.thumbnail_url }))}
         />
+      )}
+      {deleteScene && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <p>Delete scene <strong>{deleteScene.label}</strong>? This cannot be undone.</p>
+            <div className="modal-actions">
+              <Button onClick={() => setDeleteScene(null)}>Cancel</Button>
+              <Button onClick={handleDeleteScene} variant="danger">Delete</Button>
+            </div>
+          </div>
+        </div>
       )}
       {flagsScene && flagsModalLoading && (
         <div className="modal-overlay">

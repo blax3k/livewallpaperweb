@@ -69,6 +69,10 @@ export const scenesApi = {
       body: JSON.stringify({ dataUrl }),
     });
   },
+
+  delete(sceneId: string): Promise<void> {
+    return request<void>(`/api/scenes/${sceneId}`, { method: 'DELETE' });
+  },
 };
 
 export const projectsApi = {
