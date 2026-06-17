@@ -16,6 +16,7 @@ interface UseKeyboardControlsOptions {
   onDepthApply?: (depth: number, spriteIndex: number) => void;
   onXFocusApply?: (value: number) => void;
   onTextureApply?: (index: number, textureResource: string, width: number, height: number, texCoordinates: number[]) => void;
+  onMarkDirty?: () => void;
 }
 
 export function useKeyboardControls({
@@ -29,6 +30,7 @@ export function useKeyboardControls({
   onDepthApply,
   onXFocusApply,
   onTextureApply,
+  onMarkDirty,
 }: UseKeyboardControlsOptions) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -94,9 +96,10 @@ export function useKeyboardControls({
       rendererRef.current?.setSpritePosition(selectedSprite.index, x, y);
       history.push({ type: 'position', spriteIndex: selectedSprite.index, before, after: { x, y } });
       onSpriteMove(x, y);
+      onMarkDirty?.();
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedSprite, rendererRef, history, onUndoApply, onRedoApply, onSpriteMove]);
+  }, [selectedSprite, rendererRef, history, onUndoApply, onRedoApply, onSpriteMove, onMarkDirty]);
 }

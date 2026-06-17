@@ -1,5 +1,8 @@
 require('jest-canvas-mock');
 
+// Tell React's act() that this is a test environment so it doesn't log a warning
+global.IS_REACT_ACT_ENVIRONMENT = true;
+
 // Mock window.devicePixelRatio
 Object.defineProperty(window, 'devicePixelRatio', {
   writable: true,

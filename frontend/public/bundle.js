@@ -70063,7 +70063,8 @@ ${e2}`);
     onScaleApply,
     onDepthApply,
     onXFocusApply,
-    onTextureApply
+    onTextureApply,
+    onMarkDirty
   }) {
     (0, import_react13.useEffect)(() => {
       const handleKeyDown = (e2) => {
@@ -70124,10 +70125,11 @@ ${e2}`);
         rendererRef.current?.setSpritePosition(selectedSprite.index, x2, y2);
         history.push({ type: "position", spriteIndex: selectedSprite.index, before, after: { x: x2, y: y2 } });
         onSpriteMove(x2, y2);
+        onMarkDirty?.();
       };
       window.addEventListener("keydown", handleKeyDown);
       return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [selectedSprite, rendererRef, history, onUndoApply, onRedoApply, onSpriteMove]);
+    }, [selectedSprite, rendererRef, history, onUndoApply, onRedoApply, onSpriteMove, onMarkDirty]);
   }
 
   // src/ScenePage.tsx
@@ -70263,6 +70265,7 @@ ${e2}`);
       onSpriteMove: applySelectedSpriteMove,
       onDragCommit: (action) => {
         if (activeConditionSet === null) history.push(action);
+        markDirty();
       }
     });
     useKeyboardControls({
@@ -70275,7 +70278,8 @@ ${e2}`);
       onScaleApply: applySelectedSpriteSize,
       onDepthApply: handleSpriteDepthApply,
       onXFocusApply: handleXFocusChange,
-      onTextureApply: handleTextureApply
+      onTextureApply: handleTextureApply,
+      onMarkDirty: markDirty
     });
     (0, import_react14.useEffect)(() => {
       fetch("/api/scenes").then((r2) => r2.json()).then(

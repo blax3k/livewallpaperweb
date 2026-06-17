@@ -176,7 +176,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     selectedSprite,
     rendererRef,
     onSpriteMove: applySelectedSpriteMove,
-    onDragCommit: (action) => { if (activeConditionSet === null) history.push(action); },
+    onDragCommit: (action) => { if (activeConditionSet === null) history.push(action); markDirty(); },
   });
 
   useKeyboardControls({
@@ -190,6 +190,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     onDepthApply: handleSpriteDepthApply,
     onXFocusApply: handleXFocusChange,
     onTextureApply: handleTextureApply,
+    onMarkDirty: markDirty,
   });
 
   useEffect(() => {
