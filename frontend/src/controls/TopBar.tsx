@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { SceneSelectorControl, SceneOption } from './SceneSelectorControl';
 import { PhoneGuideControl } from './PhoneGuideControl';
-import { NewSceneDialog } from './NewSceneDialog';
-import { ImageLibraryModal } from './ImageLibraryModal';
+import { NewSceneDialog } from './modals/NewSceneDialog';
+import { ImageLibraryModal } from './modals/ImageLibraryModal';
 import { Button } from '../components/Button';
 
 interface TopBarProps {

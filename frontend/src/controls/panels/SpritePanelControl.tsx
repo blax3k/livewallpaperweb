@@ -1,6 +1,6 @@
 import React from 'react';
 import './SpritePanelControl.scss';
-import { SliderRow } from '../components/SliderRow';
+import { SliderRow } from '../../components/SliderRow';
 
 interface SpritePanelControlProps {
   spriteName: string;

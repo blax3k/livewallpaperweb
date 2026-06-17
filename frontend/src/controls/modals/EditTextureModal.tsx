@@ -5,10 +5,10 @@ import {
   buildTexCoordArray,
   clampTexOffset,
   extractInitialScale,
-} from '../renderers/TextureCoordinateCalculator';
+} from '../../renderers/TextureCoordinateCalculator';
 import './EditTextureModal.scss';
-import { Button } from '../components/Button';
-import { SliderRow } from '../components/SliderRow';
+import { Button } from '../../components/Button';
+import { SliderRow } from '../../components/SliderRow';
 
 interface EditTextureModalProps {
   spriteName: string;

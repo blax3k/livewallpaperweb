@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './ProjectListPage.scss';
-import { NewProjectDialog } from './controls/NewProjectDialog';
+import { NewProjectDialog } from './controls/modals/NewProjectDialog';
 import { Button } from './components/Button';
 import { PageLayout, PageHeader, PageBody } from './components/PageLayout';
 import { projectsApi } from './api';

@@ -64182,10 +64182,10 @@ ${parts.join("\n")}
   // src/ScenePage.tsx
   var import_react14 = __toESM(require_react());
 
-  // src/controls/SpriteListPanel.tsx
+  // src/controls/panels/SpriteListPanel.tsx
   var import_react2 = __toESM(require_react());
 
-  // src/controls/ImageLibraryModal.tsx
+  // src/controls/modals/ImageLibraryModal.tsx
   var import_react = __toESM(require_react());
   var import_react_dom = __toESM(require_react_dom());
 
@@ -64195,7 +64195,7 @@ ${parts.join("\n")}
     return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: `btn btn--${variant} ${className}`.trim(), ...rest, children });
   }
 
-  // src/controls/ImageLibraryModal.tsx
+  // src/controls/modals/ImageLibraryModal.tsx
   var import_jsx_runtime2 = __toESM(require_jsx_runtime());
   function getUploadUrl(filename) {
     return `/uploads/${filename}`;
@@ -64354,7 +64354,7 @@ ${parts.join("\n")}
     );
   }
 
-  // src/controls/SpriteListPanel.tsx
+  // src/controls/panels/SpriteListPanel.tsx
   var import_jsx_runtime3 = __toESM(require_jsx_runtime());
   function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd, onChangeTexture, onDelete, onEditTexture, onRename, onEditConditions }) {
     const [showModal, setShowModal] = (0, import_react2.useState)(false);
@@ -64635,7 +64635,7 @@ ${parts.join("\n")}
     ) });
   }
 
-  // src/controls/SpritePanelControl.tsx
+  // src/controls/panels/SpritePanelControl.tsx
   var import_jsx_runtime6 = __toESM(require_jsx_runtime());
   var COORD_MIN = -10;
   var COORD_MAX = 10;
@@ -64756,7 +64756,7 @@ ${parts.join("\n")}
     ] });
   }
 
-  // src/controls/SceneEditorPanel.tsx
+  // src/controls/panels/SceneEditorPanel.tsx
   var import_jsx_runtime7 = __toESM(require_jsx_runtime());
   function SceneEditorPanel({
     sceneLoaded,
@@ -64873,10 +64873,10 @@ ${parts.join("\n")}
     ] });
   }
 
-  // src/controls/AllConditionsPanel.tsx
+  // src/controls/panels/AllConditionsPanel.tsx
   var import_react4 = __toESM(require_react());
 
-  // src/controls/ConditionSetsPanel.tsx
+  // src/controls/panels/ConditionSetsPanel.tsx
   var import_react3 = __toESM(require_react());
   var import_jsx_runtime8 = __toESM(require_jsx_runtime());
   function ConditionSetsPanel({
@@ -65046,7 +65046,7 @@ ${parts.join("\n")}
     ] });
   }
 
-  // src/controls/AllConditionsPanel.tsx
+  // src/controls/panels/AllConditionsPanel.tsx
   var import_jsx_runtime9 = __toESM(require_jsx_runtime());
   function AllConditionsPanel({
     spriteEntries,
@@ -65126,7 +65126,7 @@ ${parts.join("\n")}
     ] });
   }
 
-  // src/controls/NewSceneDialog.tsx
+  // src/controls/modals/NewSceneDialog.tsx
   var import_react6 = __toESM(require_react());
 
   // src/components/SceneCard.tsx
@@ -65159,7 +65159,7 @@ ${parts.join("\n")}
     );
   }
 
-  // src/controls/NewSceneDialog.tsx
+  // src/controls/modals/NewSceneDialog.tsx
   var import_jsx_runtime12 = __toESM(require_jsx_runtime());
   function NewSceneDialog({ onConfirm, onCancel, scenes = [] }) {
     const [name, setName] = (0, import_react6.useState)("");
@@ -65287,7 +65287,7 @@ ${parts.join("\n")}
     return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "notification-stack", children: notifications.map((n2) => /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "notification-card", children: n2.message }, n2.id)) });
   }
 
-  // src/controls/EditTextureModal.tsx
+  // src/controls/modals/EditTextureModal.tsx
   var import_react8 = __toESM(require_react());
 
   // ../node_modules/pixi.js/lib/environment-browser/browserExt.mjs
@@ -68034,7 +68034,7 @@ ${e2}`);
     return Math.max(1, Math.min(8, scale));
   }
 
-  // src/controls/EditTextureModal.tsx
+  // src/controls/modals/EditTextureModal.tsx
   var import_jsx_runtime15 = __toESM(require_jsx_runtime());
   function imageUrlFromResource(textureResource) {
     if (textureResource.startsWith("/")) return textureResource;
@@ -70579,7 +70579,7 @@ ${e2}`);
     return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "page-body", children });
   }
 
-  // src/controls/SceneFlagsModal.tsx
+  // src/controls/modals/SceneFlagsModal.tsx
   var import_react15 = __toESM(require_react());
   var import_jsx_runtime18 = __toESM(require_jsx_runtime());
   function FlagCheckList({
@@ -70872,7 +70872,7 @@ ${e2}`);
   // src/ProjectListPage.tsx
   var import_react18 = __toESM(require_react());
 
-  // src/controls/NewProjectDialog.tsx
+  // src/controls/modals/NewProjectDialog.tsx
   var import_react17 = __toESM(require_react());
   var import_jsx_runtime20 = __toESM(require_jsx_runtime());
   function NewProjectDialog({ onConfirm, onCancel }) {

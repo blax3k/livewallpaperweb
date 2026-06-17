@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './NewSceneDialog.scss';
-import { Button } from '../components/Button';
+import { Button } from '../../components/Button';
 
 interface NewProjectDialogProps {
   onConfirm: (name: string) => void;

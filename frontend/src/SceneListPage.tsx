@@ -3,8 +3,8 @@ import './SceneListPage.scss';
 import { Button } from './components/Button';
 import { SceneCard } from './components/SceneCard';
 import { PageLayout, PageHeader, PageBody } from './components/PageLayout';
-import { NewSceneDialog } from './controls/NewSceneDialog';
-import { SceneFlagsModal } from './controls/SceneFlagsModal';
+import { NewSceneDialog } from './controls/modals/NewSceneDialog';
+import { SceneFlagsModal } from './controls/modals/SceneFlagsModal';
 import { scenesApi, flagsApi } from './api';
 import type { FlagDefinition, SceneFlagDeclarations } from '@livewallpaper/types';
 

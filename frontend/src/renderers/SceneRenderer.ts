@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { Scene, Sprite } from '../interfaces/Scene';
 import { PhoneGuide } from './PhoneGuide';
-import type { SpriteEntry } from '../controls/SpriteListPanel';
+import type { SpriteEntry } from '../controls/panels/SpriteListPanel';
 import type { SpriteConditionBlock, SpriteModification, RuleConditionGroup } from '@livewallpaper/types';
 
 interface SpriteMetadata {

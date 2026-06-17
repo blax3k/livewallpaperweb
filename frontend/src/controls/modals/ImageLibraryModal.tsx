@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import './ImageLibraryModal.scss';
-import { Button } from '../components/Button';
+import { Button } from '../../components/Button';
 
 interface ImageRecord {
   id: string;

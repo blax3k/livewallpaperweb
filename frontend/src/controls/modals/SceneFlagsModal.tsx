@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
-import '../RulesPage.scss'; // reuses modal-overlay, modal-box, modal-title, modal-footer
+import '../../RulesPage.scss'; // reuses modal-overlay, modal-box, modal-title, modal-footer
 import './SceneFlagsModal.scss';
-import { Button } from '../components/Button';
+import { Button } from '../../components/Button';
 import type { SceneFlagDeclarations, ScoredFlagEntry, FlagDefinition } from '@livewallpaper/types';
 
 interface SceneFlagsModalProps {

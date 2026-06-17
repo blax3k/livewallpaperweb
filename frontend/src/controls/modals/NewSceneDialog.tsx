@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './NewSceneDialog.scss';
-import { Button } from '../components/Button';
-import { SceneCard } from '../components/SceneCard';
+import { Button } from '../../components/Button';
+import { SceneCard } from '../../components/SceneCard';
 
 interface SceneChoice {
   id: string;

@@ -157,7 +157,7 @@ body {
   }
 }
 
-/* src/controls/SpriteListPanel.scss */
+/* src/controls/panels/SpriteListPanel.scss */
 #sprite-list-panel .sprite-list-title {
   font-size: 12px;
   font-weight: bold;
@@ -335,7 +335,7 @@ body {
   background: rgba(255, 255, 255, 0.18);
 }
 
-/* src/controls/ImageLibraryModal.scss */
+/* src/controls/modals/ImageLibraryModal.scss */
 .add-sprite-overlay {
   position: fixed;
   inset: 0;
@@ -657,7 +657,7 @@ body {
   -moz-appearance: textfield;
 }
 
-/* src/controls/SpritePanelControl.scss */
+/* src/controls/panels/SpritePanelControl.scss */
 #sprite-panel-control {
   display: flex;
   flex-direction: column;
@@ -678,7 +678,7 @@ body {
   white-space: nowrap;
 }
 
-/* src/controls/ConditionSetsPanel.scss */
+/* src/controls/panels/ConditionSetsPanel.scss */
 .csp {
   margin-top: 10px;
   border-top: 1px solid #333;
@@ -864,7 +864,7 @@ body {
   color: #4a9eff;
 }
 
-/* src/controls/AllConditionsPanel.scss */
+/* src/controls/panels/AllConditionsPanel.scss */
 .all-conditions-panel {
   background: rgba(0, 0, 0, 0.8);
   color: white;
@@ -961,7 +961,7 @@ body {
   flex: none;
 }
 
-/* src/controls/NewSceneDialog.scss */
+/* src/controls/modals/NewSceneDialog.scss */
 .new-scene-overlay {
   position: fixed;
   inset: 0;
@@ -1092,7 +1092,7 @@ body {
   text-overflow: ellipsis;
 }
 
-/* src/controls/EditTextureModal.scss */
+/* src/controls/modals/EditTextureModal.scss */
 .edit-texture-overlay {
   position: fixed;
   inset: 0;
@@ -1461,7 +1461,7 @@ body {
   width: 640px;
 }
 
-/* src/controls/SceneFlagsModal.scss */
+/* src/controls/modals/SceneFlagsModal.scss */
 .sfm-modal {
   width: 540px;
 }

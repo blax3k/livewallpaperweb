@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './SpriteListPanel.scss';
-import { ImageLibraryModal } from './ImageLibraryModal';
+import { ImageLibraryModal } from '../modals/ImageLibraryModal';
 
 export interface SpriteEntry {
   id?: string;

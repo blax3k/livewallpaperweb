@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { SceneRenderer } from '../renderers/SceneRenderer';
 import { scenesApi, spritesApi } from '../api';
-import type { SpriteEntry } from '../controls/SpriteListPanel';
+import type { SpriteEntry } from '../controls/panels/SpriteListPanel';
 import type { Scene } from '../interfaces/Scene';
 import type { SpriteConditionBlock, RuleConditionGroup } from '@livewallpaper/types';
 
