@@ -9,6 +9,7 @@ import {
 import './EditTextureModal.scss';
 import { Button } from '../../components/Button';
 import { SliderRow } from '../../components/SliderRow';
+import { toDisplay, toInternal } from '../../displayScale';
 
 interface EditTextureModalProps {
   spriteName: string;
@@ -42,7 +43,7 @@ const WIDTH_MIN = 0.1;
 const WIDTH_MAX = 15;
 const WIDTH_STEP = 0.1;
 const SCALE_MIN = 1.0;
-const SCALE_MAX = 8.0;
+const SCALE_MAX = 10.0;
 const SCALE_STEP = 0.1;
 
 export function EditTextureModal({
@@ -284,29 +285,29 @@ export function EditTextureModal({
 
             <SliderRow
               label="Width"
-              min={WIDTH_MIN} max={WIDTH_MAX} step={WIDTH_STEP}
-              value={state.width}
-              decimalPlaces={1}
+              min={toDisplay(WIDTH_MIN)} max={toDisplay(WIDTH_MAX)} step={toDisplay(WIDTH_STEP)}
+              value={toDisplay(state.width)}
+              decimalPlaces={0}
               labelWidth={70} labelAlign="right"
-              onChange={(v) => setState(prev => ({ ...prev, width: Math.max(WIDTH_MIN, Math.min(WIDTH_MAX, v)) }))}
+              onChange={(v) => setState(prev => ({ ...prev, width: Math.max(WIDTH_MIN, Math.min(WIDTH_MAX, toInternal(v))) }))}
             />
 
             <SliderRow
               label="Height"
-              min={WIDTH_MIN} max={WIDTH_MAX} step={WIDTH_STEP}
-              value={state.height}
-              decimalPlaces={1}
+              min={toDisplay(WIDTH_MIN)} max={toDisplay(WIDTH_MAX)} step={toDisplay(WIDTH_STEP)}
+              value={toDisplay(state.height)}
+              decimalPlaces={0}
               labelWidth={70} labelAlign="right"
-              onChange={(v) => setState(prev => ({ ...prev, height: Math.max(WIDTH_MIN, Math.min(WIDTH_MAX, v)) }))}
+              onChange={(v) => setState(prev => ({ ...prev, height: Math.max(WIDTH_MIN, Math.min(WIDTH_MAX, toInternal(v))) }))}
             />
 
             <SliderRow
               label="Tex Scale"
-              min={SCALE_MIN} max={SCALE_MAX} step={SCALE_STEP}
-              value={state.textureScale}
-              decimalPlaces={1}
+              min={toDisplay(SCALE_MIN)} max={toDisplay(SCALE_MAX)} step={toDisplay(SCALE_STEP)}
+              value={toDisplay(state.textureScale)}
+              decimalPlaces={0}
               labelWidth={70} labelAlign="right"
-              onChange={(v) => setState(prev => ({ ...prev, textureScale: Math.max(SCALE_MIN, Math.min(SCALE_MAX, v)) }))}
+              onChange={(v) => setState(prev => ({ ...prev, textureScale: Math.max(SCALE_MIN, Math.min(SCALE_MAX, toInternal(v))) }))}
             />
           </div>
 

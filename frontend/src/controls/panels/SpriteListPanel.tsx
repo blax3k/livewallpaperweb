@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './SpriteListPanel.scss';
 import { ImageLibraryModal } from '../modals/ImageLibraryModal';
+import { toDisplay } from '../../displayScale';
 
 export interface SpriteEntry {
   id?: string;
@@ -117,7 +118,7 @@ export function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onA
                 {entry.name || `Sprite ${index}`}
               </span>
             )}
-            <span className="sprite-parallax">{entry.parallaxMultiplier.toFixed(2)}</span>
+            <span className="sprite-parallax">{toDisplay(entry.parallaxMultiplier)}</span>
             <span
               className="sprite-menu-trigger"
               onClick={(e) => {

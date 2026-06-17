@@ -1,5 +1,6 @@
 import React from 'react';
 import { SliderRow } from '../components/SliderRow';
+import { DISPLAY_SCALE } from '../displayScale';
 
 interface XFocusControlProps {
   disabled?: boolean;
@@ -14,13 +15,13 @@ export function XFocusControl({ disabled, value, onChange, onChangeStart, onChan
     <div style={{ marginBottom: 12 }}>
       <SliderRow
         label="Focus"
-        min={0} max={1} step={0.01}
-        value={value}
+        min={0} max={DISPLAY_SCALE} step={1}
+        value={Math.round(value * DISPLAY_SCALE)}
         disabled={disabled}
-        decimalPlaces={2}
-        onChange={onChange}
+        decimalPlaces={0}
+        onChange={(v) => onChange(v / DISPLAY_SCALE)}
         onPointerDown={() => onChangeStart?.(value)}
-        onPointerUp={(v) => onChangeCommit?.(v)}
+        onPointerUp={(v) => onChangeCommit?.(v / DISPLAY_SCALE)}
       />
     </div>
   );

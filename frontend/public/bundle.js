@@ -64354,6 +64354,11 @@ ${parts.join("\n")}
     );
   }
 
+  // src/displayScale.ts
+  var DISPLAY_SCALE = 100;
+  var toDisplay = (v2) => Math.round(v2 * DISPLAY_SCALE);
+  var toInternal = (v2) => v2 / DISPLAY_SCALE;
+
   // src/controls/panels/SpriteListPanel.tsx
   var import_jsx_runtime3 = __toESM(require_jsx_runtime());
   function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd, onChangeTexture, onDelete, onEditTexture, onRename, onEditConditions }) {
@@ -64450,7 +64455,7 @@ ${parts.join("\n")}
                 children: entry.name || `Sprite ${index}`
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "sprite-parallax", children: entry.parallaxMultiplier.toFixed(2) }),
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "sprite-parallax", children: toDisplay(entry.parallaxMultiplier) }),
             /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
               "span",
               {
@@ -64623,39 +64628,44 @@ ${parts.join("\n")}
       {
         label: "Focus",
         min: 0,
-        max: 1,
-        step: 0.01,
-        value,
+        max: DISPLAY_SCALE,
+        step: 1,
+        value: Math.round(value * DISPLAY_SCALE),
         disabled,
-        decimalPlaces: 2,
-        onChange,
+        decimalPlaces: 0,
+        onChange: (v2) => onChange(v2 / DISPLAY_SCALE),
         onPointerDown: () => onChangeStart?.(value),
-        onPointerUp: (v2) => onChangeCommit?.(v2)
+        onPointerUp: (v2) => onChangeCommit?.(v2 / DISPLAY_SCALE)
       }
     ) });
   }
 
   // src/controls/panels/SpritePanelControl.tsx
   var import_jsx_runtime6 = __toESM(require_jsx_runtime());
-  var COORD_MIN = -10;
-  var COORD_MAX = 10;
-  var COORD_STEP = 0.01;
-  var DEPTH_MIN = 0.1;
-  var DEPTH_MAX = 2;
-  var DEPTH_STEP = 0.01;
-  var SIZE_MIN = 0.1;
-  var SIZE_MAX = 20;
-  var SIZE_STEP = 0.01;
+  var COORD_MIN = -10 * DISPLAY_SCALE;
+  var COORD_MAX = 10 * DISPLAY_SCALE;
+  var COORD_STEP = 1;
+  var DEPTH_MIN = 0;
+  var DEPTH_MAX = Math.round(2 * DISPLAY_SCALE);
+  var DEPTH_STEP = 1;
+  var SIZE_MIN = Math.round(0.01 * DISPLAY_SCALE);
+  var SIZE_MAX = 20 * DISPLAY_SCALE;
+  var SIZE_STEP = 1;
   function SpritePanelControl({ spriteName, x: x2, y: y2, depth, width, height, disabled, onChange, onChangeStart, onChangeCommit, onDepthChange, onDepthChangeStart, onDepthCommit, onSizeChange, onSizeChangeStart, onSizeCommit }) {
     const aspectRatio = width > 0 && height > 0 ? height / width : 1;
-    const handleWidthChange = (newW) => {
-      const newH = Math.max(SIZE_MIN, newW * aspectRatio);
+    const handleWidthChange = (displayW) => {
+      const newW = toInternal(displayW);
+      const newH = Math.max(toInternal(SIZE_MIN), newW * aspectRatio);
       onSizeChange(newW, newH);
     };
-    const handleHeightChange = (newH) => {
-      const newW = Math.max(SIZE_MIN, newH / aspectRatio);
+    const handleHeightChange = (displayH) => {
+      const newH = toInternal(displayH);
+      const newW = Math.max(toInternal(SIZE_MIN), newH / aspectRatio);
       onSizeChange(newW, newH);
     };
+    const displayDepth = Math.min(DEPTH_MAX, Math.max(DEPTH_MIN, toDisplay(depth)));
+    const displayWidth = Math.min(SIZE_MAX, Math.max(SIZE_MIN, toDisplay(width)));
+    const displayHeight = Math.min(SIZE_MAX, Math.max(SIZE_MIN, toDisplay(height)));
     return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { id: "sprite-panel-control", className: disabled ? "sprite-panel-control--disabled" : void 0, children: [
       /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "sprite-panel-name", children: disabled ? "No sprite selected" : spriteName }),
       /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
@@ -64665,14 +64675,15 @@ ${parts.join("\n")}
           min: COORD_MIN,
           max: COORD_MAX,
           step: COORD_STEP,
-          value: x2,
+          value: toDisplay(x2),
           disabled,
           labelWidth: 12,
+          decimalPlaces: 0,
           onPointerDown: () => onChangeStart?.(x2, y2),
-          onChange: (v2) => onChange(v2, y2),
-          onPointerUp: (v2) => onChangeCommit?.(v2, y2),
+          onChange: (v2) => onChange(toInternal(v2), y2),
+          onPointerUp: (v2) => onChangeCommit?.(toInternal(v2), y2),
           onFocus: () => onChangeStart?.(x2, y2),
-          onCommit: (v2) => onChangeCommit?.(v2, y2)
+          onCommit: (v2) => onChangeCommit?.(toInternal(v2), y2)
         }
       ),
       /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
@@ -64682,14 +64693,15 @@ ${parts.join("\n")}
           min: COORD_MIN,
           max: COORD_MAX,
           step: COORD_STEP,
-          value: y2,
+          value: toDisplay(y2),
           disabled,
           labelWidth: 12,
+          decimalPlaces: 0,
           onPointerDown: () => onChangeStart?.(x2, y2),
-          onChange: (v2) => onChange(x2, v2),
-          onPointerUp: (v2) => onChangeCommit?.(x2, v2),
+          onChange: (v2) => onChange(x2, toInternal(v2)),
+          onPointerUp: (v2) => onChangeCommit?.(x2, toInternal(v2)),
           onFocus: () => onChangeStart?.(x2, y2),
-          onCommit: (v2) => onChangeCommit?.(x2, v2)
+          onCommit: (v2) => onChangeCommit?.(x2, toInternal(v2))
         }
       ),
       /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
@@ -64699,15 +64711,16 @@ ${parts.join("\n")}
           min: DEPTH_MIN,
           max: DEPTH_MAX,
           step: DEPTH_STEP,
-          value: Math.min(DEPTH_MAX, Math.max(DEPTH_MIN, depth)),
+          value: displayDepth,
           disabled,
           labelWidth: 12,
+          decimalPlaces: 0,
           onPointerDown: () => onDepthChangeStart?.(depth),
-          onChange: (v2) => onDepthChange(v2),
-          onPointerUp: (v2) => onDepthCommit?.(v2),
+          onChange: (v2) => onDepthChange(toInternal(v2)),
+          onPointerUp: (v2) => onDepthCommit?.(toInternal(v2)),
           onFocus: () => onDepthChangeStart?.(depth),
           onCommit: (v2) => {
-            if (v2 >= DEPTH_MIN) onDepthCommit?.(v2);
+            if (toInternal(v2) >= toInternal(DEPTH_MIN)) onDepthCommit?.(toInternal(v2));
           }
         }
       ),
@@ -64718,17 +64731,18 @@ ${parts.join("\n")}
           min: SIZE_MIN,
           max: SIZE_MAX,
           step: SIZE_STEP,
-          value: Math.min(SIZE_MAX, Math.max(SIZE_MIN, width)),
+          value: displayWidth,
           disabled,
           labelWidth: 12,
+          decimalPlaces: 0,
           onPointerDown: () => onSizeChangeStart?.(),
           onChange: (v2) => {
-            if (v2 >= SIZE_MIN) handleWidthChange(v2);
+            if (toInternal(v2) >= toInternal(SIZE_MIN)) handleWidthChange(v2);
           },
-          onPointerUp: (v2) => onSizeCommit?.(v2, Math.max(SIZE_MIN, v2 * aspectRatio)),
+          onPointerUp: (v2) => onSizeCommit?.(toInternal(v2), Math.max(toInternal(SIZE_MIN), toInternal(v2) * aspectRatio)),
           onFocus: () => onSizeChangeStart?.(),
           onCommit: (v2) => {
-            if (v2 >= SIZE_MIN) onSizeCommit?.(v2, Math.max(SIZE_MIN, v2 * aspectRatio));
+            if (toInternal(v2) >= toInternal(SIZE_MIN)) onSizeCommit?.(toInternal(v2), Math.max(toInternal(SIZE_MIN), toInternal(v2) * aspectRatio));
           }
         }
       ),
@@ -64739,17 +64753,18 @@ ${parts.join("\n")}
           min: SIZE_MIN,
           max: SIZE_MAX,
           step: SIZE_STEP,
-          value: Math.min(SIZE_MAX, Math.max(SIZE_MIN, height)),
+          value: displayHeight,
           disabled,
           labelWidth: 12,
+          decimalPlaces: 0,
           onPointerDown: () => onSizeChangeStart?.(),
           onChange: (v2) => {
-            if (v2 >= SIZE_MIN) handleHeightChange(v2);
+            if (toInternal(v2) >= toInternal(SIZE_MIN)) handleHeightChange(v2);
           },
-          onPointerUp: (v2) => onSizeCommit?.(Math.max(SIZE_MIN, v2 / aspectRatio), v2),
+          onPointerUp: (v2) => onSizeCommit?.(Math.max(toInternal(SIZE_MIN), toInternal(v2) / aspectRatio), toInternal(v2)),
           onFocus: () => onSizeChangeStart?.(),
           onCommit: (v2) => {
-            if (v2 >= SIZE_MIN) onSizeCommit?.(Math.max(SIZE_MIN, v2 / aspectRatio), v2);
+            if (toInternal(v2) >= toInternal(SIZE_MIN)) onSizeCommit?.(Math.max(toInternal(SIZE_MIN), toInternal(v2) / aspectRatio), toInternal(v2));
           }
         }
       )
@@ -68045,7 +68060,7 @@ ${e2}`);
   var WIDTH_MAX = 15;
   var WIDTH_STEP = 0.1;
   var SCALE_MIN = 1;
-  var SCALE_MAX = 8;
+  var SCALE_MAX = 10;
   var SCALE_STEP = 0.1;
   function EditTextureModal({
     spriteName,
@@ -68237,42 +68252,42 @@ ${e2}`);
             SliderRow,
             {
               label: "Width",
-              min: WIDTH_MIN,
-              max: WIDTH_MAX,
-              step: WIDTH_STEP,
-              value: state.width,
-              decimalPlaces: 1,
+              min: toDisplay(WIDTH_MIN),
+              max: toDisplay(WIDTH_MAX),
+              step: toDisplay(WIDTH_STEP),
+              value: toDisplay(state.width),
+              decimalPlaces: 0,
               labelWidth: 70,
               labelAlign: "right",
-              onChange: (v2) => setState((prev) => ({ ...prev, width: Math.max(WIDTH_MIN, Math.min(WIDTH_MAX, v2)) }))
+              onChange: (v2) => setState((prev) => ({ ...prev, width: Math.max(WIDTH_MIN, Math.min(WIDTH_MAX, toInternal(v2))) }))
             }
           ),
           /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
             SliderRow,
             {
               label: "Height",
-              min: WIDTH_MIN,
-              max: WIDTH_MAX,
-              step: WIDTH_STEP,
-              value: state.height,
-              decimalPlaces: 1,
+              min: toDisplay(WIDTH_MIN),
+              max: toDisplay(WIDTH_MAX),
+              step: toDisplay(WIDTH_STEP),
+              value: toDisplay(state.height),
+              decimalPlaces: 0,
               labelWidth: 70,
               labelAlign: "right",
-              onChange: (v2) => setState((prev) => ({ ...prev, height: Math.max(WIDTH_MIN, Math.min(WIDTH_MAX, v2)) }))
+              onChange: (v2) => setState((prev) => ({ ...prev, height: Math.max(WIDTH_MIN, Math.min(WIDTH_MAX, toInternal(v2))) }))
             }
           ),
           /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
             SliderRow,
             {
               label: "Tex Scale",
-              min: SCALE_MIN,
-              max: SCALE_MAX,
-              step: SCALE_STEP,
-              value: state.textureScale,
-              decimalPlaces: 1,
+              min: toDisplay(SCALE_MIN),
+              max: toDisplay(SCALE_MAX),
+              step: toDisplay(SCALE_STEP),
+              value: toDisplay(state.textureScale),
+              decimalPlaces: 0,
               labelWidth: 70,
               labelAlign: "right",
-              onChange: (v2) => setState((prev) => ({ ...prev, textureScale: Math.max(SCALE_MIN, Math.min(SCALE_MAX, v2)) }))
+              onChange: (v2) => setState((prev) => ({ ...prev, textureScale: Math.max(SCALE_MIN, Math.min(SCALE_MAX, toInternal(v2))) }))
             }
           )
         ] }),
