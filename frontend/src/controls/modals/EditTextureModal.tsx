@@ -38,6 +38,7 @@ function imageUrlFromResource(textureResource: string): string {
 
 // Internal PixiJS canvas resolution (CSS px). CSS scaling fills the container.
 const PIXI_SIZE = 600;
+const PREVIEW_PADDING = 0.85;
 
 const WIDTH_MIN = 0.1;
 const WIDTH_MAX = 15;
@@ -117,10 +118,9 @@ export function EditTextureModal({
     });
 
     // Fit sprite into the square canvas preserving world-space aspect ratio (like Android)
-    const padding = 0.85;
     const scaleFit = Math.min(
-      (canvasSize * padding) / s.width,
-      (canvasSize * padding) / s.height,
+      (canvasSize * PREVIEW_PADDING) / s.width,
+      (canvasSize * PREVIEW_PADDING) / s.height,
     );
     sprite.width = s.width * scaleFit;
     sprite.height = s.height * scaleFit;
@@ -223,12 +223,35 @@ export function EditTextureModal({
 
       const rect = containerRef.current.getBoundingClientRect();
       const s = stateRef.current;
-      // Same sign convention as Android: negate delta so dragging moves the texture
+
+      // Compute the current UV window size so we can convert pixel drag → UV delta.
+      // As scale increases the window shrinks; without this correction the texture
+      // would move proportionally faster than the mouse.
+      const { windowSizeU, windowSizeV } = calculateTexCoords(
+        originalTexCoords.current,
+        s.textureScale,
+        s.width,
+        s.height,
+        originalWidth.current,
+        originalHeight.current,
+        s.offsetU,
+        s.offsetV,
+      );
+
+      // Sprite display size in CSS px (mirrors updatePixiSprite's scaleFit logic)
+      const scaleFit = Math.min(
+        (rect.width * PREVIEW_PADDING) / s.width,
+        (rect.width * PREVIEW_PADDING) / s.height,
+      );
+      const spritePixelW = s.width * scaleFit;
+      const spritePixelH = s.height * scaleFit;
+
+      // 1:1 drag: dx pixels → (dx / spritePixelW) * windowSizeU UV units
       const [newOffU, newOffV] = clampTexOffset(
         s.offsetU,
         s.offsetV,
-        -(dx / rect.width),
-        -(dy / rect.height),
+        -(dx / spritePixelW) * windowSizeU,
+        -(dy / spritePixelH) * windowSizeV,
         s.width,
         s.height,
         originalWidth.current,

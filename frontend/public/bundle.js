@@ -68056,6 +68056,7 @@ ${e2}`);
     return /\.(png|jpg|jpeg|gif|webp)$/i.test(textureResource) ? `/images/${textureResource}` : `/images/${textureResource}.png`;
   }
   var PIXI_SIZE = 600;
+  var PREVIEW_PADDING = 0.85;
   var WIDTH_MIN = 0.1;
   var WIDTH_MAX = 15;
   var WIDTH_STEP = 0.1;
@@ -68116,10 +68117,9 @@ ${e2}`);
           (win.vMax - win.vMin) * baseTexture.height
         )
       });
-      const padding = 0.85;
       const scaleFit = Math.min(
-        canvasSize * padding / s2.width,
-        canvasSize * padding / s2.height
+        canvasSize * PREVIEW_PADDING / s2.width,
+        canvasSize * PREVIEW_PADDING / s2.height
       );
       sprite.width = s2.width * scaleFit;
       sprite.height = s2.height * scaleFit;
@@ -68195,11 +68195,27 @@ ${e2}`);
         lastMousePos.current = { x: e2.clientX, y: e2.clientY };
         const rect = containerRef.current.getBoundingClientRect();
         const s2 = stateRef.current;
+        const { windowSizeU, windowSizeV } = calculateTexCoords(
+          originalTexCoords.current,
+          s2.textureScale,
+          s2.width,
+          s2.height,
+          originalWidth.current,
+          originalHeight.current,
+          s2.offsetU,
+          s2.offsetV
+        );
+        const scaleFit = Math.min(
+          rect.width * PREVIEW_PADDING / s2.width,
+          rect.width * PREVIEW_PADDING / s2.height
+        );
+        const spritePixelW = s2.width * scaleFit;
+        const spritePixelH = s2.height * scaleFit;
         const [newOffU, newOffV] = clampTexOffset(
           s2.offsetU,
           s2.offsetV,
-          -(dx / rect.width),
-          -(dy / rect.height),
+          -(dx / spritePixelW) * windowSizeU,
+          -(dy / spritePixelH) * windowSizeV,
           s2.width,
           s2.height,
           originalWidth.current,
