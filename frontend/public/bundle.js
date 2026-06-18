@@ -68618,10 +68618,10 @@ ${e2}`);
     async addSprite(textureResource, width, height, parallaxMultiplier) {
       if (!this.app) return -1;
       await this.loadTexture(textureResource);
-      const baseName = textureResource.replace(/\.(png|jpg|jpeg|gif|webp)$/i, "");
+      const baseName = "sprite";
       const existingNames = new Set(this.sprites.map((s2) => this.spriteMetadata.get(s2)?.name ?? ""));
-      let name = baseName;
-      let counter = 1;
+      let counter = existingNames.size + 1;
+      let name = `${baseName}_${counter++}`;
       while (existingNames.has(name)) {
         name = `${baseName}_${counter++}`;
       }
