@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { SceneSelectorControl, SceneOption } from './SceneSelectorControl';
+import { SceneOption } from './SceneSelectorControl';
 import { PhoneGuideControl } from './PhoneGuideControl';
-import { NewSceneDialog } from './modals/NewSceneDialog';
 import { ImageLibraryModal } from './modals/ImageLibraryModal';
 import { Button } from '../components/Button';
 
@@ -15,7 +14,6 @@ interface TopBarProps {
   gyroMode: boolean;
   onBack?: () => void;
   onSceneSelect: (sceneName: string) => void;
-  onNewScene: (label: string, copyFromSceneId?: string) => void;
   onPhoneGuideToggle: (visible: boolean) => void;
   onSave: () => void;
   onZoomIn: () => void;
@@ -24,27 +22,14 @@ interface TopBarProps {
   onGyroModeToggle: () => void;
 }
 
-export function TopBar({ scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, onBack, onSceneSelect, onNewScene, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }: TopBarProps) {
-  const [dialogOpen, setDialogOpen] = useState(false);
+export function TopBar({ scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, onBack, onSceneSelect, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }: TopBarProps) {
   const [libraryOpen, setLibraryOpen] = useState(false);
 
-  const handleConfirm = (label: string, copyFromSceneId?: string) => {
-    setDialogOpen(false);
-    onNewScene(label, copyFromSceneId);
-  };
 
   return (
     <div className="top-bar">
       {onBack && (
         <Button onClick={onBack} title="Back to scenes">← Scenes</Button>
-      )}
-      <Button onClick={() => setDialogOpen(true)}>+ New Scene</Button>
-      {dialogOpen && (
-        <NewSceneDialog
-          onConfirm={handleConfirm}
-          onCancel={() => setDialogOpen(false)}
-          scenes={scenes.map(s => ({ id: s.value, label: s.label, thumbnail_url: s.thumbnail_url }))}
-        />
       )}
       <Button onClick={() => setLibraryOpen(true)} title="Browse and upload images">Image Library</Button>
       {libraryOpen && (
