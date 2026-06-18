@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import './ImageLibraryModal.scss';
+import './CreateSpriteModal.scss';
 import { Button } from '../../components/Button';
 
 interface ImageRecord {
@@ -21,10 +21,11 @@ function getImageThumbnailUrl(thumbFilename: string) {
   return `/image-thumbnails/${thumbFilename}`;
 }
 
-export function ImageLibraryModal({ onClose }: { onClose: () => void }) {
+export function CreateSpriteModal({ onSelect, onClose }: { onSelect: (textureResource: string) => void; onClose: () => void }) {
   const [images, setImages] = useState<ImageRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<ImageRecord | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<ImageRecord | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -48,6 +49,7 @@ export function ImageLibraryModal({ onClose }: { onClose: () => void }) {
     const res = await fetch(`/api/images/${confirmDelete.id}`, { method: 'DELETE' });
     if (res.ok) {
       setImages(prev => prev.filter(i => i.id !== confirmDelete.id));
+      if (selectedImage === getUploadUrl(confirmDelete.filename)) setSelectedImage(null);
     }
     setConfirmDelete(null);
   };
@@ -71,11 +73,11 @@ export function ImageLibraryModal({ onClose }: { onClose: () => void }) {
 
   return createPortal(
     <>
-    <div className="add-sprite-overlay">
-      <div className="add-sprite-modal" onClick={e => e.stopPropagation()}>
-        <div className="add-sprite-modal-header">
-          <span>Image Library</span>
-          <div className="add-sprite-modal-header-actions">
+    <div className="create-sprite-overlay">
+      <div className="create-sprite-modal" onClick={e => e.stopPropagation()}>
+        <div className="create-sprite-modal-header">
+          <span>Create Sprite</span>
+          <div className="create-sprite-modal-header-actions">
             <Button
               disabled={uploading}
               onClick={() => fileInputRef.current?.click()}
@@ -89,59 +91,69 @@ export function ImageLibraryModal({ onClose }: { onClose: () => void }) {
               style={{ display: 'none' }}
               onChange={handleFileChange}
             />
-            <button className="add-sprite-modal-close" onClick={onClose}>✕</button>
+            <button className="create-sprite-modal-close" onClick={onClose}>✕</button>
           </div>
         </div>
-        <div className="add-sprite-modal-body">
-          {loading && <div className="add-sprite-loading">Loading…</div>}
-          {!loading && images.length === 0 && <div className="add-sprite-loading">No images found. Upload one to get started.</div>}
+        <div className="create-sprite-modal-body">
+          {loading && <div className="create-sprite-loading">Loading…</div>}
+          {!loading && images.length === 0 && <div className="create-sprite-loading">No images found. Upload one to get started.</div>}
           {images.map(image => (
             <div
               key={image.id}
-              className="add-sprite-image-item"
+              className={`create-sprite-image-item${selectedImage === getUploadUrl(image.filename) ? ' create-sprite-image-item--selected' : ''}`}
+              onClick={() => setSelectedImage(getUploadUrl(image.filename))}
             >
               <img
                 src={image.thumb_filename ? getImageThumbnailUrl(image.thumb_filename) : getUploadUrl(image.filename)}
                 alt={image.original_name}
-                className="add-sprite-thumb"
+                className="create-sprite-thumb"
                 loading="lazy"
               />
-              <span className="add-sprite-image-name">{image.original_name}</span>
-              <div className="image-item-overlay">
+              <span className="create-sprite-image-name">{image.original_name}</span>
+              <div className="create-sprite-image-item-overlay">
                 <button
-                  className="image-item-overlay-btn image-item-overlay-btn--preview"
+                  className="create-sprite-image-item-overlay-btn create-sprite-image-item-overlay-btn--preview"
                   onClick={e => { e.stopPropagation(); setPreviewImage(image); }}
                   title="Preview"
                 >
                   &#128065;
                 </button>
+                <button
+                  className="create-sprite-image-item-overlay-btn create-sprite-image-item-overlay-btn--delete"
+                  onClick={e => handleDelete(image, e)}
+                  title="Delete"
+                >
+                  &#128465;
+                </button>
               </div>
-              <button
-                className="image-item-overlay-btn image-item-overlay-btn--delete"
-                onClick={e => handleDelete(image, e)}
-                title="Delete"
-              >
-                &#128465;
-              </button>
             </div>
           ))}
+        </div>
+        <div className="create-sprite-modal-footer">
+          <Button
+            variant="primary"
+            disabled={selectedImage === null}
+            onClick={() => { onSelect(selectedImage!); }}
+          >
+            Create
+          </Button>
         </div>
       </div>
     </div>
     {previewImage && (
-      <div className="add-sprite-preview-overlay" onClick={() => setPreviewImage(null)}>
-        <div className="add-sprite-preview-modal" onClick={e => e.stopPropagation()}>
-          <button className="add-sprite-preview-close" onClick={() => setPreviewImage(null)}>✕</button>
-          <img src={getUploadUrl(previewImage!.filename)} alt={previewImage!.original_name} className="add-sprite-preview-img" />
+      <div className="create-sprite-preview-overlay" onClick={() => setPreviewImage(null)}>
+        <div className="create-sprite-preview-modal" onClick={e => e.stopPropagation()}>
+          <button className="create-sprite-preview-close" onClick={() => setPreviewImage(null)}>✕</button>
+          <img src={getUploadUrl(previewImage!.filename)} alt={previewImage!.original_name} className="create-sprite-preview-img" />
         </div>
       </div>
     )}
     {confirmDelete && (
-      <div className="add-sprite-preview-overlay" onClick={() => setConfirmDelete(null)}>
-        <div className="add-sprite-confirm-delete-dialog" onClick={e => e.stopPropagation()}>
+      <div className="create-sprite-preview-overlay" onClick={() => setConfirmDelete(null)}>
+        <div className="create-sprite-confirm-delete-dialog" onClick={e => e.stopPropagation()}>
           <p>Delete <strong>{confirmDelete.original_name}</strong>?</p>
-          <p className="add-sprite-confirm-delete-sub">This cannot be undone.</p>
-          <div className="sprite-confirm-actions">
+          <p className="create-sprite-confirm-delete-sub">This cannot be undone.</p>
+          <div className="create-sprite-confirm-actions">
             <Button variant="danger" onClick={handleDeleteConfirmed}>Delete</Button>
             <Button onClick={() => setConfirmDelete(null)}>Cancel</Button>
           </div>

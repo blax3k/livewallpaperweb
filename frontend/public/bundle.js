@@ -1337,7 +1337,7 @@
           return dispatcher;
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var React20 = require_react(), Internals = {
+        var React21 = require_react(), Internals = {
           d: {
             f: noop,
             r: function() {
@@ -1355,7 +1355,7 @@
           },
           p: 0,
           findDOMNode: null
-        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React20.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React21.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
         "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
           "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
         );
@@ -2890,7 +2890,7 @@
           "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
         }
         function validateOptionProps(element, props) {
-          null == props.value && ("object" === typeof props.children && null !== props.children ? React20.Children.forEach(props.children, function(child) {
+          null == props.value && ("object" === typeof props.children && null !== props.children ? React21.Children.forEach(props.children, function(child) {
             null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
               "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
             ));
@@ -18522,14 +18522,14 @@
           ));
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var Scheduler = require_scheduler(), React20 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+        var Scheduler = require_scheduler(), React21 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
         /* @__PURE__ */ Symbol.for("react.scope");
         var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity");
         /* @__PURE__ */ Symbol.for("react.legacy_hidden");
         /* @__PURE__ */ Symbol.for("react.tracing_marker");
         var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel");
         /* @__PURE__ */ Symbol.for("react.view_transition");
-        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React20.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React21.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
           pending: false,
           data: null,
           method: null,
@@ -21317,7 +21317,7 @@
           }
         };
         (function() {
-          var isomorphicReactPackageVersion = React20.version;
+          var isomorphicReactPackageVersion = React21.version;
           if ("19.2.5" !== isomorphicReactPackageVersion)
             throw Error(
               'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.5\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21671,18 +21671,18 @@
         function isValidElement(object) {
           return "object" === typeof object && null !== object && object.$$typeof === REACT_ELEMENT_TYPE;
         }
-        var React20 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React20.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
+        var React21 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React21.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
           return null;
         };
-        React20 = {
+        React21 = {
           react_stack_bottom_frame: function(callStackForError) {
             return callStackForError();
           }
         };
         var specialPropKeyWarningShown;
         var didWarnAboutElementRef = {};
-        var unknownOwnerDebugStack = React20.react_stack_bottom_frame.bind(
-          React20,
+        var unknownOwnerDebugStack = React21.react_stack_bottom_frame.bind(
+          React21,
           UnknownOwner
         )();
         var unknownOwnerDebugTask = createTask(getTaskName(UnknownOwner));
@@ -64176,16 +64176,16 @@ ${parts.join("\n")}
   });
 
   // src/client.tsx
-  var import_react22 = __toESM(require_react());
+  var import_react23 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/ScenePage.tsx
-  var import_react12 = __toESM(require_react());
+  var import_react13 = __toESM(require_react());
 
   // src/controls/panels/SpriteListPanel.tsx
   var import_react2 = __toESM(require_react());
 
-  // src/controls/modals/ImageLibraryModal.tsx
+  // src/controls/modals/CreateSpriteModal.tsx
   var import_react = __toESM(require_react());
   var import_react_dom = __toESM(require_react_dom());
 
@@ -64195,7 +64195,7 @@ ${parts.join("\n")}
     return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: `btn btn--${variant} ${className}`.trim(), ...rest, children });
   }
 
-  // src/controls/modals/ImageLibraryModal.tsx
+  // src/controls/modals/CreateSpriteModal.tsx
   var import_jsx_runtime2 = __toESM(require_jsx_runtime());
   function getUploadUrl(filename) {
     return `/uploads/${filename}`;
@@ -64203,7 +64203,7 @@ ${parts.join("\n")}
   function getImageThumbnailUrl(thumbFilename) {
     return `/image-thumbnails/${thumbFilename}`;
   }
-  function ImageLibraryModal({ onSelect, onClose }) {
+  function CreateSpriteModal({ onSelect, onClose }) {
     const [images, setImages] = (0, import_react.useState)([]);
     const [loading, setLoading] = (0, import_react.useState)(true);
     const [uploading, setUploading] = (0, import_react.useState)(false);
@@ -64251,10 +64251,10 @@ ${parts.join("\n")}
     };
     return (0, import_react_dom.createPortal)(
       /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(import_jsx_runtime2.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "add-sprite-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "add-sprite-modal", onClick: (e2) => e2.stopPropagation(), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "add-sprite-modal-header", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { children: "Select Image" }),
-            /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "add-sprite-modal-header-actions", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "create-sprite-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "create-sprite-modal", onClick: (e2) => e2.stopPropagation(), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "create-sprite-modal-header", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { children: "Create Sprite" }),
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "create-sprite-modal-header-actions", children: [
               /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
                 Button,
                 {
@@ -64273,16 +64273,16 @@ ${parts.join("\n")}
                   onChange: handleFileChange
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { className: "add-sprite-modal-close", onClick: onClose, children: "\u2715" })
+              /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { className: "create-sprite-modal-close", onClick: onClose, children: "\u2715" })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "add-sprite-modal-body", children: [
-            loading && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "add-sprite-loading", children: "Loading\u2026" }),
-            !loading && images.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "add-sprite-loading", children: "No images found. Upload one to get started." }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "create-sprite-modal-body", children: [
+            loading && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "create-sprite-loading", children: "Loading\u2026" }),
+            !loading && images.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "create-sprite-loading", children: "No images found. Upload one to get started." }),
             images.map((image) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
               "div",
               {
-                className: `add-sprite-image-item${selectedImage === getUploadUrl(image.filename) ? " add-sprite-image-item--selected" : ""}`,
+                className: `create-sprite-image-item${selectedImage === getUploadUrl(image.filename) ? " create-sprite-image-item--selected" : ""}`,
                 onClick: () => setSelectedImage(getUploadUrl(image.filename)),
                 children: [
                   /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
@@ -64290,38 +64290,40 @@ ${parts.join("\n")}
                     {
                       src: image.thumb_filename ? getImageThumbnailUrl(image.thumb_filename) : getUploadUrl(image.filename),
                       alt: image.original_name,
-                      className: "add-sprite-thumb",
+                      className: "create-sprite-thumb",
                       loading: "lazy"
                     }
                   ),
-                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "add-sprite-image-name", children: image.original_name }),
-                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "image-item-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
-                    "button",
-                    {
-                      className: "image-item-overlay-btn image-item-overlay-btn--preview",
-                      onClick: (e2) => {
-                        e2.stopPropagation();
-                        setPreviewImage(image);
-                      },
-                      title: "Preview",
-                      children: "\u{1F441}"
-                    }
-                  ) }),
-                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
-                    "button",
-                    {
-                      className: "image-item-overlay-btn image-item-overlay-btn--delete",
-                      onClick: (e2) => handleDelete(image, e2),
-                      title: "Delete",
-                      children: "\u{1F5D1}"
-                    }
-                  )
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "create-sprite-image-name", children: image.original_name }),
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "create-sprite-image-item-overlay", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+                      "button",
+                      {
+                        className: "create-sprite-image-item-overlay-btn create-sprite-image-item-overlay-btn--preview",
+                        onClick: (e2) => {
+                          e2.stopPropagation();
+                          setPreviewImage(image);
+                        },
+                        title: "Preview",
+                        children: "\u{1F441}"
+                      }
+                    ),
+                    /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+                      "button",
+                      {
+                        className: "create-sprite-image-item-overlay-btn create-sprite-image-item-overlay-btn--delete",
+                        onClick: (e2) => handleDelete(image, e2),
+                        title: "Delete",
+                        children: "\u{1F5D1}"
+                      }
+                    )
+                  ] })
                 ]
               },
               image.id
             ))
           ] }),
-          onSelect && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "add-sprite-modal-footer", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "create-sprite-modal-footer", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
             Button,
             {
               variant: "primary",
@@ -64329,22 +64331,22 @@ ${parts.join("\n")}
               onClick: () => {
                 onSelect(selectedImage);
               },
-              children: "Select"
+              children: "Create"
             }
           ) })
         ] }) }),
-        previewImage && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "add-sprite-preview-overlay", onClick: () => setPreviewImage(null), children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "add-sprite-preview-modal", onClick: (e2) => e2.stopPropagation(), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { className: "add-sprite-preview-close", onClick: () => setPreviewImage(null), children: "\u2715" }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("img", { src: getUploadUrl(previewImage.filename), alt: previewImage.original_name, className: "add-sprite-preview-img" })
+        previewImage && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "create-sprite-preview-overlay", onClick: () => setPreviewImage(null), children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "create-sprite-preview-modal", onClick: (e2) => e2.stopPropagation(), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { className: "create-sprite-preview-close", onClick: () => setPreviewImage(null), children: "\u2715" }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("img", { src: getUploadUrl(previewImage.filename), alt: previewImage.original_name, className: "create-sprite-preview-img" })
         ] }) }),
-        confirmDelete && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "add-sprite-preview-overlay", onClick: () => setConfirmDelete(null), children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "add-sprite-confirm-delete-dialog", onClick: (e2) => e2.stopPropagation(), children: [
+        confirmDelete && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "create-sprite-preview-overlay", onClick: () => setConfirmDelete(null), children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "create-sprite-confirm-delete-dialog", onClick: (e2) => e2.stopPropagation(), children: [
           /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("p", { children: [
             "Delete ",
             /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("strong", { children: confirmDelete.original_name }),
             "?"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "add-sprite-confirm-delete-sub", children: "This cannot be undone." }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "sprite-confirm-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "create-sprite-confirm-delete-sub", children: "This cannot be undone." }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "create-sprite-confirm-actions", children: [
             /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Button, { variant: "danger", onClick: handleDeleteConfirmed, children: "Delete" }),
             /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Button, { onClick: () => setConfirmDelete(null), children: "Cancel" })
           ] })
@@ -64549,7 +64551,7 @@ ${parts.join("\n")}
         ] })
       ] }) }),
       showModal && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-        ImageLibraryModal,
+        CreateSpriteModal,
         {
           onSelect: handleImageSelected,
           onClose: () => {
@@ -65121,7 +65123,7 @@ ${parts.join("\n")}
   }
 
   // src/controls/TopBar.tsx
-  var import_react5 = __toESM(require_react());
+  var import_react6 = __toESM(require_react());
 
   // src/controls/PhoneGuideControl.tsx
   var import_jsx_runtime10 = __toESM(require_jsx_runtime());
@@ -65141,20 +65143,167 @@ ${parts.join("\n")}
     ] });
   }
 
-  // src/controls/TopBar.tsx
+  // src/controls/modals/ImageLibraryModal.tsx
+  var import_react5 = __toESM(require_react());
+  var import_react_dom2 = __toESM(require_react_dom());
   var import_jsx_runtime11 = __toESM(require_jsx_runtime());
+  function getUploadUrl2(filename) {
+    return `/uploads/${filename}`;
+  }
+  function getImageThumbnailUrl2(thumbFilename) {
+    return `/image-thumbnails/${thumbFilename}`;
+  }
+  function ImageLibraryModal({ onClose }) {
+    const [images, setImages] = (0, import_react5.useState)([]);
+    const [loading, setLoading] = (0, import_react5.useState)(true);
+    const [uploading, setUploading] = (0, import_react5.useState)(false);
+    const [previewImage, setPreviewImage] = (0, import_react5.useState)(null);
+    const [confirmDelete, setConfirmDelete] = (0, import_react5.useState)(null);
+    const fileInputRef = (0, import_react5.useRef)(null);
+    const fetchImages = () => {
+      fetch("/api/images").then((r2) => r2.json()).then((records) => {
+        setImages(records);
+        setLoading(false);
+      }).catch(() => setLoading(false));
+    };
+    (0, import_react5.useEffect)(() => {
+      fetchImages();
+    }, []);
+    const handleDelete = async (image, e2) => {
+      e2.stopPropagation();
+      setConfirmDelete(image);
+    };
+    const handleDeleteConfirmed = async () => {
+      if (!confirmDelete) return;
+      const res = await fetch(`/api/images/${confirmDelete.id}`, { method: "DELETE" });
+      if (res.ok) {
+        setImages((prev) => prev.filter((i2) => i2.id !== confirmDelete.id));
+      }
+      setConfirmDelete(null);
+    };
+    const handleFileChange = async (e2) => {
+      const file = e2.target.files?.[0];
+      if (!file) return;
+      setUploading(true);
+      const form = new FormData();
+      form.append("file", file);
+      try {
+        const res = await fetch("/api/images", { method: "POST", body: form });
+        if (!res.ok) throw new Error("Upload failed");
+        const record = await res.json();
+        setImages((prev) => [record, ...prev]);
+      } finally {
+        setUploading(false);
+        e2.target.value = "";
+      }
+    };
+    return (0, import_react_dom2.createPortal)(
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_jsx_runtime11.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "add-sprite-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "add-sprite-modal", onClick: (e2) => e2.stopPropagation(), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "add-sprite-modal-header", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: "Image Library" }),
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "add-sprite-modal-header-actions", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+                Button,
+                {
+                  disabled: uploading,
+                  onClick: () => fileInputRef.current?.click(),
+                  children: uploading ? "Uploading\u2026" : "Upload"
+                }
+              ),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+                "input",
+                {
+                  ref: fileInputRef,
+                  type: "file",
+                  accept: "image/png,image/jpeg,image/gif,image/webp",
+                  style: { display: "none" },
+                  onChange: handleFileChange
+                }
+              ),
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { className: "add-sprite-modal-close", onClick: onClose, children: "\u2715" })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "add-sprite-modal-body", children: [
+            loading && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "add-sprite-loading", children: "Loading\u2026" }),
+            !loading && images.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "add-sprite-loading", children: "No images found. Upload one to get started." }),
+            images.map((image) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(
+              "div",
+              {
+                className: "add-sprite-image-item",
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+                    "img",
+                    {
+                      src: image.thumb_filename ? getImageThumbnailUrl2(image.thumb_filename) : getUploadUrl2(image.filename),
+                      alt: image.original_name,
+                      className: "add-sprite-thumb",
+                      loading: "lazy"
+                    }
+                  ),
+                  /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "add-sprite-image-name", children: image.original_name }),
+                  /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "image-item-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+                    "button",
+                    {
+                      className: "image-item-overlay-btn image-item-overlay-btn--preview",
+                      onClick: (e2) => {
+                        e2.stopPropagation();
+                        setPreviewImage(image);
+                      },
+                      title: "Preview",
+                      children: "\u{1F441}"
+                    }
+                  ) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+                    "button",
+                    {
+                      className: "image-item-overlay-btn image-item-overlay-btn--delete",
+                      onClick: (e2) => handleDelete(image, e2),
+                      title: "Delete",
+                      children: "\u{1F5D1}"
+                    }
+                  )
+                ]
+              },
+              image.id
+            ))
+          ] })
+        ] }) }),
+        previewImage && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "add-sprite-preview-overlay", onClick: () => setPreviewImage(null), children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "add-sprite-preview-modal", onClick: (e2) => e2.stopPropagation(), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { className: "add-sprite-preview-close", onClick: () => setPreviewImage(null), children: "\u2715" }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("img", { src: getUploadUrl2(previewImage.filename), alt: previewImage.original_name, className: "add-sprite-preview-img" })
+        ] }) }),
+        confirmDelete && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "add-sprite-preview-overlay", onClick: () => setConfirmDelete(null), children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "add-sprite-confirm-delete-dialog", onClick: (e2) => e2.stopPropagation(), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { children: [
+            "Delete ",
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("strong", { children: confirmDelete.original_name }),
+            "?"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "add-sprite-confirm-delete-sub", children: "This cannot be undone." }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "sprite-confirm-actions", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Button, { variant: "danger", onClick: handleDeleteConfirmed, children: "Delete" }),
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Button, { onClick: () => setConfirmDelete(null), children: "Cancel" })
+          ] })
+        ] }) })
+      ] }),
+      document.body
+    );
+  }
+
+  // src/controls/TopBar.tsx
+  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
   function TopBar({ scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, onBack, onSceneSelect, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }) {
-    const [libraryOpen, setLibraryOpen] = (0, import_react5.useState)(false);
-    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "top-bar", children: [
-      onBack && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Button, { onClick: onBack, title: "Back to scenes", children: "\u2190 Scenes" }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Button, { onClick: () => setLibraryOpen(true), title: "Browse and upload images", children: "Image Library" }),
-      libraryOpen && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+    const [libraryOpen, setLibraryOpen] = (0, import_react6.useState)(false);
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "top-bar", children: [
+      onBack && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Button, { onClick: onBack, title: "Back to scenes", children: "\u2190 Scenes" }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Button, { onClick: () => setLibraryOpen(true), title: "Browse and upload images", children: "Image Library" }),
+      libraryOpen && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
         ImageLibraryModal,
         {
           onClose: () => setLibraryOpen(false)
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
         PhoneGuideControl,
         {
           checked: phoneGuideVisible,
@@ -65162,14 +65311,14 @@ ${parts.join("\n")}
           onChange: onPhoneGuideToggle
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Button, { onClick: onZoomOut, disabled: !sceneLoaded, title: "Zoom out", children: "\uFF0D" }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { className: "zoom-indicator", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Button, { onClick: onZoomOut, disabled: !sceneLoaded, title: "Zoom out", children: "\uFF0D" }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { className: "zoom-indicator", children: [
         Math.round(zoom * 100),
         "%"
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Button, { onClick: onZoomIn, disabled: !sceneLoaded, title: "Zoom in", children: "\uFF0B" }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Button, { onClick: onCenter, disabled: !sceneLoaded, children: "Center" }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Button, { onClick: onZoomIn, disabled: !sceneLoaded, title: "Zoom in", children: "\uFF0B" }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Button, { onClick: onCenter, disabled: !sceneLoaded, children: "Center" }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
         Button,
         {
           onClick: onGyroModeToggle,
@@ -65179,19 +65328,19 @@ ${parts.join("\n")}
           children: gyroMode ? "\u{1F4F1} Gyro" : "\u{1F5B1} Default"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Button, { onClick: onSave, disabled: isSaving || !sceneLoaded, children: isSaving ? "Saving..." : "Save Scene" })
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Button, { onClick: onSave, disabled: isSaving || !sceneLoaded, children: isSaving ? "Saving..." : "Save Scene" })
     ] });
   }
 
   // src/controls/NotificationStack.tsx
-  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
   function NotificationStack({ notifications }) {
     if (notifications.length === 0) return null;
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "notification-stack", children: notifications.map((n2) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "notification-card", children: n2.message }, n2.id)) });
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "notification-stack", children: notifications.map((n2) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "notification-card", children: n2.message }, n2.id)) });
   }
 
   // src/controls/modals/EditTextureModal.tsx
-  var import_react6 = __toESM(require_react());
+  var import_react7 = __toESM(require_react());
 
   // ../node_modules/pixi.js/lib/environment-browser/browserExt.mjs
   init_Extensions();
@@ -67938,7 +68087,7 @@ ${e2}`);
   }
 
   // src/controls/modals/EditTextureModal.tsx
-  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
   function imageUrlFromResource(textureResource) {
     if (textureResource.startsWith("/")) return textureResource;
     return /\.(png|jpg|jpeg|gif|webp)$/i.test(textureResource) ? `/images/${textureResource}` : `/images/${textureResource}.png`;
@@ -67960,26 +68109,26 @@ ${e2}`);
     onApply,
     onClose
   }) {
-    const originalTexCoords = (0, import_react6.useRef)(texCoordinates);
-    const originalWidth = (0, import_react6.useRef)(initWidth);
-    const originalHeight = (0, import_react6.useRef)(initHeight);
-    const [state, setState] = (0, import_react6.useState)(() => ({
+    const originalTexCoords = (0, import_react7.useRef)(texCoordinates);
+    const originalWidth = (0, import_react7.useRef)(initWidth);
+    const originalHeight = (0, import_react7.useRef)(initHeight);
+    const [state, setState] = (0, import_react7.useState)(() => ({
       width: initWidth,
       height: initHeight,
       textureScale: extractInitialScale(texCoordinates),
       offsetU: 0,
       offsetV: 0
     }));
-    const stateRef = (0, import_react6.useRef)(state);
+    const stateRef = (0, import_react7.useRef)(state);
     stateRef.current = state;
-    const containerRef = (0, import_react6.useRef)(null);
-    const pixiAppRef = (0, import_react6.useRef)(null);
-    const pixiSpriteRef = (0, import_react6.useRef)(null);
-    const pixiHighlightRef = (0, import_react6.useRef)(null);
-    const baseTextureRef = (0, import_react6.useRef)(null);
-    const dragging = (0, import_react6.useRef)(false);
-    const lastMousePos = (0, import_react6.useRef)({ x: 0, y: 0 });
-    const updatePixiSprite = (0, import_react6.useCallback)((s2) => {
+    const containerRef = (0, import_react7.useRef)(null);
+    const pixiAppRef = (0, import_react7.useRef)(null);
+    const pixiSpriteRef = (0, import_react7.useRef)(null);
+    const pixiHighlightRef = (0, import_react7.useRef)(null);
+    const baseTextureRef = (0, import_react7.useRef)(null);
+    const dragging = (0, import_react7.useRef)(false);
+    const lastMousePos = (0, import_react7.useRef)({ x: 0, y: 0 });
+    const updatePixiSprite = (0, import_react7.useCallback)((s2) => {
       const sprite = pixiSpriteRef.current;
       const highlight = pixiHighlightRef.current;
       const baseTexture = baseTextureRef.current;
@@ -68020,7 +68169,7 @@ ${e2}`);
         highlight.moveTo(left, top).lineTo(left + sprite.width, top).lineTo(left + sprite.width, top + sprite.height).lineTo(left, top + sprite.height).lineTo(left, top).stroke({ color: 65280, width: 2, alpha: 0.85 });
       }
     }, []);
-    (0, import_react6.useEffect)(() => {
+    (0, import_react7.useEffect)(() => {
       let app = null;
       let cancelled = false;
       const init2 = async () => {
@@ -68072,10 +68221,10 @@ ${e2}`);
         }
       };
     }, [textureResource]);
-    (0, import_react6.useEffect)(() => {
+    (0, import_react7.useEffect)(() => {
       updatePixiSprite(state);
     }, [state, updatePixiSprite]);
-    (0, import_react6.useEffect)(() => {
+    (0, import_react7.useEffect)(() => {
       const onMove = (e2) => {
         if (!dragging.current || !containerRef.current) return;
         const dx = e2.clientX - lastMousePos.current.x;
@@ -68141,18 +68290,18 @@ ${e2}`);
       );
       onApply(buildTexCoordArray(win), s2.width, s2.height);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "edit-texture-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "edit-texture-modal", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "edit-texture-header", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "edit-texture-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "edit-texture-modal", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "edit-texture-header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { children: [
           "Edit Texture \u2014 ",
           spriteName
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("button", { className: "edit-texture-close", onClick: onClose, children: "\u2715" })
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("button", { className: "edit-texture-close", onClick: onClose, children: "\u2715" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "edit-texture-body", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "edit-texture-controls", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { className: "edit-texture-hint", children: "Drag the preview to pan the texture" }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "edit-texture-body", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "edit-texture-controls", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { className: "edit-texture-hint", children: "Drag the preview to pan the texture" }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
             SliderRow,
             {
               label: "Width",
@@ -68166,7 +68315,7 @@ ${e2}`);
               onChange: (v2) => setState((prev) => ({ ...prev, width: Math.max(WIDTH_MIN, Math.min(WIDTH_MAX, toInternal(v2))) }))
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
             SliderRow,
             {
               label: "Height",
@@ -68180,7 +68329,7 @@ ${e2}`);
               onChange: (v2) => setState((prev) => ({ ...prev, height: Math.max(WIDTH_MIN, Math.min(WIDTH_MAX, toInternal(v2))) }))
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
             SliderRow,
             {
               label: "Tex Scale",
@@ -68195,7 +68344,7 @@ ${e2}`);
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
           "div",
           {
             className: "edit-texture-preview",
@@ -68204,18 +68353,18 @@ ${e2}`);
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "edit-texture-footer", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Button, { onClick: onClose, children: "Cancel" }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Button, { variant: "primary", onClick: handleApply, children: "Apply" })
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "edit-texture-footer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { onClick: onClose, children: "Cancel" }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Button, { variant: "primary", onClick: handleApply, children: "Apply" })
       ] })
     ] }) });
   }
 
   // src/hooks/useUndoHistory.ts
-  var import_react7 = __toESM(require_react());
+  var import_react8 = __toESM(require_react());
   function useUndoHistory() {
-    const past = (0, import_react7.useRef)([]);
-    const future = (0, import_react7.useRef)([]);
+    const past = (0, import_react8.useRef)([]);
+    const future = (0, import_react8.useRef)([]);
     function push(action) {
       past.current = [...past.current, action];
       future.current = [];
@@ -68242,10 +68391,10 @@ ${e2}`);
   }
 
   // src/hooks/useNotifications.ts
-  var import_react8 = __toESM(require_react());
+  var import_react9 = __toESM(require_react());
   function useNotifications() {
-    const [notifications, setNotifications] = (0, import_react8.useState)([]);
-    const notify = (0, import_react8.useCallback)((message) => {
+    const [notifications, setNotifications] = (0, import_react9.useState)([]);
+    const notify = (0, import_react9.useCallback)((message) => {
       const id = Date.now();
       setNotifications((prev) => [...prev, { id, message }]);
       setTimeout(() => {
@@ -68256,7 +68405,7 @@ ${e2}`);
   }
 
   // src/hooks/useSceneRenderer.ts
-  var import_react9 = __toESM(require_react());
+  var import_react10 = __toESM(require_react());
 
   // src/renderers/PhoneGuide.ts
   var PhoneGuide = class {
@@ -69547,25 +69696,25 @@ ${e2}`);
 
   // src/hooks/useSceneRenderer.ts
   function useSceneRenderer(onNotify, onSaved) {
-    const [showSceneControls, setShowSceneControls] = (0, import_react9.useState)(false);
-    const [currentSceneId, setCurrentSceneId] = (0, import_react9.useState)(null);
-    const [xFocus, setXFocus] = (0, import_react9.useState)(0.5);
-    const [startTime, setStartTime] = (0, import_react9.useState)(0);
-    const [endTime, setEndTime] = (0, import_react9.useState)(1439);
-    const [spriteEntries, setSpriteEntries] = (0, import_react9.useState)([]);
-    const [selectedSprite, setSelectedSprite] = (0, import_react9.useState)(null);
-    const [isSaving, setIsSaving] = (0, import_react9.useState)(false);
-    const [isDirty, setIsDirty] = (0, import_react9.useState)(false);
-    const isDirtyRef = (0, import_react9.useRef)(false);
-    const [phoneGuideVisible, setPhoneGuideVisible] = (0, import_react9.useState)(true);
-    const [zoom, setZoom] = (0, import_react9.useState)(1);
-    const onNotifyRef = (0, import_react9.useRef)(onNotify);
+    const [showSceneControls, setShowSceneControls] = (0, import_react10.useState)(false);
+    const [currentSceneId, setCurrentSceneId] = (0, import_react10.useState)(null);
+    const [xFocus, setXFocus] = (0, import_react10.useState)(0.5);
+    const [startTime, setStartTime] = (0, import_react10.useState)(0);
+    const [endTime, setEndTime] = (0, import_react10.useState)(1439);
+    const [spriteEntries, setSpriteEntries] = (0, import_react10.useState)([]);
+    const [selectedSprite, setSelectedSprite] = (0, import_react10.useState)(null);
+    const [isSaving, setIsSaving] = (0, import_react10.useState)(false);
+    const [isDirty, setIsDirty] = (0, import_react10.useState)(false);
+    const isDirtyRef = (0, import_react10.useRef)(false);
+    const [phoneGuideVisible, setPhoneGuideVisible] = (0, import_react10.useState)(true);
+    const [zoom, setZoom] = (0, import_react10.useState)(1);
+    const onNotifyRef = (0, import_react10.useRef)(onNotify);
     onNotifyRef.current = onNotify;
-    const onSavedRef = (0, import_react9.useRef)(onSaved);
+    const onSavedRef = (0, import_react10.useRef)(onSaved);
     onSavedRef.current = onSaved;
-    const [, setConditionsVersion] = (0, import_react9.useState)(0);
-    const bumpConditionsVersion = (0, import_react9.useCallback)(() => setConditionsVersion((v2) => v2 + 1), []);
-    const handleSelectConditionSet = (0, import_react9.useCallback)((spriteIndex, conditionIndex) => {
+    const [, setConditionsVersion] = (0, import_react10.useState)(0);
+    const bumpConditionsVersion = (0, import_react10.useCallback)(() => setConditionsVersion((v2) => v2 + 1), []);
+    const handleSelectConditionSet = (0, import_react10.useCallback)((spriteIndex, conditionIndex) => {
       const renderer = rendererRef.current;
       if (!renderer) return;
       renderer.selectCondition(spriteIndex, conditionIndex);
@@ -69577,24 +69726,24 @@ ${e2}`);
         setSelectedSprite((prev) => prev && prev.index === spriteIndex ? { ...prev, x: pos.x, y: pos.y, width: scale.width, height: scale.height, depth: parallax } : prev);
       }
     }, [bumpConditionsVersion]);
-    const markDirty = (0, import_react9.useCallback)(() => {
+    const markDirty = (0, import_react10.useCallback)(() => {
       if (isDirtyRef.current) return;
       isDirtyRef.current = true;
       setIsDirty(true);
     }, []);
-    const markClean = (0, import_react9.useCallback)(() => {
+    const markClean = (0, import_react10.useCallback)(() => {
       isDirtyRef.current = false;
       setIsDirty(false);
     }, []);
-    const phoneGuideVisibleRef = (0, import_react9.useRef)(true);
-    const canvasRef = (0, import_react9.useRef)(null);
-    const rendererRef = (0, import_react9.useRef)(null);
-    const sceneIdRef = (0, import_react9.useRef)(null);
-    const sceneLabelRef = (0, import_react9.useRef)(null);
-    const refreshSpriteList = (0, import_react9.useCallback)((r2) => {
+    const phoneGuideVisibleRef = (0, import_react10.useRef)(true);
+    const canvasRef = (0, import_react10.useRef)(null);
+    const rendererRef = (0, import_react10.useRef)(null);
+    const sceneIdRef = (0, import_react10.useRef)(null);
+    const sceneLabelRef = (0, import_react10.useRef)(null);
+    const refreshSpriteList = (0, import_react10.useCallback)((r2) => {
       setSpriteEntries([...r2.getSpriteEntries()]);
     }, []);
-    const loadScene = (0, import_react9.useCallback)(async (sceneId) => {
+    const loadScene = (0, import_react10.useCallback)(async (sceneId) => {
       try {
         const scene = await scenesApi.get(sceneId);
         const sceneData = scene.data;
@@ -69630,7 +69779,7 @@ ${e2}`);
         console.error("Failed to load scene:", error);
       }
     }, [refreshSpriteList, markClean, bumpConditionsVersion]);
-    const saveScene = (0, import_react9.useCallback)(async () => {
+    const saveScene = (0, import_react10.useCallback)(async () => {
       const sceneId = sceneIdRef.current;
       const label = sceneLabelRef.current;
       const data = rendererRef.current?.getSceneData();
@@ -69652,33 +69801,33 @@ ${e2}`);
         setIsSaving(false);
       }
     }, [markClean]);
-    const handleXFocusChange = (0, import_react9.useCallback)((value) => {
+    const handleXFocusChange = (0, import_react10.useCallback)((value) => {
       setXFocus(value);
       rendererRef.current?.setScrollOffset(value);
       markDirty();
     }, [markDirty]);
-    const handleStartTimeChange = (0, import_react9.useCallback)((value) => {
+    const handleStartTimeChange = (0, import_react10.useCallback)((value) => {
       setStartTime(value);
       rendererRef.current?.setStartTime(value);
       markDirty();
     }, [markDirty]);
-    const handleEndTimeChange = (0, import_react9.useCallback)((value) => {
+    const handleEndTimeChange = (0, import_react10.useCallback)((value) => {
       setEndTime(value);
       rendererRef.current?.setEndTime(value);
       markDirty();
     }, [markDirty]);
-    const handlePhoneGuideToggle = (0, import_react9.useCallback)((visible) => {
+    const handlePhoneGuideToggle = (0, import_react10.useCallback)((visible) => {
       phoneGuideVisibleRef.current = visible;
       setPhoneGuideVisible(visible);
       if (visible) rendererRef.current?.showGuide();
       else rendererRef.current?.hideGuide();
     }, []);
-    const handleSpriteToggle = (0, import_react9.useCallback)((index) => {
+    const handleSpriteToggle = (0, import_react10.useCallback)((index) => {
       rendererRef.current?.toggleSpriteByIndex(index);
       if (rendererRef.current) refreshSpriteList(rendererRef.current);
       markDirty();
     }, [refreshSpriteList, markDirty]);
-    const handleSpriteSelect = (0, import_react9.useCallback)((index) => {
+    const handleSpriteSelect = (0, import_react10.useCallback)((index) => {
       const pos = rendererRef.current?.getSpritePosition(index);
       const scaleInfo = rendererRef.current?.getSpriteScale(index);
       const name = spriteEntries[index]?.name || `Sprite ${index}`;
@@ -69687,7 +69836,7 @@ ${e2}`);
         rendererRef.current?.setSelectedSpriteHighlight(index);
       }
     }, [spriteEntries]);
-    const handleSpritePositionChange = (0, import_react9.useCallback)((x2, y2) => {
+    const handleSpritePositionChange = (0, import_react10.useCallback)((x2, y2) => {
       if (!rendererRef.current) return;
       setSelectedSprite((prev) => {
         if (!prev) return null;
@@ -69696,7 +69845,7 @@ ${e2}`);
       });
       markDirty();
     }, [markDirty]);
-    const handleSpriteSizeChange = (0, import_react9.useCallback)((width, height) => {
+    const handleSpriteSizeChange = (0, import_react10.useCallback)((width, height) => {
       setSelectedSprite((prev) => {
         if (!prev) return null;
         rendererRef.current?.setSpriteSize(prev.index, width, height);
@@ -69704,7 +69853,7 @@ ${e2}`);
       });
       markDirty();
     }, [markDirty]);
-    const handleSpriteDepthChange = (0, import_react9.useCallback)((depth) => {
+    const handleSpriteDepthChange = (0, import_react10.useCallback)((depth) => {
       setSelectedSprite((prev) => {
         if (!prev) return null;
         rendererRef.current?.setSpriteParallax(prev.index, depth);
@@ -69718,7 +69867,7 @@ ${e2}`);
       });
       markDirty();
     }, [refreshSpriteList, markDirty]);
-    const handleSpriteDepthApply = (0, import_react9.useCallback)((depth, spriteIndex) => {
+    const handleSpriteDepthApply = (0, import_react10.useCallback)((depth, spriteIndex) => {
       if (!rendererRef.current) return;
       rendererRef.current.setSpriteParallax(spriteIndex, depth);
       const newIndex = rendererRef.current.sortSpritesByParallax(spriteIndex);
@@ -69726,7 +69875,7 @@ ${e2}`);
       setSelectedSprite((prev) => prev ? { ...prev, index: newIndex, depth } : null);
       markDirty();
     }, [refreshSpriteList, markDirty]);
-    const handleAddSprite = (0, import_react9.useCallback)(async (textureResource) => {
+    const handleAddSprite = (0, import_react10.useCallback)(async (textureResource) => {
       if (!rendererRef.current) return;
       const newIndex = await rendererRef.current.addSprite(textureResource, 5, 5, 1);
       if (newIndex < 0) return;
@@ -69739,7 +69888,7 @@ ${e2}`);
       rendererRef.current.setSelectedSpriteHighlight(newIndex);
       markDirty();
     }, [refreshSpriteList, markDirty]);
-    const handleChangeTexture = (0, import_react9.useCallback)(async (index, textureResource) => {
+    const handleChangeTexture = (0, import_react10.useCallback)(async (index, textureResource) => {
       await rendererRef.current?.changeTexture(index, textureResource);
       const scaleInfo = rendererRef.current?.getSpriteScale(index);
       if (scaleInfo) {
@@ -69747,7 +69896,7 @@ ${e2}`);
       }
       markDirty();
     }, [markDirty]);
-    const handleDeleteSprite = (0, import_react9.useCallback)((index) => {
+    const handleDeleteSprite = (0, import_react10.useCallback)((index) => {
       if (!rendererRef.current) return;
       rendererRef.current.removeSpriteByIndex(index);
       refreshSpriteList(rendererRef.current);
@@ -69759,14 +69908,14 @@ ${e2}`);
       });
       markDirty();
     }, [refreshSpriteList, markDirty]);
-    const handleSpriteConditions = (0, import_react9.useCallback)((index) => {
+    const handleSpriteConditions = (0, import_react10.useCallback)((index) => {
       return rendererRef.current?.getSpriteConditions(index) ?? [];
     }, []);
-    const handleSaveSpriteConditions = (0, import_react9.useCallback)((index, conditions) => {
+    const handleSaveSpriteConditions = (0, import_react10.useCallback)((index, conditions) => {
       rendererRef.current?.setSpriteConditions(index, conditions);
       markDirty();
     }, [markDirty]);
-    const handleAddConditionSet = (0, import_react9.useCallback)((spriteIndex) => {
+    const handleAddConditionSet = (0, import_react10.useCallback)((spriteIndex) => {
       const renderer = rendererRef.current;
       if (!renderer) return;
       const newIndex = renderer.addConditionBlock(spriteIndex);
@@ -69776,7 +69925,7 @@ ${e2}`);
         handleSelectConditionSet(spriteIndex, newIndex);
       }
     }, [bumpConditionsVersion, markDirty, handleSelectConditionSet]);
-    const handleRemoveConditionSet = (0, import_react9.useCallback)((spriteIndex, conditionIndex) => {
+    const handleRemoveConditionSet = (0, import_react10.useCallback)((spriteIndex, conditionIndex) => {
       const renderer = rendererRef.current;
       if (!renderer) return;
       renderer.removeConditionBlock(spriteIndex, conditionIndex);
@@ -69789,16 +69938,16 @@ ${e2}`);
         setSelectedSprite((prev) => prev && prev.index === spriteIndex ? { ...prev, x: pos.x, y: pos.y, width: scale.width, height: scale.height, depth: parallax } : prev);
       }
     }, [bumpConditionsVersion, markDirty]);
-    const handleRenameConditionSet = (0, import_react9.useCallback)((spriteIndex, conditionIndex, name) => {
+    const handleRenameConditionSet = (0, import_react10.useCallback)((spriteIndex, conditionIndex, name) => {
       rendererRef.current?.setConditionBlockName(spriteIndex, conditionIndex, name);
       bumpConditionsVersion();
     }, [bumpConditionsVersion]);
-    const handleSetConditionSetFlags = (0, import_react9.useCallback)((spriteIndex, conditionIndex, conditions) => {
+    const handleSetConditionSetFlags = (0, import_react10.useCallback)((spriteIndex, conditionIndex, conditions) => {
       rendererRef.current?.setConditionBlockFlags(spriteIndex, conditionIndex, conditions);
       bumpConditionsVersion();
       markDirty();
     }, [bumpConditionsVersion, markDirty]);
-    const handleRenameSprite = (0, import_react9.useCallback)((index, newName) => {
+    const handleRenameSprite = (0, import_react10.useCallback)((index, newName) => {
       if (!rendererRef.current) return;
       rendererRef.current.renameSpriteByIndex(index, newName);
       refreshSpriteList(rendererRef.current);
@@ -69808,15 +69957,15 @@ ${e2}`);
       }
     }, [refreshSpriteList]);
     const ZOOM_FACTOR = 1.25;
-    const handleZoomIn = (0, import_react9.useCallback)(() => {
+    const handleZoomIn = (0, import_react10.useCallback)(() => {
       rendererRef.current?.zoomAtCenter(ZOOM_FACTOR);
       setZoom(rendererRef.current?.getZoom() ?? 1);
     }, []);
-    const handleZoomOut = (0, import_react9.useCallback)(() => {
+    const handleZoomOut = (0, import_react10.useCallback)(() => {
       rendererRef.current?.zoomAtCenter(1 / ZOOM_FACTOR);
       setZoom(rendererRef.current?.getZoom() ?? 1);
     }, []);
-    const handleZoomAtPoint = (0, import_react9.useCallback)((cssX, cssY, factor) => {
+    const handleZoomAtPoint = (0, import_react10.useCallback)((cssX, cssY, factor) => {
       if (factor >= 1) {
         rendererRef.current?.zoomAt(cssX, cssY, factor);
       } else {
@@ -69824,12 +69973,12 @@ ${e2}`);
       }
       setZoom(rendererRef.current?.getZoom() ?? 1);
     }, []);
-    const handleCenter = (0, import_react9.useCallback)(() => {
+    const handleCenter = (0, import_react10.useCallback)(() => {
       rendererRef.current?.resetView();
       setZoom(1);
     }, []);
-    const [gyroMode, setGyroMode] = (0, import_react9.useState)(false);
-    const handleGyroModeToggle = (0, import_react9.useCallback)(() => {
+    const [gyroMode, setGyroMode] = (0, import_react10.useState)(false);
+    const handleGyroModeToggle = (0, import_react10.useCallback)(() => {
       setGyroMode((prev) => {
         if (prev) {
           rendererRef.current?.clearGyroOffset();
@@ -69840,7 +69989,7 @@ ${e2}`);
         return !prev;
       });
     }, []);
-    const handleGyroOffset = (0, import_react9.useCallback)((deltaX, deltaY, canvasWidth, canvasHeight) => {
+    const handleGyroOffset = (0, import_react10.useCallback)((deltaX, deltaY, canvasWidth, canvasHeight) => {
       const gyroX = deltaX / canvasWidth * 2;
       const gyroY = deltaY / canvasHeight * 2;
       rendererRef.current?.setGyroOffset(gyroX, gyroY);
@@ -69895,15 +70044,15 @@ ${e2}`);
   }
 
   // src/hooks/useSpriteDrag.ts
-  var import_react10 = __toESM(require_react());
+  var import_react11 = __toESM(require_react());
   function useSpriteDrag({
     selectedSprite,
     rendererRef,
     onSpriteMove,
     onDragCommit
   }) {
-    const canvasDragState = (0, import_react10.useRef)(null);
-    const handleCanvasMouseDown = (0, import_react10.useCallback)((event) => {
+    const canvasDragState = (0, import_react11.useRef)(null);
+    const handleCanvasMouseDown = (0, import_react11.useCallback)((event) => {
       if (event.button !== 0) return;
       if (!selectedSprite || !rendererRef.current) return;
       const canvas = rendererRef.current.getCanvas();
@@ -69922,9 +70071,9 @@ ${e2}`);
         startSpriteY: selectedSprite.y
       };
     }, [selectedSprite, rendererRef]);
-    const dragCallbacksRef = (0, import_react10.useRef)({ onSpriteMove, onDragCommit });
+    const dragCallbacksRef = (0, import_react11.useRef)({ onSpriteMove, onDragCommit });
     dragCallbacksRef.current = { onSpriteMove, onDragCommit };
-    (0, import_react10.useEffect)(() => {
+    (0, import_react11.useEffect)(() => {
       const handleMouseMove = (event) => {
         const drag = canvasDragState.current;
         if (!drag || !rendererRef.current) return;
@@ -69963,14 +70112,14 @@ ${e2}`);
         window.removeEventListener("mouseup", handleMouseUp);
       };
     }, [rendererRef]);
-    const cancelDrag = (0, import_react10.useCallback)(() => {
+    const cancelDrag = (0, import_react11.useCallback)(() => {
       canvasDragState.current = null;
     }, []);
     return { handleCanvasMouseDown, cancelDrag };
   }
 
   // src/hooks/useKeyboardControls.ts
-  var import_react11 = __toESM(require_react());
+  var import_react12 = __toESM(require_react());
   var ARROW_STEP = 0.05;
   function useKeyboardControls({
     selectedSprite,
@@ -69985,7 +70134,7 @@ ${e2}`);
     onTextureApply,
     onMarkDirty
   }) {
-    (0, import_react11.useEffect)(() => {
+    (0, import_react12.useEffect)(() => {
       const handleKeyDown = (e2) => {
         if ((e2.ctrlKey || e2.metaKey) && e2.key === "z" && !e2.shiftKey) {
           e2.preventDefault();
@@ -70052,21 +70201,21 @@ ${e2}`);
   }
 
   // src/ScenePage.tsx
-  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
   function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyChange }) {
-    const [scenes, setScenes] = (0, import_react12.useState)([]);
-    const [availableFlags, setAvailableFlags] = (0, import_react12.useState)([]);
+    const [scenes, setScenes] = (0, import_react13.useState)([]);
+    const [availableFlags, setAvailableFlags] = (0, import_react13.useState)([]);
     const history = useUndoHistory();
     const { notifications, notify } = useNotifications();
-    const dragStartPos = (0, import_react12.useRef)(null);
-    const dragStartSize = (0, import_react12.useRef)(null);
-    const dragStartDepth = (0, import_react12.useRef)(null);
-    const dragStartXFocus = (0, import_react12.useRef)(null);
-    const midDragStart = (0, import_react12.useRef)(null);
-    const [isPanning, setIsPanning] = (0, import_react12.useState)(false);
-    const isGyroDragging = (0, import_react12.useRef)(false);
-    const gyroOrigin = (0, import_react12.useRef)(null);
-    const [editTextureIndex, setEditTextureIndex] = (0, import_react12.useState)(null);
+    const dragStartPos = (0, import_react13.useRef)(null);
+    const dragStartSize = (0, import_react13.useRef)(null);
+    const dragStartDepth = (0, import_react13.useRef)(null);
+    const dragStartXFocus = (0, import_react13.useRef)(null);
+    const midDragStart = (0, import_react13.useRef)(null);
+    const [isPanning, setIsPanning] = (0, import_react13.useState)(false);
+    const isGyroDragging = (0, import_react13.useRef)(false);
+    const gyroOrigin = (0, import_react13.useRef)(null);
+    const [editTextureIndex, setEditTextureIndex] = (0, import_react13.useState)(null);
     const {
       canvasRef,
       rendererRef,
@@ -70112,10 +70261,10 @@ ${e2}`);
       handleGyroModeToggle,
       handleGyroOffset
     } = useSceneRenderer(notify, onSaved);
-    (0, import_react12.useEffect)(() => {
+    (0, import_react13.useEffect)(() => {
       onDirtyChange?.(isDirty);
     }, [isDirty, onDirtyChange]);
-    (0, import_react12.useEffect)(() => {
+    (0, import_react13.useEffect)(() => {
       if (!isDirty) return;
       const onBeforeUnload = (e2) => {
         e2.preventDefault();
@@ -70123,43 +70272,43 @@ ${e2}`);
       window.addEventListener("beforeunload", onBeforeUnload);
       return () => window.removeEventListener("beforeunload", onBeforeUnload);
     }, [isDirty]);
-    const handleBack = (0, import_react12.useCallback)(() => {
+    const handleBack = (0, import_react13.useCallback)(() => {
       if (isDirty && !window.confirm("You have unsaved changes. Leave without saving?")) return;
       onBack?.();
     }, [isDirty, onBack]);
-    const handleSceneSelect = (0, import_react12.useCallback)((sceneId) => {
+    const handleSceneSelect = (0, import_react13.useCallback)((sceneId) => {
       if (isDirty && !window.confirm("You have unsaved changes. Switch scenes without saving?")) return;
       loadScene(sceneId);
     }, [isDirty, loadScene]);
-    const ensureSpriteSelected = (0, import_react12.useCallback)((spriteIndex) => {
+    const ensureSpriteSelected = (0, import_react13.useCallback)((spriteIndex) => {
       if (selectedSprite?.index !== spriteIndex) {
         handleSpriteSelect(spriteIndex);
       }
     }, [selectedSprite, handleSpriteSelect]);
-    const handleSelectConditionSetForSprite = (0, import_react12.useCallback)((spriteIndex, conditionIndex) => {
+    const handleSelectConditionSetForSprite = (0, import_react13.useCallback)((spriteIndex, conditionIndex) => {
       ensureSpriteSelected(spriteIndex);
       handleSelectConditionSet(spriteIndex, conditionIndex);
     }, [ensureSpriteSelected, handleSelectConditionSet]);
-    const handleAddConditionSetForSprite = (0, import_react12.useCallback)((spriteIndex) => {
+    const handleAddConditionSetForSprite = (0, import_react13.useCallback)((spriteIndex) => {
       ensureSpriteSelected(spriteIndex);
       handleAddConditionSet(spriteIndex);
     }, [ensureSpriteSelected, handleAddConditionSet]);
-    const handleRemoveConditionSetForSprite = (0, import_react12.useCallback)((spriteIndex, conditionIndex) => {
+    const handleRemoveConditionSetForSprite = (0, import_react13.useCallback)((spriteIndex, conditionIndex) => {
       ensureSpriteSelected(spriteIndex);
       handleRemoveConditionSet(spriteIndex, conditionIndex);
     }, [ensureSpriteSelected, handleRemoveConditionSet]);
-    const handleRenameConditionSetForSprite = (0, import_react12.useCallback)((spriteIndex, conditionIndex, name) => {
+    const handleRenameConditionSetForSprite = (0, import_react13.useCallback)((spriteIndex, conditionIndex, name) => {
       ensureSpriteSelected(spriteIndex);
       handleRenameConditionSet(spriteIndex, conditionIndex, name);
     }, [ensureSpriteSelected, handleRenameConditionSet]);
-    const handleSetConditionSetFlagsForSprite = (0, import_react12.useCallback)((spriteIndex, conditionIndex, conditions) => {
+    const handleSetConditionSetFlagsForSprite = (0, import_react13.useCallback)((spriteIndex, conditionIndex, conditions) => {
       ensureSpriteSelected(spriteIndex);
       handleSetConditionSetFlags(spriteIndex, conditionIndex, conditions);
     }, [ensureSpriteSelected, handleSetConditionSetFlags]);
-    const getConditionsForSprite = (0, import_react12.useCallback)((spriteIndex) => {
+    const getConditionsForSprite = (0, import_react13.useCallback)((spriteIndex) => {
       return rendererRef.current?.getSpriteConditions(spriteIndex) ?? [];
     }, [rendererRef]);
-    const getActiveConditionIndexForSprite = (0, import_react12.useCallback)((spriteIndex) => {
+    const getActiveConditionIndexForSprite = (0, import_react13.useCallback)((spriteIndex) => {
       return rendererRef.current?.getSelectedConditionIndex(spriteIndex) ?? null;
     }, [rendererRef]);
     const activeConditionSet = selectedSprite !== null ? (() => {
@@ -70167,13 +70316,13 @@ ${e2}`);
       return conditionIndex !== null ? { spriteIndex: selectedSprite.index, conditionIndex } : null;
     })() : null;
     const activeConditionLabel = activeConditionSet ? getConditionsForSprite(activeConditionSet.spriteIndex)[activeConditionSet.conditionIndex]?.name ?? `Set ${activeConditionSet.conditionIndex + 1}` : null;
-    const applySelectedSpriteMove = (0, import_react12.useCallback)((x2, y2) => {
+    const applySelectedSpriteMove = (0, import_react13.useCallback)((x2, y2) => {
       setSelectedSprite((prev) => prev ? { ...prev, x: x2, y: y2 } : null);
     }, [setSelectedSprite]);
-    const applySelectedSpriteSize = (0, import_react12.useCallback)((width, height) => {
+    const applySelectedSpriteSize = (0, import_react13.useCallback)((width, height) => {
       setSelectedSprite((prev) => prev ? { ...prev, width, height } : null);
     }, [setSelectedSprite]);
-    const handleTextureApply = (0, import_react12.useCallback)((index, textureResource, width, height, texCoordinates) => {
+    const handleTextureApply = (0, import_react13.useCallback)((index, textureResource, width, height, texCoordinates) => {
       rendererRef.current?.changeTexture(index, textureResource, { width, height }, texCoordinates);
       setSelectedSprite((prev) => prev?.index === index ? { ...prev, width, height } : prev);
       markDirty();
@@ -70200,21 +70349,21 @@ ${e2}`);
       onTextureApply: handleTextureApply,
       onMarkDirty: markDirty
     });
-    (0, import_react12.useEffect)(() => {
+    (0, import_react13.useEffect)(() => {
       fetch("/api/scenes").then((r2) => r2.json()).then(
         (data) => setScenes(data.map((s2) => ({ value: s2.id, label: s2.label, thumbnail_url: s2.thumbnail_url })))
       ).catch(() => {
       });
     }, []);
-    (0, import_react12.useEffect)(() => {
+    (0, import_react13.useEffect)(() => {
       if (!projectId) return;
       flagsApi.list(projectId).then(setAvailableFlags).catch(() => {
       });
     }, [projectId]);
-    (0, import_react12.useEffect)(() => {
+    (0, import_react13.useEffect)(() => {
       if (initialSceneId) loadScene(initialSceneId);
     }, []);
-    (0, import_react12.useEffect)(() => {
+    (0, import_react13.useEffect)(() => {
       const el = canvasRef.current;
       if (!el) return;
       const onWheel = (e2) => {
@@ -70228,7 +70377,7 @@ ${e2}`);
       el.addEventListener("wheel", onWheel, { passive: false });
       return () => el.removeEventListener("wheel", onWheel);
     }, [canvasRef, rendererRef, handleZoomAtPoint]);
-    (0, import_react12.useEffect)(() => {
+    (0, import_react13.useEffect)(() => {
       const el = canvasRef.current;
       if (!el) return;
       const onMouseDown = (e2) => {
@@ -70260,7 +70409,7 @@ ${e2}`);
         window.removeEventListener("mouseup", onMouseUp);
       };
     }, [canvasRef, rendererRef, cancelDrag]);
-    (0, import_react12.useEffect)(() => {
+    (0, import_react13.useEffect)(() => {
       const el = canvasRef.current;
       if (!el) return;
       const onMouseDown = (e2) => {
@@ -70293,10 +70442,10 @@ ${e2}`);
         window.removeEventListener("mouseup", onMouseUp);
       };
     }, [canvasRef, rendererRef, gyroMode, handleGyroOffset, cancelDrag]);
-    const handleSpritePositionChangeStart = (0, import_react12.useCallback)((x2, y2) => {
+    const handleSpritePositionChangeStart = (0, import_react13.useCallback)((x2, y2) => {
       dragStartPos.current = { x: x2, y: y2 };
     }, []);
-    const handleSpritePositionCommit = (0, import_react12.useCallback)((x2, y2) => {
+    const handleSpritePositionCommit = (0, import_react13.useCallback)((x2, y2) => {
       if (!selectedSprite || !dragStartPos.current || activeConditionSet !== null) return;
       const before = dragStartPos.current;
       dragStartPos.current = null;
@@ -70304,10 +70453,10 @@ ${e2}`);
         history.push({ type: "position", spriteIndex: selectedSprite.index, before, after: { x: x2, y: y2 } });
       }
     }, [selectedSprite, history, activeConditionSet]);
-    const handleSpriteSizeChangeStart = (0, import_react12.useCallback)(() => {
+    const handleSpriteSizeChangeStart = (0, import_react13.useCallback)(() => {
       if (selectedSprite) dragStartSize.current = { width: selectedSprite.width, height: selectedSprite.height };
     }, [selectedSprite]);
-    const handleSpriteSizeCommit = (0, import_react12.useCallback)((width, height) => {
+    const handleSpriteSizeCommit = (0, import_react13.useCallback)((width, height) => {
       if (!selectedSprite || !dragStartSize.current || activeConditionSet !== null) return;
       const before = dragStartSize.current;
       dragStartSize.current = null;
@@ -70315,7 +70464,7 @@ ${e2}`);
         history.push({ type: "scale", spriteIndex: selectedSprite.index, before, after: { width, height } });
       }
     }, [selectedSprite, history, activeConditionSet]);
-    const handleChangeTextureWithHistory = (0, import_react12.useCallback)(async (index, textureResource) => {
+    const handleChangeTextureWithHistory = (0, import_react13.useCallback)(async (index, textureResource) => {
       const beforeTexture = rendererRef.current?.getSpriteTextureResource(index) ?? "";
       const beforeSize = rendererRef.current?.getSpriteScale(index);
       const beforeTexCoords = rendererRef.current?.getSpriteTexCoordinates(index) ?? [0, 1, 0, 0, 1, 1, 1, 0];
@@ -70328,13 +70477,13 @@ ${e2}`);
         after: { textureResource, width: afterSize?.width ?? 0, height: afterSize?.height ?? 0, texCoordinates: [0, 1, 0, 0, 1, 1, 1, 0] }
       });
     }, [handleChangeTexture, rendererRef, history]);
-    const handleSpriteDepthChangeStart = (0, import_react12.useCallback)((depth) => {
+    const handleSpriteDepthChangeStart = (0, import_react13.useCallback)((depth) => {
       dragStartDepth.current = depth;
     }, []);
-    const handleXFocusChangeStart = (0, import_react12.useCallback)((value) => {
+    const handleXFocusChangeStart = (0, import_react13.useCallback)((value) => {
       dragStartXFocus.current = value;
     }, []);
-    const handleXFocusCommit = (0, import_react12.useCallback)((value) => {
+    const handleXFocusCommit = (0, import_react13.useCallback)((value) => {
       if (dragStartXFocus.current === null) return;
       const before = dragStartXFocus.current;
       dragStartXFocus.current = null;
@@ -70342,7 +70491,7 @@ ${e2}`);
         history.push({ type: "xFocus", before, after: value });
       }
     }, [history]);
-    const handleSpriteDepthCommit = (0, import_react12.useCallback)((depth) => {
+    const handleSpriteDepthCommit = (0, import_react13.useCallback)((depth) => {
       if (!selectedSprite || dragStartDepth.current === null || activeConditionSet !== null) return;
       const before = dragStartDepth.current;
       dragStartDepth.current = null;
@@ -70350,8 +70499,8 @@ ${e2}`);
         history.push({ type: "depth", spriteIndex: selectedSprite.index, before, after: depth });
       }
     }, [selectedSprite, history, activeConditionSet]);
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
         TopBar,
         {
           scenes,
@@ -70371,8 +70520,8 @@ ${e2}`);
           onGyroModeToggle: handleGyroModeToggle
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "app-content", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "app-content", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
           SceneEditorPanel,
           {
             sceneLoaded: showSceneControls,
@@ -70405,7 +70554,7 @@ ${e2}`);
             onSpriteSizeCommit: handleSpriteSizeCommit
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "main-content", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "main-content", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
           "div",
           {
             id: "canvas-container",
@@ -70414,7 +70563,7 @@ ${e2}`);
             style: gyroMode ? { cursor: isGyroDragging.current ? "crosshair" : "crosshair" } : isPanning ? { cursor: "grabbing" } : zoom > 1 ? { cursor: "grab" } : void 0
           }
         ) }),
-        showSceneControls && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+        showSceneControls && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
           AllConditionsPanel,
           {
             spriteEntries,
@@ -70430,11 +70579,11 @@ ${e2}`);
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(NotificationStack, { notifications }),
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(NotificationStack, { notifications }),
       editTextureIndex !== null && (() => {
         const texData = rendererRef.current?.getSpriteTexData(editTextureIndex);
         if (!texData) return null;
-        return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+        return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
           EditTextureModal,
           {
             spriteName: spriteEntries[editTextureIndex]?.name ?? `Sprite ${editTextureIndex}`,
@@ -70457,24 +70606,24 @@ ${e2}`);
   }
 
   // src/SceneListPage.tsx
-  var import_react16 = __toESM(require_react());
+  var import_react17 = __toESM(require_react());
 
   // src/components/SceneCard.tsx
-  var import_react13 = __toESM(require_react());
-  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
+  var import_react14 = __toESM(require_react());
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
   function SceneCard({ label, thumbnail_url, selected, onClick, thumbBuster = 0 }) {
-    const [thumbFailed, setThumbFailed] = (0, import_react13.useState)(false);
-    (0, import_react13.useEffect)(() => {
+    const [thumbFailed, setThumbFailed] = (0, import_react14.useState)(false);
+    (0, import_react14.useEffect)(() => {
       setThumbFailed(false);
     }, [thumbnail_url, thumbBuster]);
     const thumbnailSrc = thumbnail_url ? `${thumbnail_url}${thumbnail_url.includes("?") ? "&" : "?"}v=${thumbBuster}` : null;
-    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
       "div",
       {
         className: `scene-card${selected ? " scene-card--selected" : ""}`,
         onClick,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "scene-card-preview", children: thumbnailSrc && !thumbFailed ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "scene-card-preview", children: thumbnailSrc && !thumbFailed ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
             "img",
             {
               src: thumbnailSrc,
@@ -70482,37 +70631,37 @@ ${e2}`);
               className: "scene-card-thumb",
               onError: () => setThumbFailed(true)
             }
-          ) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "scene-card-icon", children: "\u{1F3AC}" }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "scene-card-label", children: label })
+          ) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "scene-card-icon", children: "\u{1F3AC}" }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "scene-card-label", children: label })
         ]
       }
     );
   }
 
   // src/components/PageLayout.tsx
-  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
   function PageLayout({ children }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "page-layout", children });
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "page-layout", children });
   }
   function PageHeader({ title, left, children }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "page-header", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "page-header", children: [
       left,
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "page-header-title", children: title }),
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "page-header-title", children: title }),
       children
     ] });
   }
   function PageBody({ children }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "page-body", children });
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "page-body", children });
   }
 
   // src/controls/modals/NewSceneDialog.tsx
-  var import_react14 = __toESM(require_react());
-  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
+  var import_react15 = __toESM(require_react());
+  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
   function NewSceneDialog({ onConfirm, onCancel, scenes = [] }) {
-    const [name, setName] = (0, import_react14.useState)("");
-    const [copyFromId, setCopyFromId] = (0, import_react14.useState)(void 0);
-    const inputRef = (0, import_react14.useRef)(null);
-    (0, import_react14.useEffect)(() => {
+    const [name, setName] = (0, import_react15.useState)("");
+    const [copyFromId, setCopyFromId] = (0, import_react15.useState)(void 0);
+    const inputRef = (0, import_react15.useRef)(null);
+    (0, import_react15.useEffect)(() => {
       inputRef.current?.focus();
     }, []);
     const handleSubmit = (e2) => {
@@ -70523,12 +70672,12 @@ ${e2}`);
     const handleKeyDown = (e2) => {
       if (e2.key === "Escape") onCancel();
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "new-scene-overlay", onKeyDown: handleKeyDown, children: /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "new-scene-dialog", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h2", { className: "new-scene-title", children: "New Scene" }),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("form", { onSubmit: handleSubmit, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "new-scene-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("label", { htmlFor: "new-scene-name", children: "Scene name" }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "new-scene-overlay", onKeyDown: handleKeyDown, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "new-scene-dialog", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h2", { className: "new-scene-title", children: "New Scene" }),
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("form", { onSubmit: handleSubmit, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "new-scene-field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("label", { htmlFor: "new-scene-name", children: "Scene name" }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
             "input",
             {
               id: "new-scene-name",
@@ -70540,10 +70689,10 @@ ${e2}`);
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "new-scene-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("label", { children: "Copy from" }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "new-scene-copy-grid", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "new-scene-field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("label", { children: "Copy from" }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "new-scene-copy-grid", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
               SceneCard,
               {
                 label: "Blank",
@@ -70551,7 +70700,7 @@ ${e2}`);
                 onClick: () => setCopyFromId(void 0)
               }
             ),
-            scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+            scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
               SceneCard,
               {
                 label: scene.label,
@@ -70563,17 +70712,17 @@ ${e2}`);
             ))
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "new-scene-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button, { type: "button", onClick: onCancel, children: "Cancel" }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button, { type: "submit", variant: "primary", disabled: !name.trim(), children: "OK" })
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "new-scene-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Button, { type: "button", onClick: onCancel, children: "Cancel" }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Button, { type: "submit", variant: "primary", disabled: !name.trim(), children: "OK" })
         ] })
       ] })
     ] }) });
   }
 
   // src/controls/modals/SceneFlagsModal.tsx
-  var import_react15 = __toESM(require_react());
-  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
+  var import_react16 = __toESM(require_react());
+  var import_jsx_runtime19 = __toESM(require_jsx_runtime());
   function FlagCheckList({
     label,
     allFlags,
@@ -70581,11 +70730,11 @@ ${e2}`);
     onChange
   }) {
     const toggle = (id) => onChange(selected.includes(id) ? selected.filter((x2) => x2 !== id) : [...selected, id]);
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "sfm-section", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h3", { className: "section-title", children: label }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "sfm-checklist", children: [
-        allFlags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "sfm-check-label", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "sfm-section", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h3", { className: "section-title", children: label }),
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "sfm-checklist", children: [
+        allFlags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "sfm-check-label", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
             "input",
             {
               type: "checkbox",
@@ -70593,10 +70742,10 @@ ${e2}`);
               onChange: () => toggle(f2.id)
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "sfm-flag-name", children: f2.name || f2.id }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("code", { className: "sfm-flag-id", children: f2.id })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "sfm-flag-name", children: f2.name || f2.id }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("code", { className: "sfm-flag-id", children: f2.id })
         ] }, f2.id)),
-        allFlags.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "sfm-empty", children: "No flags defined. Add flags in the Flags manager." })
+        allFlags.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { className: "sfm-empty", children: "No flags defined. Add flags in the Flags manager." })
       ] })
     ] });
   }
@@ -70612,25 +70761,25 @@ ${e2}`);
     };
     const updateEntry = (i2, patch) => onChange(scored.map((e2, idx) => idx === i2 ? { ...e2, ...patch } : e2));
     const deleteEntry = (i2) => onChange(scored.filter((_, idx) => idx !== i2));
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "sfm-section", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("h3", { className: "section-title", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "sfm-section", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("h3", { className: "section-title", children: [
         "Scored flags ",
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "section-hint", children: "(active flags add their weight to this scene's score)" })
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "section-hint", children: "(active flags add their weight to this scene's score)" })
       ] }),
-      scored.map((entry, i2) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "sfm-scored-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(
+      scored.map((entry, i2) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "sfm-scored-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(
           "select",
           {
             value: entry.flagId,
             onChange: (e2) => updateEntry(i2, { flagId: e2.target.value }),
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
-              allFlags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
+              allFlags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
             ]
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("label", { children: "Weight" }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("label", { children: "Weight" }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
           "input",
           {
             type: "number",
@@ -70640,33 +70789,33 @@ ${e2}`);
             onChange: (e2) => updateEntry(i2, { weight: +e2.target.value })
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "condition-delete", onClick: () => deleteEntry(i2), title: "Remove", children: "\u2715" })
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "condition-delete", onClick: () => deleteEntry(i2), title: "Remove", children: "\u2715" })
       ] }, i2)),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Button, { onClick: addEntry, disabled: allFlags.length === 0, children: "+ Scored Flag" })
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Button, { onClick: addEntry, disabled: allFlags.length === 0, children: "+ Scored Flag" })
     ] });
   }
   function SceneFlagsModal({ sceneName, flags, declarations, onSave, onClose }) {
-    const [required, setRequired] = (0, import_react15.useState)(declarations.required ?? []);
-    const [excluded, setExcluded] = (0, import_react15.useState)(declarations.excluded ?? []);
-    const [scored, setScored] = (0, import_react15.useState)(declarations.scored ?? []);
-    const handleSave = (0, import_react15.useCallback)(() => {
+    const [required, setRequired] = (0, import_react16.useState)(declarations.required ?? []);
+    const [excluded, setExcluded] = (0, import_react16.useState)(declarations.excluded ?? []);
+    const [scored, setScored] = (0, import_react16.useState)(declarations.scored ?? []);
+    const handleSave = (0, import_react16.useCallback)(() => {
       const result = {};
       if (required.length > 0) result.required = required;
       if (excluded.length > 0) result.excluded = excluded;
       if (scored.length > 0) result.scored = scored;
       onSave(result);
     }, [required, excluded, scored, onSave]);
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "modal-overlay", onClick: onClose, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "modal-box sfm-modal", onClick: (e2) => e2.stopPropagation(), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("h2", { className: "modal-title", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "modal-overlay", onClick: onClose, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "modal-box sfm-modal", onClick: (e2) => e2.stopPropagation(), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("h2", { className: "modal-title", children: [
         "Scene Flags \u2014 ",
         sceneName
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("p", { className: "section-hint", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("p", { className: "section-hint", children: [
         "Control when this scene appears. The picker sums scored-flag weights; highest score wins.",
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("br", {}),
         "Leave all empty for a scene that's always eligible with score 0 (legacy behaviour)."
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
         FlagCheckList,
         {
           label: "Required flags (scene hidden unless ALL are active)",
@@ -70675,7 +70824,7 @@ ${e2}`);
           onChange: setRequired
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
         ScoredFlagList,
         {
           allFlags: flags,
@@ -70683,7 +70832,7 @@ ${e2}`);
           onChange: setScored
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
         FlagCheckList,
         {
           label: "Excluded flags (scene hidden if ANY is active)",
@@ -70692,25 +70841,25 @@ ${e2}`);
           onChange: setExcluded
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "modal-footer", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Button, { onClick: onClose, children: "Cancel" }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Button, { variant: "primary", onClick: handleSave, children: "Save" })
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "modal-footer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Button, { onClick: onClose, children: "Cancel" }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Button, { variant: "primary", onClick: handleSave, children: "Save" })
       ] })
     ] }) });
   }
 
   // src/SceneListPage.tsx
-  var import_jsx_runtime19 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime20 = __toESM(require_jsx_runtime());
   function SceneListPage({ onSelect, onBack, onFlags, onRules, projectId, projectname, thumbBuster = 0 }) {
-    const [scenes, setScenes] = (0, import_react16.useState)([]);
-    const [loading, setLoading] = (0, import_react16.useState)(true);
-    const [showNewSceneDialog, setShowNewSceneDialog] = (0, import_react16.useState)(false);
-    const [deleteScene, setDeleteScene] = (0, import_react16.useState)(null);
-    const [flagsScene, setFlagsScene] = (0, import_react16.useState)(null);
-    const [flagsModalData, setFlagsModalData] = (0, import_react16.useState)(null);
-    const [availableFlags, setAvailableFlags] = (0, import_react16.useState)([]);
-    const [flagsModalLoading, setFlagsModalLoading] = (0, import_react16.useState)(false);
-    (0, import_react16.useEffect)(() => {
+    const [scenes, setScenes] = (0, import_react17.useState)([]);
+    const [loading, setLoading] = (0, import_react17.useState)(true);
+    const [showNewSceneDialog, setShowNewSceneDialog] = (0, import_react17.useState)(false);
+    const [deleteScene, setDeleteScene] = (0, import_react17.useState)(null);
+    const [flagsScene, setFlagsScene] = (0, import_react17.useState)(null);
+    const [flagsModalData, setFlagsModalData] = (0, import_react17.useState)(null);
+    const [availableFlags, setAvailableFlags] = (0, import_react17.useState)([]);
+    const [flagsModalLoading, setFlagsModalLoading] = (0, import_react17.useState)(false);
+    (0, import_react17.useEffect)(() => {
       fetch(`/api/scenes${projectId ? `?projectId=${encodeURIComponent(projectId)}` : ""}`).then((r2) => r2.json()).then((records) => {
         setScenes(records);
         setLoading(false);
@@ -70740,7 +70889,7 @@ ${e2}`);
         window.alert(message);
       });
     };
-    const handleDeleteScene = (0, import_react16.useCallback)(async () => {
+    const handleDeleteScene = (0, import_react17.useCallback)(async () => {
       if (!deleteScene) return;
       try {
         await scenesApi.delete(deleteScene.id);
@@ -70751,7 +70900,7 @@ ${e2}`);
         setDeleteScene(null);
       }
     }, [deleteScene]);
-    const openSceneFlags = (0, import_react16.useCallback)(async (scene) => {
+    const openSceneFlags = (0, import_react17.useCallback)(async (scene) => {
       setFlagsScene(scene);
       setFlagsModalLoading(true);
       try {
@@ -70768,7 +70917,7 @@ ${e2}`);
         setFlagsModalLoading(false);
       }
     }, [projectId]);
-    const handleSaveSceneFlags = (0, import_react16.useCallback)(async (declarations) => {
+    const handleSaveSceneFlags = (0, import_react17.useCallback)(async (declarations) => {
       if (!flagsScene || !flagsModalData) return;
       try {
         const sceneDetail = await scenesApi.get(flagsScene.id);
@@ -70780,17 +70929,17 @@ ${e2}`);
         setFlagsModalData(null);
       }
     }, [flagsScene, flagsModalData]);
-    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(PageLayout, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(PageHeader, { title: projectname, left: onBack && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Button, { onClick: onBack, children: "\u2190" }), children: [
-        onFlags && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Button, { onClick: onFlags, children: "Flags" }),
-        onRules && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Button, { onClick: onRules, children: "Rules" }),
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Button, { onClick: () => setShowNewSceneDialog(true), children: "+ Scene" })
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(PageLayout, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(PageHeader, { title: projectname, left: onBack && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Button, { onClick: onBack, children: "\u2190" }), children: [
+        onFlags && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Button, { onClick: onFlags, children: "Flags" }),
+        onRules && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Button, { onClick: onRules, children: "Rules" }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Button, { onClick: () => setShowNewSceneDialog(true), children: "+ Scene" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(PageBody, { children: [
-        loading && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "scene-list-empty", children: "Loading\u2026" }),
-        !loading && scenes.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "scene-list-empty", children: "No scenes found. Create one from within the editor." }),
-        !loading && scenes.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "scene-list-grid", children: scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "scene-card-wrapper", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(PageBody, { children: [
+        loading && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "scene-list-empty", children: "Loading\u2026" }),
+        !loading && scenes.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "scene-list-empty", children: "No scenes found. Create one from within the editor." }),
+        !loading && scenes.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "scene-list-grid", children: scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "scene-card-wrapper", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
             SceneCard,
             {
               label: scene.label,
@@ -70799,7 +70948,7 @@ ${e2}`);
               onClick: () => onSelect(scene)
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
             "button",
             {
               className: "scene-flags-btn",
@@ -70811,7 +70960,7 @@ ${e2}`);
               children: "\u{1F6A9}"
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
             "button",
             {
               className: "scene-delete-btn",
@@ -70825,7 +70974,7 @@ ${e2}`);
           )
         ] }, scene.id)) })
       ] }),
-      showNewSceneDialog && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+      showNewSceneDialog && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
         NewSceneDialog,
         {
           onConfirm: handleCreate,
@@ -70833,19 +70982,19 @@ ${e2}`);
           scenes: scenes.map((s2) => ({ id: s2.id, label: s2.label, thumbnail_url: s2.thumbnail_url }))
         }
       ),
-      deleteScene && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "modal-box", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("p", { children: [
+      deleteScene && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "modal-box", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("p", { children: [
           "Delete scene ",
-          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("strong", { children: deleteScene.label }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("strong", { children: deleteScene.label }),
           "? This cannot be undone."
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "modal-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Button, { onClick: () => setDeleteScene(null), children: "Cancel" }),
-          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Button, { onClick: handleDeleteScene, variant: "danger", children: "Delete" })
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "modal-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Button, { onClick: () => setDeleteScene(null), children: "Cancel" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Button, { onClick: handleDeleteScene, variant: "danger", children: "Delete" })
         ] })
       ] }) }),
-      flagsScene && flagsModalLoading && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "modal-box", style: { minWidth: 200, textAlign: "center" }, children: "Loading\u2026" }) }),
-      flagsScene && !flagsModalLoading && flagsModalData && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+      flagsScene && flagsModalLoading && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "modal-box", style: { minWidth: 200, textAlign: "center" }, children: "Loading\u2026" }) }),
+      flagsScene && !flagsModalLoading && flagsModalData && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
         SceneFlagsModal,
         {
           sceneName: flagsScene.label,
@@ -70862,15 +71011,15 @@ ${e2}`);
   }
 
   // src/ProjectListPage.tsx
-  var import_react18 = __toESM(require_react());
+  var import_react19 = __toESM(require_react());
 
   // src/controls/modals/NewProjectDialog.tsx
-  var import_react17 = __toESM(require_react());
-  var import_jsx_runtime20 = __toESM(require_jsx_runtime());
+  var import_react18 = __toESM(require_react());
+  var import_jsx_runtime21 = __toESM(require_jsx_runtime());
   function NewProjectDialog({ onConfirm, onCancel }) {
-    const [name, setName] = (0, import_react17.useState)("");
-    const inputRef = (0, import_react17.useRef)(null);
-    (0, import_react17.useEffect)(() => {
+    const [name, setName] = (0, import_react18.useState)("");
+    const inputRef = (0, import_react18.useRef)(null);
+    (0, import_react18.useEffect)(() => {
       inputRef.current?.focus();
     }, []);
     const handleSubmit = (e2) => {
@@ -70881,12 +71030,12 @@ ${e2}`);
     const handleKeyDown = (e2) => {
       if (e2.key === "Escape") onCancel();
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "new-scene-overlay", onKeyDown: handleKeyDown, children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "new-scene-dialog", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h2", { className: "new-scene-title", children: "New Project" }),
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("form", { onSubmit: handleSubmit, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "new-scene-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("label", { htmlFor: "new-project-name", children: "Project name" }),
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "new-scene-overlay", onKeyDown: handleKeyDown, children: /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "new-scene-dialog", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h2", { className: "new-scene-title", children: "New Project" }),
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("form", { onSubmit: handleSubmit, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "new-scene-field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("label", { htmlFor: "new-project-name", children: "Project name" }),
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
             "input",
             {
               id: "new-project-name",
@@ -70898,26 +71047,26 @@ ${e2}`);
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "new-scene-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Button, { type: "button", onClick: onCancel, children: "Cancel" }),
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Button, { type: "submit", variant: "primary", disabled: !name.trim(), children: "OK" })
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "new-scene-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Button, { type: "button", onClick: onCancel, children: "Cancel" }),
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Button, { type: "submit", variant: "primary", disabled: !name.trim(), children: "OK" })
         ] })
       ] })
     ] }) });
   }
 
   // src/ProjectListPage.tsx
-  var import_jsx_runtime21 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime22 = __toESM(require_jsx_runtime());
   function ProjectCollage({ sceneIds, sceneThumbnailUrls }) {
-    const [failedThumbs, setFailedThumbs] = (0, import_react18.useState)(/* @__PURE__ */ new Set());
+    const [failedThumbs, setFailedThumbs] = (0, import_react19.useState)(/* @__PURE__ */ new Set());
     if (!sceneIds || sceneIds.length === 0) {
-      return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "project-card-icon", children: "\u{1F4C1}" });
+      return /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "project-card-icon", children: "\u{1F4C1}" });
     }
     const cells = [...sceneIds.slice(0, 4)];
     while (cells.length < 4) cells.push("");
-    return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "project-card-collage", children: cells.map((id, i2) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "project-card-collage", children: cells.map((id, i2) => {
       const thumbnailSrc = id ? sceneThumbnailUrls?.[i2] ?? "" : "";
-      return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "project-card-collage-cell", children: thumbnailSrc && !failedThumbs.has(thumbnailSrc) && /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "project-card-collage-cell", children: thumbnailSrc && !failedThumbs.has(thumbnailSrc) && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
         "img",
         {
           src: thumbnailSrc,
@@ -70928,11 +71077,11 @@ ${e2}`);
     }) });
   }
   function ProjectListPage({ onSelect, onLogout }) {
-    const [projects, setProjects] = (0, import_react18.useState)([]);
-    const [loading, setLoading] = (0, import_react18.useState)(true);
-    const [showDialog, setShowDialog] = (0, import_react18.useState)(false);
-    const [showArchived, setShowArchived] = (0, import_react18.useState)(false);
-    (0, import_react18.useEffect)(() => {
+    const [projects, setProjects] = (0, import_react19.useState)([]);
+    const [loading, setLoading] = (0, import_react19.useState)(true);
+    const [showDialog, setShowDialog] = (0, import_react19.useState)(false);
+    const [showArchived, setShowArchived] = (0, import_react19.useState)(false);
+    (0, import_react19.useEffect)(() => {
       projectsApi.list().then((records) => {
         setProjects(records);
         setLoading(false);
@@ -70965,24 +71114,24 @@ ${e2}`);
         window.alert("Failed to unarchive project");
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(PageLayout, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(PageHeader, { title: "Projects", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Button, { onClick: () => setShowDialog(true), children: "+ Project" }),
-        onLogout && /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Button, { onClick: onLogout, children: "Log out" })
+    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(PageLayout, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(PageHeader, { title: "Projects", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Button, { onClick: () => setShowDialog(true), children: "+ Project" }),
+        onLogout && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Button, { onClick: onLogout, children: "Log out" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(PageBody, { children: [
-        loading && /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "project-list-empty", children: "Loading\u2026" }),
-        !loading && projects.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "project-list-empty", children: "No projects yet. Create one to get started." }),
-        !loading && activeProjects.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "project-list-grid", children: activeProjects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "project-card", onClick: () => onSelect(project), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(PageBody, { children: [
+        loading && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "project-list-empty", children: "Loading\u2026" }),
+        !loading && projects.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "project-list-empty", children: "No projects yet. Create one to get started." }),
+        !loading && activeProjects.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "project-list-grid", children: activeProjects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "project-card", onClick: () => onSelect(project), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
             ProjectCollage,
             {
               sceneIds: project.scene_ids,
               sceneThumbnailUrls: project.scene_thumbnail_urls
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "project-card-name", children: project.name }),
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "project-card-actions", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "project-card-name", children: project.name }),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "project-card-actions", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
             Button,
             {
               className: "project-card-action",
@@ -70991,28 +71140,28 @@ ${e2}`);
             }
           ) })
         ] }, project.id)) }),
-        !loading && archivedProjects.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "project-archive-section", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(
+        !loading && archivedProjects.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "project-archive-section", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
             Button,
             {
               className: "project-archive-toggle",
               onClick: () => setShowArchived((prev) => !prev),
               children: [
-                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: `project-archive-toggle-icon${showArchived ? " is-open" : ""}`, children: "\u25B8" }),
+                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: `project-archive-toggle-icon${showArchived ? " is-open" : ""}`, children: "\u25B8" }),
                 "Archived projects"
               ]
             }
           ),
-          showArchived && /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "project-list-grid project-list-grid--archived", children: archivedProjects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "project-card project-card--archived", onClick: () => onSelect(project), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+          showArchived && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "project-list-grid project-list-grid--archived", children: archivedProjects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "project-card project-card--archived", onClick: () => onSelect(project), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
               ProjectCollage,
               {
                 sceneIds: project.scene_ids,
                 sceneThumbnailUrls: project.scene_thumbnail_urls
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "project-card-name", children: project.name }),
-            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "project-card-actions", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "project-card-name", children: project.name }),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "project-card-actions", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
               Button,
               {
                 className: "project-card-action",
@@ -71023,7 +71172,7 @@ ${e2}`);
           ] }, project.id)) })
         ] })
       ] }),
-      showDialog && /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+      showDialog && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
         NewProjectDialog,
         {
           onConfirm: handleCreate,
@@ -71034,14 +71183,14 @@ ${e2}`);
   }
 
   // src/FlagsPage.tsx
-  var import_react19 = __toESM(require_react());
-  var import_jsx_runtime22 = __toESM(require_jsx_runtime());
+  var import_react20 = __toESM(require_react());
+  var import_jsx_runtime23 = __toESM(require_jsx_runtime());
   function generateId(name) {
     return name.trim().toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
   }
   function FlagRow({ flag, onChange, onDelete, onNameBlur }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("tr", { className: "flags-table__row", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("tr", { className: "flags-table__row", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
         "input",
         {
           className: "flags-table__input",
@@ -71051,7 +71200,7 @@ ${e2}`);
           spellCheck: false
         }
       ) }),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
         "input",
         {
           className: "flags-table__input",
@@ -71061,7 +71210,7 @@ ${e2}`);
           placeholder: "Display Name"
         }
       ) }),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("td", { className: "flags-table__center", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("td", { className: "flags-table__center", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
         "input",
         {
           type: "checkbox",
@@ -71069,16 +71218,16 @@ ${e2}`);
           onChange: (e2) => onChange({ ...flag, defaultActive: e2.target.checked })
         }
       ) }),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Button, { variant: "danger", onClick: onDelete, children: "Delete" }) })
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Button, { variant: "danger", onClick: onDelete, children: "Delete" }) })
     ] });
   }
   function FlagsPage({ projectId, projectName, onBack }) {
-    const [flags, setFlags] = (0, import_react19.useState)([]);
-    const [loading, setLoading] = (0, import_react19.useState)(true);
-    const [saving, setSaving] = (0, import_react19.useState)(false);
-    const [dirty, setDirty] = (0, import_react19.useState)(false);
-    const [error, setError] = (0, import_react19.useState)(null);
-    (0, import_react19.useEffect)(() => {
+    const [flags, setFlags] = (0, import_react20.useState)([]);
+    const [loading, setLoading] = (0, import_react20.useState)(true);
+    const [saving, setSaving] = (0, import_react20.useState)(false);
+    const [dirty, setDirty] = (0, import_react20.useState)(false);
+    const [error, setError] = (0, import_react20.useState)(null);
+    (0, import_react20.useEffect)(() => {
       flagsApi.list(projectId).then((data) => {
         setFlags(data);
         setLoading(false);
@@ -71087,7 +71236,7 @@ ${e2}`);
         setLoading(false);
       });
     }, [projectId]);
-    const updateFlag = (0, import_react19.useCallback)((index, updated) => {
+    const updateFlag = (0, import_react20.useCallback)((index, updated) => {
       setFlags((prev) => {
         const next = [...prev];
         next[index] = updated;
@@ -71095,15 +71244,15 @@ ${e2}`);
       });
       setDirty(true);
     }, []);
-    const deleteFlag = (0, import_react19.useCallback)((index) => {
+    const deleteFlag = (0, import_react20.useCallback)((index) => {
       setFlags((prev) => prev.filter((_, i2) => i2 !== index));
       setDirty(true);
     }, []);
-    const addFlag = (0, import_react19.useCallback)(() => {
+    const addFlag = (0, import_react20.useCallback)(() => {
       setFlags((prev) => [...prev, { id: "", name: "", defaultActive: false }]);
       setDirty(true);
     }, []);
-    const handleNameBlur = (0, import_react19.useCallback)((index) => {
+    const handleNameBlur = (0, import_react20.useCallback)((index) => {
       setFlags((prev) => {
         const flag = prev[index];
         if (flag && !flag.id && flag.name) {
@@ -71114,7 +71263,7 @@ ${e2}`);
         return prev;
       });
     }, []);
-    const save = (0, import_react19.useCallback)(async () => {
+    const save = (0, import_react20.useCallback)(async () => {
       setError(null);
       setSaving(true);
       try {
@@ -71126,32 +71275,32 @@ ${e2}`);
         setSaving(false);
       }
     }, [projectId, flags]);
-    const handleBack = (0, import_react19.useCallback)(() => {
+    const handleBack = (0, import_react20.useCallback)(() => {
       if (dirty && !window.confirm("You have unsaved changes. Leave without saving?")) return;
       onBack();
     }, [dirty, onBack]);
-    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(PageLayout, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(PageHeader, { title: `${projectName} \u2014 Flags`, left: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Button, { onClick: handleBack, children: "\u2190" }), children: [
-        dirty && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Button, { variant: "primary", onClick: save, disabled: saving, children: saving ? "Saving\u2026" : "Save" }),
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Button, { onClick: addFlag, children: "+ Flag" })
+    return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(PageLayout, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(PageHeader, { title: `${projectName} \u2014 Flags`, left: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Button, { onClick: handleBack, children: "\u2190" }), children: [
+        dirty && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Button, { variant: "primary", onClick: save, disabled: saving, children: saving ? "Saving\u2026" : "Save" }),
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Button, { onClick: addFlag, children: "+ Flag" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(PageBody, { children: [
-        loading && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { style: { padding: "1rem" }, children: "Loading\u2026" }),
-        error && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { style: { padding: "1rem", color: "red" }, children: error }),
-        !loading && /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(import_jsx_runtime22.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("p", { style: { padding: "0.5rem 1rem", color: "#aaa", fontSize: "0.85rem" }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(PageBody, { children: [
+        loading && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { style: { padding: "1rem" }, children: "Loading\u2026" }),
+        error && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { style: { padding: "1rem", color: "red" }, children: error }),
+        !loading && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(import_jsx_runtime23.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("p", { style: { padding: "0.5rem 1rem", color: "#aaa", fontSize: "0.85rem" }, children: [
             "Flags are the binary on/off states that drive scene selection and sprite visibility. The ",
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("strong", { children: "id" }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("strong", { children: "id" }),
             " must be a stable snake_case identifier \u2014 it is referenced by rules and scenes."
           ] }),
-          flags.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { style: { padding: "1rem", color: "#888" }, children: "No flags defined yet. Click \u201C+ Flag\u201D to add one." }) : /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("table", { className: "flags-table", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("tr", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("th", { children: "ID" }),
-              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("th", { children: "Display Name" }),
-              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("th", { className: "flags-table__center", children: "Default Active" }),
-              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("th", {})
+          flags.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { style: { padding: "1rem", color: "#888" }, children: "No flags defined yet. Click \u201C+ Flag\u201D to add one." }) : /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("table", { className: "flags-table", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("tr", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("th", { children: "ID" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("th", { children: "Display Name" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("th", { className: "flags-table__center", children: "Default Active" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("th", {})
             ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("tbody", { children: flags.map((flag, i2) => /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("tbody", { children: flags.map((flag, i2) => /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
               FlagRow,
               {
                 flag,
@@ -71162,15 +71311,15 @@ ${e2}`);
               i2
             )) })
           ] }),
-          flags.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: { padding: "0.75rem 1rem" }, children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Button, { onClick: addFlag, children: "+ Flag" }) })
+          flags.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: { padding: "0.75rem 1rem" }, children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Button, { onClick: addFlag, children: "+ Flag" }) })
         ] })
       ] })
     ] });
   }
 
   // src/RulesPage.tsx
-  var import_react20 = __toESM(require_react());
-  var import_jsx_runtime23 = __toESM(require_jsx_runtime());
+  var import_react21 = __toESM(require_react());
+  var import_jsx_runtime24 = __toESM(require_jsx_runtime());
   function generateRuleId(name) {
     return name.trim().toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
   }
@@ -71225,23 +71374,23 @@ ${e2}`);
       }
       onChange(base);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "condition-row", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("select", { value: condition.type, onChange: (e2) => typeChanged(e2.target.value), children: CONDITION_TYPES.map((t2) => /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: t2.value, children: t2.label }, t2.value)) }),
-      (condition.type === "flag_active" || condition.type === "flag_inactive") && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("select", { value: condition.flagId ?? "", onChange: (e2) => set({ flagId: e2.target.value }), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
-        flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
+    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "condition-row", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("select", { value: condition.type, onChange: (e2) => typeChanged(e2.target.value), children: CONDITION_TYPES.map((t2) => /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: t2.value, children: t2.label }, t2.value)) }),
+      (condition.type === "flag_active" || condition.type === "flag_inactive") && /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("select", { value: condition.flagId ?? "", onChange: (e2) => set({ flagId: e2.target.value }), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
+        flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
       ] }),
-      condition.type === "time_of_day" && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(import_jsx_runtime23.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("label", { children: "Start" }),
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("input", { type: "number", min: 0, max: 23, value: condition.startHour ?? 0, onChange: (e2) => set({ startHour: +e2.target.value }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("label", { children: "End" }),
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("input", { type: "number", min: 0, max: 23, value: condition.endHour ?? 0, onChange: (e2) => set({ endHour: +e2.target.value }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "condition-hint", children: "(exclusive; 22\u20136 = overnight wrap)" })
+      condition.type === "time_of_day" && /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(import_jsx_runtime24.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("label", { children: "Start" }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("input", { type: "number", min: 0, max: 23, value: condition.startHour ?? 0, onChange: (e2) => set({ startHour: +e2.target.value }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("label", { children: "End" }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("input", { type: "number", min: 0, max: 23, value: condition.endHour ?? 0, onChange: (e2) => set({ endHour: +e2.target.value }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "condition-hint", children: "(exclusive; 22\u20136 = overnight wrap)" })
       ] }),
-      condition.type === "day_of_week" && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "condition-days", children: DAY_LABELS.map((label, i2) => {
+      condition.type === "day_of_week" && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "condition-days", children: DAY_LABELS.map((label, i2) => {
         const checked = (condition.daysOfWeek ?? []).includes(i2);
-        return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: "condition-day-label", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+        return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { className: "condition-day-label", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
             "input",
             {
               type: "checkbox",
@@ -71255,41 +71404,41 @@ ${e2}`);
           label
         ] }, i2);
       }) }),
-      (condition.type === "scene_count" || condition.type === "install_duration_hours") && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(import_jsx_runtime23.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("select", { value: condition.operator ?? ">=", onChange: (e2) => set({ operator: e2.target.value }), children: [">=", "<=", "==", ">", "<"].map((op) => /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: op, children: op }, op)) }),
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("input", { type: "number", min: 0, value: condition.intValue ?? 0, onChange: (e2) => set({ intValue: +e2.target.value }) })
+      (condition.type === "scene_count" || condition.type === "install_duration_hours") && /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(import_jsx_runtime24.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("select", { value: condition.operator ?? ">=", onChange: (e2) => set({ operator: e2.target.value }), children: [">=", "<=", "==", ">", "<"].map((op) => /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: op, children: op }, op)) }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("input", { type: "number", min: 0, value: condition.intValue ?? 0, onChange: (e2) => set({ intValue: +e2.target.value }) })
       ] }),
-      condition.type === "time_since_flag_change" && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(import_jsx_runtime23.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("select", { value: condition.flagId ?? "", onChange: (e2) => set({ flagId: e2.target.value }), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
-          flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
+      condition.type === "time_since_flag_change" && /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(import_jsx_runtime24.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("select", { value: condition.flagId ?? "", onChange: (e2) => set({ flagId: e2.target.value }), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
+          flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("select", { value: condition.flagChangeType ?? "activated", onChange: (e2) => set({ flagChangeType: e2.target.value }), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "activated", children: "was activated" }),
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "deactivated", children: "was deactivated" })
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("select", { value: condition.flagChangeType ?? "activated", onChange: (e2) => set({ flagChangeType: e2.target.value }), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "activated", children: "was activated" }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "deactivated", children: "was deactivated" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("select", { value: condition.operator ?? ">=", onChange: (e2) => set({ operator: e2.target.value }), children: [">=", "<=", "==", ">", "<"].map((op) => /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: op, children: op }, op)) }),
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("input", { type: "number", min: 0, value: condition.intValue ?? 0, onChange: (e2) => set({ intValue: +e2.target.value }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "condition-hint", children: "hours" })
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("select", { value: condition.operator ?? ">=", onChange: (e2) => set({ operator: e2.target.value }), children: [">=", "<=", "==", ">", "<"].map((op) => /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: op, children: op }, op)) }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("input", { type: "number", min: 0, value: condition.intValue ?? 0, onChange: (e2) => set({ intValue: +e2.target.value }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "condition-hint", children: "hours" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("button", { className: "condition-delete", onClick: onDelete, title: "Remove condition", children: "\u2715" })
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("button", { className: "condition-delete", onClick: onDelete, title: "Remove condition", children: "\u2715" })
     ] });
   }
   function ActionEditor({ action, flags, onChange, onDelete }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "action-row", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("select", { value: action.type, onChange: (e2) => onChange({ ...action, type: e2.target.value }), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "activate_flag", children: "Activate flag" }),
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "deactivate_flag", children: "Deactivate flag" })
+    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "action-row", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("select", { value: action.type, onChange: (e2) => onChange({ ...action, type: e2.target.value }), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "activate_flag", children: "Activate flag" }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "deactivate_flag", children: "Deactivate flag" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("select", { value: action.flagId ?? "", onChange: (e2) => onChange({ ...action, flagId: e2.target.value }), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
-        flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("select", { value: action.flagId ?? "", onChange: (e2) => onChange({ ...action, flagId: e2.target.value }), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
+        flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("button", { className: "condition-delete", onClick: onDelete, title: "Remove action", children: "\u2715" })
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("button", { className: "condition-delete", onClick: onDelete, title: "Remove action", children: "\u2715" })
     ] });
   }
   function RuleEditModal({ rule: initial, flags, onSave, onCancel }) {
-    const [rule, setRule] = (0, import_react20.useState)(() => JSON.parse(JSON.stringify(initial)));
+    const [rule, setRule] = (0, import_react21.useState)(() => JSON.parse(JSON.stringify(initial)));
     const setField = (key, value) => setRule((r2) => ({ ...r2, [key]: value }));
     const conditions = rule.conditions ?? { operator: "AND", checks: [] };
     const setConditions = (g2) => setField("conditions", g2);
@@ -71302,11 +71451,11 @@ ${e2}`);
     const handleNameBlur = () => {
       if (!rule.id && rule.name) setField("id", generateRuleId(rule.name));
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "modal-overlay", onClick: onCancel, children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "modal-box rule-modal", onClick: (e2) => e2.stopPropagation(), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h2", { className: "modal-title", children: initial.id ? "Edit Rule" : "New Rule" }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "form-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("label", { children: "Name" }),
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "modal-overlay", onClick: onCancel, children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "modal-box rule-modal", onClick: (e2) => e2.stopPropagation(), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h2", { className: "modal-title", children: initial.id ? "Edit Rule" : "New Rule" }),
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "form-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("label", { children: "Name" }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
           "input",
           {
             value: rule.name,
@@ -71316,9 +71465,9 @@ ${e2}`);
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "form-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("label", { children: "ID" }),
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "form-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("label", { children: "ID" }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
           "input",
           {
             value: rule.id,
@@ -71328,28 +71477,28 @@ ${e2}`);
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "form-row", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("input", { type: "checkbox", checked: rule.oneShot ?? false, onChange: (e2) => setField("oneShot", e2.target.checked) }),
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "form-row", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("input", { type: "checkbox", checked: rule.oneShot ?? false, onChange: (e2) => setField("oneShot", e2.target.checked) }),
         " ",
         "One-shot (fires only once ever)"
       ] }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("h3", { className: "section-title", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("h3", { className: "section-title", children: [
         "Conditions",
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
           "select",
           {
             value: conditions.operator,
             onChange: (e2) => setConditions({ ...conditions, operator: e2.target.value }),
             style: { marginLeft: "0.5rem", fontSize: "0.85rem" },
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "AND", children: "ALL must pass (AND)" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { value: "OR", children: "ANY must pass (OR)" })
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "AND", children: "ALL must pass (AND)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("option", { value: "OR", children: "ANY must pass (OR)" })
             ]
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { className: "section-hint", children: "Leave empty to always fire." }),
-      conditions.checks.map((c2, i2) => /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { className: "section-hint", children: "Leave empty to always fire." }),
+      conditions.checks.map((c2, i2) => /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
         ConditionEditor,
         {
           condition: c2,
@@ -71359,9 +71508,9 @@ ${e2}`);
         },
         i2
       )),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Button, { onClick: addCondition, style: { marginBottom: "1rem" }, children: "+ Condition" }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h3", { className: "section-title", children: "Actions" }),
-      rule.actions.map((a2, i2) => /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Button, { onClick: addCondition, style: { marginBottom: "1rem" }, children: "+ Condition" }),
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h3", { className: "section-title", children: "Actions" }),
+      rule.actions.map((a2, i2) => /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
         ActionEditor,
         {
           action: a2,
@@ -71371,23 +71520,23 @@ ${e2}`);
         },
         i2
       )),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Button, { onClick: addAction, style: { marginBottom: "1rem" }, children: "+ Action" }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "modal-footer", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Button, { variant: "primary", onClick: () => onSave(rule), children: "Save Rule" })
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Button, { onClick: addAction, style: { marginBottom: "1rem" }, children: "+ Action" }),
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "modal-footer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Button, { variant: "primary", onClick: () => onSave(rule), children: "Save Rule" })
       ] })
     ] }) });
   }
   function RulesPage({ projectId, projectName, onBack }) {
-    const [rules, setRules] = (0, import_react20.useState)([]);
-    const [flags, setFlags] = (0, import_react20.useState)([]);
-    const [loading, setLoading] = (0, import_react20.useState)(true);
-    const [saving, setSaving] = (0, import_react20.useState)(false);
-    const [dirty, setDirty] = (0, import_react20.useState)(false);
-    const [error, setError] = (0, import_react20.useState)(null);
-    const [editingIndex, setEditingIndex] = (0, import_react20.useState)(null);
-    const [isNewRule, setIsNewRule] = (0, import_react20.useState)(false);
-    (0, import_react20.useEffect)(() => {
+    const [rules, setRules] = (0, import_react21.useState)([]);
+    const [flags, setFlags] = (0, import_react21.useState)([]);
+    const [loading, setLoading] = (0, import_react21.useState)(true);
+    const [saving, setSaving] = (0, import_react21.useState)(false);
+    const [dirty, setDirty] = (0, import_react21.useState)(false);
+    const [error, setError] = (0, import_react21.useState)(null);
+    const [editingIndex, setEditingIndex] = (0, import_react21.useState)(null);
+    const [isNewRule, setIsNewRule] = (0, import_react21.useState)(false);
+    (0, import_react21.useEffect)(() => {
       Promise.all([rulesApi.list(projectId), flagsApi.list(projectId)]).then(([r2, f2]) => {
         setRules(r2);
         setFlags(f2);
@@ -71397,7 +71546,7 @@ ${e2}`);
         setLoading(false);
       });
     }, [projectId]);
-    const save = (0, import_react20.useCallback)(async () => {
+    const save = (0, import_react21.useCallback)(async () => {
       setError(null);
       setSaving(true);
       try {
@@ -71434,50 +71583,50 @@ ${e2}`);
       setRules((prev) => prev.filter((_, i2) => i2 !== index));
       setDirty(true);
     };
-    const handleBack = (0, import_react20.useCallback)(() => {
+    const handleBack = (0, import_react21.useCallback)(() => {
       if (dirty && !window.confirm("You have unsaved changes. Leave without saving?")) return;
       onBack();
     }, [dirty, onBack]);
-    return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(PageLayout, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(PageHeader, { title: `${projectName} \u2014 Rules`, left: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Button, { onClick: handleBack, children: "\u2190" }), children: [
-        dirty && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Button, { variant: "primary", onClick: save, disabled: saving, children: saving ? "Saving\u2026" : "Save" }),
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Button, { onClick: openNew, children: "+ Rule" })
+    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(PageLayout, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(PageHeader, { title: `${projectName} \u2014 Rules`, left: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Button, { onClick: handleBack, children: "\u2190" }), children: [
+        dirty && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Button, { variant: "primary", onClick: save, disabled: saving, children: saving ? "Saving\u2026" : "Save" }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Button, { onClick: openNew, children: "+ Rule" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(PageBody, { children: [
-        loading && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { style: { padding: "1rem" }, children: "Loading\u2026" }),
-        error && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { style: { padding: "1rem", color: "red" }, children: error }),
-        !loading && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(import_jsx_runtime23.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { style: { padding: "0.5rem 1rem", color: "#aaa", fontSize: "0.85rem" }, children: "Rules are evaluated every 5 minutes when the wallpaper is visible. When a rule's conditions pass, its actions fire and flags are updated. One-shot rules fire at most once." }),
-          rules.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { style: { padding: "1rem", color: "#888" }, children: "No rules defined. Click \u201C+ Rule\u201D to create one." }) : /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("table", { className: "rules-table", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("tr", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("th", { children: "Name" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("th", { children: "ID" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("th", { children: "Conditions" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("th", { children: "Actions" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("th", { children: "One-shot" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("th", {})
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(PageBody, { children: [
+        loading && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: { padding: "1rem" }, children: "Loading\u2026" }),
+        error && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: { padding: "1rem", color: "red" }, children: error }),
+        !loading && /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(import_jsx_runtime24.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: { padding: "0.5rem 1rem", color: "#aaa", fontSize: "0.85rem" }, children: "Rules are evaluated every 5 minutes when the wallpaper is visible. When a rule's conditions pass, its actions fire and flags are updated. One-shot rules fire at most once." }),
+          rules.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: { padding: "1rem", color: "#888" }, children: "No rules defined. Click \u201C+ Rule\u201D to create one." }) : /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("table", { className: "rules-table", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("tr", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("th", { children: "Name" }),
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("th", { children: "ID" }),
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("th", { children: "Conditions" }),
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("th", { children: "Actions" }),
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("th", { children: "One-shot" }),
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("th", {})
             ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("tbody", { children: rules.map((rule, i2) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("tr", { className: "rules-table__row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("td", { children: rule.name || /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { color: "#666" }, children: "(unnamed)" }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("code", { children: rule.id || "\u2014" }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("td", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("tbody", { children: rules.map((rule, i2) => /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("tr", { className: "rules-table__row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("td", { children: rule.name || /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { style: { color: "#666" }, children: "(unnamed)" }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("code", { children: rule.id || "\u2014" }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("td", { children: [
                 rule.conditions?.checks?.length ?? 0,
                 " check(s)"
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("td", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("td", { children: [
                 rule.actions?.length ?? 0,
                 " action(s)"
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("td", { children: rule.oneShot ? "Yes" : "No" }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("td", { className: "rules-table__actions", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Button, { onClick: () => openEdit(i2), children: "Edit" }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Button, { variant: "danger", onClick: () => deleteRule(i2), children: "Delete" })
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("td", { children: rule.oneShot ? "Yes" : "No" }),
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("td", { className: "rules-table__actions", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Button, { onClick: () => openEdit(i2), children: "Edit" }),
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Button, { variant: "danger", onClick: () => deleteRule(i2), children: "Delete" })
               ] })
             ] }, i2)) })
           ] })
         ] })
       ] }),
-      editingIndex !== null && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+      editingIndex !== null && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
         RuleEditModal,
         {
           rule: rules[editingIndex],
@@ -71490,14 +71639,14 @@ ${e2}`);
   }
 
   // src/LoginPage.tsx
-  var import_react21 = __toESM(require_react());
-  var import_jsx_runtime24 = __toESM(require_jsx_runtime());
+  var import_react22 = __toESM(require_react());
+  var import_jsx_runtime25 = __toESM(require_jsx_runtime());
   function LoginPage({ onAuthenticated }) {
-    const [mode, setMode] = (0, import_react21.useState)("login");
-    const [email, setEmail] = (0, import_react21.useState)("");
-    const [password, setPassword] = (0, import_react21.useState)("");
-    const [error, setError] = (0, import_react21.useState)("");
-    const [loading, setLoading] = (0, import_react21.useState)(false);
+    const [mode, setMode] = (0, import_react22.useState)("login");
+    const [email, setEmail] = (0, import_react22.useState)("");
+    const [password, setPassword] = (0, import_react22.useState)("");
+    const [error, setError] = (0, import_react22.useState)("");
+    const [loading, setLoading] = (0, import_react22.useState)(false);
     const handleSubmit = async (e2) => {
       e2.preventDefault();
       setError("");
@@ -71515,11 +71664,11 @@ ${e2}`);
         setLoading(false);
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "login-page", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("form", { className: "login-card", onSubmit: handleSubmit, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "login-title", children: "Live Wallpaper Editor" }),
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "login-field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("label", { htmlFor: "email", children: "Email" }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "login-page", children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("form", { className: "login-card", onSubmit: handleSubmit, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "login-title", children: "Live Wallpaper Editor" }),
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "login-field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("label", { htmlFor: "email", children: "Email" }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
           "input",
           {
             id: "email",
@@ -71531,9 +71680,9 @@ ${e2}`);
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "login-field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("label", { htmlFor: "password", children: "Password" }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "login-field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("label", { htmlFor: "password", children: "Password" }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
           "input",
           {
             id: "password",
@@ -71545,17 +71694,17 @@ ${e2}`);
           }
         )
       ] }),
-      error && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "login-error", children: error }),
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("button", { className: "login-submit", type: "submit", disabled: loading, children: loading ? "Please wait\u2026" : mode === "login" ? "Log in" : "Create account" }),
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "login-toggle", children: mode === "login" ? /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(import_jsx_runtime24.Fragment, { children: [
+      error && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "login-error", children: error }),
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("button", { className: "login-submit", type: "submit", disabled: loading, children: loading ? "Please wait\u2026" : mode === "login" ? "Log in" : "Create account" }),
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "login-toggle", children: mode === "login" ? /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(import_jsx_runtime25.Fragment, { children: [
         "No account? ",
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("button", { type: "button", onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("button", { type: "button", onClick: () => {
           setMode("register");
           setError("");
         }, children: "Register" })
-      ] }) : /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(import_jsx_runtime24.Fragment, { children: [
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(import_jsx_runtime25.Fragment, { children: [
         "Already have an account? ",
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("button", { type: "button", onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("button", { type: "button", onClick: () => {
           setMode("login");
           setError("");
         }, children: "Log in" })
@@ -71564,7 +71713,7 @@ ${e2}`);
   }
 
   // src/client.tsx
-  var import_jsx_runtime25 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime26 = __toESM(require_jsx_runtime());
   console.log("[bundle] loaded \u2014 build b85774b");
   function pageFromPath() {
     const sceneMatch = window.location.pathname.match(/^\/project\/([^/]+)\/scene\/([^/]+)$/);
@@ -71580,28 +71729,28 @@ ${e2}`);
     return { type: "projects" };
   }
   function App() {
-    const [authState, setAuthState] = (0, import_react22.useState)({ status: "loading" });
-    const [page, setPage] = (0, import_react22.useState)(pageFromPath);
-    const [thumbBuster, setThumbBuster] = (0, import_react22.useState)(0);
-    const isDirtyRef = (0, import_react22.useRef)(false);
-    const pageRef = (0, import_react22.useRef)(page);
-    (0, import_react22.useEffect)(() => {
+    const [authState, setAuthState] = (0, import_react23.useState)({ status: "loading" });
+    const [page, setPage] = (0, import_react23.useState)(pageFromPath);
+    const [thumbBuster, setThumbBuster] = (0, import_react23.useState)(0);
+    const isDirtyRef = (0, import_react23.useRef)(false);
+    const pageRef = (0, import_react23.useRef)(page);
+    (0, import_react23.useEffect)(() => {
       pageRef.current = page;
     }, [page]);
-    (0, import_react22.useEffect)(() => {
+    (0, import_react23.useEffect)(() => {
       setUnauthorizedHandler(() => setAuthState({ status: "unauthenticated" }));
       authApi.me().then((user) => setAuthState({ status: "authenticated", user })).catch(() => {
       });
     }, []);
-    const handleLogout = (0, import_react22.useCallback)(async () => {
+    const handleLogout = (0, import_react23.useCallback)(async () => {
       await authApi.logout().catch(() => {
       });
       setAuthState({ status: "unauthenticated" });
     }, []);
-    const handleDirtyChange = (0, import_react22.useCallback)((dirty) => {
+    const handleDirtyChange = (0, import_react23.useCallback)((dirty) => {
       isDirtyRef.current = dirty;
     }, []);
-    (0, import_react22.useEffect)(() => {
+    (0, import_react23.useEffect)(() => {
       const onPopState = () => {
         const currentPage = pageRef.current;
         if (currentPage.type !== "scene" || !isDirtyRef.current) {
@@ -71618,39 +71767,39 @@ ${e2}`);
       window.addEventListener("popstate", onPopState);
       return () => window.removeEventListener("popstate", onPopState);
     }, []);
-    const navigateToProject = (0, import_react22.useCallback)((project) => {
+    const navigateToProject = (0, import_react23.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
       setPage({ type: "scenes", project });
     }, []);
-    const navigateToScene = (0, import_react22.useCallback)((scene, project) => {
+    const navigateToScene = (0, import_react23.useCallback)((scene, project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/scene/${encodeURIComponent(scene.id)}`);
       setPage({ type: "scene", sceneId: scene.id, project });
     }, []);
-    const navigateBackToProjects = (0, import_react22.useCallback)(() => {
+    const navigateBackToProjects = (0, import_react23.useCallback)(() => {
       window.history.pushState(null, "", "/");
       setPage({ type: "projects" });
     }, []);
-    const navigateBackToScenes = (0, import_react22.useCallback)((project) => {
+    const navigateBackToScenes = (0, import_react23.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
       setPage({ type: "scenes", project });
     }, []);
-    const navigateToFlags = (0, import_react22.useCallback)((project) => {
+    const navigateToFlags = (0, import_react23.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/flags`);
       setPage({ type: "flags", project });
     }, []);
-    const navigateToRules = (0, import_react22.useCallback)((project) => {
+    const navigateToRules = (0, import_react23.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/rules`);
       setPage({ type: "rules", project });
     }, []);
-    const handleSaved = (0, import_react22.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
+    const handleSaved = (0, import_react23.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
     if (authState.status === "loading") {
       return null;
     }
     if (authState.status === "unauthenticated") {
-      return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(LoginPage, { onAuthenticated: (user) => setAuthState({ status: "authenticated", user }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(LoginPage, { onAuthenticated: (user) => setAuthState({ status: "authenticated", user }) });
     }
     if (page.type === "scene") {
-      return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
         ScenePage,
         {
           initialSceneId: page.sceneId,
@@ -71662,7 +71811,7 @@ ${e2}`);
       );
     }
     if (page.type === "flags") {
-      return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
         FlagsPage,
         {
           projectId: page.project.id,
@@ -71672,7 +71821,7 @@ ${e2}`);
       );
     }
     if (page.type === "rules") {
-      return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
         RulesPage,
         {
           projectId: page.project.id,
@@ -71682,7 +71831,7 @@ ${e2}`);
       );
     }
     if (page.type === "scenes") {
-      return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
         SceneListPage,
         {
           onSelect: (scene) => navigateToScene(scene, page.project),
@@ -71695,11 +71844,11 @@ ${e2}`);
         }
       );
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(ProjectListPage, { onSelect: navigateToProject, onLogout: handleLogout });
+    return /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(ProjectListPage, { onSelect: navigateToProject, onLogout: handleLogout });
   }
   window.addEventListener("DOMContentLoaded", () => {
     const root = (0, import_client.createRoot)(document.body);
-    root.render(/* @__PURE__ */ (0, import_jsx_runtime25.jsx)(App, {}));
+    root.render(/* @__PURE__ */ (0, import_jsx_runtime26.jsx)(App, {}));
   });
 })();
 /*! Bundled license information:

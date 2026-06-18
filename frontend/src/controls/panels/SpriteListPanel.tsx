@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './SpriteListPanel.scss';
-import { ImageLibraryModal } from '../modals/ImageLibraryModal';
+import { CreateSpriteModal } from '../modals/CreateSpriteModal';
 import { toDisplay } from '../../displayScale';
 
 export interface SpriteEntry {
@@ -200,7 +200,7 @@ export function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onA
       )}
 
       {showModal && (
-        <ImageLibraryModal
+        <CreateSpriteModal
           onSelect={handleImageSelected}
           onClose={() => { setShowModal(false); setChangeTextureIndex(null); }}
         />
