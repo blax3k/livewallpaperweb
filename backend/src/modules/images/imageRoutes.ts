@@ -12,13 +12,14 @@ export async function registerImageRoutes(
   server: FastifyInstance,
   deps: ImageRouteDeps,
 ): Promise<void> {
-  server.get('/api/images', async () => {
-    return listImages();
+  server.get<{Params: {projectId: string}}>('/api/images/:projectId', async (req) => {
+    return listImages(req.params.projectId);
   });
 
-  server.post('/api/images', async (req, reply) => {
+  server.post<{ Querystring: { projectId?: string } }>('/api/images', async (req, reply) => {
     try {
-      const image = await uploadImage(await req.file(), deps.storage, deps.thumbnailStorage);
+      const projectId = req.query.projectId;
+      const image = await uploadImage(projectId, await req.file(), deps.storage, deps.thumbnailStorage);
 
       return reply.status(HttpStatus.CREATED).send(image);
     } catch (err) {

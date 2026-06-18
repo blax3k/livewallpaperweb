@@ -1337,7 +1337,7 @@
           return dispatcher;
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var React21 = require_react(), Internals = {
+        var React19 = require_react(), Internals = {
           d: {
             f: noop,
             r: function() {
@@ -1355,7 +1355,7 @@
           },
           p: 0,
           findDOMNode: null
-        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React21.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React19.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
         "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
           "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
         );
@@ -2890,7 +2890,7 @@
           "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
         }
         function validateOptionProps(element, props) {
-          null == props.value && ("object" === typeof props.children && null !== props.children ? React21.Children.forEach(props.children, function(child) {
+          null == props.value && ("object" === typeof props.children && null !== props.children ? React19.Children.forEach(props.children, function(child) {
             null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
               "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
             ));
@@ -18522,14 +18522,14 @@
           ));
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var Scheduler = require_scheduler(), React21 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+        var Scheduler = require_scheduler(), React19 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
         /* @__PURE__ */ Symbol.for("react.scope");
         var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity");
         /* @__PURE__ */ Symbol.for("react.legacy_hidden");
         /* @__PURE__ */ Symbol.for("react.tracing_marker");
         var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel");
         /* @__PURE__ */ Symbol.for("react.view_transition");
-        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React21.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React19.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
           pending: false,
           data: null,
           method: null,
@@ -21317,7 +21317,7 @@
           }
         };
         (function() {
-          var isomorphicReactPackageVersion = React21.version;
+          var isomorphicReactPackageVersion = React19.version;
           if ("19.2.5" !== isomorphicReactPackageVersion)
             throw Error(
               'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.5\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21671,18 +21671,18 @@
         function isValidElement(object) {
           return "object" === typeof object && null !== object && object.$$typeof === REACT_ELEMENT_TYPE;
         }
-        var React21 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React21.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
+        var React19 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React19.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
           return null;
         };
-        React21 = {
+        React19 = {
           react_stack_bottom_frame: function(callStackForError) {
             return callStackForError();
           }
         };
         var specialPropKeyWarningShown;
         var didWarnAboutElementRef = {};
-        var unknownOwnerDebugStack = React21.react_stack_bottom_frame.bind(
-          React21,
+        var unknownOwnerDebugStack = React19.react_stack_bottom_frame.bind(
+          React19,
           UnknownOwner
         )();
         var unknownOwnerDebugTask = createTask(getTaskName(UnknownOwner));
@@ -64183,10 +64183,10 @@ ${parts.join("\n")}
   var import_react13 = __toESM(require_react());
 
   // src/controls/panels/SpriteListPanel.tsx
-  var import_react2 = __toESM(require_react());
+  var import_react3 = __toESM(require_react());
 
   // src/controls/modals/CreateSpriteModal.tsx
-  var import_react = __toESM(require_react());
+  var import_react2 = __toESM(require_react());
   var import_react_dom = __toESM(require_react_dom());
 
   // src/components/Button.tsx
@@ -64195,60 +64195,238 @@ ${parts.join("\n")}
     return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: `btn btn--${variant} ${className}`.trim(), ...rest, children });
   }
 
-  // src/controls/modals/CreateSpriteModal.tsx
-  var import_jsx_runtime2 = __toESM(require_jsx_runtime());
+  // src/hooks/useImageLibrary.ts
+  var import_react = __toESM(require_react());
+
+  // src/api.ts
+  var ApiError = class extends Error {
+    constructor(status, message) {
+      super(message);
+      this.status = status;
+      this.name = "ApiError";
+    }
+  };
+  var unauthorizedHandler = null;
+  function setUnauthorizedHandler(handler) {
+    unauthorizedHandler = handler;
+  }
+  async function request(input, init2) {
+    const res = await fetch(input, init2);
+    if (!res.ok) {
+      if (res.status === 401) {
+        unauthorizedHandler?.();
+      }
+      let message = `HTTP ${res.status}`;
+      try {
+        const body = await res.json();
+        message = body.error ?? body.message ?? message;
+      } catch {
+      }
+      throw new ApiError(res.status, message);
+    }
+    const contentType = res.headers.get("content-type");
+    if (contentType?.includes("application/json")) {
+      return res.json();
+    }
+    return void 0;
+  }
+  var scenesApi = {
+    list(projectId) {
+      const url = projectId ? `/api/scenes?projectId=${encodeURIComponent(projectId)}` : "/api/scenes";
+      return request(url);
+    },
+    get(sceneId) {
+      return request(`/api/scenes/${sceneId}`);
+    },
+    create(name, label, data, projectId) {
+      return request("/api/scenes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, label, data, ...projectId && { projectId } })
+      });
+    },
+    update(sceneId, label, data) {
+      return request(`/api/scenes/${sceneId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ label, data })
+      });
+    },
+    updateThumbnail(sceneId, dataUrl) {
+      return request(`/api/scenes/${sceneId}/thumbnail`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ dataUrl })
+      });
+    },
+    delete(sceneId) {
+      return request(`/api/scenes/${sceneId}`, { method: "DELETE" });
+    }
+  };
+  var projectsApi = {
+    list() {
+      return request("/api/projects");
+    },
+    create(name) {
+      return request("/api/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name })
+      });
+    },
+    archive(projectId) {
+      return request(`/api/projects/${projectId}/archive`, { method: "PATCH" });
+    },
+    unarchive(projectId) {
+      return request(`/api/projects/${projectId}/unarchive`, { method: "PATCH" });
+    }
+  };
+  var imagesApi = {
+    list(projectId) {
+      return request(`/api/images/${projectId}`);
+    },
+    upload(projectId, file) {
+      const form = new FormData();
+      form.append("file", file);
+      return request(`/api/images?projectId=${encodeURIComponent(projectId)}`, { method: "POST", body: form });
+    },
+    delete(imageId) {
+      return request(`/api/images/${imageId}`, { method: "DELETE" });
+    }
+  };
+  var flagsApi = {
+    list(projectId) {
+      return request(`/api/projects/${projectId}/flags`);
+    },
+    save(projectId, flags) {
+      return request(`/api/projects/${projectId}/flags`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(flags)
+      });
+    }
+  };
+  var rulesApi = {
+    list(projectId) {
+      return request(`/api/projects/${projectId}/rules`);
+    },
+    save(projectId, rules) {
+      return request(`/api/projects/${projectId}/rules`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(rules)
+      });
+    }
+  };
+  var spritesApi = {
+    rename(spriteId, name) {
+      return request(`/api/sprites/${spriteId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name })
+      });
+    }
+  };
+  var authApi = {
+    me() {
+      return request("/api/auth/me");
+    },
+    login(email, password) {
+      return request("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+    },
+    register(email, password) {
+      return request("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+    },
+    logout() {
+      return request("/api/auth/logout", { method: "POST" });
+    }
+  };
+
+  // src/hooks/useImageLibrary.ts
   function getUploadUrl(filename) {
     return `/uploads/${filename}`;
   }
   function getImageThumbnailUrl(thumbFilename) {
     return `/image-thumbnails/${thumbFilename}`;
   }
-  function CreateSpriteModal({ onSelect, onClose }) {
+  function useImageLibrary(projectId, onImageDeleted) {
     const [images, setImages] = (0, import_react.useState)([]);
     const [loading, setLoading] = (0, import_react.useState)(true);
     const [uploading, setUploading] = (0, import_react.useState)(false);
-    const [selectedImage, setSelectedImage] = (0, import_react.useState)(null);
     const [previewImage, setPreviewImage] = (0, import_react.useState)(null);
     const [confirmDelete, setConfirmDelete] = (0, import_react.useState)(null);
     const fileInputRef = (0, import_react.useRef)(null);
-    const fetchImages = () => {
-      fetch("/api/images").then((r2) => r2.json()).then((records) => {
+    (0, import_react.useEffect)(() => {
+      imagesApi.list(projectId).then((records) => {
         setImages(records);
         setLoading(false);
       }).catch(() => setLoading(false));
-    };
-    (0, import_react.useEffect)(() => {
-      fetchImages();
-    }, []);
-    const handleDelete = async (image, e2) => {
+    }, [projectId]);
+    const handleDelete = (image, e2) => {
       e2.stopPropagation();
       setConfirmDelete(image);
     };
     const handleDeleteConfirmed = async () => {
       if (!confirmDelete) return;
-      const res = await fetch(`/api/images/${confirmDelete.id}`, { method: "DELETE" });
-      if (res.ok) {
-        setImages((prev) => prev.filter((i2) => i2.id !== confirmDelete.id));
-        if (selectedImage === getUploadUrl(confirmDelete.filename)) setSelectedImage(null);
-      }
+      await imagesApi.delete(confirmDelete.id);
+      setImages((prev) => prev.filter((i2) => i2.id !== confirmDelete.id));
+      onImageDeleted?.(confirmDelete);
       setConfirmDelete(null);
     };
     const handleFileChange = async (e2) => {
       const file = e2.target.files?.[0];
       if (!file) return;
       setUploading(true);
-      const form = new FormData();
-      form.append("file", file);
       try {
-        const res = await fetch("/api/images", { method: "POST", body: form });
-        if (!res.ok) throw new Error("Upload failed");
-        const record = await res.json();
+        const record = await imagesApi.upload(projectId, file);
         setImages((prev) => [record, ...prev]);
       } finally {
         setUploading(false);
         e2.target.value = "";
       }
     };
+    return {
+      images,
+      loading,
+      uploading,
+      previewImage,
+      setPreviewImage,
+      confirmDelete,
+      setConfirmDelete,
+      fileInputRef,
+      handleDelete,
+      handleDeleteConfirmed,
+      handleFileChange
+    };
+  }
+
+  // src/controls/modals/CreateSpriteModal.tsx
+  var import_jsx_runtime2 = __toESM(require_jsx_runtime());
+  function CreateSpriteModal({ onSelect, onClose, projectId }) {
+    const [selectedImage, setSelectedImage] = (0, import_react2.useState)(null);
+    const {
+      images,
+      loading,
+      uploading,
+      previewImage,
+      setPreviewImage,
+      confirmDelete,
+      setConfirmDelete,
+      fileInputRef,
+      handleDelete,
+      handleDeleteConfirmed,
+      handleFileChange
+    } = useImageLibrary(projectId, (deleted) => {
+      if (selectedImage === getUploadUrl(deleted.filename)) setSelectedImage(null);
+    });
     return (0, import_react_dom.createPortal)(
       /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(import_jsx_runtime2.Fragment, { children: [
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "create-sprite-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "create-sprite-modal", onClick: (e2) => e2.stopPropagation(), children: [
@@ -64363,15 +64541,15 @@ ${parts.join("\n")}
 
   // src/controls/panels/SpriteListPanel.tsx
   var import_jsx_runtime3 = __toESM(require_jsx_runtime());
-  function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd, onChangeTexture, onDelete, onEditTexture, onRename, onEditConditions }) {
-    const [showModal, setShowModal] = (0, import_react2.useState)(false);
-    const [changeTextureIndex, setChangeTextureIndex] = (0, import_react2.useState)(null);
-    const [menuOpenIndex, setMenuOpenIndex] = (0, import_react2.useState)(null);
-    const [confirmDeleteIndex, setConfirmDeleteIndex] = (0, import_react2.useState)(null);
-    const [editingIndex, setEditingIndex] = (0, import_react2.useState)(null);
-    const [editingValue, setEditingValue] = (0, import_react2.useState)("");
-    const menuRef = (0, import_react2.useRef)(null);
-    (0, import_react2.useEffect)(() => {
+  function SpriteListPanel({ entries, projectId, selectedName, onToggle, onSelect, onAdd, onChangeTexture, onDelete, onEditTexture, onRename, onEditConditions }) {
+    const [showModal, setShowModal] = (0, import_react3.useState)(false);
+    const [changeTextureIndex, setChangeTextureIndex] = (0, import_react3.useState)(null);
+    const [menuOpenIndex, setMenuOpenIndex] = (0, import_react3.useState)(null);
+    const [confirmDeleteIndex, setConfirmDeleteIndex] = (0, import_react3.useState)(null);
+    const [editingIndex, setEditingIndex] = (0, import_react3.useState)(null);
+    const [editingValue, setEditingValue] = (0, import_react3.useState)("");
+    const menuRef = (0, import_react3.useRef)(null);
+    (0, import_react3.useEffect)(() => {
       if (menuOpenIndex === null) return;
       const handleClick = (e2) => {
         if (menuRef.current && !menuRef.current.contains(e2.target)) {
@@ -64557,7 +64735,8 @@ ${parts.join("\n")}
           onClose: () => {
             setShowModal(false);
             setChangeTextureIndex(null);
-          }
+          },
+          projectId
         }
       )
     ] });
@@ -64781,6 +64960,7 @@ ${parts.join("\n")}
     startTime,
     endTime,
     spriteEntries,
+    projectId,
     selectedSprite,
     onXFocusChange,
     onXFocusChangeStart,
@@ -64806,51 +64986,15 @@ ${parts.join("\n")}
     onSpriteSizeChangeStart,
     onSpriteSizeCommit
   }) {
-    function minutesToTimeString(minutes) {
-      const h2 = Math.floor(minutes / 60) % 24;
-      const m2 = minutes % 60;
-      return `${String(h2).padStart(2, "0")}:${String(m2).padStart(2, "0")}`;
-    }
-    function timeStringToMinutes(timeStr) {
-      const [h2, m2] = timeStr.split(":").map(Number);
-      return h2 * 60 + m2;
-    }
     return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "controls", children: [
       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h2", { children: "Scene" }),
       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(XFocusControl, { disabled: !sceneLoaded, value: xFocus, onChange: onXFocusChange, onChangeStart: onXFocusChangeStart, onChangeCommit: onXFocusCommit }),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: { display: "flex", gap: "8px", alignItems: "center" }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: { display: "flex", flexDirection: "column", flex: 1 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("label", { htmlFor: "start-time-input", style: { fontSize: "12px", marginBottom: "4px" }, children: "Start Time:" }),
-          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
-            "input",
-            {
-              type: "time",
-              id: "start-time-input",
-              disabled: !sceneLoaded,
-              value: minutesToTimeString(startTime),
-              onChange: (e2) => onStartTimeChange(timeStringToMinutes(e2.target.value))
-            }
-          )
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: { display: "flex", flexDirection: "column", flex: 1 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("label", { htmlFor: "end-time-input", style: { fontSize: "12px", marginBottom: "4px" }, children: "End Time:" }),
-          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
-            "input",
-            {
-              type: "time",
-              id: "end-time-input",
-              disabled: !sceneLoaded,
-              value: minutesToTimeString(endTime),
-              onChange: (e2) => onEndTimeChange(timeStringToMinutes(e2.target.value))
-            }
-          )
-        ] })
-      ] }) }),
       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h2", { children: "Sprites" }),
       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "control-group", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
         SpriteListPanel,
         {
           entries: spriteEntries,
+          projectId,
           selectedName: selectedSprite?.name ?? null,
           onToggle: onSpriteToggle,
           onSelect: onSpriteSelect,
@@ -64891,10 +65035,10 @@ ${parts.join("\n")}
   }
 
   // src/controls/panels/AllConditionsPanel.tsx
-  var import_react4 = __toESM(require_react());
+  var import_react5 = __toESM(require_react());
 
   // src/controls/panels/ConditionSetsPanel.tsx
-  var import_react3 = __toESM(require_react());
+  var import_react4 = __toESM(require_react());
   var import_jsx_runtime8 = __toESM(require_jsx_runtime());
   function ConditionSetsPanel({
     spriteIndex,
@@ -64907,8 +65051,8 @@ ${parts.join("\n")}
     onRename,
     onSetFlags
   }) {
-    const [editingNameIndex, setEditingNameIndex] = (0, import_react3.useState)(null);
-    const [nameValue, setNameValue] = (0, import_react3.useState)("");
+    const [editingNameIndex, setEditingNameIndex] = (0, import_react4.useState)(null);
+    const [nameValue, setNameValue] = (0, import_react4.useState)("");
     const commitRename = (conditionIndex) => {
       const trimmed = nameValue.trim();
       if (trimmed) onRename(spriteIndex, conditionIndex, trimmed);
@@ -65077,8 +65221,8 @@ ${parts.join("\n")}
     onRenameConditionSet,
     onSetConditionSetFlags
   }) {
-    const [expanded, setExpanded] = (0, import_react4.useState)(/* @__PURE__ */ new Set());
-    (0, import_react4.useEffect)(() => {
+    const [expanded, setExpanded] = (0, import_react5.useState)(/* @__PURE__ */ new Set());
+    (0, import_react5.useEffect)(() => {
       if (selectedSpriteIndex === null) return;
       setExpanded((prev) => prev.has(selectedSpriteIndex) ? prev : new Set(prev).add(selectedSpriteIndex));
     }, [selectedSpriteIndex]);
@@ -65144,59 +65288,22 @@ ${parts.join("\n")}
   }
 
   // src/controls/modals/ImageLibraryModal.tsx
-  var import_react5 = __toESM(require_react());
   var import_react_dom2 = __toESM(require_react_dom());
   var import_jsx_runtime11 = __toESM(require_jsx_runtime());
-  function getUploadUrl2(filename) {
-    return `/uploads/${filename}`;
-  }
-  function getImageThumbnailUrl2(thumbFilename) {
-    return `/image-thumbnails/${thumbFilename}`;
-  }
-  function ImageLibraryModal({ onClose }) {
-    const [images, setImages] = (0, import_react5.useState)([]);
-    const [loading, setLoading] = (0, import_react5.useState)(true);
-    const [uploading, setUploading] = (0, import_react5.useState)(false);
-    const [previewImage, setPreviewImage] = (0, import_react5.useState)(null);
-    const [confirmDelete, setConfirmDelete] = (0, import_react5.useState)(null);
-    const fileInputRef = (0, import_react5.useRef)(null);
-    const fetchImages = () => {
-      fetch("/api/images").then((r2) => r2.json()).then((records) => {
-        setImages(records);
-        setLoading(false);
-      }).catch(() => setLoading(false));
-    };
-    (0, import_react5.useEffect)(() => {
-      fetchImages();
-    }, []);
-    const handleDelete = async (image, e2) => {
-      e2.stopPropagation();
-      setConfirmDelete(image);
-    };
-    const handleDeleteConfirmed = async () => {
-      if (!confirmDelete) return;
-      const res = await fetch(`/api/images/${confirmDelete.id}`, { method: "DELETE" });
-      if (res.ok) {
-        setImages((prev) => prev.filter((i2) => i2.id !== confirmDelete.id));
-      }
-      setConfirmDelete(null);
-    };
-    const handleFileChange = async (e2) => {
-      const file = e2.target.files?.[0];
-      if (!file) return;
-      setUploading(true);
-      const form = new FormData();
-      form.append("file", file);
-      try {
-        const res = await fetch("/api/images", { method: "POST", body: form });
-        if (!res.ok) throw new Error("Upload failed");
-        const record = await res.json();
-        setImages((prev) => [record, ...prev]);
-      } finally {
-        setUploading(false);
-        e2.target.value = "";
-      }
-    };
+  function ImageLibraryModal({ projectId, onClose }) {
+    const {
+      images,
+      loading,
+      uploading,
+      previewImage,
+      setPreviewImage,
+      confirmDelete,
+      setConfirmDelete,
+      fileInputRef,
+      handleDelete,
+      handleDeleteConfirmed,
+      handleFileChange
+    } = useImageLibrary(projectId);
     return (0, import_react_dom2.createPortal)(
       /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_jsx_runtime11.Fragment, { children: [
         /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "add-sprite-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "add-sprite-modal", onClick: (e2) => e2.stopPropagation(), children: [
@@ -65235,7 +65342,7 @@ ${parts.join("\n")}
                   /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
                     "img",
                     {
-                      src: image.thumb_filename ? getImageThumbnailUrl2(image.thumb_filename) : getUploadUrl2(image.filename),
+                      src: image.thumb_filename ? getImageThumbnailUrl(image.thumb_filename) : getUploadUrl(image.filename),
                       alt: image.original_name,
                       className: "add-sprite-thumb",
                       loading: "lazy"
@@ -65271,7 +65378,7 @@ ${parts.join("\n")}
         ] }) }),
         previewImage && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "add-sprite-preview-overlay", onClick: () => setPreviewImage(null), children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "add-sprite-preview-modal", onClick: (e2) => e2.stopPropagation(), children: [
           /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { className: "add-sprite-preview-close", onClick: () => setPreviewImage(null), children: "\u2715" }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("img", { src: getUploadUrl2(previewImage.filename), alt: previewImage.original_name, className: "add-sprite-preview-img" })
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("img", { src: getUploadUrl(previewImage.filename), alt: previewImage.original_name, className: "add-sprite-preview-img" })
         ] }) }),
         confirmDelete && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "add-sprite-preview-overlay", onClick: () => setConfirmDelete(null), children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "add-sprite-confirm-delete-dialog", onClick: (e2) => e2.stopPropagation(), children: [
           /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { children: [
@@ -65292,7 +65399,7 @@ ${parts.join("\n")}
 
   // src/controls/TopBar.tsx
   var import_jsx_runtime12 = __toESM(require_jsx_runtime());
-  function TopBar({ scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, onBack, onSceneSelect, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }) {
+  function TopBar({ projectId, scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, onBack, onSceneSelect, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }) {
     const [libraryOpen, setLibraryOpen] = (0, import_react6.useState)(false);
     return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "top-bar", children: [
       onBack && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Button, { onClick: onBack, title: "Back to scenes", children: "\u2190 Scenes" }),
@@ -65300,7 +65407,8 @@ ${parts.join("\n")}
       libraryOpen && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
         ImageLibraryModal,
         {
-          onClose: () => setLibraryOpen(false)
+          onClose: () => setLibraryOpen(false),
+          projectId
         }
       ),
       /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
@@ -69555,145 +69663,6 @@ ${e2}`);
     }
   };
 
-  // src/api.ts
-  var ApiError = class extends Error {
-    constructor(status, message) {
-      super(message);
-      this.status = status;
-      this.name = "ApiError";
-    }
-  };
-  var unauthorizedHandler = null;
-  function setUnauthorizedHandler(handler) {
-    unauthorizedHandler = handler;
-  }
-  async function request(input, init2) {
-    const res = await fetch(input, init2);
-    if (!res.ok) {
-      if (res.status === 401) {
-        unauthorizedHandler?.();
-      }
-      let message = `HTTP ${res.status}`;
-      try {
-        const body = await res.json();
-        message = body.error ?? body.message ?? message;
-      } catch {
-      }
-      throw new ApiError(res.status, message);
-    }
-    const contentType = res.headers.get("content-type");
-    if (contentType?.includes("application/json")) {
-      return res.json();
-    }
-    return void 0;
-  }
-  var scenesApi = {
-    list(projectId) {
-      const url = projectId ? `/api/scenes?projectId=${encodeURIComponent(projectId)}` : "/api/scenes";
-      return request(url);
-    },
-    get(sceneId) {
-      return request(`/api/scenes/${sceneId}`);
-    },
-    create(name, label, data, projectId) {
-      return request("/api/scenes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, label, data, ...projectId && { projectId } })
-      });
-    },
-    update(sceneId, label, data) {
-      return request(`/api/scenes/${sceneId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ label, data })
-      });
-    },
-    updateThumbnail(sceneId, dataUrl) {
-      return request(`/api/scenes/${sceneId}/thumbnail`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ dataUrl })
-      });
-    },
-    delete(sceneId) {
-      return request(`/api/scenes/${sceneId}`, { method: "DELETE" });
-    }
-  };
-  var projectsApi = {
-    list() {
-      return request("/api/projects");
-    },
-    create(name) {
-      return request("/api/projects", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name })
-      });
-    },
-    archive(projectId) {
-      return request(`/api/projects/${projectId}/archive`, { method: "PATCH" });
-    },
-    unarchive(projectId) {
-      return request(`/api/projects/${projectId}/unarchive`, { method: "PATCH" });
-    }
-  };
-  var flagsApi = {
-    list(projectId) {
-      return request(`/api/projects/${projectId}/flags`);
-    },
-    save(projectId, flags) {
-      return request(`/api/projects/${projectId}/flags`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(flags)
-      });
-    }
-  };
-  var rulesApi = {
-    list(projectId) {
-      return request(`/api/projects/${projectId}/rules`);
-    },
-    save(projectId, rules) {
-      return request(`/api/projects/${projectId}/rules`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(rules)
-      });
-    }
-  };
-  var spritesApi = {
-    rename(spriteId, name) {
-      return request(`/api/sprites/${spriteId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name })
-      });
-    }
-  };
-  var authApi = {
-    me() {
-      return request("/api/auth/me");
-    },
-    login(email, password) {
-      return request("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
-    },
-    register(email, password) {
-      return request("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
-    },
-    logout() {
-      return request("/api/auth/logout", { method: "POST" });
-    }
-  };
-
   // src/hooks/useSceneRenderer.ts
   function useSceneRenderer(onNotify, onSaved) {
     const [showSceneControls, setShowSceneControls] = (0, import_react10.useState)(false);
@@ -70503,6 +70472,7 @@ ${e2}`);
       /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
         TopBar,
         {
+          projectId,
           scenes,
           currentSceneName: currentSceneId,
           sceneLoaded: showSceneControls,
@@ -70528,6 +70498,7 @@ ${e2}`);
             xFocus,
             startTime,
             endTime,
+            projectId,
             spriteEntries,
             selectedSprite,
             onXFocusChange: handleXFocusChange,

@@ -21,6 +21,7 @@ interface SceneEditorPanelProps {
   startTime: number;
   endTime: number;
   spriteEntries: SpriteEntry[];
+  projectId: string;
   selectedSprite: SelectedSprite | null;
   onXFocusChange: (value: number) => void;
   onXFocusChangeStart?: (value: number) => void;
@@ -55,6 +56,7 @@ export function SceneEditorPanel({
   startTime,
   endTime,
   spriteEntries,
+  projectId,
   selectedSprite,
   onXFocusChange,
   onXFocusChangeStart,
@@ -80,49 +82,16 @@ export function SceneEditorPanel({
   onSpriteSizeChangeStart,
   onSpriteSizeCommit,
 }: SceneEditorPanelProps) {
-  function minutesToTimeString(minutes: number): string {
-    const h = Math.floor(minutes / 60) % 24;
-    const m = minutes % 60;
-    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-  }
-
-  function timeStringToMinutes(timeStr: string): number {
-    const [h, m] = timeStr.split(':').map(Number);
-    return h * 60 + m;
-  }
 
   return (
     <div className="controls">
       <h2>Scene</h2>
       <XFocusControl disabled={!sceneLoaded} value={xFocus} onChange={onXFocusChange} onChangeStart={onXFocusChangeStart} onChangeCommit={onXFocusCommit} />
-      <div className="control-group">
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-            <label htmlFor="start-time-input" style={{ fontSize: '12px', marginBottom: '4px' }}>Start Time:</label>
-            <input
-              type="time"
-              id="start-time-input"
-              disabled={!sceneLoaded}
-              value={minutesToTimeString(startTime)}
-              onChange={(e) => onStartTimeChange(timeStringToMinutes(e.target.value))}
-            />
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-            <label htmlFor="end-time-input" style={{ fontSize: '12px', marginBottom: '4px' }}>End Time:</label>
-            <input
-              type="time"
-              id="end-time-input"
-              disabled={!sceneLoaded}
-              value={minutesToTimeString(endTime)}
-              onChange={(e) => onEndTimeChange(timeStringToMinutes(e.target.value))}
-            />
-          </div>
-        </div>
-      </div>
       <h2>Sprites</h2>
       <div className="control-group">
         <SpriteListPanel
           entries={spriteEntries}
+          projectId={projectId}
           selectedName={selectedSprite?.name ?? null}
           onToggle={onSpriteToggle}
           onSelect={onSpriteSelect}
@@ -132,6 +101,7 @@ export function SceneEditorPanel({
           onRename={onRenameSprite}
           onEditTexture={onEditTexture}
           onEditConditions={onEditConditions}
+
         />
       </div>
       <h2 style={{ display: 'flex', alignItems: 'center', gap: 6 }}>

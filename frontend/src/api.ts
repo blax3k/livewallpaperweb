@@ -98,14 +98,14 @@ export const projectsApi = {
 };
 
 export const imagesApi = {
-  list(): Promise<ImageRecord[]> {
-    return request<ImageRecord[]>('/api/images');
+  list(projectId: string): Promise<ImageRecord[]> {
+    return request<ImageRecord[]>(`/api/images/${projectId}`);
   },
 
-  upload(file: File): Promise<ImageRecord> {
+  upload(projectId: string, file: File): Promise<ImageRecord> {
     const form = new FormData();
     form.append('file', file);
-    return request<ImageRecord>('/api/images', { method: 'POST', body: form });
+    return request<ImageRecord>(`/api/images?projectId=${encodeURIComponent(projectId)}`, { method: 'POST', body: form });
   },
 
   delete(imageId: string): Promise<void> {

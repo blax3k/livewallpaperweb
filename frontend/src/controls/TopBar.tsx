@@ -5,6 +5,7 @@ import { ImageLibraryModal } from './modals/ImageLibraryModal';
 import { Button } from '../components/Button';
 
 interface TopBarProps {
+  projectId: string;
   scenes: SceneOption[];
   currentSceneName: string | null;
   sceneLoaded: boolean;
@@ -22,7 +23,7 @@ interface TopBarProps {
   onGyroModeToggle: () => void;
 }
 
-export function TopBar({ scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, onBack, onSceneSelect, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }: TopBarProps) {
+export function TopBar({projectId, scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, onBack, onSceneSelect, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }: TopBarProps) {
   const [libraryOpen, setLibraryOpen] = useState(false);
 
 
@@ -35,6 +36,7 @@ export function TopBar({ scenes, currentSceneName, sceneLoaded, isSaving, phoneG
       {libraryOpen && (
         <ImageLibraryModal
           onClose={() => setLibraryOpen(false)}
+          projectId={projectId}
         />
       )}
       <PhoneGuideControl

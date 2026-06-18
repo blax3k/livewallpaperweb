@@ -3,6 +3,7 @@ import { randomUUID } from 'crypto';
 import sharp from 'sharp';
 import type { ImageStorage } from '../../storage';
 import { deleteImageRecordById, insertImageRecord, selectImages } from './imageRepository';
+import { HttpStatus } from '../../utils/httpStatus';
 
 const ALLOWED_MIME_TYPES = new Set(['image/png', 'image/jpeg', 'image/gif', 'image/webp']);
 const MIME_TO_EXT: Record<string, string> = {
@@ -20,12 +21,12 @@ export class ImageUploadError extends Error {
 
 async function buildImageUpload(part?: MultipartFile) {
   if (!part) {
-    throw new ImageUploadError(400, { error: 'No file uploaded' });
+    throw new ImageUploadError(HttpStatus.BAD_REQUEST, { error: 'No file uploaded' });
   }
 
   if (!ALLOWED_MIME_TYPES.has(part.mimetype)) {
     part.file.resume();
-    throw new ImageUploadError(400, {
+    throw new ImageUploadError(HttpStatus.BAD_REQUEST, {
       error: 'Unsupported file type. Allowed: png, jpg, gif, webp',
     });
   }
@@ -36,6 +37,10 @@ async function buildImageUpload(part?: MultipartFile) {
   const chunks: Buffer[] = [];
   for await (const chunk of part.file) {
     chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+
+  if (part.file.truncated) {
+    throw new ImageUploadError(HttpStatus.PAYLOAD_TOO_LARGE, { error: 'File too large. Maximum size is 100MB.' });
   }
 
   const buffer = Buffer.concat(chunks);
@@ -49,15 +54,15 @@ async function buildImageUpload(part?: MultipartFile) {
   };
 }
 
-export async function listImages() {
-  return selectImages();
+export async function listImages(projectId: string) {
+  return selectImages(projectId);
 }
 
 async function generateThumbnail(buffer: Buffer): Promise<Buffer> {
   return sharp(buffer).resize(256, 256, { fit: 'inside', withoutEnlargement: true }).jpeg({ quality: 85 }).toBuffer();
 }
 
-export async function uploadImage(part: MultipartFile | undefined, storage: ImageStorage, thumbnailStorage: ImageStorage) {
+export async function uploadImage(projectId: string | undefined, part: MultipartFile | undefined, storage: ImageStorage, thumbnailStorage: ImageStorage) {
   const upload = await buildImageUpload(part);
   await storage.save(upload.filename, upload.buffer);
 
@@ -76,6 +81,7 @@ export async function uploadImage(part: MultipartFile | undefined, storage: Imag
       originalName: upload.originalName,
       mimeType: upload.mimeType,
       sizeBytes: upload.sizeBytes,
+      projectId: projectId,
       thumbFilename,
     });
   } catch (err) {

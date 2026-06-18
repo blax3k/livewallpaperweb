@@ -1,0 +1,66 @@
+import { useState, useEffect, useRef } from 'react';
+import { imagesApi } from '../api';
+import type { ImageRecord } from '../api';
+
+export function getUploadUrl(filename: string) {
+  return `/uploads/${filename}`;
+}
+
+export function getImageThumbnailUrl(thumbFilename: string) {
+  return `/image-thumbnails/${thumbFilename}`;
+}
+
+export function useImageLibrary(projectId: string, onImageDeleted?: (image: ImageRecord) => void) {
+  const [images, setImages] = useState<ImageRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const [previewImage, setPreviewImage] = useState<ImageRecord | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<ImageRecord | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    imagesApi.list(projectId)
+      .then((records) => { setImages(records); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, [projectId]);
+
+  const handleDelete = (image: ImageRecord, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setConfirmDelete(image);
+  };
+
+  const handleDeleteConfirmed = async () => {
+    if (!confirmDelete) return;
+    await imagesApi.delete(confirmDelete.id);
+    setImages(prev => prev.filter(i => i.id !== confirmDelete.id));
+    onImageDeleted?.(confirmDelete);
+    setConfirmDelete(null);
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const record = await imagesApi.upload(projectId, file);
+      setImages(prev => [record, ...prev]);
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  };
+
+  return {
+    images,
+    loading,
+    uploading,
+    previewImage,
+    setPreviewImage,
+    confirmDelete,
+    setConfirmDelete,
+    fileInputRef,
+    handleDelete,
+    handleDeleteConfirmed,
+    handleFileChange,
+  };
+}

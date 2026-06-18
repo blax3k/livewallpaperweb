@@ -1,75 +1,27 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import './CreateSpriteModal.scss';
 import { Button } from '../../components/Button';
+import { useImageLibrary, getUploadUrl, getImageThumbnailUrl } from '../../hooks/useImageLibrary';
 
-interface ImageRecord {
-  id: string;
-  filename: string;
-  original_name: string;
-  mime_type: string;
-  size_bytes: number;
-  created_at: string;
-  thumb_filename: string | null;
-}
-
-function getUploadUrl(filename: string) {
-  return `/uploads/${filename}`;
-}
-
-function getImageThumbnailUrl(thumbFilename: string) {
-  return `/image-thumbnails/${thumbFilename}`;
-}
-
-export function CreateSpriteModal({ onSelect, onClose }: { onSelect: (textureResource: string) => void; onClose: () => void }) {
-  const [images, setImages] = useState<ImageRecord[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
+export function CreateSpriteModal({ onSelect, onClose, projectId }: { onSelect: (textureResource: string) => void; onClose: () => void; projectId: string; }) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [previewImage, setPreviewImage] = useState<ImageRecord | null>(null);
-  const [confirmDelete, setConfirmDelete] = useState<ImageRecord | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const fetchImages = () => {
-    fetch('/api/images')
-      .then(r => r.json())
-      .then((records: ImageRecord[]) => { setImages(records); setLoading(false); })
-      .catch(() => setLoading(false));
-  };
-
-  useEffect(() => { fetchImages(); }, []);
-
-  const handleDelete = async (image: ImageRecord, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setConfirmDelete(image);
-  };
-
-  const handleDeleteConfirmed = async () => {
-    if (!confirmDelete) return;
-    const res = await fetch(`/api/images/${confirmDelete.id}`, { method: 'DELETE' });
-    if (res.ok) {
-      setImages(prev => prev.filter(i => i.id !== confirmDelete.id));
-      if (selectedImage === getUploadUrl(confirmDelete.filename)) setSelectedImage(null);
-    }
-    setConfirmDelete(null);
-  };
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
-    const form = new FormData();
-    form.append('file', file);
-    try {
-      const res = await fetch('/api/images', { method: 'POST', body: form });
-      if (!res.ok) throw new Error('Upload failed');
-      const record: ImageRecord = await res.json();
-      setImages(prev => [record, ...prev]);
-    } finally {
-      setUploading(false);
-      e.target.value = '';
-    }
-  };
+  const {
+    images,
+    loading,
+    uploading,
+    previewImage,
+    setPreviewImage,
+    confirmDelete,
+    setConfirmDelete,
+    fileInputRef,
+    handleDelete,
+    handleDeleteConfirmed,
+    handleFileChange,
+  } = useImageLibrary(projectId, (deleted) => {
+    if (selectedImage === getUploadUrl(deleted.filename)) setSelectedImage(null);
+  });
 
   return createPortal(
     <>
@@ -144,7 +96,7 @@ export function CreateSpriteModal({ onSelect, onClose }: { onSelect: (textureRes
       <div className="create-sprite-preview-overlay" onClick={() => setPreviewImage(null)}>
         <div className="create-sprite-preview-modal" onClick={e => e.stopPropagation()}>
           <button className="create-sprite-preview-close" onClick={() => setPreviewImage(null)}>✕</button>
-          <img src={getUploadUrl(previewImage!.filename)} alt={previewImage!.original_name} className="create-sprite-preview-img" />
+          <img src={getUploadUrl(previewImage.filename)} alt={previewImage.original_name} className="create-sprite-preview-img" />
         </div>
       </div>
     )}

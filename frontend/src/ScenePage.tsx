@@ -14,7 +14,7 @@ import type { FlagDefinition, RuleConditionGroup } from '@livewallpaper/types';
 
 interface ScenePageProps {
   initialSceneId?: string;
-  projectId?: string;
+  projectId: string;
   onBack?: () => void;
   onSaved?: () => void;
   onDirtyChange?: (isDirty: boolean) => void;
@@ -371,6 +371,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
   return (
     <>
       <TopBar
+        projectId={projectId}
         scenes={scenes}
         currentSceneName={currentSceneId}
         sceneLoaded={showSceneControls}
@@ -393,6 +394,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
           xFocus={xFocus}
           startTime={startTime}
           endTime={endTime}
+          projectId={projectId}
           spriteEntries={spriteEntries}
           selectedSprite={selectedSprite}
           onXFocusChange={handleXFocusChange}

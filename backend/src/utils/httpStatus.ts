@@ -6,4 +6,5 @@ export const HttpStatus = {
   UNAUTHORIZED: 401,
   NOT_FOUND: 404,
   CONFLICT: 409,
+  PAYLOAD_TOO_LARGE: 413,
 } as const;

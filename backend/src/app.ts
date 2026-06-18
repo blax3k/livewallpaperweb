@@ -39,8 +39,10 @@ export async function buildServer(deps: BuildServerDeps) {
     secret: process.env.COOKIE_SECRET,
   });
 
+  const MB = 1024 * 1024;
+  const MAX_UPLOAD_SIZE_MB = 100;
   await server.register(multipart, {
-    limits: { fileSize: 20 * 1024 * 1024 },
+    limits: { fileSize: MAX_UPLOAD_SIZE_MB * MB },
   });
 
   await server.register(staticFiles, {

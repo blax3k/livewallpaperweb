@@ -12,6 +12,7 @@ export interface SpriteEntry {
 
 interface SpriteListPanelProps {
   entries: SpriteEntry[];
+  projectId: string;
   selectedName: string | null;
   onToggle: (index: number) => void;
   onSelect: (index: number) => void;
@@ -23,7 +24,7 @@ interface SpriteListPanelProps {
   onEditConditions?: (index: number) => void;
 }
 
-export function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onAdd, onChangeTexture, onDelete, onEditTexture, onRename, onEditConditions }: SpriteListPanelProps) {
+export function SpriteListPanel({ entries, projectId, selectedName, onToggle, onSelect, onAdd, onChangeTexture, onDelete, onEditTexture, onRename, onEditConditions }: SpriteListPanelProps) {
   const [showModal, setShowModal] = useState(false);
   const [changeTextureIndex, setChangeTextureIndex] = useState<number | null>(null);
   const [menuOpenIndex, setMenuOpenIndex] = useState<number | null>(null);
@@ -203,6 +204,7 @@ export function SpriteListPanel({ entries, selectedName, onToggle, onSelect, onA
         <CreateSpriteModal
           onSelect={handleImageSelected}
           onClose={() => { setShowModal(false); setChangeTextureIndex(null); }}
+          projectId={projectId}
         />
       )}
     </div>
