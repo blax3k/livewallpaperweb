@@ -9,7 +9,8 @@ import { useNotifications } from './hooks/useNotifications';
 import { useSceneRenderer } from './hooks/useSceneRenderer';
 import { useSpriteDrag } from './hooks/useSpriteDrag';
 import { useKeyboardControls } from './hooks/useKeyboardControls';
-import { flagsApi } from './api';
+import { computeSceneSize, collectTextureResources, formatBytes } from './utils/sceneSize';
+import { flagsApi, imagesApi } from './api';
 import type { FlagDefinition, RuleConditionGroup } from '@livewallpaper/types';
 
 interface ScenePageProps {
@@ -76,10 +77,34 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     handleZoomAtPoint,
     handleCenter,
     zoom,
+    conditionsVersion,
     gyroMode,
     handleGyroModeToggle,
     handleGyroOffset,
   } = useSceneRenderer(notify, onSaved);
+
+  const [sceneSize, setSceneSize] = useState<{ label: string; title: string } | null>(null);
+
+  useEffect(() => {
+    const sceneData = rendererRef.current?.getSceneData();
+    if (!sceneData) { setSceneSize(null); return; }
+
+    const resources = collectTextureResources(sceneData);
+    const filenames = [...resources]
+      .filter(r => r.startsWith('/uploads/'))
+      .map(r => r.slice('/uploads/'.length));
+
+    let cancelled = false;
+    imagesApi.getSizesByFilenames(filenames).then(sizeMap => {
+      if (cancelled) return;
+      const breakdown = computeSceneSize(sceneData, sizeMap);
+      setSceneSize({
+        label: formatBytes(breakdown.totalBytes),
+        title: `Images: ${formatBytes(breakdown.imageBytes)} · JSON: ${formatBytes(breakdown.jsonBytes)}`,
+      });
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [spriteEntries, conditionsVersion, rendererRef]);
 
   useEffect(() => {
     onDirtyChange?.(isDirty);
@@ -387,6 +412,8 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
         zoom={zoom}
         gyroMode={gyroMode}
         onGyroModeToggle={handleGyroModeToggle}
+        sceneSizeLabel={sceneSize?.label}
+        sceneSizeTitle={sceneSize?.title}
       />
       <div className="app-content">
         <SceneEditorPanel

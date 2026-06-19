@@ -29,6 +29,12 @@ body {
   min-width: 3.5em;
   text-align: center;
 }
+.top-bar .scene-size-indicator {
+  color: #aaa;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  cursor: default;
+}
 .top-bar .control-group {
   margin-bottom: 0;
   display: flex;

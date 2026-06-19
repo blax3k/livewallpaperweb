@@ -111,6 +111,14 @@ export const imagesApi = {
   delete(imageId: string): Promise<void> {
     return request<void>(`/api/images/${imageId}`, { method: 'DELETE' });
   },
+
+  getSizesByFilenames(filenames: string[]): Promise<Record<string, number>> {
+    return request<Record<string, number>>('/api/images/by-filenames', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filenames }),
+    });
+  },
 };
 
 export const flagsApi = {

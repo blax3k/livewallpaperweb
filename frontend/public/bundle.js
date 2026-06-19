@@ -64292,6 +64292,13 @@ ${parts.join("\n")}
     },
     delete(imageId) {
       return request(`/api/images/${imageId}`, { method: "DELETE" });
+    },
+    getSizesByFilenames(filenames) {
+      return request("/api/images/by-filenames", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filenames })
+      });
     }
   };
   var flagsApi = {
@@ -65399,7 +65406,7 @@ ${parts.join("\n")}
 
   // src/controls/TopBar.tsx
   var import_jsx_runtime12 = __toESM(require_jsx_runtime());
-  function TopBar({ projectId, scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, onBack, onSceneSelect, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }) {
+  function TopBar({ projectId, scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, sceneSizeLabel, sceneSizeTitle, onBack, onSceneSelect, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }) {
     const [libraryOpen, setLibraryOpen] = (0, import_react6.useState)(false);
     return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "top-bar", children: [
       onBack && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Button, { onClick: onBack, title: "Back to scenes", children: "\u2190 Scenes" }),
@@ -65436,6 +65443,7 @@ ${parts.join("\n")}
           children: gyroMode ? "\u{1F4F1} Gyro" : "\u{1F5B1} Default"
         }
       ),
+      sceneSizeLabel && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "scene-size-indicator", title: sceneSizeTitle, children: sceneSizeLabel }),
       /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Button, { onClick: onSave, disabled: isSaving || !sceneLoaded, children: isSaving ? "Saving..." : "Save Scene" })
     ] });
   }
@@ -69681,7 +69689,7 @@ ${e2}`);
     onNotifyRef.current = onNotify;
     const onSavedRef = (0, import_react10.useRef)(onSaved);
     onSavedRef.current = onSaved;
-    const [, setConditionsVersion] = (0, import_react10.useState)(0);
+    const [conditionsVersion, setConditionsVersion] = (0, import_react10.useState)(0);
     const bumpConditionsVersion = (0, import_react10.useCallback)(() => setConditionsVersion((v2) => v2 + 1), []);
     const handleSelectConditionSet = (0, import_react10.useCallback)((spriteIndex, conditionIndex) => {
       const renderer = rendererRef.current;
@@ -70006,6 +70014,7 @@ ${e2}`);
       handleZoomAtPoint,
       handleCenter,
       zoom,
+      conditionsVersion,
       gyroMode,
       handleGyroModeToggle,
       handleGyroOffset
@@ -70169,6 +70178,39 @@ ${e2}`);
     }, [selectedSprite, rendererRef, history, onUndoApply, onRedoApply, onSpriteMove, onMarkDirty]);
   }
 
+  // src/utils/sceneSize.ts
+  function collectTextureResources(scene) {
+    const resources = /* @__PURE__ */ new Set();
+    for (const sprite of scene.sprites) {
+      resources.add(sprite.textureResource);
+      for (const block of sprite.conditions ?? []) {
+        for (const mod of block.modifications ?? []) {
+          if (mod.type === "texture" && mod.textureResource) {
+            resources.add(mod.textureResource);
+          }
+        }
+      }
+    }
+    return resources;
+  }
+  function computeSceneSize(scene, sizesByFilename) {
+    const jsonBytes = new TextEncoder().encode(JSON.stringify(scene)).length;
+    const resources = collectTextureResources(scene);
+    let imageBytes = 0;
+    for (const resource of resources) {
+      if (!resource.startsWith("/uploads/")) continue;
+      const filename = resource.slice("/uploads/".length);
+      imageBytes += sizesByFilename[filename] ?? 0;
+    }
+    return { jsonBytes, imageBytes, totalBytes: jsonBytes + imageBytes };
+  }
+  function formatBytes(bytes) {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+  }
+
   // src/ScenePage.tsx
   var import_jsx_runtime15 = __toESM(require_jsx_runtime());
   function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyChange }) {
@@ -70226,10 +70268,34 @@ ${e2}`);
       handleZoomAtPoint,
       handleCenter,
       zoom,
+      conditionsVersion,
       gyroMode,
       handleGyroModeToggle,
       handleGyroOffset
     } = useSceneRenderer(notify, onSaved);
+    const [sceneSize, setSceneSize] = (0, import_react13.useState)(null);
+    (0, import_react13.useEffect)(() => {
+      const sceneData = rendererRef.current?.getSceneData();
+      if (!sceneData) {
+        setSceneSize(null);
+        return;
+      }
+      const resources = collectTextureResources(sceneData);
+      const filenames = [...resources].filter((r2) => r2.startsWith("/uploads/")).map((r2) => r2.slice("/uploads/".length));
+      let cancelled = false;
+      imagesApi.getSizesByFilenames(filenames).then((sizeMap) => {
+        if (cancelled) return;
+        const breakdown = computeSceneSize(sceneData, sizeMap);
+        setSceneSize({
+          label: formatBytes(breakdown.totalBytes),
+          title: `Images: ${formatBytes(breakdown.imageBytes)} \xB7 JSON: ${formatBytes(breakdown.jsonBytes)}`
+        });
+      }).catch(() => {
+      });
+      return () => {
+        cancelled = true;
+      };
+    }, [spriteEntries, conditionsVersion, rendererRef]);
     (0, import_react13.useEffect)(() => {
       onDirtyChange?.(isDirty);
     }, [isDirty, onDirtyChange]);
@@ -70487,7 +70553,9 @@ ${e2}`);
           onCenter: handleCenter,
           zoom,
           gyroMode,
-          onGyroModeToggle: handleGyroModeToggle
+          onGyroModeToggle: handleGyroModeToggle,
+          sceneSizeLabel: sceneSize?.label,
+          sceneSizeTitle: sceneSize?.title
         }
       ),
       /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "app-content", children: [

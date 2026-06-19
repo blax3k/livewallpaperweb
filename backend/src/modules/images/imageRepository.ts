@@ -25,3 +25,12 @@ export async function deleteImageRecordById(id: string) {
   const result = await pool.query('DELETE FROM images WHERE id = $1 RETURNING filename, thumb_filename', [id]);
   return result.rows[0] ?? null;
 }
+
+export async function selectImageSizesByFilenames(filenames: string[]): Promise<Record<string, number>> {
+  if (filenames.length === 0) return {};
+  const result = await pool.query<{ filename: string; size_bytes: number }>(
+    'SELECT filename, size_bytes FROM images WHERE filename = ANY($1)',
+    [filenames],
+  );
+  return Object.fromEntries(result.rows.map(r => [r.filename, r.size_bytes]));
+}

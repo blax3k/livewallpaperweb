@@ -13,6 +13,8 @@ interface TopBarProps {
   phoneGuideVisible: boolean;
   zoom: number;
   gyroMode: boolean;
+  sceneSizeLabel?: string;
+  sceneSizeTitle?: string;
   onBack?: () => void;
   onSceneSelect: (sceneName: string) => void;
   onPhoneGuideToggle: (visible: boolean) => void;
@@ -23,7 +25,7 @@ interface TopBarProps {
   onGyroModeToggle: () => void;
 }
 
-export function TopBar({projectId, scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, onBack, onSceneSelect, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }: TopBarProps) {
+export function TopBar({projectId, scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, sceneSizeLabel, sceneSizeTitle, onBack, onSceneSelect, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }: TopBarProps) {
   const [libraryOpen, setLibraryOpen] = useState(false);
 
 
@@ -56,6 +58,11 @@ export function TopBar({projectId, scenes, currentSceneName, sceneLoaded, isSavi
       >
         {gyroMode ? '📱 Gyro' : '🖱 Default'}
       </Button>
+      {sceneSizeLabel && (
+        <span className="scene-size-indicator" title={sceneSizeTitle}>
+          {sceneSizeLabel}
+        </span>
+      )}
       <Button onClick={onSave} disabled={isSaving || !sceneLoaded}>
         {isSaving ? 'Saving...' : 'Save Scene'}
       </Button>

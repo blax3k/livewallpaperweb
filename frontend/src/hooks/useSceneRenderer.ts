@@ -39,7 +39,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
   // changed. There's no separate "active condition" state here — a sprite with one or more
   // condition sets always has exactly one selected, tracked entirely inside the renderer, and
   // queried fresh via renderer.getSelectedConditionIndex(spriteIndex) wherever it's needed.
-  const [, setConditionsVersion] = useState(0);
+  const [conditionsVersion, setConditionsVersion] = useState(0);
   const bumpConditionsVersion = useCallback(() => setConditionsVersion(v => v + 1), []);
 
   // Declared early (before loadScene/handleSpriteSelect) since they depend on it.
@@ -430,6 +430,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     handleZoomAtPoint,
     handleCenter,
     zoom,
+    conditionsVersion,
     gyroMode,
     handleGyroModeToggle,
     handleGyroOffset,

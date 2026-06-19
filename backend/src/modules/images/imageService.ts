@@ -2,7 +2,7 @@ import type { MultipartFile } from '@fastify/multipart';
 import { randomUUID } from 'crypto';
 import sharp from 'sharp';
 import type { ImageStorage } from '../../storage';
-import { deleteImageRecordById, insertImageRecord, selectImages } from './imageRepository';
+import { deleteImageRecordById, insertImageRecord, selectImages, selectImageSizesByFilenames } from './imageRepository';
 import { HttpStatus } from '../../utils/httpStatus';
 
 const ALLOWED_MIME_TYPES = new Set(['image/png', 'image/jpeg', 'image/gif', 'image/webp']);
@@ -89,6 +89,10 @@ export async function uploadImage(projectId: string | undefined, part: Multipart
     if (thumbFilename) await thumbnailStorage.delete(thumbFilename);
     throw err;
   }
+}
+
+export async function getImageSizesByFilenames(filenames: string[]) {
+  return selectImageSizesByFilenames(filenames);
 }
 
 export async function deleteImage(id: string, storage: ImageStorage, thumbnailStorage: ImageStorage) {

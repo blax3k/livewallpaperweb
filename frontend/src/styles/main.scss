@@ -31,6 +31,13 @@ body {
     text-align: center;
   }
 
+  .scene-size-indicator {
+    color: #aaa;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    cursor: default;
+  }
+
   .control-group {
     margin-bottom: 0;
     display: flex;

@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import type { ImageStorage } from '../../storage';
-import { deleteImage, ImageUploadError, listImages, uploadImage } from './imageService';
+import { deleteImage, getImageSizesByFilenames, ImageUploadError, listImages, uploadImage } from './imageService';
 import { HttpStatus } from '../../utils/httpStatus';
 
 interface ImageRouteDeps {
@@ -28,6 +28,10 @@ export async function registerImageRoutes(
       }
       throw err;
     }
+  });
+
+  server.post<{ Body: { filenames: string[] } }>('/api/images/by-filenames', async (req) => {
+    return getImageSizesByFilenames(req.body.filenames ?? []);
   });
 
   server.delete<{ Params: { id: string } }>('/api/images/:id', async (req, reply) => {
