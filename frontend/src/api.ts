@@ -46,11 +46,11 @@ export const scenesApi = {
     return request<SceneDetail>(`/api/scenes/${sceneId}`);
   },
 
-  create(name: string, label: string, data: object, projectId?: string): Promise<SceneSummary> {
+  create(name: string, label: string, data: object, projectId?: string, copyFromSceneId?: string): Promise<SceneSummary> {
     return request<SceneSummary>('/api/scenes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, label, data, ...(projectId && { projectId }) }),
+      body: JSON.stringify({ name, label, data, ...(projectId && { projectId }), ...(copyFromSceneId && { copyFromSceneId }) }),
     });
   },
 

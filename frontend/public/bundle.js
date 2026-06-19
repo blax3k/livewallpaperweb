@@ -64238,11 +64238,11 @@ ${parts.join("\n")}
     get(sceneId) {
       return request(`/api/scenes/${sceneId}`);
     },
-    create(name, label, data, projectId) {
+    create(name, label, data, projectId, copyFromSceneId) {
       return request("/api/scenes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, label, data, ...projectId && { projectId } })
+        body: JSON.stringify({ name, label, data, ...projectId && { projectId }, ...copyFromSceneId && { copyFromSceneId } })
       });
     },
     update(sceneId, label, data) {
@@ -70385,7 +70385,7 @@ ${e2}`);
       onMarkDirty: markDirty
     });
     (0, import_react13.useEffect)(() => {
-      fetch("/api/scenes").then((r2) => r2.json()).then(
+      scenesApi.list().then(
         (data) => setScenes(data.map((s2) => ({ value: s2.id, label: s2.label, thumbnail_url: s2.thumbnail_url })))
       ).catch(() => {
       });
@@ -70899,25 +70899,14 @@ ${e2}`);
     const [availableFlags, setAvailableFlags] = (0, import_react17.useState)([]);
     const [flagsModalLoading, setFlagsModalLoading] = (0, import_react17.useState)(false);
     (0, import_react17.useEffect)(() => {
-      fetch(`/api/scenes${projectId ? `?projectId=${encodeURIComponent(projectId)}` : ""}`).then((r2) => r2.json()).then((records) => {
+      scenesApi.list(projectId).then((records) => {
         setScenes(records);
         setLoading(false);
       }).catch(() => setLoading(false));
     }, []);
     const handleCreate = (label, copyFromSceneId) => {
       const name = label.trim().toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
-      fetch("/api/scenes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, label: label.trim(), data: { sprites: [], xFocus: 0 }, projectId, copyFromSceneId })
-      }).then(async (r2) => {
-        const payload = await r2.json().catch(() => ({}));
-        if (!r2.ok) {
-          const err = payload;
-          throw new Error(err.error ?? err.message ?? "Failed to create scene");
-        }
-        return payload;
-      }).then((scene) => {
+      scenesApi.create(name, label.trim(), { sprites: [], xFocus: 0 }, projectId, copyFromSceneId).then((scene) => {
         if (!scene?.id || !scene?.name) {
           throw new Error("Invalid scene response from server");
         }

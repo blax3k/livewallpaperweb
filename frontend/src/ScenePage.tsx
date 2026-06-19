@@ -10,7 +10,7 @@ import { useSceneRenderer } from './hooks/useSceneRenderer';
 import { useSpriteDrag } from './hooks/useSpriteDrag';
 import { useKeyboardControls } from './hooks/useKeyboardControls';
 import { computeSceneSize, collectTextureResources, formatBytes } from './utils/sceneSize';
-import { flagsApi, imagesApi } from './api';
+import { scenesApi, flagsApi, imagesApi } from './api';
 import type { FlagDefinition, RuleConditionGroup } from '@livewallpaper/types';
 
 interface ScenePageProps {
@@ -219,9 +219,8 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
   });
 
   useEffect(() => {
-    fetch('/api/scenes')
-      .then(r => r.json())
-      .then((data: { id: string; label: string; thumbnail_url?: string }[]) =>
+    scenesApi.list()
+      .then((data) =>
         setScenes(data.map(s => ({ value: s.id, label: s.label, thumbnail_url: s.thumbnail_url })))
       )
       .catch(() => {});

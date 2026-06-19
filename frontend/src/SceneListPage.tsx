@@ -15,11 +15,6 @@ interface SceneRecord {
   thumbnail_url: string;
 }
 
-interface ApiError {
-  error?: string;
-  message?: string;
-}
-
 interface SceneListPageProps {
   onSelect: (scene: SceneRecord) => void;
   onBack?: () => void;
@@ -45,27 +40,14 @@ export function SceneListPage({ onSelect, onBack, onFlags, onRules, projectId, p
   const [flagsModalLoading, setFlagsModalLoading] = useState(false);
 
   useEffect(() => {
-    fetch(`/api/scenes${projectId ? `?projectId=${encodeURIComponent(projectId)}` : ''}`)
-      .then(r => r.json())
-      .then((records: SceneRecord[]) => { setScenes(records); setLoading(false); })
+    scenesApi.list(projectId)
+      .then((records) => { setScenes(records); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
 
   const handleCreate = (label: string, copyFromSceneId?: string) => {
     const name = label.trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
-    fetch('/api/scenes', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, label: label.trim(), data: { sprites: [], xFocus: 0 }, projectId, copyFromSceneId }),
-    })
-      .then(async (r) => {
-        const payload = await r.json().catch(() => ({} as ApiError));
-        if (!r.ok) {
-          const err = payload as ApiError;
-          throw new Error(err.error ?? err.message ?? 'Failed to create scene');
-        }
-        return payload as SceneRecord;
-      })
+    scenesApi.create(name, label.trim(), { sprites: [], xFocus: 0 }, projectId, copyFromSceneId)
       .then((scene) => {
         if (!scene?.id || !scene?.name) {
           throw new Error('Invalid scene response from server');
