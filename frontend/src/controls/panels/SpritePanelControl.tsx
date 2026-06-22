@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Link2, Unlink2 } from 'lucide-react';
 import './SpritePanelControl.scss';
 import { SliderRow } from '../../components/SliderRow';
 import { DISPLAY_SCALE, toDisplay, toInternal } from '../../displayScale';
@@ -22,6 +23,8 @@ interface SpritePanelControlProps {
   onSizeCommit?: (width: number, height: number) => void;
 }
 
+const LINK_ICON_SIZE = 12;
+
 const COORD_MIN = -10 * DISPLAY_SCALE;
 const COORD_MAX = 10 * DISPLAY_SCALE;
 const COORD_STEP = 1;
@@ -34,19 +37,58 @@ const SIZE_MIN = Math.round(0.01 * DISPLAY_SCALE);
 const SIZE_MAX = 20 * DISPLAY_SCALE;
 const SIZE_STEP = 1;
 
+
 export function SpritePanelControl({ spriteName, x, y, depth, width, height, disabled, onChange, onChangeStart, onChangeCommit, onDepthChange, onDepthChangeStart, onDepthCommit, onSizeChange, onSizeChangeStart, onSizeCommit }: SpritePanelControlProps) {
-  const aspectRatio = width > 0 && height > 0 ? height / width : 1;
+  const [linked, setLinked] = useState(true);
+  // Ratio captured at unlink time; enforced again when relinking.
+  const lockedRatio = useRef<number | null>(null);
+
+  // Reset when a different sprite is selected.
+  useEffect(() => {
+    lockedRatio.current = null;
+    setLinked(true);
+  }, [spriteName]);
+
+  const liveRatio = width > 0 && height > 0 ? height / width : 1;
+  const effectiveRatio = lockedRatio.current ?? liveRatio;
+
+  const handleToggleLinked = () => {
+    if (linked) {
+      lockedRatio.current = liveRatio;
+      setLinked(false);
+    } else {
+      setLinked(true);
+      if (lockedRatio.current !== null) {
+        const ratio = lockedRatio.current;
+        const [newW, newH] = width >= height
+          ? [width, Math.max(toInternal(SIZE_MIN), width * ratio)]
+          : [Math.max(toInternal(SIZE_MIN), height / ratio), height];
+        onSizeChangeStart?.();
+        onSizeChange(newW, newH);
+        onSizeCommit?.(newW, newH);
+      }
+    }
+  };
 
   const handleWidthChange = (displayW: number) => {
     const newW = toInternal(displayW);
-    const newH = Math.max(toInternal(SIZE_MIN), newW * aspectRatio);
+    const newH = linked ? Math.max(toInternal(SIZE_MIN), newW * effectiveRatio) : height;
     onSizeChange(newW, newH);
   };
 
   const handleHeightChange = (displayH: number) => {
     const newH = toInternal(displayH);
-    const newW = Math.max(toInternal(SIZE_MIN), newH / aspectRatio);
+    const newW = linked ? Math.max(toInternal(SIZE_MIN), newH / effectiveRatio) : width;
     onSizeChange(newW, newH);
+  };
+
+  const handleSizeCommit = (displayValue: number, axis: 'width' | 'height') => {
+    const v = toInternal(displayValue);
+    if (v < toInternal(SIZE_MIN)) return;
+    const [newW, newH] = axis === 'width'
+      ? [v, linked ? Math.max(toInternal(SIZE_MIN), v * effectiveRatio) : height]
+      : [linked ? Math.max(toInternal(SIZE_MIN), v / effectiveRatio) : width, v];
+    onSizeCommit?.(newW, newH);
   };
 
   const displayDepth = Math.min(DEPTH_MAX, Math.max(DEPTH_MIN, toDisplay(depth)));
@@ -83,24 +125,36 @@ export function SpritePanelControl({ spriteName, x, y, depth, width, height, dis
         onFocus={() => onDepthChangeStart?.(depth)}
         onCommit={(v) => { if (toInternal(v) >= toInternal(DEPTH_MIN)) onDepthCommit?.(toInternal(v)); }}
       />
-      <SliderRow
-        label="W" min={SIZE_MIN} max={SIZE_MAX} step={SIZE_STEP}
-        value={displayWidth} disabled={disabled} labelWidth={12} decimalPlaces={0}
-        onPointerDown={() => onSizeChangeStart?.()}
-        onChange={(v) => { if (toInternal(v) >= toInternal(SIZE_MIN)) handleWidthChange(v); }}
-        onPointerUp={(v) => onSizeCommit?.(toInternal(v), Math.max(toInternal(SIZE_MIN), toInternal(v) * aspectRatio))}
-        onFocus={() => onSizeChangeStart?.()}
-        onCommit={(v) => { if (toInternal(v) >= toInternal(SIZE_MIN)) onSizeCommit?.(toInternal(v), Math.max(toInternal(SIZE_MIN), toInternal(v) * aspectRatio)); }}
-      />
-      <SliderRow
-        label="H" min={SIZE_MIN} max={SIZE_MAX} step={SIZE_STEP}
-        value={displayHeight} disabled={disabled} labelWidth={12} decimalPlaces={0}
-        onPointerDown={() => onSizeChangeStart?.()}
-        onChange={(v) => { if (toInternal(v) >= toInternal(SIZE_MIN)) handleHeightChange(v); }}
-        onPointerUp={(v) => onSizeCommit?.(Math.max(toInternal(SIZE_MIN), toInternal(v) / aspectRatio), toInternal(v))}
-        onFocus={() => onSizeChangeStart?.()}
-        onCommit={(v) => { if (toInternal(v) >= toInternal(SIZE_MIN)) onSizeCommit?.(Math.max(toInternal(SIZE_MIN), toInternal(v) / aspectRatio), toInternal(v)); }}
-      />
+      <div className="size-controls">
+        <SliderRow
+          label="W" min={SIZE_MIN} max={SIZE_MAX} step={SIZE_STEP}
+          value={displayWidth} disabled={disabled} labelWidth={12} decimalPlaces={0}
+          onPointerDown={() => onSizeChangeStart?.()}
+          onChange={(v) => { if (toInternal(v) >= toInternal(SIZE_MIN)) handleWidthChange(v); }}
+          onPointerUp={(v) => handleSizeCommit(v, 'width')}
+          onFocus={() => onSizeChangeStart?.()}
+          onCommit={(v) => handleSizeCommit(v, 'width')}
+        />
+        <SliderRow
+          label="H" min={SIZE_MIN} max={SIZE_MAX} step={SIZE_STEP}
+          value={displayHeight} disabled={disabled} labelWidth={12} decimalPlaces={0}
+          onPointerDown={() => onSizeChangeStart?.()}
+          onChange={(v) => { if (toInternal(v) >= toInternal(SIZE_MIN)) handleHeightChange(v); }}
+          onPointerUp={(v) => handleSizeCommit(v, 'height')}
+          onFocus={() => onSizeChangeStart?.()}
+          onCommit={(v) => handleSizeCommit(v, 'height')}
+        />
+        <div className="aspect-ratio-toggle">
+          <button
+            className={`aspect-ratio-toggle__btn${linked ? ' aspect-ratio-toggle__btn--linked' : ''}`}
+            onClick={handleToggleLinked}
+            title={linked ? 'Unlink width and height' : 'Link width and height'}
+            tabIndex={-1}
+          >
+            {linked ? <Link2 size={LINK_ICON_SIZE} /> : <Unlink2 size={LINK_ICON_SIZE} />}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

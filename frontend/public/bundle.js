@@ -1337,7 +1337,7 @@
           return dispatcher;
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var React19 = require_react(), Internals = {
+        var React20 = require_react(), Internals = {
           d: {
             f: noop,
             r: function() {
@@ -1355,7 +1355,7 @@
           },
           p: 0,
           findDOMNode: null
-        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React19.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React20.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
         "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
           "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
         );
@@ -2890,7 +2890,7 @@
           "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
         }
         function validateOptionProps(element, props) {
-          null == props.value && ("object" === typeof props.children && null !== props.children ? React19.Children.forEach(props.children, function(child) {
+          null == props.value && ("object" === typeof props.children && null !== props.children ? React20.Children.forEach(props.children, function(child) {
             null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
               "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
             ));
@@ -18522,14 +18522,14 @@
           ));
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var Scheduler = require_scheduler(), React19 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+        var Scheduler = require_scheduler(), React20 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
         /* @__PURE__ */ Symbol.for("react.scope");
         var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity");
         /* @__PURE__ */ Symbol.for("react.legacy_hidden");
         /* @__PURE__ */ Symbol.for("react.tracing_marker");
         var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel");
         /* @__PURE__ */ Symbol.for("react.view_transition");
-        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React19.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React20.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
           pending: false,
           data: null,
           method: null,
@@ -21317,7 +21317,7 @@
           }
         };
         (function() {
-          var isomorphicReactPackageVersion = React19.version;
+          var isomorphicReactPackageVersion = React20.version;
           if ("19.2.5" !== isomorphicReactPackageVersion)
             throw Error(
               'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.5\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21671,18 +21671,18 @@
         function isValidElement(object) {
           return "object" === typeof object && null !== object && object.$$typeof === REACT_ELEMENT_TYPE;
         }
-        var React19 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React19.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
+        var React20 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React20.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
           return null;
         };
-        React19 = {
+        React20 = {
           react_stack_bottom_frame: function(callStackForError) {
             return callStackForError();
           }
         };
         var specialPropKeyWarningShown;
         var didWarnAboutElementRef = {};
-        var unknownOwnerDebugStack = React19.react_stack_bottom_frame.bind(
-          React19,
+        var unknownOwnerDebugStack = React20.react_stack_bottom_frame.bind(
+          React20,
           UnknownOwner
         )();
         var unknownOwnerDebugTask = createTask(getTaskName(UnknownOwner));
@@ -64176,11 +64176,11 @@ ${parts.join("\n")}
   });
 
   // src/client.tsx
-  var import_react23 = __toESM(require_react());
+  var import_react27 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/ScenePage.tsx
-  var import_react13 = __toESM(require_react());
+  var import_react17 = __toESM(require_react());
 
   // src/controls/panels/SpriteListPanel.tsx
   var import_react3 = __toESM(require_react());
@@ -64829,7 +64829,129 @@ ${parts.join("\n")}
   }
 
   // src/controls/panels/SpritePanelControl.tsx
+  var import_react7 = __toESM(require_react());
+
+  // ../node_modules/lucide-react/dist/esm/createLucideIcon.mjs
+  var import_react6 = __toESM(require_react(), 1);
+
+  // ../node_modules/lucide-react/dist/esm/shared/src/utils/mergeClasses.mjs
+  var mergeClasses = (...classes) => classes.filter((className, index, array) => {
+    return Boolean(className) && className.trim() !== "" && array.indexOf(className) === index;
+  }).join(" ").trim();
+
+  // ../node_modules/lucide-react/dist/esm/shared/src/utils/toKebabCase.mjs
+  var toKebabCase = (string) => string.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+
+  // ../node_modules/lucide-react/dist/esm/shared/src/utils/toCamelCase.mjs
+  var toCamelCase = (string) => string.replace(
+    /^([A-Z])|[\s-_]+(\w)/g,
+    (match, p1, p2) => p2 ? p2.toUpperCase() : p1.toLowerCase()
+  );
+
+  // ../node_modules/lucide-react/dist/esm/shared/src/utils/toPascalCase.mjs
+  var toPascalCase = (string) => {
+    const camelCase = toCamelCase(string);
+    return camelCase.charAt(0).toUpperCase() + camelCase.slice(1);
+  };
+
+  // ../node_modules/lucide-react/dist/esm/Icon.mjs
+  var import_react5 = __toESM(require_react(), 1);
+
+  // ../node_modules/lucide-react/dist/esm/defaultAttributes.mjs
+  var defaultAttributes = {
+    xmlns: "http://www.w3.org/2000/svg",
+    width: 24,
+    height: 24,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 2,
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  };
+
+  // ../node_modules/lucide-react/dist/esm/shared/src/utils/hasA11yProp.mjs
+  var hasA11yProp = (props) => {
+    for (const prop in props) {
+      if (prop.startsWith("aria-") || prop === "role" || prop === "title") {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  // ../node_modules/lucide-react/dist/esm/context.mjs
+  var import_react4 = __toESM(require_react(), 1);
+  var LucideContext = (0, import_react4.createContext)({});
+  var useLucideContext = () => (0, import_react4.useContext)(LucideContext);
+
+  // ../node_modules/lucide-react/dist/esm/Icon.mjs
+  var Icon = (0, import_react5.forwardRef)(
+    ({ color, size, strokeWidth, absoluteStrokeWidth, className = "", children, iconNode, ...rest }, ref) => {
+      const {
+        size: contextSize = 24,
+        strokeWidth: contextStrokeWidth = 2,
+        absoluteStrokeWidth: contextAbsoluteStrokeWidth = false,
+        color: contextColor = "currentColor",
+        className: contextClass = ""
+      } = useLucideContext() ?? {};
+      const calculatedStrokeWidth = absoluteStrokeWidth ?? contextAbsoluteStrokeWidth ? Number(strokeWidth ?? contextStrokeWidth) * 24 / Number(size ?? contextSize) : strokeWidth ?? contextStrokeWidth;
+      return (0, import_react5.createElement)(
+        "svg",
+        {
+          ref,
+          ...defaultAttributes,
+          width: size ?? contextSize ?? defaultAttributes.width,
+          height: size ?? contextSize ?? defaultAttributes.height,
+          stroke: color ?? contextColor,
+          strokeWidth: calculatedStrokeWidth,
+          className: mergeClasses("lucide", contextClass, className),
+          ...!children && !hasA11yProp(rest) && { "aria-hidden": "true" },
+          ...rest
+        },
+        [
+          ...iconNode.map(([tag, attrs]) => (0, import_react5.createElement)(tag, attrs)),
+          ...Array.isArray(children) ? children : [children]
+        ]
+      );
+    }
+  );
+
+  // ../node_modules/lucide-react/dist/esm/createLucideIcon.mjs
+  var createLucideIcon = (iconName, iconNode) => {
+    const Component = (0, import_react6.forwardRef)(
+      ({ className, ...props }, ref) => (0, import_react6.createElement)(Icon, {
+        ref,
+        iconNode,
+        className: mergeClasses(
+          `lucide-${toKebabCase(toPascalCase(iconName))}`,
+          `lucide-${iconName}`,
+          className
+        ),
+        ...props
+      })
+    );
+    Component.displayName = toPascalCase(iconName);
+    return Component;
+  };
+
+  // ../node_modules/lucide-react/dist/esm/icons/link-2.mjs
+  var __iconNode = [
+    ["path", { d: "M9 17H7A5 5 0 0 1 7 7h2", key: "8i5ue5" }],
+    ["path", { d: "M15 7h2a5 5 0 1 1 0 10h-2", key: "1b9ql8" }],
+    ["line", { x1: "8", x2: "16", y1: "12", y2: "12", key: "1jonct" }]
+  ];
+  var Link2 = createLucideIcon("link-2", __iconNode);
+
+  // ../node_modules/lucide-react/dist/esm/icons/unlink-2.mjs
+  var __iconNode2 = [
+    ["path", { d: "M15 7h2a5 5 0 0 1 0 10h-2m-6 0H7A5 5 0 0 1 7 7h2", key: "1re2ne" }]
+  ];
+  var Unlink2 = createLucideIcon("unlink-2", __iconNode2);
+
+  // src/controls/panels/SpritePanelControl.tsx
   var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+  var LINK_ICON_SIZE = 12;
   var COORD_MIN = -10 * DISPLAY_SCALE;
   var COORD_MAX = 10 * DISPLAY_SCALE;
   var COORD_STEP = 1;
@@ -64840,16 +64962,44 @@ ${parts.join("\n")}
   var SIZE_MAX = 20 * DISPLAY_SCALE;
   var SIZE_STEP = 1;
   function SpritePanelControl({ spriteName, x: x2, y: y2, depth, width, height, disabled, onChange, onChangeStart, onChangeCommit, onDepthChange, onDepthChangeStart, onDepthCommit, onSizeChange, onSizeChangeStart, onSizeCommit }) {
-    const aspectRatio = width > 0 && height > 0 ? height / width : 1;
+    const [linked, setLinked] = (0, import_react7.useState)(true);
+    const lockedRatio = (0, import_react7.useRef)(null);
+    (0, import_react7.useEffect)(() => {
+      lockedRatio.current = null;
+      setLinked(true);
+    }, [spriteName]);
+    const liveRatio = width > 0 && height > 0 ? height / width : 1;
+    const effectiveRatio = lockedRatio.current ?? liveRatio;
+    const handleToggleLinked = () => {
+      if (linked) {
+        lockedRatio.current = liveRatio;
+        setLinked(false);
+      } else {
+        setLinked(true);
+        if (lockedRatio.current !== null) {
+          const ratio = lockedRatio.current;
+          const [newW, newH] = width >= height ? [width, Math.max(toInternal(SIZE_MIN), width * ratio)] : [Math.max(toInternal(SIZE_MIN), height / ratio), height];
+          onSizeChangeStart?.();
+          onSizeChange(newW, newH);
+          onSizeCommit?.(newW, newH);
+        }
+      }
+    };
     const handleWidthChange = (displayW) => {
       const newW = toInternal(displayW);
-      const newH = Math.max(toInternal(SIZE_MIN), newW * aspectRatio);
+      const newH = linked ? Math.max(toInternal(SIZE_MIN), newW * effectiveRatio) : height;
       onSizeChange(newW, newH);
     };
     const handleHeightChange = (displayH) => {
       const newH = toInternal(displayH);
-      const newW = Math.max(toInternal(SIZE_MIN), newH / aspectRatio);
+      const newW = linked ? Math.max(toInternal(SIZE_MIN), newH / effectiveRatio) : width;
       onSizeChange(newW, newH);
+    };
+    const handleSizeCommit = (displayValue, axis) => {
+      const v2 = toInternal(displayValue);
+      if (v2 < toInternal(SIZE_MIN)) return;
+      const [newW, newH] = axis === "width" ? [v2, linked ? Math.max(toInternal(SIZE_MIN), v2 * effectiveRatio) : height] : [linked ? Math.max(toInternal(SIZE_MIN), v2 / effectiveRatio) : width, v2];
+      onSizeCommit?.(newW, newH);
     };
     const displayDepth = Math.min(DEPTH_MAX, Math.max(DEPTH_MIN, toDisplay(depth)));
     const displayWidth = Math.min(SIZE_MAX, Math.max(SIZE_MIN, toDisplay(width)));
@@ -64912,50 +65062,58 @@ ${parts.join("\n")}
           }
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-        SliderRow,
-        {
-          label: "W",
-          min: SIZE_MIN,
-          max: SIZE_MAX,
-          step: SIZE_STEP,
-          value: displayWidth,
-          disabled,
-          labelWidth: 12,
-          decimalPlaces: 0,
-          onPointerDown: () => onSizeChangeStart?.(),
-          onChange: (v2) => {
-            if (toInternal(v2) >= toInternal(SIZE_MIN)) handleWidthChange(v2);
-          },
-          onPointerUp: (v2) => onSizeCommit?.(toInternal(v2), Math.max(toInternal(SIZE_MIN), toInternal(v2) * aspectRatio)),
-          onFocus: () => onSizeChangeStart?.(),
-          onCommit: (v2) => {
-            if (toInternal(v2) >= toInternal(SIZE_MIN)) onSizeCommit?.(toInternal(v2), Math.max(toInternal(SIZE_MIN), toInternal(v2) * aspectRatio));
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "size-controls", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+          SliderRow,
+          {
+            label: "W",
+            min: SIZE_MIN,
+            max: SIZE_MAX,
+            step: SIZE_STEP,
+            value: displayWidth,
+            disabled,
+            labelWidth: 12,
+            decimalPlaces: 0,
+            onPointerDown: () => onSizeChangeStart?.(),
+            onChange: (v2) => {
+              if (toInternal(v2) >= toInternal(SIZE_MIN)) handleWidthChange(v2);
+            },
+            onPointerUp: (v2) => handleSizeCommit(v2, "width"),
+            onFocus: () => onSizeChangeStart?.(),
+            onCommit: (v2) => handleSizeCommit(v2, "width")
           }
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-        SliderRow,
-        {
-          label: "H",
-          min: SIZE_MIN,
-          max: SIZE_MAX,
-          step: SIZE_STEP,
-          value: displayHeight,
-          disabled,
-          labelWidth: 12,
-          decimalPlaces: 0,
-          onPointerDown: () => onSizeChangeStart?.(),
-          onChange: (v2) => {
-            if (toInternal(v2) >= toInternal(SIZE_MIN)) handleHeightChange(v2);
-          },
-          onPointerUp: (v2) => onSizeCommit?.(Math.max(toInternal(SIZE_MIN), toInternal(v2) / aspectRatio), toInternal(v2)),
-          onFocus: () => onSizeChangeStart?.(),
-          onCommit: (v2) => {
-            if (toInternal(v2) >= toInternal(SIZE_MIN)) onSizeCommit?.(Math.max(toInternal(SIZE_MIN), toInternal(v2) / aspectRatio), toInternal(v2));
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+          SliderRow,
+          {
+            label: "H",
+            min: SIZE_MIN,
+            max: SIZE_MAX,
+            step: SIZE_STEP,
+            value: displayHeight,
+            disabled,
+            labelWidth: 12,
+            decimalPlaces: 0,
+            onPointerDown: () => onSizeChangeStart?.(),
+            onChange: (v2) => {
+              if (toInternal(v2) >= toInternal(SIZE_MIN)) handleHeightChange(v2);
+            },
+            onPointerUp: (v2) => handleSizeCommit(v2, "height"),
+            onFocus: () => onSizeChangeStart?.(),
+            onCommit: (v2) => handleSizeCommit(v2, "height")
           }
-        }
-      )
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "aspect-ratio-toggle", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+          "button",
+          {
+            className: `aspect-ratio-toggle__btn${linked ? " aspect-ratio-toggle__btn--linked" : ""}`,
+            onClick: handleToggleLinked,
+            title: linked ? "Unlink width and height" : "Link width and height",
+            tabIndex: -1,
+            children: linked ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Link2, { size: LINK_ICON_SIZE }) : /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Unlink2, { size: LINK_ICON_SIZE })
+          }
+        ) })
+      ] })
     ] });
   }
 
@@ -65042,10 +65200,10 @@ ${parts.join("\n")}
   }
 
   // src/controls/panels/AllConditionsPanel.tsx
-  var import_react5 = __toESM(require_react());
+  var import_react9 = __toESM(require_react());
 
   // src/controls/panels/ConditionSetsPanel.tsx
-  var import_react4 = __toESM(require_react());
+  var import_react8 = __toESM(require_react());
   var import_jsx_runtime8 = __toESM(require_jsx_runtime());
   function ConditionSetsPanel({
     spriteIndex,
@@ -65058,8 +65216,8 @@ ${parts.join("\n")}
     onRename,
     onSetFlags
   }) {
-    const [editingNameIndex, setEditingNameIndex] = (0, import_react4.useState)(null);
-    const [nameValue, setNameValue] = (0, import_react4.useState)("");
+    const [editingNameIndex, setEditingNameIndex] = (0, import_react8.useState)(null);
+    const [nameValue, setNameValue] = (0, import_react8.useState)("");
     const commitRename = (conditionIndex) => {
       const trimmed = nameValue.trim();
       if (trimmed) onRename(spriteIndex, conditionIndex, trimmed);
@@ -65228,8 +65386,8 @@ ${parts.join("\n")}
     onRenameConditionSet,
     onSetConditionSetFlags
   }) {
-    const [expanded, setExpanded] = (0, import_react5.useState)(/* @__PURE__ */ new Set());
-    (0, import_react5.useEffect)(() => {
+    const [expanded, setExpanded] = (0, import_react9.useState)(/* @__PURE__ */ new Set());
+    (0, import_react9.useEffect)(() => {
       if (selectedSpriteIndex === null) return;
       setExpanded((prev) => prev.has(selectedSpriteIndex) ? prev : new Set(prev).add(selectedSpriteIndex));
     }, [selectedSpriteIndex]);
@@ -65274,7 +65432,7 @@ ${parts.join("\n")}
   }
 
   // src/controls/TopBar.tsx
-  var import_react6 = __toESM(require_react());
+  var import_react10 = __toESM(require_react());
 
   // src/controls/PhoneGuideControl.tsx
   var import_jsx_runtime10 = __toESM(require_jsx_runtime());
@@ -65407,7 +65565,7 @@ ${parts.join("\n")}
   // src/controls/TopBar.tsx
   var import_jsx_runtime12 = __toESM(require_jsx_runtime());
   function TopBar({ projectId, scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, sceneSizeLabel, sceneSizeTitle, onBack, onSceneSelect, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }) {
-    const [libraryOpen, setLibraryOpen] = (0, import_react6.useState)(false);
+    const [libraryOpen, setLibraryOpen] = (0, import_react10.useState)(false);
     return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "top-bar", children: [
       onBack && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Button, { onClick: onBack, title: "Back to scenes", children: "\u2190 Scenes" }),
       /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Button, { onClick: () => setLibraryOpen(true), title: "Browse and upload images", children: "Image Library" }),
@@ -65456,7 +65614,7 @@ ${parts.join("\n")}
   }
 
   // src/controls/modals/EditTextureModal.tsx
-  var import_react7 = __toESM(require_react());
+  var import_react11 = __toESM(require_react());
 
   // ../node_modules/pixi.js/lib/environment-browser/browserExt.mjs
   init_Extensions();
@@ -68225,26 +68383,26 @@ ${e2}`);
     onApply,
     onClose
   }) {
-    const originalTexCoords = (0, import_react7.useRef)(texCoordinates);
-    const originalWidth = (0, import_react7.useRef)(initWidth);
-    const originalHeight = (0, import_react7.useRef)(initHeight);
-    const [state, setState] = (0, import_react7.useState)(() => ({
+    const originalTexCoords = (0, import_react11.useRef)(texCoordinates);
+    const originalWidth = (0, import_react11.useRef)(initWidth);
+    const originalHeight = (0, import_react11.useRef)(initHeight);
+    const [state, setState] = (0, import_react11.useState)(() => ({
       width: initWidth,
       height: initHeight,
       textureScale: extractInitialScale(texCoordinates),
       offsetU: 0,
       offsetV: 0
     }));
-    const stateRef = (0, import_react7.useRef)(state);
+    const stateRef = (0, import_react11.useRef)(state);
     stateRef.current = state;
-    const containerRef = (0, import_react7.useRef)(null);
-    const pixiAppRef = (0, import_react7.useRef)(null);
-    const pixiSpriteRef = (0, import_react7.useRef)(null);
-    const pixiHighlightRef = (0, import_react7.useRef)(null);
-    const baseTextureRef = (0, import_react7.useRef)(null);
-    const dragging = (0, import_react7.useRef)(false);
-    const lastMousePos = (0, import_react7.useRef)({ x: 0, y: 0 });
-    const updatePixiSprite = (0, import_react7.useCallback)((s2) => {
+    const containerRef = (0, import_react11.useRef)(null);
+    const pixiAppRef = (0, import_react11.useRef)(null);
+    const pixiSpriteRef = (0, import_react11.useRef)(null);
+    const pixiHighlightRef = (0, import_react11.useRef)(null);
+    const baseTextureRef = (0, import_react11.useRef)(null);
+    const dragging = (0, import_react11.useRef)(false);
+    const lastMousePos = (0, import_react11.useRef)({ x: 0, y: 0 });
+    const updatePixiSprite = (0, import_react11.useCallback)((s2) => {
       const sprite = pixiSpriteRef.current;
       const highlight = pixiHighlightRef.current;
       const baseTexture = baseTextureRef.current;
@@ -68285,7 +68443,7 @@ ${e2}`);
         highlight.moveTo(left, top).lineTo(left + sprite.width, top).lineTo(left + sprite.width, top + sprite.height).lineTo(left, top + sprite.height).lineTo(left, top).stroke({ color: 65280, width: 2, alpha: 0.85 });
       }
     }, []);
-    (0, import_react7.useEffect)(() => {
+    (0, import_react11.useEffect)(() => {
       let app = null;
       let cancelled = false;
       const init2 = async () => {
@@ -68337,10 +68495,10 @@ ${e2}`);
         }
       };
     }, [textureResource]);
-    (0, import_react7.useEffect)(() => {
+    (0, import_react11.useEffect)(() => {
       updatePixiSprite(state);
     }, [state, updatePixiSprite]);
-    (0, import_react7.useEffect)(() => {
+    (0, import_react11.useEffect)(() => {
       const onMove = (e2) => {
         if (!dragging.current || !containerRef.current) return;
         const dx = e2.clientX - lastMousePos.current.x;
@@ -68477,10 +68635,10 @@ ${e2}`);
   }
 
   // src/hooks/useUndoHistory.ts
-  var import_react8 = __toESM(require_react());
+  var import_react12 = __toESM(require_react());
   function useUndoHistory() {
-    const past = (0, import_react8.useRef)([]);
-    const future = (0, import_react8.useRef)([]);
+    const past = (0, import_react12.useRef)([]);
+    const future = (0, import_react12.useRef)([]);
     function push(action) {
       past.current = [...past.current, action];
       future.current = [];
@@ -68507,10 +68665,10 @@ ${e2}`);
   }
 
   // src/hooks/useNotifications.ts
-  var import_react9 = __toESM(require_react());
+  var import_react13 = __toESM(require_react());
   function useNotifications() {
-    const [notifications, setNotifications] = (0, import_react9.useState)([]);
-    const notify = (0, import_react9.useCallback)((message) => {
+    const [notifications, setNotifications] = (0, import_react13.useState)([]);
+    const notify = (0, import_react13.useCallback)((message) => {
       const id = Date.now();
       setNotifications((prev) => [...prev, { id, message }]);
       setTimeout(() => {
@@ -68521,7 +68679,7 @@ ${e2}`);
   }
 
   // src/hooks/useSceneRenderer.ts
-  var import_react10 = __toESM(require_react());
+  var import_react14 = __toESM(require_react());
 
   // src/renderers/PhoneGuide.ts
   var PhoneGuide = class {
@@ -69673,25 +69831,25 @@ ${e2}`);
 
   // src/hooks/useSceneRenderer.ts
   function useSceneRenderer(onNotify, onSaved) {
-    const [showSceneControls, setShowSceneControls] = (0, import_react10.useState)(false);
-    const [currentSceneId, setCurrentSceneId] = (0, import_react10.useState)(null);
-    const [xFocus, setXFocus] = (0, import_react10.useState)(0.5);
-    const [startTime, setStartTime] = (0, import_react10.useState)(0);
-    const [endTime, setEndTime] = (0, import_react10.useState)(1439);
-    const [spriteEntries, setSpriteEntries] = (0, import_react10.useState)([]);
-    const [selectedSprite, setSelectedSprite] = (0, import_react10.useState)(null);
-    const [isSaving, setIsSaving] = (0, import_react10.useState)(false);
-    const [isDirty, setIsDirty] = (0, import_react10.useState)(false);
-    const isDirtyRef = (0, import_react10.useRef)(false);
-    const [phoneGuideVisible, setPhoneGuideVisible] = (0, import_react10.useState)(true);
-    const [zoom, setZoom] = (0, import_react10.useState)(1);
-    const onNotifyRef = (0, import_react10.useRef)(onNotify);
+    const [showSceneControls, setShowSceneControls] = (0, import_react14.useState)(false);
+    const [currentSceneId, setCurrentSceneId] = (0, import_react14.useState)(null);
+    const [xFocus, setXFocus] = (0, import_react14.useState)(0.5);
+    const [startTime, setStartTime] = (0, import_react14.useState)(0);
+    const [endTime, setEndTime] = (0, import_react14.useState)(1439);
+    const [spriteEntries, setSpriteEntries] = (0, import_react14.useState)([]);
+    const [selectedSprite, setSelectedSprite] = (0, import_react14.useState)(null);
+    const [isSaving, setIsSaving] = (0, import_react14.useState)(false);
+    const [isDirty, setIsDirty] = (0, import_react14.useState)(false);
+    const isDirtyRef = (0, import_react14.useRef)(false);
+    const [phoneGuideVisible, setPhoneGuideVisible] = (0, import_react14.useState)(true);
+    const [zoom, setZoom] = (0, import_react14.useState)(1);
+    const onNotifyRef = (0, import_react14.useRef)(onNotify);
     onNotifyRef.current = onNotify;
-    const onSavedRef = (0, import_react10.useRef)(onSaved);
+    const onSavedRef = (0, import_react14.useRef)(onSaved);
     onSavedRef.current = onSaved;
-    const [conditionsVersion, setConditionsVersion] = (0, import_react10.useState)(0);
-    const bumpConditionsVersion = (0, import_react10.useCallback)(() => setConditionsVersion((v2) => v2 + 1), []);
-    const handleSelectConditionSet = (0, import_react10.useCallback)((spriteIndex, conditionIndex) => {
+    const [conditionsVersion, setConditionsVersion] = (0, import_react14.useState)(0);
+    const bumpConditionsVersion = (0, import_react14.useCallback)(() => setConditionsVersion((v2) => v2 + 1), []);
+    const handleSelectConditionSet = (0, import_react14.useCallback)((spriteIndex, conditionIndex) => {
       const renderer = rendererRef.current;
       if (!renderer) return;
       renderer.selectCondition(spriteIndex, conditionIndex);
@@ -69703,24 +69861,24 @@ ${e2}`);
         setSelectedSprite((prev) => prev && prev.index === spriteIndex ? { ...prev, x: pos.x, y: pos.y, width: scale.width, height: scale.height, depth: parallax } : prev);
       }
     }, [bumpConditionsVersion]);
-    const markDirty = (0, import_react10.useCallback)(() => {
+    const markDirty = (0, import_react14.useCallback)(() => {
       if (isDirtyRef.current) return;
       isDirtyRef.current = true;
       setIsDirty(true);
     }, []);
-    const markClean = (0, import_react10.useCallback)(() => {
+    const markClean = (0, import_react14.useCallback)(() => {
       isDirtyRef.current = false;
       setIsDirty(false);
     }, []);
-    const phoneGuideVisibleRef = (0, import_react10.useRef)(true);
-    const canvasRef = (0, import_react10.useRef)(null);
-    const rendererRef = (0, import_react10.useRef)(null);
-    const sceneIdRef = (0, import_react10.useRef)(null);
-    const sceneLabelRef = (0, import_react10.useRef)(null);
-    const refreshSpriteList = (0, import_react10.useCallback)((r2) => {
+    const phoneGuideVisibleRef = (0, import_react14.useRef)(true);
+    const canvasRef = (0, import_react14.useRef)(null);
+    const rendererRef = (0, import_react14.useRef)(null);
+    const sceneIdRef = (0, import_react14.useRef)(null);
+    const sceneLabelRef = (0, import_react14.useRef)(null);
+    const refreshSpriteList = (0, import_react14.useCallback)((r2) => {
       setSpriteEntries([...r2.getSpriteEntries()]);
     }, []);
-    const loadScene = (0, import_react10.useCallback)(async (sceneId) => {
+    const loadScene = (0, import_react14.useCallback)(async (sceneId) => {
       try {
         const scene = await scenesApi.get(sceneId);
         const sceneData = scene.data;
@@ -69756,7 +69914,7 @@ ${e2}`);
         console.error("Failed to load scene:", error);
       }
     }, [refreshSpriteList, markClean, bumpConditionsVersion]);
-    const saveScene = (0, import_react10.useCallback)(async () => {
+    const saveScene = (0, import_react14.useCallback)(async () => {
       const sceneId = sceneIdRef.current;
       const label = sceneLabelRef.current;
       const data = rendererRef.current?.getSceneData();
@@ -69778,33 +69936,33 @@ ${e2}`);
         setIsSaving(false);
       }
     }, [markClean]);
-    const handleXFocusChange = (0, import_react10.useCallback)((value) => {
+    const handleXFocusChange = (0, import_react14.useCallback)((value) => {
       setXFocus(value);
       rendererRef.current?.setScrollOffset(value);
       markDirty();
     }, [markDirty]);
-    const handleStartTimeChange = (0, import_react10.useCallback)((value) => {
+    const handleStartTimeChange = (0, import_react14.useCallback)((value) => {
       setStartTime(value);
       rendererRef.current?.setStartTime(value);
       markDirty();
     }, [markDirty]);
-    const handleEndTimeChange = (0, import_react10.useCallback)((value) => {
+    const handleEndTimeChange = (0, import_react14.useCallback)((value) => {
       setEndTime(value);
       rendererRef.current?.setEndTime(value);
       markDirty();
     }, [markDirty]);
-    const handlePhoneGuideToggle = (0, import_react10.useCallback)((visible) => {
+    const handlePhoneGuideToggle = (0, import_react14.useCallback)((visible) => {
       phoneGuideVisibleRef.current = visible;
       setPhoneGuideVisible(visible);
       if (visible) rendererRef.current?.showGuide();
       else rendererRef.current?.hideGuide();
     }, []);
-    const handleSpriteToggle = (0, import_react10.useCallback)((index) => {
+    const handleSpriteToggle = (0, import_react14.useCallback)((index) => {
       rendererRef.current?.toggleSpriteByIndex(index);
       if (rendererRef.current) refreshSpriteList(rendererRef.current);
       markDirty();
     }, [refreshSpriteList, markDirty]);
-    const handleSpriteSelect = (0, import_react10.useCallback)((index) => {
+    const handleSpriteSelect = (0, import_react14.useCallback)((index) => {
       const pos = rendererRef.current?.getSpritePosition(index);
       const scaleInfo = rendererRef.current?.getSpriteScale(index);
       const name = spriteEntries[index]?.name || `Sprite ${index}`;
@@ -69813,7 +69971,7 @@ ${e2}`);
         rendererRef.current?.setSelectedSpriteHighlight(index);
       }
     }, [spriteEntries]);
-    const handleSpritePositionChange = (0, import_react10.useCallback)((x2, y2) => {
+    const handleSpritePositionChange = (0, import_react14.useCallback)((x2, y2) => {
       if (!rendererRef.current) return;
       setSelectedSprite((prev) => {
         if (!prev) return null;
@@ -69822,7 +69980,7 @@ ${e2}`);
       });
       markDirty();
     }, [markDirty]);
-    const handleSpriteSizeChange = (0, import_react10.useCallback)((width, height) => {
+    const handleSpriteSizeChange = (0, import_react14.useCallback)((width, height) => {
       setSelectedSprite((prev) => {
         if (!prev) return null;
         rendererRef.current?.setSpriteSize(prev.index, width, height);
@@ -69830,7 +69988,7 @@ ${e2}`);
       });
       markDirty();
     }, [markDirty]);
-    const handleSpriteDepthChange = (0, import_react10.useCallback)((depth) => {
+    const handleSpriteDepthChange = (0, import_react14.useCallback)((depth) => {
       setSelectedSprite((prev) => {
         if (!prev) return null;
         rendererRef.current?.setSpriteParallax(prev.index, depth);
@@ -69844,7 +70002,7 @@ ${e2}`);
       });
       markDirty();
     }, [refreshSpriteList, markDirty]);
-    const handleSpriteDepthApply = (0, import_react10.useCallback)((depth, spriteIndex) => {
+    const handleSpriteDepthApply = (0, import_react14.useCallback)((depth, spriteIndex) => {
       if (!rendererRef.current) return;
       rendererRef.current.setSpriteParallax(spriteIndex, depth);
       const newIndex = rendererRef.current.sortSpritesByParallax(spriteIndex);
@@ -69852,7 +70010,7 @@ ${e2}`);
       setSelectedSprite((prev) => prev ? { ...prev, index: newIndex, depth } : null);
       markDirty();
     }, [refreshSpriteList, markDirty]);
-    const handleAddSprite = (0, import_react10.useCallback)(async (textureResource) => {
+    const handleAddSprite = (0, import_react14.useCallback)(async (textureResource) => {
       if (!rendererRef.current) return;
       const newIndex = await rendererRef.current.addSprite(textureResource, 5, 5, 1);
       if (newIndex < 0) return;
@@ -69865,7 +70023,7 @@ ${e2}`);
       rendererRef.current.setSelectedSpriteHighlight(newIndex);
       markDirty();
     }, [refreshSpriteList, markDirty]);
-    const handleChangeTexture = (0, import_react10.useCallback)(async (index, textureResource) => {
+    const handleChangeTexture = (0, import_react14.useCallback)(async (index, textureResource) => {
       await rendererRef.current?.changeTexture(index, textureResource);
       const scaleInfo = rendererRef.current?.getSpriteScale(index);
       if (scaleInfo) {
@@ -69873,7 +70031,7 @@ ${e2}`);
       }
       markDirty();
     }, [markDirty]);
-    const handleDeleteSprite = (0, import_react10.useCallback)((index) => {
+    const handleDeleteSprite = (0, import_react14.useCallback)((index) => {
       if (!rendererRef.current) return;
       rendererRef.current.removeSpriteByIndex(index);
       refreshSpriteList(rendererRef.current);
@@ -69885,14 +70043,14 @@ ${e2}`);
       });
       markDirty();
     }, [refreshSpriteList, markDirty]);
-    const handleSpriteConditions = (0, import_react10.useCallback)((index) => {
+    const handleSpriteConditions = (0, import_react14.useCallback)((index) => {
       return rendererRef.current?.getSpriteConditions(index) ?? [];
     }, []);
-    const handleSaveSpriteConditions = (0, import_react10.useCallback)((index, conditions) => {
+    const handleSaveSpriteConditions = (0, import_react14.useCallback)((index, conditions) => {
       rendererRef.current?.setSpriteConditions(index, conditions);
       markDirty();
     }, [markDirty]);
-    const handleAddConditionSet = (0, import_react10.useCallback)((spriteIndex) => {
+    const handleAddConditionSet = (0, import_react14.useCallback)((spriteIndex) => {
       const renderer = rendererRef.current;
       if (!renderer) return;
       const newIndex = renderer.addConditionBlock(spriteIndex);
@@ -69902,7 +70060,7 @@ ${e2}`);
         handleSelectConditionSet(spriteIndex, newIndex);
       }
     }, [bumpConditionsVersion, markDirty, handleSelectConditionSet]);
-    const handleRemoveConditionSet = (0, import_react10.useCallback)((spriteIndex, conditionIndex) => {
+    const handleRemoveConditionSet = (0, import_react14.useCallback)((spriteIndex, conditionIndex) => {
       const renderer = rendererRef.current;
       if (!renderer) return;
       renderer.removeConditionBlock(spriteIndex, conditionIndex);
@@ -69915,16 +70073,16 @@ ${e2}`);
         setSelectedSprite((prev) => prev && prev.index === spriteIndex ? { ...prev, x: pos.x, y: pos.y, width: scale.width, height: scale.height, depth: parallax } : prev);
       }
     }, [bumpConditionsVersion, markDirty]);
-    const handleRenameConditionSet = (0, import_react10.useCallback)((spriteIndex, conditionIndex, name) => {
+    const handleRenameConditionSet = (0, import_react14.useCallback)((spriteIndex, conditionIndex, name) => {
       rendererRef.current?.setConditionBlockName(spriteIndex, conditionIndex, name);
       bumpConditionsVersion();
     }, [bumpConditionsVersion]);
-    const handleSetConditionSetFlags = (0, import_react10.useCallback)((spriteIndex, conditionIndex, conditions) => {
+    const handleSetConditionSetFlags = (0, import_react14.useCallback)((spriteIndex, conditionIndex, conditions) => {
       rendererRef.current?.setConditionBlockFlags(spriteIndex, conditionIndex, conditions);
       bumpConditionsVersion();
       markDirty();
     }, [bumpConditionsVersion, markDirty]);
-    const handleRenameSprite = (0, import_react10.useCallback)((index, newName) => {
+    const handleRenameSprite = (0, import_react14.useCallback)((index, newName) => {
       if (!rendererRef.current) return;
       rendererRef.current.renameSpriteByIndex(index, newName);
       refreshSpriteList(rendererRef.current);
@@ -69934,15 +70092,15 @@ ${e2}`);
       }
     }, [refreshSpriteList]);
     const ZOOM_FACTOR = 1.25;
-    const handleZoomIn = (0, import_react10.useCallback)(() => {
+    const handleZoomIn = (0, import_react14.useCallback)(() => {
       rendererRef.current?.zoomAtCenter(ZOOM_FACTOR);
       setZoom(rendererRef.current?.getZoom() ?? 1);
     }, []);
-    const handleZoomOut = (0, import_react10.useCallback)(() => {
+    const handleZoomOut = (0, import_react14.useCallback)(() => {
       rendererRef.current?.zoomAtCenter(1 / ZOOM_FACTOR);
       setZoom(rendererRef.current?.getZoom() ?? 1);
     }, []);
-    const handleZoomAtPoint = (0, import_react10.useCallback)((cssX, cssY, factor) => {
+    const handleZoomAtPoint = (0, import_react14.useCallback)((cssX, cssY, factor) => {
       if (factor >= 1) {
         rendererRef.current?.zoomAt(cssX, cssY, factor);
       } else {
@@ -69950,12 +70108,12 @@ ${e2}`);
       }
       setZoom(rendererRef.current?.getZoom() ?? 1);
     }, []);
-    const handleCenter = (0, import_react10.useCallback)(() => {
+    const handleCenter = (0, import_react14.useCallback)(() => {
       rendererRef.current?.resetView();
       setZoom(1);
     }, []);
-    const [gyroMode, setGyroMode] = (0, import_react10.useState)(false);
-    const handleGyroModeToggle = (0, import_react10.useCallback)(() => {
+    const [gyroMode, setGyroMode] = (0, import_react14.useState)(false);
+    const handleGyroModeToggle = (0, import_react14.useCallback)(() => {
       setGyroMode((prev) => {
         if (prev) {
           rendererRef.current?.clearGyroOffset();
@@ -69966,7 +70124,7 @@ ${e2}`);
         return !prev;
       });
     }, []);
-    const handleGyroOffset = (0, import_react10.useCallback)((deltaX, deltaY, canvasWidth, canvasHeight) => {
+    const handleGyroOffset = (0, import_react14.useCallback)((deltaX, deltaY, canvasWidth, canvasHeight) => {
       const gyroX = deltaX / canvasWidth * 2;
       const gyroY = deltaY / canvasHeight * 2;
       rendererRef.current?.setGyroOffset(gyroX, gyroY);
@@ -70022,15 +70180,15 @@ ${e2}`);
   }
 
   // src/hooks/useSpriteDrag.ts
-  var import_react11 = __toESM(require_react());
+  var import_react15 = __toESM(require_react());
   function useSpriteDrag({
     selectedSprite,
     rendererRef,
     onSpriteMove,
     onDragCommit
   }) {
-    const canvasDragState = (0, import_react11.useRef)(null);
-    const handleCanvasMouseDown = (0, import_react11.useCallback)((event) => {
+    const canvasDragState = (0, import_react15.useRef)(null);
+    const handleCanvasMouseDown = (0, import_react15.useCallback)((event) => {
       if (event.button !== 0) return;
       if (!selectedSprite || !rendererRef.current) return;
       const canvas = rendererRef.current.getCanvas();
@@ -70049,9 +70207,9 @@ ${e2}`);
         startSpriteY: selectedSprite.y
       };
     }, [selectedSprite, rendererRef]);
-    const dragCallbacksRef = (0, import_react11.useRef)({ onSpriteMove, onDragCommit });
+    const dragCallbacksRef = (0, import_react15.useRef)({ onSpriteMove, onDragCommit });
     dragCallbacksRef.current = { onSpriteMove, onDragCommit };
-    (0, import_react11.useEffect)(() => {
+    (0, import_react15.useEffect)(() => {
       const handleMouseMove = (event) => {
         const drag = canvasDragState.current;
         if (!drag || !rendererRef.current) return;
@@ -70090,14 +70248,14 @@ ${e2}`);
         window.removeEventListener("mouseup", handleMouseUp);
       };
     }, [rendererRef]);
-    const cancelDrag = (0, import_react11.useCallback)(() => {
+    const cancelDrag = (0, import_react15.useCallback)(() => {
       canvasDragState.current = null;
     }, []);
     return { handleCanvasMouseDown, cancelDrag };
   }
 
   // src/hooks/useKeyboardControls.ts
-  var import_react12 = __toESM(require_react());
+  var import_react16 = __toESM(require_react());
   var ARROW_STEP = 0.05;
   function useKeyboardControls({
     selectedSprite,
@@ -70112,7 +70270,7 @@ ${e2}`);
     onTextureApply,
     onMarkDirty
   }) {
-    (0, import_react12.useEffect)(() => {
+    (0, import_react16.useEffect)(() => {
       const handleKeyDown = (e2) => {
         if ((e2.ctrlKey || e2.metaKey) && e2.key === "z" && !e2.shiftKey) {
           e2.preventDefault();
@@ -70214,19 +70372,19 @@ ${e2}`);
   // src/ScenePage.tsx
   var import_jsx_runtime15 = __toESM(require_jsx_runtime());
   function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyChange }) {
-    const [scenes, setScenes] = (0, import_react13.useState)([]);
-    const [availableFlags, setAvailableFlags] = (0, import_react13.useState)([]);
+    const [scenes, setScenes] = (0, import_react17.useState)([]);
+    const [availableFlags, setAvailableFlags] = (0, import_react17.useState)([]);
     const history = useUndoHistory();
     const { notifications, notify } = useNotifications();
-    const dragStartPos = (0, import_react13.useRef)(null);
-    const dragStartSize = (0, import_react13.useRef)(null);
-    const dragStartDepth = (0, import_react13.useRef)(null);
-    const dragStartXFocus = (0, import_react13.useRef)(null);
-    const midDragStart = (0, import_react13.useRef)(null);
-    const [isPanning, setIsPanning] = (0, import_react13.useState)(false);
-    const isGyroDragging = (0, import_react13.useRef)(false);
-    const gyroOrigin = (0, import_react13.useRef)(null);
-    const [editTextureIndex, setEditTextureIndex] = (0, import_react13.useState)(null);
+    const dragStartPos = (0, import_react17.useRef)(null);
+    const dragStartSize = (0, import_react17.useRef)(null);
+    const dragStartDepth = (0, import_react17.useRef)(null);
+    const dragStartXFocus = (0, import_react17.useRef)(null);
+    const midDragStart = (0, import_react17.useRef)(null);
+    const [isPanning, setIsPanning] = (0, import_react17.useState)(false);
+    const isGyroDragging = (0, import_react17.useRef)(false);
+    const gyroOrigin = (0, import_react17.useRef)(null);
+    const [editTextureIndex, setEditTextureIndex] = (0, import_react17.useState)(null);
     const {
       canvasRef,
       rendererRef,
@@ -70273,8 +70431,8 @@ ${e2}`);
       handleGyroModeToggle,
       handleGyroOffset
     } = useSceneRenderer(notify, onSaved);
-    const [sceneSize, setSceneSize] = (0, import_react13.useState)(null);
-    (0, import_react13.useEffect)(() => {
+    const [sceneSize, setSceneSize] = (0, import_react17.useState)(null);
+    (0, import_react17.useEffect)(() => {
       const sceneData = rendererRef.current?.getSceneData();
       if (!sceneData) {
         setSceneSize(null);
@@ -70296,10 +70454,10 @@ ${e2}`);
         cancelled = true;
       };
     }, [spriteEntries, conditionsVersion, rendererRef]);
-    (0, import_react13.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       onDirtyChange?.(isDirty);
     }, [isDirty, onDirtyChange]);
-    (0, import_react13.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       if (!isDirty) return;
       const onBeforeUnload = (e2) => {
         e2.preventDefault();
@@ -70307,43 +70465,43 @@ ${e2}`);
       window.addEventListener("beforeunload", onBeforeUnload);
       return () => window.removeEventListener("beforeunload", onBeforeUnload);
     }, [isDirty]);
-    const handleBack = (0, import_react13.useCallback)(() => {
+    const handleBack = (0, import_react17.useCallback)(() => {
       if (isDirty && !window.confirm("You have unsaved changes. Leave without saving?")) return;
       onBack?.();
     }, [isDirty, onBack]);
-    const handleSceneSelect = (0, import_react13.useCallback)((sceneId) => {
+    const handleSceneSelect = (0, import_react17.useCallback)((sceneId) => {
       if (isDirty && !window.confirm("You have unsaved changes. Switch scenes without saving?")) return;
       loadScene(sceneId);
     }, [isDirty, loadScene]);
-    const ensureSpriteSelected = (0, import_react13.useCallback)((spriteIndex) => {
+    const ensureSpriteSelected = (0, import_react17.useCallback)((spriteIndex) => {
       if (selectedSprite?.index !== spriteIndex) {
         handleSpriteSelect(spriteIndex);
       }
     }, [selectedSprite, handleSpriteSelect]);
-    const handleSelectConditionSetForSprite = (0, import_react13.useCallback)((spriteIndex, conditionIndex) => {
+    const handleSelectConditionSetForSprite = (0, import_react17.useCallback)((spriteIndex, conditionIndex) => {
       ensureSpriteSelected(spriteIndex);
       handleSelectConditionSet(spriteIndex, conditionIndex);
     }, [ensureSpriteSelected, handleSelectConditionSet]);
-    const handleAddConditionSetForSprite = (0, import_react13.useCallback)((spriteIndex) => {
+    const handleAddConditionSetForSprite = (0, import_react17.useCallback)((spriteIndex) => {
       ensureSpriteSelected(spriteIndex);
       handleAddConditionSet(spriteIndex);
     }, [ensureSpriteSelected, handleAddConditionSet]);
-    const handleRemoveConditionSetForSprite = (0, import_react13.useCallback)((spriteIndex, conditionIndex) => {
+    const handleRemoveConditionSetForSprite = (0, import_react17.useCallback)((spriteIndex, conditionIndex) => {
       ensureSpriteSelected(spriteIndex);
       handleRemoveConditionSet(spriteIndex, conditionIndex);
     }, [ensureSpriteSelected, handleRemoveConditionSet]);
-    const handleRenameConditionSetForSprite = (0, import_react13.useCallback)((spriteIndex, conditionIndex, name) => {
+    const handleRenameConditionSetForSprite = (0, import_react17.useCallback)((spriteIndex, conditionIndex, name) => {
       ensureSpriteSelected(spriteIndex);
       handleRenameConditionSet(spriteIndex, conditionIndex, name);
     }, [ensureSpriteSelected, handleRenameConditionSet]);
-    const handleSetConditionSetFlagsForSprite = (0, import_react13.useCallback)((spriteIndex, conditionIndex, conditions) => {
+    const handleSetConditionSetFlagsForSprite = (0, import_react17.useCallback)((spriteIndex, conditionIndex, conditions) => {
       ensureSpriteSelected(spriteIndex);
       handleSetConditionSetFlags(spriteIndex, conditionIndex, conditions);
     }, [ensureSpriteSelected, handleSetConditionSetFlags]);
-    const getConditionsForSprite = (0, import_react13.useCallback)((spriteIndex) => {
+    const getConditionsForSprite = (0, import_react17.useCallback)((spriteIndex) => {
       return rendererRef.current?.getSpriteConditions(spriteIndex) ?? [];
     }, [rendererRef]);
-    const getActiveConditionIndexForSprite = (0, import_react13.useCallback)((spriteIndex) => {
+    const getActiveConditionIndexForSprite = (0, import_react17.useCallback)((spriteIndex) => {
       return rendererRef.current?.getSelectedConditionIndex(spriteIndex) ?? null;
     }, [rendererRef]);
     const activeConditionSet = selectedSprite !== null ? (() => {
@@ -70351,13 +70509,13 @@ ${e2}`);
       return conditionIndex !== null ? { spriteIndex: selectedSprite.index, conditionIndex } : null;
     })() : null;
     const activeConditionLabel = activeConditionSet ? getConditionsForSprite(activeConditionSet.spriteIndex)[activeConditionSet.conditionIndex]?.name ?? `Set ${activeConditionSet.conditionIndex + 1}` : null;
-    const applySelectedSpriteMove = (0, import_react13.useCallback)((x2, y2) => {
+    const applySelectedSpriteMove = (0, import_react17.useCallback)((x2, y2) => {
       setSelectedSprite((prev) => prev ? { ...prev, x: x2, y: y2 } : null);
     }, [setSelectedSprite]);
-    const applySelectedSpriteSize = (0, import_react13.useCallback)((width, height) => {
+    const applySelectedSpriteSize = (0, import_react17.useCallback)((width, height) => {
       setSelectedSprite((prev) => prev ? { ...prev, width, height } : null);
     }, [setSelectedSprite]);
-    const handleTextureApply = (0, import_react13.useCallback)((index, textureResource, width, height, texCoordinates) => {
+    const handleTextureApply = (0, import_react17.useCallback)((index, textureResource, width, height, texCoordinates) => {
       rendererRef.current?.changeTexture(index, textureResource, { width, height }, texCoordinates);
       setSelectedSprite((prev) => prev?.index === index ? { ...prev, width, height } : prev);
       markDirty();
@@ -70384,21 +70542,21 @@ ${e2}`);
       onTextureApply: handleTextureApply,
       onMarkDirty: markDirty
     });
-    (0, import_react13.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       scenesApi.list().then(
         (data) => setScenes(data.map((s2) => ({ value: s2.id, label: s2.label, thumbnail_url: s2.thumbnail_url })))
       ).catch(() => {
       });
     }, []);
-    (0, import_react13.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       if (!projectId) return;
       flagsApi.list(projectId).then(setAvailableFlags).catch(() => {
       });
     }, [projectId]);
-    (0, import_react13.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       if (initialSceneId) loadScene(initialSceneId);
     }, []);
-    (0, import_react13.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       const el = canvasRef.current;
       if (!el) return;
       const onWheel = (e2) => {
@@ -70412,7 +70570,7 @@ ${e2}`);
       el.addEventListener("wheel", onWheel, { passive: false });
       return () => el.removeEventListener("wheel", onWheel);
     }, [canvasRef, rendererRef, handleZoomAtPoint]);
-    (0, import_react13.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       const el = canvasRef.current;
       if (!el) return;
       const onMouseDown = (e2) => {
@@ -70444,7 +70602,7 @@ ${e2}`);
         window.removeEventListener("mouseup", onMouseUp);
       };
     }, [canvasRef, rendererRef, cancelDrag]);
-    (0, import_react13.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       const el = canvasRef.current;
       if (!el) return;
       const onMouseDown = (e2) => {
@@ -70477,10 +70635,10 @@ ${e2}`);
         window.removeEventListener("mouseup", onMouseUp);
       };
     }, [canvasRef, rendererRef, gyroMode, handleGyroOffset, cancelDrag]);
-    const handleSpritePositionChangeStart = (0, import_react13.useCallback)((x2, y2) => {
+    const handleSpritePositionChangeStart = (0, import_react17.useCallback)((x2, y2) => {
       dragStartPos.current = { x: x2, y: y2 };
     }, []);
-    const handleSpritePositionCommit = (0, import_react13.useCallback)((x2, y2) => {
+    const handleSpritePositionCommit = (0, import_react17.useCallback)((x2, y2) => {
       if (!selectedSprite || !dragStartPos.current || activeConditionSet !== null) return;
       const before = dragStartPos.current;
       dragStartPos.current = null;
@@ -70488,10 +70646,10 @@ ${e2}`);
         history.push({ type: "position", spriteIndex: selectedSprite.index, before, after: { x: x2, y: y2 } });
       }
     }, [selectedSprite, history, activeConditionSet]);
-    const handleSpriteSizeChangeStart = (0, import_react13.useCallback)(() => {
+    const handleSpriteSizeChangeStart = (0, import_react17.useCallback)(() => {
       if (selectedSprite) dragStartSize.current = { width: selectedSprite.width, height: selectedSprite.height };
     }, [selectedSprite]);
-    const handleSpriteSizeCommit = (0, import_react13.useCallback)((width, height) => {
+    const handleSpriteSizeCommit = (0, import_react17.useCallback)((width, height) => {
       if (!selectedSprite || !dragStartSize.current || activeConditionSet !== null) return;
       const before = dragStartSize.current;
       dragStartSize.current = null;
@@ -70499,7 +70657,7 @@ ${e2}`);
         history.push({ type: "scale", spriteIndex: selectedSprite.index, before, after: { width, height } });
       }
     }, [selectedSprite, history, activeConditionSet]);
-    const handleChangeTextureWithHistory = (0, import_react13.useCallback)(async (index, textureResource) => {
+    const handleChangeTextureWithHistory = (0, import_react17.useCallback)(async (index, textureResource) => {
       const beforeTexture = rendererRef.current?.getSpriteTextureResource(index) ?? "";
       const beforeSize = rendererRef.current?.getSpriteScale(index);
       const beforeTexCoords = rendererRef.current?.getSpriteTexCoordinates(index) ?? [0, 1, 0, 0, 1, 1, 1, 0];
@@ -70512,13 +70670,13 @@ ${e2}`);
         after: { textureResource, width: afterSize?.width ?? 0, height: afterSize?.height ?? 0, texCoordinates: [0, 1, 0, 0, 1, 1, 1, 0] }
       });
     }, [handleChangeTexture, rendererRef, history]);
-    const handleSpriteDepthChangeStart = (0, import_react13.useCallback)((depth) => {
+    const handleSpriteDepthChangeStart = (0, import_react17.useCallback)((depth) => {
       dragStartDepth.current = depth;
     }, []);
-    const handleXFocusChangeStart = (0, import_react13.useCallback)((value) => {
+    const handleXFocusChangeStart = (0, import_react17.useCallback)((value) => {
       dragStartXFocus.current = value;
     }, []);
-    const handleXFocusCommit = (0, import_react13.useCallback)((value) => {
+    const handleXFocusCommit = (0, import_react17.useCallback)((value) => {
       if (dragStartXFocus.current === null) return;
       const before = dragStartXFocus.current;
       dragStartXFocus.current = null;
@@ -70526,7 +70684,7 @@ ${e2}`);
         history.push({ type: "xFocus", before, after: value });
       }
     }, [history]);
-    const handleSpriteDepthCommit = (0, import_react13.useCallback)((depth) => {
+    const handleSpriteDepthCommit = (0, import_react17.useCallback)((depth) => {
       if (!selectedSprite || dragStartDepth.current === null || activeConditionSet !== null) return;
       const before = dragStartDepth.current;
       dragStartDepth.current = null;
@@ -70645,14 +70803,14 @@ ${e2}`);
   }
 
   // src/SceneListPage.tsx
-  var import_react17 = __toESM(require_react());
+  var import_react21 = __toESM(require_react());
 
   // src/components/SceneCard.tsx
-  var import_react14 = __toESM(require_react());
+  var import_react18 = __toESM(require_react());
   var import_jsx_runtime16 = __toESM(require_jsx_runtime());
   function SceneCard({ label, thumbnail_url, selected, onClick, thumbBuster = 0 }) {
-    const [thumbFailed, setThumbFailed] = (0, import_react14.useState)(false);
-    (0, import_react14.useEffect)(() => {
+    const [thumbFailed, setThumbFailed] = (0, import_react18.useState)(false);
+    (0, import_react18.useEffect)(() => {
       setThumbFailed(false);
     }, [thumbnail_url, thumbBuster]);
     const thumbnailSrc = thumbnail_url ? `${thumbnail_url}${thumbnail_url.includes("?") ? "&" : "?"}v=${thumbBuster}` : null;
@@ -70694,13 +70852,13 @@ ${e2}`);
   }
 
   // src/controls/modals/NewSceneDialog.tsx
-  var import_react15 = __toESM(require_react());
+  var import_react19 = __toESM(require_react());
   var import_jsx_runtime18 = __toESM(require_jsx_runtime());
   function NewSceneDialog({ onConfirm, onCancel, scenes = [] }) {
-    const [name, setName] = (0, import_react15.useState)("");
-    const [copyFromId, setCopyFromId] = (0, import_react15.useState)(void 0);
-    const inputRef = (0, import_react15.useRef)(null);
-    (0, import_react15.useEffect)(() => {
+    const [name, setName] = (0, import_react19.useState)("");
+    const [copyFromId, setCopyFromId] = (0, import_react19.useState)(void 0);
+    const inputRef = (0, import_react19.useRef)(null);
+    (0, import_react19.useEffect)(() => {
       inputRef.current?.focus();
     }, []);
     const handleSubmit = (e2) => {
@@ -70760,7 +70918,7 @@ ${e2}`);
   }
 
   // src/controls/modals/SceneFlagsModal.tsx
-  var import_react16 = __toESM(require_react());
+  var import_react20 = __toESM(require_react());
   var import_jsx_runtime19 = __toESM(require_jsx_runtime());
   function FlagCheckList({
     label,
@@ -70834,10 +70992,10 @@ ${e2}`);
     ] });
   }
   function SceneFlagsModal({ sceneName, flags, declarations, onSave, onClose }) {
-    const [required, setRequired] = (0, import_react16.useState)(declarations.required ?? []);
-    const [excluded, setExcluded] = (0, import_react16.useState)(declarations.excluded ?? []);
-    const [scored, setScored] = (0, import_react16.useState)(declarations.scored ?? []);
-    const handleSave = (0, import_react16.useCallback)(() => {
+    const [required, setRequired] = (0, import_react20.useState)(declarations.required ?? []);
+    const [excluded, setExcluded] = (0, import_react20.useState)(declarations.excluded ?? []);
+    const [scored, setScored] = (0, import_react20.useState)(declarations.scored ?? []);
+    const handleSave = (0, import_react20.useCallback)(() => {
       const result = {};
       if (required.length > 0) result.required = required;
       if (excluded.length > 0) result.excluded = excluded;
@@ -70890,15 +71048,15 @@ ${e2}`);
   // src/SceneListPage.tsx
   var import_jsx_runtime20 = __toESM(require_jsx_runtime());
   function SceneListPage({ onSelect, onBack, onFlags, onRules, projectId, projectname, thumbBuster = 0 }) {
-    const [scenes, setScenes] = (0, import_react17.useState)([]);
-    const [loading, setLoading] = (0, import_react17.useState)(true);
-    const [showNewSceneDialog, setShowNewSceneDialog] = (0, import_react17.useState)(false);
-    const [deleteScene, setDeleteScene] = (0, import_react17.useState)(null);
-    const [flagsScene, setFlagsScene] = (0, import_react17.useState)(null);
-    const [flagsModalData, setFlagsModalData] = (0, import_react17.useState)(null);
-    const [availableFlags, setAvailableFlags] = (0, import_react17.useState)([]);
-    const [flagsModalLoading, setFlagsModalLoading] = (0, import_react17.useState)(false);
-    (0, import_react17.useEffect)(() => {
+    const [scenes, setScenes] = (0, import_react21.useState)([]);
+    const [loading, setLoading] = (0, import_react21.useState)(true);
+    const [showNewSceneDialog, setShowNewSceneDialog] = (0, import_react21.useState)(false);
+    const [deleteScene, setDeleteScene] = (0, import_react21.useState)(null);
+    const [flagsScene, setFlagsScene] = (0, import_react21.useState)(null);
+    const [flagsModalData, setFlagsModalData] = (0, import_react21.useState)(null);
+    const [availableFlags, setAvailableFlags] = (0, import_react21.useState)([]);
+    const [flagsModalLoading, setFlagsModalLoading] = (0, import_react21.useState)(false);
+    (0, import_react21.useEffect)(() => {
       scenesApi.list(projectId).then((records) => {
         setScenes(records);
         setLoading(false);
@@ -70917,7 +71075,7 @@ ${e2}`);
         window.alert(message);
       });
     };
-    const handleDeleteScene = (0, import_react17.useCallback)(async () => {
+    const handleDeleteScene = (0, import_react21.useCallback)(async () => {
       if (!deleteScene) return;
       try {
         await scenesApi.delete(deleteScene.id);
@@ -70928,7 +71086,7 @@ ${e2}`);
         setDeleteScene(null);
       }
     }, [deleteScene]);
-    const openSceneFlags = (0, import_react17.useCallback)(async (scene) => {
+    const openSceneFlags = (0, import_react21.useCallback)(async (scene) => {
       setFlagsScene(scene);
       setFlagsModalLoading(true);
       try {
@@ -70945,7 +71103,7 @@ ${e2}`);
         setFlagsModalLoading(false);
       }
     }, [projectId]);
-    const handleSaveSceneFlags = (0, import_react17.useCallback)(async (declarations) => {
+    const handleSaveSceneFlags = (0, import_react21.useCallback)(async (declarations) => {
       if (!flagsScene || !flagsModalData) return;
       try {
         const sceneDetail = await scenesApi.get(flagsScene.id);
@@ -71039,15 +71197,15 @@ ${e2}`);
   }
 
   // src/ProjectListPage.tsx
-  var import_react19 = __toESM(require_react());
+  var import_react23 = __toESM(require_react());
 
   // src/controls/modals/NewProjectDialog.tsx
-  var import_react18 = __toESM(require_react());
+  var import_react22 = __toESM(require_react());
   var import_jsx_runtime21 = __toESM(require_jsx_runtime());
   function NewProjectDialog({ onConfirm, onCancel }) {
-    const [name, setName] = (0, import_react18.useState)("");
-    const inputRef = (0, import_react18.useRef)(null);
-    (0, import_react18.useEffect)(() => {
+    const [name, setName] = (0, import_react22.useState)("");
+    const inputRef = (0, import_react22.useRef)(null);
+    (0, import_react22.useEffect)(() => {
       inputRef.current?.focus();
     }, []);
     const handleSubmit = (e2) => {
@@ -71086,7 +71244,7 @@ ${e2}`);
   // src/ProjectListPage.tsx
   var import_jsx_runtime22 = __toESM(require_jsx_runtime());
   function ProjectCollage({ sceneIds, sceneThumbnailUrls }) {
-    const [failedThumbs, setFailedThumbs] = (0, import_react19.useState)(/* @__PURE__ */ new Set());
+    const [failedThumbs, setFailedThumbs] = (0, import_react23.useState)(/* @__PURE__ */ new Set());
     if (!sceneIds || sceneIds.length === 0) {
       return /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "project-card-icon", children: "\u{1F4C1}" });
     }
@@ -71105,11 +71263,11 @@ ${e2}`);
     }) });
   }
   function ProjectListPage({ onSelect, onLogout }) {
-    const [projects, setProjects] = (0, import_react19.useState)([]);
-    const [loading, setLoading] = (0, import_react19.useState)(true);
-    const [showDialog, setShowDialog] = (0, import_react19.useState)(false);
-    const [showArchived, setShowArchived] = (0, import_react19.useState)(false);
-    (0, import_react19.useEffect)(() => {
+    const [projects, setProjects] = (0, import_react23.useState)([]);
+    const [loading, setLoading] = (0, import_react23.useState)(true);
+    const [showDialog, setShowDialog] = (0, import_react23.useState)(false);
+    const [showArchived, setShowArchived] = (0, import_react23.useState)(false);
+    (0, import_react23.useEffect)(() => {
       projectsApi.list().then((records) => {
         setProjects(records);
         setLoading(false);
@@ -71211,7 +71369,7 @@ ${e2}`);
   }
 
   // src/FlagsPage.tsx
-  var import_react20 = __toESM(require_react());
+  var import_react24 = __toESM(require_react());
   var import_jsx_runtime23 = __toESM(require_jsx_runtime());
   function generateId(name) {
     return name.trim().toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
@@ -71250,12 +71408,12 @@ ${e2}`);
     ] });
   }
   function FlagsPage({ projectId, projectName, onBack }) {
-    const [flags, setFlags] = (0, import_react20.useState)([]);
-    const [loading, setLoading] = (0, import_react20.useState)(true);
-    const [saving, setSaving] = (0, import_react20.useState)(false);
-    const [dirty, setDirty] = (0, import_react20.useState)(false);
-    const [error, setError] = (0, import_react20.useState)(null);
-    (0, import_react20.useEffect)(() => {
+    const [flags, setFlags] = (0, import_react24.useState)([]);
+    const [loading, setLoading] = (0, import_react24.useState)(true);
+    const [saving, setSaving] = (0, import_react24.useState)(false);
+    const [dirty, setDirty] = (0, import_react24.useState)(false);
+    const [error, setError] = (0, import_react24.useState)(null);
+    (0, import_react24.useEffect)(() => {
       flagsApi.list(projectId).then((data) => {
         setFlags(data);
         setLoading(false);
@@ -71264,7 +71422,7 @@ ${e2}`);
         setLoading(false);
       });
     }, [projectId]);
-    const updateFlag = (0, import_react20.useCallback)((index, updated) => {
+    const updateFlag = (0, import_react24.useCallback)((index, updated) => {
       setFlags((prev) => {
         const next = [...prev];
         next[index] = updated;
@@ -71272,15 +71430,15 @@ ${e2}`);
       });
       setDirty(true);
     }, []);
-    const deleteFlag = (0, import_react20.useCallback)((index) => {
+    const deleteFlag = (0, import_react24.useCallback)((index) => {
       setFlags((prev) => prev.filter((_, i2) => i2 !== index));
       setDirty(true);
     }, []);
-    const addFlag = (0, import_react20.useCallback)(() => {
+    const addFlag = (0, import_react24.useCallback)(() => {
       setFlags((prev) => [...prev, { id: "", name: "", defaultActive: false }]);
       setDirty(true);
     }, []);
-    const handleNameBlur = (0, import_react20.useCallback)((index) => {
+    const handleNameBlur = (0, import_react24.useCallback)((index) => {
       setFlags((prev) => {
         const flag = prev[index];
         if (flag && !flag.id && flag.name) {
@@ -71291,7 +71449,7 @@ ${e2}`);
         return prev;
       });
     }, []);
-    const save = (0, import_react20.useCallback)(async () => {
+    const save = (0, import_react24.useCallback)(async () => {
       setError(null);
       setSaving(true);
       try {
@@ -71303,7 +71461,7 @@ ${e2}`);
         setSaving(false);
       }
     }, [projectId, flags]);
-    const handleBack = (0, import_react20.useCallback)(() => {
+    const handleBack = (0, import_react24.useCallback)(() => {
       if (dirty && !window.confirm("You have unsaved changes. Leave without saving?")) return;
       onBack();
     }, [dirty, onBack]);
@@ -71346,7 +71504,7 @@ ${e2}`);
   }
 
   // src/RulesPage.tsx
-  var import_react21 = __toESM(require_react());
+  var import_react25 = __toESM(require_react());
   var import_jsx_runtime24 = __toESM(require_jsx_runtime());
   function generateRuleId(name) {
     return name.trim().toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
@@ -71466,7 +71624,7 @@ ${e2}`);
     ] });
   }
   function RuleEditModal({ rule: initial, flags, onSave, onCancel }) {
-    const [rule, setRule] = (0, import_react21.useState)(() => JSON.parse(JSON.stringify(initial)));
+    const [rule, setRule] = (0, import_react25.useState)(() => JSON.parse(JSON.stringify(initial)));
     const setField = (key, value) => setRule((r2) => ({ ...r2, [key]: value }));
     const conditions = rule.conditions ?? { operator: "AND", checks: [] };
     const setConditions = (g2) => setField("conditions", g2);
@@ -71556,15 +71714,15 @@ ${e2}`);
     ] }) });
   }
   function RulesPage({ projectId, projectName, onBack }) {
-    const [rules, setRules] = (0, import_react21.useState)([]);
-    const [flags, setFlags] = (0, import_react21.useState)([]);
-    const [loading, setLoading] = (0, import_react21.useState)(true);
-    const [saving, setSaving] = (0, import_react21.useState)(false);
-    const [dirty, setDirty] = (0, import_react21.useState)(false);
-    const [error, setError] = (0, import_react21.useState)(null);
-    const [editingIndex, setEditingIndex] = (0, import_react21.useState)(null);
-    const [isNewRule, setIsNewRule] = (0, import_react21.useState)(false);
-    (0, import_react21.useEffect)(() => {
+    const [rules, setRules] = (0, import_react25.useState)([]);
+    const [flags, setFlags] = (0, import_react25.useState)([]);
+    const [loading, setLoading] = (0, import_react25.useState)(true);
+    const [saving, setSaving] = (0, import_react25.useState)(false);
+    const [dirty, setDirty] = (0, import_react25.useState)(false);
+    const [error, setError] = (0, import_react25.useState)(null);
+    const [editingIndex, setEditingIndex] = (0, import_react25.useState)(null);
+    const [isNewRule, setIsNewRule] = (0, import_react25.useState)(false);
+    (0, import_react25.useEffect)(() => {
       Promise.all([rulesApi.list(projectId), flagsApi.list(projectId)]).then(([r2, f2]) => {
         setRules(r2);
         setFlags(f2);
@@ -71574,7 +71732,7 @@ ${e2}`);
         setLoading(false);
       });
     }, [projectId]);
-    const save = (0, import_react21.useCallback)(async () => {
+    const save = (0, import_react25.useCallback)(async () => {
       setError(null);
       setSaving(true);
       try {
@@ -71611,7 +71769,7 @@ ${e2}`);
       setRules((prev) => prev.filter((_, i2) => i2 !== index));
       setDirty(true);
     };
-    const handleBack = (0, import_react21.useCallback)(() => {
+    const handleBack = (0, import_react25.useCallback)(() => {
       if (dirty && !window.confirm("You have unsaved changes. Leave without saving?")) return;
       onBack();
     }, [dirty, onBack]);
@@ -71667,14 +71825,14 @@ ${e2}`);
   }
 
   // src/LoginPage.tsx
-  var import_react22 = __toESM(require_react());
+  var import_react26 = __toESM(require_react());
   var import_jsx_runtime25 = __toESM(require_jsx_runtime());
   function LoginPage({ onAuthenticated }) {
-    const [mode, setMode] = (0, import_react22.useState)("login");
-    const [email, setEmail] = (0, import_react22.useState)("");
-    const [password, setPassword] = (0, import_react22.useState)("");
-    const [error, setError] = (0, import_react22.useState)("");
-    const [loading, setLoading] = (0, import_react22.useState)(false);
+    const [mode, setMode] = (0, import_react26.useState)("login");
+    const [email, setEmail] = (0, import_react26.useState)("");
+    const [password, setPassword] = (0, import_react26.useState)("");
+    const [error, setError] = (0, import_react26.useState)("");
+    const [loading, setLoading] = (0, import_react26.useState)(false);
     const handleSubmit = async (e2) => {
       e2.preventDefault();
       setError("");
@@ -71757,28 +71915,28 @@ ${e2}`);
     return { type: "projects" };
   }
   function App() {
-    const [authState, setAuthState] = (0, import_react23.useState)({ status: "loading" });
-    const [page, setPage] = (0, import_react23.useState)(pageFromPath);
-    const [thumbBuster, setThumbBuster] = (0, import_react23.useState)(0);
-    const isDirtyRef = (0, import_react23.useRef)(false);
-    const pageRef = (0, import_react23.useRef)(page);
-    (0, import_react23.useEffect)(() => {
+    const [authState, setAuthState] = (0, import_react27.useState)({ status: "loading" });
+    const [page, setPage] = (0, import_react27.useState)(pageFromPath);
+    const [thumbBuster, setThumbBuster] = (0, import_react27.useState)(0);
+    const isDirtyRef = (0, import_react27.useRef)(false);
+    const pageRef = (0, import_react27.useRef)(page);
+    (0, import_react27.useEffect)(() => {
       pageRef.current = page;
     }, [page]);
-    (0, import_react23.useEffect)(() => {
+    (0, import_react27.useEffect)(() => {
       setUnauthorizedHandler(() => setAuthState({ status: "unauthenticated" }));
       authApi.me().then((user) => setAuthState({ status: "authenticated", user })).catch(() => {
       });
     }, []);
-    const handleLogout = (0, import_react23.useCallback)(async () => {
+    const handleLogout = (0, import_react27.useCallback)(async () => {
       await authApi.logout().catch(() => {
       });
       setAuthState({ status: "unauthenticated" });
     }, []);
-    const handleDirtyChange = (0, import_react23.useCallback)((dirty) => {
+    const handleDirtyChange = (0, import_react27.useCallback)((dirty) => {
       isDirtyRef.current = dirty;
     }, []);
-    (0, import_react23.useEffect)(() => {
+    (0, import_react27.useEffect)(() => {
       const onPopState = () => {
         const currentPage = pageRef.current;
         if (currentPage.type !== "scene" || !isDirtyRef.current) {
@@ -71795,31 +71953,31 @@ ${e2}`);
       window.addEventListener("popstate", onPopState);
       return () => window.removeEventListener("popstate", onPopState);
     }, []);
-    const navigateToProject = (0, import_react23.useCallback)((project) => {
+    const navigateToProject = (0, import_react27.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
       setPage({ type: "scenes", project });
     }, []);
-    const navigateToScene = (0, import_react23.useCallback)((scene, project) => {
+    const navigateToScene = (0, import_react27.useCallback)((scene, project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/scene/${encodeURIComponent(scene.id)}`);
       setPage({ type: "scene", sceneId: scene.id, project });
     }, []);
-    const navigateBackToProjects = (0, import_react23.useCallback)(() => {
+    const navigateBackToProjects = (0, import_react27.useCallback)(() => {
       window.history.pushState(null, "", "/");
       setPage({ type: "projects" });
     }, []);
-    const navigateBackToScenes = (0, import_react23.useCallback)((project) => {
+    const navigateBackToScenes = (0, import_react27.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
       setPage({ type: "scenes", project });
     }, []);
-    const navigateToFlags = (0, import_react23.useCallback)((project) => {
+    const navigateToFlags = (0, import_react27.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/flags`);
       setPage({ type: "flags", project });
     }, []);
-    const navigateToRules = (0, import_react23.useCallback)((project) => {
+    const navigateToRules = (0, import_react27.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/rules`);
       setPage({ type: "rules", project });
     }, []);
-    const handleSaved = (0, import_react23.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
+    const handleSaved = (0, import_react27.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
     if (authState.status === "loading") {
       return null;
     }
@@ -71943,5 +72101,24 @@ tiny-lru/dist/tiny-lru.js:
    * @copyright 2026 Jason Mulligan <jason.mulligan@avoidwork.com>
    * @license BSD-3-Clause
    * @version 11.4.7
+   *)
+
+lucide-react/dist/esm/shared/src/utils/mergeClasses.mjs:
+lucide-react/dist/esm/shared/src/utils/toKebabCase.mjs:
+lucide-react/dist/esm/shared/src/utils/toCamelCase.mjs:
+lucide-react/dist/esm/shared/src/utils/toPascalCase.mjs:
+lucide-react/dist/esm/defaultAttributes.mjs:
+lucide-react/dist/esm/shared/src/utils/hasA11yProp.mjs:
+lucide-react/dist/esm/context.mjs:
+lucide-react/dist/esm/Icon.mjs:
+lucide-react/dist/esm/createLucideIcon.mjs:
+lucide-react/dist/esm/icons/link-2.mjs:
+lucide-react/dist/esm/icons/unlink-2.mjs:
+lucide-react/dist/esm/lucide-react.mjs:
+  (**
+   * @license lucide-react v1.21.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
    *)
 */
