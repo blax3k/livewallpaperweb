@@ -332,6 +332,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
 
     rendererRef.current.renameSpriteByIndex(index, newName);
     refreshSpriteList(rendererRef.current);
+    setSelectedSprite(prev => prev?.index === index ? { ...prev, name: newName } : prev);
 
     const spriteId = rendererRef.current.getSpriteEntries()[index]?.id;
     if (spriteId) {

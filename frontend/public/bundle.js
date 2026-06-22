@@ -70086,6 +70086,7 @@ ${e2}`);
       if (!rendererRef.current) return;
       rendererRef.current.renameSpriteByIndex(index, newName);
       refreshSpriteList(rendererRef.current);
+      setSelectedSprite((prev) => prev?.index === index ? { ...prev, name: newName } : prev);
       const spriteId = rendererRef.current.getSpriteEntries()[index]?.id;
       if (spriteId) {
         spritesApi.rename(spriteId, newName).catch(console.error);
