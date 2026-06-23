@@ -3,7 +3,7 @@ import type { SceneSummary, SceneDetail, ProjectSummary, ImageRecord, FlagDefini
 export type { SceneSummary, SceneDetail, ProjectSummary, ImageRecord, FlagDefinition, RuleDefinition };
 
 export class ApiError extends Error {
-  constructor(public readonly status: number, message: string) {
+  constructor(public readonly status: number, message: string, public readonly data?: unknown) {
     super(message);
     this.name = 'ApiError';
   }
@@ -21,11 +21,12 @@ async function request<T>(input: string, init?: RequestInit): Promise<T> {
       unauthorizedHandler?.();
     }
     let message = `HTTP ${res.status}`;
+    let body: unknown;
     try {
-      const body = await res.json();
-      message = body.error ?? body.message ?? message;
+      body = await res.json();
+      message = (body as Record<string, string>).error ?? (body as Record<string, string>).message ?? message;
     } catch {}
-    throw new ApiError(res.status, message);
+    throw new ApiError(res.status, message, body);
   }
   const contentType = res.headers.get('content-type');
   if (contentType?.includes('application/json')) {
@@ -110,6 +111,10 @@ export const imagesApi = {
     const form = new FormData();
     form.append('file', file);
     return request<ImageRecord>(`/api/images?projectId=${encodeURIComponent(projectId)}`, { method: 'POST', body: form });
+  },
+
+  checkUsage(imageId: string): Promise<{ scenes: string[] }> {
+    return request<{ scenes: string[] }>(`/api/images/${imageId}/usage`);
   },
 
   delete(imageId: string): Promise<void> {

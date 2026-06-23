@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 /* src/styles/main.scss */
 * {
   margin: 0;
@@ -626,6 +628,58 @@ body {
 }
 .btn--danger:active:not(:disabled) {
   background: #2a1010;
+}
+
+/* src/components/ImageInUseModal.scss */
+.image-in-use-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.image-in-use-dialog {
+  background: #2a2a2a;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 24px 28px;
+  min-width: 280px;
+  text-align: center;
+}
+.image-in-use-dialog p {
+  color: #ccc;
+  font-size: 13px;
+  margin: 0 0 6px;
+}
+.image-in-use-dialog strong {
+  color: #fff;
+}
+.image-in-use-sub {
+  color: #888 !important;
+  font-size: 11px !important;
+  margin-bottom: 12px !important;
+}
+.image-in-use-list {
+  list-style: none;
+  margin: 0 0 20px;
+  padding: 0;
+  text-align: left;
+}
+.image-in-use-list li {
+  color: #ccc;
+  font-size: 13px;
+  padding: 4px 0;
+}
+.image-in-use-list li::before {
+  content: "\2022  ";
+  color: #888;
+}
+.image-in-use-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
 }
 
 /* src/components/SliderRow.scss */

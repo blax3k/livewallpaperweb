@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import type { ImageStorage } from '../../storage';
-import { deleteImage, getImageSizesByFilenames, ImageUploadError, listImages, uploadImage } from './imageService';
+import { deleteImage, getImageSizesByFilenames, ImageInUseError, ImageUploadError, listImages, uploadImage, checkImageUsage } from './imageService';
 import { HttpStatus } from '../../utils/httpStatus';
 
 interface ImageRouteDeps {
@@ -34,12 +34,23 @@ export async function registerImageRoutes(
     return getImageSizesByFilenames(req.body.filenames ?? []);
   });
 
-  server.delete<{ Params: { id: string } }>('/api/images/:id', async (req, reply) => {
-    const deleted = await deleteImage(req.params.id, deps.storage, deps.thumbnailStorage);
-    if (!deleted) {
-      return reply.status(HttpStatus.NOT_FOUND).send({ error: 'Image not found' });
-    }
+  server.get<{ Params: { id: string } }>('/api/images/:id/usage', async (req) => {
+    const scenes = await checkImageUsage(req.params.id);
+    return { scenes };
+  });
 
-    return reply.status(HttpStatus.NO_CONTENT).send();
+  server.delete<{ Params: { id: string } }>('/api/images/:id', async (req, reply) => {
+    try {
+      const deleted = await deleteImage(req.params.id, deps.storage, deps.thumbnailStorage);
+      if (!deleted) {
+        return reply.status(HttpStatus.NOT_FOUND).send({ error: 'Image not found' });
+      }
+      return reply.status(HttpStatus.NO_CONTENT).send();
+    } catch (err) {
+      if (err instanceof ImageInUseError) {
+        return reply.status(HttpStatus.CONFLICT).send({ error: 'Image is used in one or more scenes', scenes: err.scenes });
+      }
+      throw err;
+    }
   });
 }

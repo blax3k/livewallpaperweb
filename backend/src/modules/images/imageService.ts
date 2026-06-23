@@ -2,7 +2,7 @@ import type { MultipartFile } from '@fastify/multipart';
 import { randomUUID } from 'crypto';
 import sharp from 'sharp';
 import type { ImageStorage } from '../../storage';
-import { deleteImageRecordById, insertImageRecord, selectImages, selectImageSizesByFilenames } from './imageRepository';
+import { deleteImageRecordById, insertImageRecord, selectImages, selectImageSizesByFilenames, selectScenesUsingImage } from './imageRepository';
 import { HttpStatus } from '../../utils/httpStatus';
 
 const ALLOWED_MIME_TYPES = new Set(['image/png', 'image/jpeg', 'image/gif', 'image/webp']);
@@ -16,6 +16,12 @@ const MIME_TO_EXT: Record<string, string> = {
 export class ImageUploadError extends Error {
   constructor(public readonly statusCode: number, public readonly payload: { error: string }) {
     super(payload.error);
+  }
+}
+
+export class ImageInUseError extends Error {
+  constructor(public readonly scenes: string[]) {
+    super('Image is in use');
   }
 }
 
@@ -95,7 +101,16 @@ export async function getImageSizesByFilenames(filenames: string[]) {
   return selectImageSizesByFilenames(filenames);
 }
 
+export async function checkImageUsage(id: string): Promise<string[]> {
+  return selectScenesUsingImage(id);
+}
+
 export async function deleteImage(id: string, storage: ImageStorage, thumbnailStorage: ImageStorage) {
+  const scenes = await selectScenesUsingImage(id);
+  if (scenes.length > 0) {
+    throw new ImageInUseError(scenes);
+  }
+
   const deleted = await deleteImageRecordById(id);
   if (!deleted) {
     return null;

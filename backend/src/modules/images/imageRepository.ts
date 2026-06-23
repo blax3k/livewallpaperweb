@@ -26,6 +26,16 @@ export async function deleteImageRecordById(id: string) {
   return result.rows[0] ?? null;
 }
 
+export async function selectScenesUsingImage(imageId: string): Promise<string[]> {
+  const result = await pool.query<{ label: string }>(
+    `SELECT s.label FROM scenes s
+     JOIN scene_image_links sil ON sil.scene_id = s.id
+     WHERE sil.image_id = $1`,
+    [imageId],
+  );
+  return result.rows.map(r => r.label);
+}
+
 export async function selectImageSizesByFilenames(filenames: string[]): Promise<Record<string, number>> {
   if (filenames.length === 0) return {};
   const result = await pool.query<{ filename: string; size_bytes: number }>(

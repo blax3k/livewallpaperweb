@@ -1,6 +1,7 @@
 import { createPortal } from 'react-dom';
 import './ImageLibraryModal.scss';
 import { Button } from '../../components/Button';
+import { ImageInUseModal } from '../../components/ImageInUseModal';
 import { useImageLibrary, getUploadUrl, getImageThumbnailUrl } from '../../hooks/useImageLibrary';
 import { formatBytes } from '../../utils/sceneSize';
 
@@ -13,6 +14,8 @@ export function ImageLibraryModal({ projectId, onClose }: { projectId: string, o
     setPreviewImage,
     confirmDelete,
     setConfirmDelete,
+    inUseScenes,
+    setInUseScenes,
     fileInputRef,
     handleDelete,
     handleDeleteConfirmed,
@@ -99,6 +102,7 @@ export function ImageLibraryModal({ projectId, onClose }: { projectId: string, o
         </div>
       </div>
     )}
+    {inUseScenes && <ImageInUseModal scenes={inUseScenes} onClose={() => setInUseScenes(null)} />}
     </>,
     document.body
   );

@@ -16,6 +16,7 @@ export function useImageLibrary(projectId: string, onImageDeleted?: (image: Imag
   const [uploading, setUploading] = useState(false);
   const [previewImage, setPreviewImage] = useState<ImageRecord | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<ImageRecord | null>(null);
+  const [inUseScenes, setInUseScenes] = useState<string[] | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -24,9 +25,14 @@ export function useImageLibrary(projectId: string, onImageDeleted?: (image: Imag
       .catch(() => setLoading(false));
   }, [projectId]);
 
-  const handleDelete = (image: ImageRecord, e: React.MouseEvent) => {
+  const handleDelete = async (image: ImageRecord, e: React.MouseEvent) => {
     e.stopPropagation();
-    setConfirmDelete(image);
+    const { scenes } = await imagesApi.checkUsage(image.id);
+    if (scenes.length > 0) {
+      setInUseScenes(scenes);
+    } else {
+      setConfirmDelete(image);
+    }
   };
 
   const handleDeleteConfirmed = async () => {
@@ -58,6 +64,8 @@ export function useImageLibrary(projectId: string, onImageDeleted?: (image: Imag
     setPreviewImage,
     confirmDelete,
     setConfirmDelete,
+    inUseScenes,
+    setInUseScenes,
     fileInputRef,
     handleDelete,
     handleDeleteConfirmed,

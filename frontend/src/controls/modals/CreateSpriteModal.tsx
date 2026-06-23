@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import './CreateSpriteModal.scss';
 import { Button } from '../../components/Button';
+import { ImageInUseModal } from '../../components/ImageInUseModal';
 import { useImageLibrary, getUploadUrl, getImageThumbnailUrl } from '../../hooks/useImageLibrary';
 import { formatBytes } from '../../utils/sceneSize';
 
@@ -16,6 +17,8 @@ export function CreateSpriteModal({ onSelect, onClose, projectId }: { onSelect: 
     setPreviewImage,
     confirmDelete,
     setConfirmDelete,
+    inUseScenes,
+    setInUseScenes,
     fileInputRef,
     handleDelete,
     handleDeleteConfirmed,
@@ -114,6 +117,7 @@ export function CreateSpriteModal({ onSelect, onClose, projectId }: { onSelect: 
         </div>
       </div>
     )}
+    {inUseScenes && <ImageInUseModal scenes={inUseScenes} onClose={() => setInUseScenes(null)} />}
     </>,
     document.body
   );
