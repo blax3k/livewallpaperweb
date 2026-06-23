@@ -27,6 +27,41 @@ export function SliderRow({
   if (labelWidth !== undefined) labelStyle.width = labelWidth;
   if (labelAlign !== undefined) labelStyle.textAlign = labelAlign;
 
+  const formatValue = (v: number) => String(parseFloat(v.toFixed(decimalPlaces)));
+
+  const [localText, setLocalText] = React.useState(() => formatValue(value));
+  const [isFocused, setIsFocused] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!isFocused) setLocalText(formatValue(value));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, decimalPlaces, isFocused]);
+
+  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const text = e.target.value;
+    setLocalText(text);
+    if (text === '') {
+      onChange(min);
+      return;
+    }
+    const v = parseFloat(text);
+    if (!isNaN(v) && v >= min && v <= max) {
+      onChange(v);
+      onCommit?.(v);
+    }
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+    const v = parseFloat(localText);
+    const finalValue = (localText === '' || isNaN(v))
+      ? min
+      : Math.min(max, Math.max(min, v));
+    onChange(finalValue);
+    onCommit?.(finalValue);
+    setLocalText(formatValue(finalValue));
+  };
+
   return (
     <div className="slider-row">
       <label style={Object.keys(labelStyle).length ? labelStyle : undefined}>
@@ -44,17 +79,14 @@ export function SliderRow({
         onPointerUp={(e) => onPointerUp?.(parseFloat((e.target as HTMLInputElement).value))}
       />
       <input
-        type="number"
-        min={min}
-        max={max}
-        step={step}
-        value={parseFloat(value.toFixed(decimalPlaces))}
+        type="text"
+        inputMode="decimal"
+        value={localText}
         disabled={disabled}
-        onFocus={() => onFocus?.()}
-        onChange={(e) => {
-          const v = parseFloat(e.target.value);
-          if (!isNaN(v)) { onChange(v); onCommit?.(v); }
-        }}
+        onFocus={() => { setIsFocused(true); onFocus?.(); }}
+        onChange={handleTextChange}
+        onBlur={handleBlur}
+        onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
       />
     </div>
   );
