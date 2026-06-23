@@ -59,6 +59,8 @@ export class SceneRenderer {
   // Stores the block object itself (not an index) so removing/reordering other conditions
   // never invalidates it.
   private selectedConditionBlockBySprite: Map<PIXI.Sprite, SpriteConditionBlock> = new Map();
+  // Sprites explicitly showing their base (Default) state — distinct from the uninitialized case.
+  private selectedDefaultBySprite: Set<PIXI.Sprite> = new Set();
 
   constructor(container: HTMLElement) {
     this.container = container;
@@ -125,6 +127,7 @@ export class SceneRenderer {
     this.spriteMetadata.clear();
     this.conditionPreviewState.clear();
     this.selectedConditionBlockBySprite.clear();
+    this.selectedDefaultBySprite.clear();
     this.selectionHighlight = null;
     this.selectedHighlightIndex = null;
     this.app.stage.removeChildren();
@@ -897,8 +900,12 @@ export class SceneRenderer {
     const block = original?.conditions?.[conditionIndex];
     if (!metadata || !block) return;
 
-    if (!this.conditionPreviewState.has(sprite)) {
-      // First time this sprite gets a condition selected — capture its true base state.
+    const wasDefault = this.selectedDefaultBySprite.has(sprite);
+    this.selectedDefaultBySprite.delete(sprite);
+
+    if (!this.conditionPreviewState.has(sprite) || wasDefault) {
+      // Capture the current values as the base on first selection or when returning from Default
+      // (where the user may have edited position/size/parallax directly on the base sprite).
       this.conditionPreviewState.set(sprite, {
         baseX: metadata.x, baseY: metadata.y,
         baseParallax: metadata.parallaxMultiplier,
@@ -912,6 +919,33 @@ export class SceneRenderer {
   }
 
   /**
+   * Switch a sprite to show its base (Default) values. Restores the visual to the base state
+   * but keeps conditionPreviewState so switching back to a condition set can still apply its
+   * modifications relative to the correct base. Edits made while Default is active go directly
+   * to the base values (same path as sprites with no condition sets).
+   */
+  selectDefaultCondition(spriteIndex: number): void {
+    if (spriteIndex < 0 || spriteIndex >= this.sprites.length) return;
+    const sprite = this.sprites[spriteIndex];
+    const metadata = this.spriteMetadata.get(sprite);
+    if (!metadata) return;
+
+    const saved = this.conditionPreviewState.get(sprite);
+    if (saved) {
+      metadata.x = saved.baseX; metadata.y = saved.baseY;
+      metadata.parallaxMultiplier = saved.baseParallax;
+      sprite.width = saved.baseWidth; sprite.height = saved.baseHeight;
+      const baseTexture = this.textures.get(metadata.textureResource);
+      if (baseTexture) sprite.texture = this.cropTexture(baseTexture, saved.baseTexCoordinates);
+      this.applyAllPositions();
+      this.updateSelectionHighlight();
+    }
+
+    this.selectedConditionBlockBySprite.delete(sprite);
+    this.selectedDefaultBySprite.add(sprite);
+  }
+
+  /**
    * Returns the index of the currently selected condition set for a sprite, or null if it has
    * none selected (i.e. it has no condition sets at all, so its plain base values are shown).
    * Looked up by the block's identity rather than a stored index, so it stays correct even after
@@ -919,7 +953,9 @@ export class SceneRenderer {
    */
   getSelectedConditionIndex(spriteIndex: number): number | null {
     if (spriteIndex < 0 || spriteIndex >= this.sprites.length) return null;
-    const block = this.selectedConditionBlockBySprite.get(this.sprites[spriteIndex]);
+    const sprite = this.sprites[spriteIndex];
+    if (this.selectedDefaultBySprite.has(sprite)) return -1;
+    const block = this.selectedConditionBlockBySprite.get(sprite);
     if (!block) return null;
     const original = this.getOriginalSpriteData(spriteIndex);
     const index = original?.conditions?.indexOf(block) ?? -1;

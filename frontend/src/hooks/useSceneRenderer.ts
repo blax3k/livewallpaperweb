@@ -47,7 +47,11 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     const renderer = rendererRef.current;
     if (!renderer) return;
 
-    renderer.selectCondition(spriteIndex, conditionIndex);
+    if (conditionIndex === -1) {
+      renderer.selectDefaultCondition(spriteIndex);
+    } else {
+      renderer.selectCondition(spriteIndex, conditionIndex);
+    }
     bumpConditionsVersion();
     // If this is the sprite currently focused for editing, reflect its new override values.
     const pos = renderer.getSpritePosition(spriteIndex);
@@ -216,9 +220,10 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     setSelectedSprite(prev => {
       if (!prev) return null;
       rendererRef.current?.setSpriteParallax(prev.index, depth);
-      // Don't re-sort while this sprite has a condition set selected — the parallax change is
-      // only an override on that condition, not a change to its base sort position.
-      const hasSelectedCondition = rendererRef.current?.getSelectedConditionIndex(prev.index) !== null;
+      // Don't re-sort while this sprite has a (non-default) condition set selected — the
+      // parallax change is only an override on that condition, not a change to base sort order.
+      const selIdx = rendererRef.current?.getSelectedConditionIndex(prev.index);
+      const hasSelectedCondition = selIdx !== null && selIdx !== -1;
       if (!hasSelectedCondition) {
         const newIndex = rendererRef.current?.sortSpritesByParallax(prev.index) ?? prev.index;
         if (rendererRef.current) refreshSpriteList(rendererRef.current);

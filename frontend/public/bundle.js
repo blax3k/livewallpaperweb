@@ -65260,16 +65260,25 @@ ${parts.join("\n")}
       if (trimmed) onRename(spriteIndex, conditionIndex, trimmed);
       setEditingNameIndex(null);
     };
+    const isDefaultActive = activeConditionIndex === null || activeConditionIndex === -1;
     const handleRowClick = (conditionIndex) => {
       if (activeConditionIndex === conditionIndex) return;
       onSelectCondition(spriteIndex, conditionIndex);
+    };
+    const handleDefaultClick = () => {
+      if (isDefaultActive) return;
+      onSelectCondition(spriteIndex, -1);
     };
     return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "csp", children: [
       /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "csp__header", children: [
         /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "csp__title", children: "Condition Sets" }),
         /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("button", { className: "csp__add-btn", onClick: () => onAdd(spriteIndex), title: "Add condition set", children: "+" })
       ] }),
-      conditionBlocks.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "csp__empty", children: "No condition sets. Add one to override this sprite's properties based on flags." }),
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: `csp__set csp__set--default${isDefaultActive ? " csp__set--active" : ""}`, children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "csp__set-row", onClick: handleDefaultClick, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "csp__set-name", children: "Default" }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "csp__set-summary", children: "base values" })
+      ] }) }),
+      conditionBlocks.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "csp__empty", children: "Add a condition set to override this sprite's properties based on flags." }),
       conditionBlocks.map((block, i2) => {
         const isActive = activeConditionIndex === i2;
         return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: `csp__set${isActive ? " csp__set--active" : ""}`, children: [
@@ -68825,6 +68834,8 @@ ${e2}`);
       // Stores the block object itself (not an index) so removing/reordering other conditions
       // never invalidates it.
       this.selectedConditionBlockBySprite = /* @__PURE__ */ new Map();
+      // Sprites explicitly showing their base (Default) state — distinct from the uninitialized case.
+      this.selectedDefaultBySprite = /* @__PURE__ */ new Set();
       /**
        * Scale and position the scene to fit the canvas view
        * Centers the view around world x=0 (the room sprite)
@@ -68882,6 +68893,7 @@ ${e2}`);
       this.spriteMetadata.clear();
       this.conditionPreviewState.clear();
       this.selectedConditionBlockBySprite.clear();
+      this.selectedDefaultBySprite.clear();
       this.selectionHighlight = null;
       this.selectedHighlightIndex = null;
       this.app.stage.removeChildren();
@@ -69517,7 +69529,9 @@ ${e2}`);
       const original = this.getOriginalSpriteData(spriteIndex);
       const block = original?.conditions?.[conditionIndex];
       if (!metadata || !block) return;
-      if (!this.conditionPreviewState.has(sprite)) {
+      const wasDefault = this.selectedDefaultBySprite.has(sprite);
+      this.selectedDefaultBySprite.delete(sprite);
+      if (!this.conditionPreviewState.has(sprite) || wasDefault) {
         this.conditionPreviewState.set(sprite, {
           baseX: metadata.x,
           baseY: metadata.y,
@@ -69531,6 +69545,32 @@ ${e2}`);
       this.applyConditionMods(spriteIndex, block.modifications);
     }
     /**
+     * Switch a sprite to show its base (Default) values. Restores the visual to the base state
+     * but keeps conditionPreviewState so switching back to a condition set can still apply its
+     * modifications relative to the correct base. Edits made while Default is active go directly
+     * to the base values (same path as sprites with no condition sets).
+     */
+    selectDefaultCondition(spriteIndex) {
+      if (spriteIndex < 0 || spriteIndex >= this.sprites.length) return;
+      const sprite = this.sprites[spriteIndex];
+      const metadata = this.spriteMetadata.get(sprite);
+      if (!metadata) return;
+      const saved = this.conditionPreviewState.get(sprite);
+      if (saved) {
+        metadata.x = saved.baseX;
+        metadata.y = saved.baseY;
+        metadata.parallaxMultiplier = saved.baseParallax;
+        sprite.width = saved.baseWidth;
+        sprite.height = saved.baseHeight;
+        const baseTexture = this.textures.get(metadata.textureResource);
+        if (baseTexture) sprite.texture = this.cropTexture(baseTexture, saved.baseTexCoordinates);
+        this.applyAllPositions();
+        this.updateSelectionHighlight();
+      }
+      this.selectedConditionBlockBySprite.delete(sprite);
+      this.selectedDefaultBySprite.add(sprite);
+    }
+    /**
      * Returns the index of the currently selected condition set for a sprite, or null if it has
      * none selected (i.e. it has no condition sets at all, so its plain base values are shown).
      * Looked up by the block's identity rather than a stored index, so it stays correct even after
@@ -69538,7 +69578,9 @@ ${e2}`);
      */
     getSelectedConditionIndex(spriteIndex) {
       if (spriteIndex < 0 || spriteIndex >= this.sprites.length) return null;
-      const block = this.selectedConditionBlockBySprite.get(this.sprites[spriteIndex]);
+      const sprite = this.sprites[spriteIndex];
+      if (this.selectedDefaultBySprite.has(sprite)) return -1;
+      const block = this.selectedConditionBlockBySprite.get(sprite);
       if (!block) return null;
       const original = this.getOriginalSpriteData(spriteIndex);
       const index = original?.conditions?.indexOf(block) ?? -1;
@@ -69890,7 +69932,11 @@ ${e2}`);
     const handleSelectConditionSet = (0, import_react14.useCallback)((spriteIndex, conditionIndex) => {
       const renderer = rendererRef.current;
       if (!renderer) return;
-      renderer.selectCondition(spriteIndex, conditionIndex);
+      if (conditionIndex === -1) {
+        renderer.selectDefaultCondition(spriteIndex);
+      } else {
+        renderer.selectCondition(spriteIndex, conditionIndex);
+      }
       bumpConditionsVersion();
       const pos = renderer.getSpritePosition(spriteIndex);
       const scale = renderer.getSpriteScale(spriteIndex);
@@ -70030,7 +70076,8 @@ ${e2}`);
       setSelectedSprite((prev) => {
         if (!prev) return null;
         rendererRef.current?.setSpriteParallax(prev.index, depth);
-        const hasSelectedCondition = rendererRef.current?.getSelectedConditionIndex(prev.index) !== null;
+        const selIdx = rendererRef.current?.getSelectedConditionIndex(prev.index);
+        const hasSelectedCondition = selIdx !== null && selIdx !== -1;
         if (!hasSelectedCondition) {
           const newIndex = rendererRef.current?.sortSpritesByParallax(prev.index) ?? prev.index;
           if (rendererRef.current) refreshSpriteList(rendererRef.current);
@@ -70512,7 +70559,7 @@ ${e2}`);
     }, [rendererRef]);
     const activeConditionSet = selectedSprite !== null ? (() => {
       const conditionIndex = getActiveConditionIndexForSprite(selectedSprite.index);
-      return conditionIndex !== null ? { spriteIndex: selectedSprite.index, conditionIndex } : null;
+      return conditionIndex !== null && conditionIndex !== -1 ? { spriteIndex: selectedSprite.index, conditionIndex } : null;
     })() : null;
     const activeConditionLabel = activeConditionSet ? getConditionsForSprite(activeConditionSet.spriteIndex)[activeConditionSet.conditionIndex]?.name ?? `Set ${activeConditionSet.conditionIndex + 1}` : null;
     const applySelectedSpriteMove = (0, import_react17.useCallback)((x2, y2) => {

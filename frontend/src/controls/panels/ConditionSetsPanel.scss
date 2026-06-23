@@ -53,6 +53,11 @@
       border-color: #4a9eff;
       background: #0d1f33;
     }
+
+    &--default .csp__set-name {
+      color: #aaa;
+      font-style: italic;
+    }
   }
 
   &__set-row {

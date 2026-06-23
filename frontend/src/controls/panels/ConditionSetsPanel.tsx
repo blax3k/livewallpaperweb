@@ -34,11 +34,16 @@ export function ConditionSetsPanel({
     setEditingNameIndex(null);
   };
 
+  const isDefaultActive = activeConditionIndex === null || activeConditionIndex === -1;
+
   const handleRowClick = (conditionIndex: number) => {
-    // Once a sprite has condition sets, exactly one must always stay selected — clicking the
-    // already-active row is a no-op rather than deselecting to an ambiguous "none active" state.
     if (activeConditionIndex === conditionIndex) return;
     onSelectCondition(spriteIndex, conditionIndex);
+  };
+
+  const handleDefaultClick = () => {
+    if (isDefaultActive) return;
+    onSelectCondition(spriteIndex, -1);
   };
 
   return (
@@ -48,8 +53,15 @@ export function ConditionSetsPanel({
         <button className="csp__add-btn" onClick={() => onAdd(spriteIndex)} title="Add condition set">+</button>
       </div>
 
+      <div className={`csp__set csp__set--default${isDefaultActive ? ' csp__set--active' : ''}`}>
+        <div className="csp__set-row" onClick={handleDefaultClick}>
+          <span className="csp__set-name">Default</span>
+          <span className="csp__set-summary">base values</span>
+        </div>
+      </div>
+
       {conditionBlocks.length === 0 && (
-        <div className="csp__empty">No condition sets. Add one to override this sprite's properties based on flags.</div>
+        <div className="csp__empty">Add a condition set to override this sprite's properties based on flags.</div>
       )}
 
       {conditionBlocks.map((block, i) => {

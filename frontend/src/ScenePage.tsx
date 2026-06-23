@@ -174,7 +174,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
   const activeConditionSet = selectedSprite !== null
     ? (() => {
         const conditionIndex = getActiveConditionIndexForSprite(selectedSprite.index);
-        return conditionIndex !== null ? { spriteIndex: selectedSprite.index, conditionIndex } : null;
+        return conditionIndex !== null && conditionIndex !== -1 ? { spriteIndex: selectedSprite.index, conditionIndex } : null;
       })()
     : null;
 
