@@ -8,6 +8,7 @@ type ProjectSummaryRow = {
   created_at?: string;
   updated_at?: string;
   scene_ids: string[] | null;
+  total_size_bytes?: number;
 };
 
 export class ProjectObject extends ObjectModel {
@@ -19,6 +20,7 @@ export class ProjectObject extends ObjectModel {
     created_at?: string,
     updated_at?: string,
     public readonly scene_ids: string[] = [],
+    public readonly total_size_bytes: number = 0,
   ) {
     super(id, status, created_at, updated_at);
   }
@@ -32,6 +34,7 @@ export class ProjectObject extends ObjectModel {
       row.created_at,
       row.updated_at,
       row.scene_ids ?? [],
+      row.total_size_bytes ?? 0,
     );
   }
 
