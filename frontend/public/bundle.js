@@ -64418,6 +64418,39 @@ ${parts.join("\n")}
     };
   }
 
+  // src/utils/sceneSize.ts
+  function collectTextureResources(scene) {
+    const resources = /* @__PURE__ */ new Set();
+    for (const sprite of scene.sprites) {
+      resources.add(sprite.textureResource);
+      for (const block of sprite.conditions ?? []) {
+        for (const mod of block.modifications ?? []) {
+          if (mod.type === "texture" && mod.textureResource) {
+            resources.add(mod.textureResource);
+          }
+        }
+      }
+    }
+    return resources;
+  }
+  function computeSceneSize(scene, sizesByFilename) {
+    const jsonBytes = new TextEncoder().encode(JSON.stringify(scene)).length;
+    const resources = collectTextureResources(scene);
+    let imageBytes = 0;
+    for (const resource of resources) {
+      if (!resource.startsWith("/uploads/")) continue;
+      const filename = resource.slice("/uploads/".length);
+      imageBytes += sizesByFilename[filename] ?? 0;
+    }
+    return { jsonBytes, imageBytes, totalBytes: jsonBytes + imageBytes };
+  }
+  function formatBytes(bytes) {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+  }
+
   // src/controls/modals/CreateSpriteModal.tsx
   var import_jsx_runtime2 = __toESM(require_jsx_runtime());
   function CreateSpriteModal({ onSelect, onClose, projectId }) {
@@ -64483,6 +64516,7 @@ ${parts.join("\n")}
                     }
                   ),
                   /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "create-sprite-image-name", children: image.original_name }),
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "image-size-label", children: formatBytes(image.size_bytes) }),
                   /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "create-sprite-image-item-overlay", children: [
                     /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
                       "button",
@@ -65517,6 +65551,7 @@ ${parts.join("\n")}
                     }
                   ),
                   /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "add-sprite-image-name", children: image.original_name }),
+                  /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "image-size-label", children: formatBytes(image.size_bytes) }),
                   /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "image-item-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
                     "button",
                     {
@@ -70338,39 +70373,6 @@ ${e2}`);
       window.addEventListener("keydown", handleKeyDown);
       return () => window.removeEventListener("keydown", handleKeyDown);
     }, [selectedSprite, rendererRef, history, onUndoApply, onRedoApply, onSpriteMove, onMarkDirty]);
-  }
-
-  // src/utils/sceneSize.ts
-  function collectTextureResources(scene) {
-    const resources = /* @__PURE__ */ new Set();
-    for (const sprite of scene.sprites) {
-      resources.add(sprite.textureResource);
-      for (const block of sprite.conditions ?? []) {
-        for (const mod of block.modifications ?? []) {
-          if (mod.type === "texture" && mod.textureResource) {
-            resources.add(mod.textureResource);
-          }
-        }
-      }
-    }
-    return resources;
-  }
-  function computeSceneSize(scene, sizesByFilename) {
-    const jsonBytes = new TextEncoder().encode(JSON.stringify(scene)).length;
-    const resources = collectTextureResources(scene);
-    let imageBytes = 0;
-    for (const resource of resources) {
-      if (!resource.startsWith("/uploads/")) continue;
-      const filename = resource.slice("/uploads/".length);
-      imageBytes += sizesByFilename[filename] ?? 0;
-    }
-    return { jsonBytes, imageBytes, totalBytes: jsonBytes + imageBytes };
-  }
-  function formatBytes(bytes) {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-    return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
   }
 
   // src/ScenePage.tsx

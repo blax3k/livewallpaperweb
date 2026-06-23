@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import './CreateSpriteModal.scss';
 import { Button } from '../../components/Button';
 import { useImageLibrary, getUploadUrl, getImageThumbnailUrl } from '../../hooks/useImageLibrary';
+import { formatBytes } from '../../utils/sceneSize';
 
 export function CreateSpriteModal({ onSelect, onClose, projectId }: { onSelect: (textureResource: string) => void; onClose: () => void; projectId: string; }) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -62,6 +63,7 @@ export function CreateSpriteModal({ onSelect, onClose, projectId }: { onSelect: 
                 loading="lazy"
               />
               <span className="create-sprite-image-name">{image.original_name}</span>
+              <span className="image-size-label">{formatBytes(image.size_bytes)}</span>
               <div className="create-sprite-image-item-overlay">
                 <button
                   className="create-sprite-image-item-overlay-btn create-sprite-image-item-overlay-btn--preview"

@@ -490,6 +490,11 @@ body {
   word-break: break-all;
   line-height: 1.3;
 }
+.image-size-label {
+  font-size: 10px;
+  color: #555;
+  text-align: center;
+}
 .create-sprite-preview-overlay {
   position: fixed;
   inset: 0;
@@ -1157,6 +1162,11 @@ body {
   text-align: center;
   word-break: break-all;
   line-height: 1.3;
+}
+.image-size-label {
+  font-size: 10px;
+  color: #555;
+  text-align: center;
 }
 .add-sprite-preview-overlay {
   position: fixed;

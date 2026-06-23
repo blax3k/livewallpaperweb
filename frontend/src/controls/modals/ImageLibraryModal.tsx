@@ -2,6 +2,7 @@ import { createPortal } from 'react-dom';
 import './ImageLibraryModal.scss';
 import { Button } from '../../components/Button';
 import { useImageLibrary, getUploadUrl, getImageThumbnailUrl } from '../../hooks/useImageLibrary';
+import { formatBytes } from '../../utils/sceneSize';
 
 export function ImageLibraryModal({ projectId, onClose }: { projectId: string, onClose: () => void }) {
   const {
@@ -56,6 +57,7 @@ export function ImageLibraryModal({ projectId, onClose }: { projectId: string, o
                 loading="lazy"
               />
               <span className="add-sprite-image-name">{image.original_name}</span>
+              <span className="image-size-label">{formatBytes(image.size_bytes)}</span>
               <div className="image-item-overlay">
                 <button
                   className="image-item-overlay-btn image-item-overlay-btn--preview"
