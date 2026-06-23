@@ -252,6 +252,7 @@ export interface ProjectSummary {
   updated_at?: string;
   scene_ids: string[];
   scene_thumbnail_urls: string[];
+  total_size_bytes: number;
 }
 
 export interface SceneSummary {

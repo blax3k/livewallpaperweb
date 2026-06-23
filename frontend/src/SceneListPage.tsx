@@ -5,8 +5,9 @@ import { SceneCard } from './components/SceneCard';
 import { PageLayout, PageHeader, PageBody } from './components/PageLayout';
 import { NewSceneDialog } from './controls/modals/NewSceneDialog';
 import { SceneFlagsModal } from './controls/modals/SceneFlagsModal';
-import { scenesApi, flagsApi } from './api';
+import { scenesApi, flagsApi, projectsApi } from './api';
 import type { FlagDefinition, SceneFlagDeclarations } from '@livewallpaper/types';
+import { formatBytes } from './utils/sceneSize';
 
 interface SceneRecord {
   id: string;
@@ -22,13 +23,16 @@ interface SceneListPageProps {
   onRules?: () => void;
   projectname: string;
   projectId?: string;
+  projectSize?: number;
   thumbBuster?: number;
 }
 
-export function SceneListPage({ onSelect, onBack, onFlags, onRules, projectId, projectname, thumbBuster = 0 }: SceneListPageProps) {
+export function SceneListPage({ onSelect, onBack, onFlags, onRules, projectId, projectname, projectSize, thumbBuster = 0 }: SceneListPageProps) {
   const [scenes, setScenes] = useState<SceneRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [showNewSceneDialog, setShowNewSceneDialog] = useState(false);
+  const [fetchedName, setFetchedName] = useState<string | undefined>(undefined);
+  const [fetchedSize, setFetchedSize] = useState<number | undefined>(undefined);
 
   // Scene flags modal state
   const [deleteScene, setDeleteScene] = useState<SceneRecord | null>(null);
@@ -44,6 +48,16 @@ export function SceneListPage({ onSelect, onBack, onFlags, onRules, projectId, p
       .then((records) => { setScenes(records); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (!projectId || (projectname && projectSize !== undefined)) return;
+    projectsApi.get(projectId)
+      .then(p => {
+        if (!projectname) setFetchedName(p.name);
+        if (projectSize === undefined) setFetchedSize(p.total_size_bytes);
+      })
+      .catch(() => {});
+  }, [projectId]);
 
   const handleCreate = (label: string, copyFromSceneId?: string) => {
     const name = label.trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
@@ -106,7 +120,17 @@ export function SceneListPage({ onSelect, onBack, onFlags, onRules, projectId, p
 
   return (
     <PageLayout>
-      <PageHeader title={projectname} left={onBack && <Button onClick={onBack}>←</Button>}>
+      <PageHeader
+        title={
+          <>
+            {projectname || fetchedName}
+            {(projectSize ?? fetchedSize) !== undefined && (
+              <span className="project-size-badge">{formatBytes((projectSize ?? fetchedSize)!)}</span>
+            )}
+          </>
+        }
+        left={onBack && <Button onClick={onBack}>←</Button>}
+      >
         {onFlags && <Button onClick={onFlags}>Flags</Button>}
         {onRules && <Button onClick={onRules}>Rules</Button>}
         <Button onClick={() => setShowNewSceneDialog(true)}>+ Scene</Button>

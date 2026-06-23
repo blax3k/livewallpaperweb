@@ -18,6 +18,7 @@ type AuthState =
 interface ProjectRecord {
   id: string;
   name: string;
+  total_size_bytes?: number;
 }
 
 type Page =
@@ -172,6 +173,7 @@ function App() {
         onRules={() => navigateToRules(page.project)}
         projectname={page.project.name}
         projectId={page.project.id}
+        projectSize={page.project.total_size_bytes}
         thumbBuster={thumbBuster}
       />
     );

@@ -64267,6 +64267,9 @@ ${parts.join("\n")}
     list() {
       return request("/api/projects");
     },
+    get(projectId) {
+      return request(`/api/projects/${encodeURIComponent(projectId)}`);
+    },
     create(name) {
       return request("/api/projects", {
         method: "POST",
@@ -71048,10 +71051,12 @@ ${e2}`);
 
   // src/SceneListPage.tsx
   var import_jsx_runtime20 = __toESM(require_jsx_runtime());
-  function SceneListPage({ onSelect, onBack, onFlags, onRules, projectId, projectname, thumbBuster = 0 }) {
+  function SceneListPage({ onSelect, onBack, onFlags, onRules, projectId, projectname, projectSize, thumbBuster = 0 }) {
     const [scenes, setScenes] = (0, import_react21.useState)([]);
     const [loading, setLoading] = (0, import_react21.useState)(true);
     const [showNewSceneDialog, setShowNewSceneDialog] = (0, import_react21.useState)(false);
+    const [fetchedName, setFetchedName] = (0, import_react21.useState)(void 0);
+    const [fetchedSize, setFetchedSize] = (0, import_react21.useState)(void 0);
     const [deleteScene, setDeleteScene] = (0, import_react21.useState)(null);
     const [flagsScene, setFlagsScene] = (0, import_react21.useState)(null);
     const [flagsModalData, setFlagsModalData] = (0, import_react21.useState)(null);
@@ -71063,6 +71068,14 @@ ${e2}`);
         setLoading(false);
       }).catch(() => setLoading(false));
     }, []);
+    (0, import_react21.useEffect)(() => {
+      if (!projectId || projectname && projectSize !== void 0) return;
+      projectsApi.get(projectId).then((p2) => {
+        if (!projectname) setFetchedName(p2.name);
+        if (projectSize === void 0) setFetchedSize(p2.total_size_bytes);
+      }).catch(() => {
+      });
+    }, [projectId]);
     const handleCreate = (label, copyFromSceneId) => {
       const name = label.trim().toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
       scenesApi.create(name, label.trim(), { sprites: [], xFocus: 0 }, projectId, copyFromSceneId).then((scene) => {
@@ -71117,11 +71130,21 @@ ${e2}`);
       }
     }, [flagsScene, flagsModalData]);
     return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(PageLayout, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(PageHeader, { title: projectname, left: onBack && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Button, { onClick: onBack, children: "\u2190" }), children: [
-        onFlags && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Button, { onClick: onFlags, children: "Flags" }),
-        onRules && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Button, { onClick: onRules, children: "Rules" }),
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Button, { onClick: () => setShowNewSceneDialog(true), children: "+ Scene" })
-      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(
+        PageHeader,
+        {
+          title: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(import_jsx_runtime20.Fragment, { children: [
+            projectname || fetchedName,
+            (projectSize ?? fetchedSize) !== void 0 && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "project-size-badge", children: formatBytes(projectSize ?? fetchedSize) })
+          ] }),
+          left: onBack && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Button, { onClick: onBack, children: "\u2190" }),
+          children: [
+            onFlags && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Button, { onClick: onFlags, children: "Flags" }),
+            onRules && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Button, { onClick: onRules, children: "Rules" }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Button, { onClick: () => setShowNewSceneDialog(true), children: "+ Scene" })
+          ]
+        }
+      ),
       /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(PageBody, { children: [
         loading && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "scene-list-empty", children: "Loading\u2026" }),
         !loading && scenes.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "scene-list-empty", children: "No scenes found. Create one from within the editor." }),
@@ -71318,6 +71341,7 @@ ${e2}`);
             }
           ),
           /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "project-card-name", children: project.name }),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "project-card-size", children: formatBytes(project.total_size_bytes) }),
           /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "project-card-actions", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
             Button,
             {
@@ -71348,6 +71372,7 @@ ${e2}`);
               }
             ),
             /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "project-card-name", children: project.name }),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "project-card-size", children: formatBytes(project.total_size_bytes) }),
             /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "project-card-actions", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
               Button,
               {
@@ -72027,6 +72052,7 @@ ${e2}`);
           onRules: () => navigateToRules(page.project),
           projectname: page.project.name,
           projectId: page.project.id,
+          projectSize: page.project.total_size_bytes,
           thumbBuster
         }
       );

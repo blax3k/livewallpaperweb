@@ -4,6 +4,7 @@ import { NewProjectDialog } from './controls/modals/NewProjectDialog';
 import { Button } from './components/Button';
 import { PageLayout, PageHeader, PageBody } from './components/PageLayout';
 import { projectsApi } from './api';
+import { formatBytes } from './utils/sceneSize';
 
 type ProjectStatus = 'ACTIVE' | 'ARCHIVED' | 'DELETED';
 
@@ -13,6 +14,7 @@ interface ProjectRecord {
   status: ProjectStatus;
   scene_ids: string[];
   scene_thumbnail_urls: string[];
+  total_size_bytes: number;
 }
 
 interface ProjectListPageProps {
@@ -115,6 +117,7 @@ export function ProjectListPage({ onSelect, onLogout }: ProjectListPageProps) {
                   sceneThumbnailUrls={project.scene_thumbnail_urls}
                 />
                 <div className="project-card-name">{project.name}</div>
+                <div className="project-card-size">{formatBytes(project.total_size_bytes)}</div>
                 <div className="project-card-actions">
                   <Button
                     className="project-card-action"
@@ -145,6 +148,7 @@ export function ProjectListPage({ onSelect, onLogout }: ProjectListPageProps) {
                       sceneThumbnailUrls={project.scene_thumbnail_urls}
                     />
                     <div className="project-card-name">{project.name}</div>
+                    <div className="project-card-size">{formatBytes(project.total_size_bytes)}</div>
                     <div className="project-card-actions">
                       <Button
                         className="project-card-action"

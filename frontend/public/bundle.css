@@ -1322,6 +1322,13 @@ body {
 }
 
 /* src/SceneListPage.scss */
+.project-size-badge {
+  font-size: 11px;
+  font-weight: normal;
+  color: #555;
+  margin-left: 8px;
+  vertical-align: middle;
+}
 .scene-list-empty {
   color: #666;
   font-size: 13px;
@@ -1885,6 +1892,12 @@ body {
   color: #ccc;
   text-align: center;
   word-break: break-word;
+}
+.project-card-size {
+  font-size: 11px;
+  color: #555;
+  text-align: center;
+  margin-top: -4px;
 }
 .project-card-actions {
   display: flex;

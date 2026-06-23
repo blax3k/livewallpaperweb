@@ -80,6 +80,10 @@ export const projectsApi = {
     return request<ProjectSummary[]>('/api/projects');
   },
 
+  get(projectId: string): Promise<ProjectSummary> {
+    return request<ProjectSummary>(`/api/projects/${encodeURIComponent(projectId)}`);
+  },
+
   create(name: string): Promise<ProjectSummary> {
     return request<ProjectSummary>('/api/projects', {
       method: 'POST',

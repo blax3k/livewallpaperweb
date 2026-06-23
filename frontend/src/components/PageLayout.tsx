@@ -6,7 +6,7 @@ interface PageLayoutProps {
 }
 
 interface PageHeaderProps {
-  title: string;
+  title: React.ReactNode;
   left?: React.ReactNode;
   children?: React.ReactNode;
 }
