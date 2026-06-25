@@ -114,3 +114,37 @@ export async function updateProjectRules(projectId: string, rules: RuleDefinitio
   );
   return (result.rowCount ?? 0) > 0;
 }
+
+export async function selectFlagUsage(projectId: string, flagId: string): Promise<{ scenes: string[]; rules: string[] }> {
+  const scenesResult = await pool.query<{ name: string }>(
+    `SELECT DISTINCT s.name
+     FROM scenes s
+     WHERE s.project_id = $1
+       AND s.status <> 'DELETED'
+       AND (
+         jsonb_path_exists(s.flag_declarations, '$.required[*] ? (@ == $f)', jsonb_build_object('f', $2))
+         OR jsonb_path_exists(s.flag_declarations, '$.excluded[*] ? (@ == $f)', jsonb_build_object('f', $2))
+         OR jsonb_path_exists(s.flag_declarations, '$.scored[*].flagId ? (@ == $f)', jsonb_build_object('f', $2))
+         OR EXISTS (
+           SELECT 1 FROM sprites sp WHERE sp.scene_id = s.id
+             AND jsonb_path_exists(sp.conditions, '$[*].conditions.checks[*].flagId ? (@ == $f)', jsonb_build_object('f', $2))
+         )
+       )
+     ORDER BY s.name`,
+    [projectId, flagId],
+  );
+
+  const rulesResult = await pool.query<{ rules: RuleDefinition[] }>(
+    'SELECT rules FROM projects WHERE id = $1 AND status <> $2',
+    [projectId, 'DELETED'],
+  );
+  const allRules: RuleDefinition[] = rulesResult.rows[0]?.rules ?? [];
+  const matchingRules = allRules
+    .filter(rule =>
+      rule.conditions?.checks.some(c => c.flagId === flagId) ||
+      rule.actions.some(a => a.flagId === flagId),
+    )
+    .map(rule => rule.name);
+
+  return { scenes: scenesResult.rows.map(r => r.name), rules: matchingRules };
+}

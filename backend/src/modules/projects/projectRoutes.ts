@@ -7,6 +7,7 @@ import {
   updateProjectFlags,
   selectProjectRules,
   updateProjectRules,
+  selectFlagUsage,
 } from './projectRepository';
 
 export async function registerProjectRoutes(server: FastifyInstance): Promise<void> {
@@ -57,6 +58,10 @@ export async function registerProjectRoutes(server: FastifyInstance): Promise<vo
     const ok = await updateProjectFlags(req.params.id, req.body);
     if (!ok) return reply.status(HttpStatus.NOT_FOUND).send({ error: 'Project not found' });
     return reply.status(HttpStatus.NO_CONTENT).send();
+  });
+
+  server.get<{ Params: { id: string; flagId: string } }>('/api/projects/:id/flags/:flagId/usage', async (req) => {
+    return selectFlagUsage(req.params.id, req.params.flagId);
   });
 
   // ── Rules ──────────────────────────────────────────────────────────────────

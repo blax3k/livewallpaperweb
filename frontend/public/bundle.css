@@ -2008,6 +2008,26 @@ body {
 .flags-table__center {
   text-align: center;
 }
+.flags-table__row--error {
+  background: rgba(224, 85, 85, 0.08);
+}
+.flags-table__name-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.flags-table__name-cell .flags-table__input {
+  flex: 1;
+}
+.flags-table__name {
+  flex: 1;
+  padding: 0.3rem 0.5rem;
+}
+.flags-table__key {
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: #888;
+}
 .flags-table__input {
   background: #1e1e1e;
   border: 1px solid #444;
@@ -2021,6 +2041,12 @@ body {
 .flags-table__input:focus {
   outline: none;
   border-color: #888;
+}
+.flags-table__input--error {
+  border-color: #e05555;
+}
+.flags-table__input--error:focus {
+  border-color: #e05555;
 }
 
 /* src/LoginPage.scss */

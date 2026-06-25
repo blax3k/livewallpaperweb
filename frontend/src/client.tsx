@@ -35,6 +35,14 @@ function pageFromPath(): Page {
     const sceneId = decodeURIComponent(sceneMatch[2]);
     return { type: 'scene', sceneId, project: { id: projectId, name: '' } };
   }
+  const flagsMatch = window.location.pathname.match(/^\/project\/([^/]+)\/flags$/);
+  if (flagsMatch) {
+    return { type: 'flags', project: { id: decodeURIComponent(flagsMatch[1]), name: '' } };
+  }
+  const rulesMatch = window.location.pathname.match(/^\/project\/([^/]+)\/rules$/);
+  if (rulesMatch) {
+    return { type: 'rules', project: { id: decodeURIComponent(rulesMatch[1]), name: '' } };
+  }
   const projectMatch = window.location.pathname.match(/^\/project\/([^/]+)$/);
   if (projectMatch) {
     return { type: 'scenes', project: { id: decodeURIComponent(projectMatch[1]), name: '' } };

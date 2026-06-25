@@ -1337,7 +1337,7 @@
           return dispatcher;
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var React21 = require_react(), Internals = {
+        var React20 = require_react(), Internals = {
           d: {
             f: noop,
             r: function() {
@@ -1355,7 +1355,7 @@
           },
           p: 0,
           findDOMNode: null
-        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React21.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React20.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
         "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
           "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
         );
@@ -2890,7 +2890,7 @@
           "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
         }
         function validateOptionProps(element, props) {
-          null == props.value && ("object" === typeof props.children && null !== props.children ? React21.Children.forEach(props.children, function(child) {
+          null == props.value && ("object" === typeof props.children && null !== props.children ? React20.Children.forEach(props.children, function(child) {
             null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
               "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
             ));
@@ -18522,14 +18522,14 @@
           ));
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var Scheduler = require_scheduler(), React21 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+        var Scheduler = require_scheduler(), React20 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
         /* @__PURE__ */ Symbol.for("react.scope");
         var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity");
         /* @__PURE__ */ Symbol.for("react.legacy_hidden");
         /* @__PURE__ */ Symbol.for("react.tracing_marker");
         var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel");
         /* @__PURE__ */ Symbol.for("react.view_transition");
-        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React21.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React20.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
           pending: false,
           data: null,
           method: null,
@@ -21317,7 +21317,7 @@
           }
         };
         (function() {
-          var isomorphicReactPackageVersion = React21.version;
+          var isomorphicReactPackageVersion = React20.version;
           if ("19.2.5" !== isomorphicReactPackageVersion)
             throw Error(
               'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.5\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21671,18 +21671,18 @@
         function isValidElement(object) {
           return "object" === typeof object && null !== object && object.$$typeof === REACT_ELEMENT_TYPE;
         }
-        var React21 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React21.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
+        var React20 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React20.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
           return null;
         };
-        React21 = {
+        React20 = {
           react_stack_bottom_frame: function(callStackForError) {
             return callStackForError();
           }
         };
         var specialPropKeyWarningShown;
         var didWarnAboutElementRef = {};
-        var unknownOwnerDebugStack = React21.react_stack_bottom_frame.bind(
-          React21,
+        var unknownOwnerDebugStack = React20.react_stack_bottom_frame.bind(
+          React20,
           UnknownOwner
         )();
         var unknownOwnerDebugTask = createTask(getTaskName(UnknownOwner));
@@ -64338,6 +64338,9 @@ ${parts.join("\n")}
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(flags)
       });
+    },
+    checkUsage(projectId, flagId) {
+      return request(`/api/projects/${projectId}/flags/${flagId}/usage`);
     }
   };
   var rulesApi = {
@@ -71510,49 +71513,92 @@ ${e2}`);
 
   // src/FlagsPage.tsx
   var import_react25 = __toESM(require_react());
+
+  // src/components/FlagInUseModal.tsx
+  var import_react_dom4 = __toESM(require_react_dom());
   var import_jsx_runtime24 = __toESM(require_jsx_runtime());
-  function generateId(name) {
-    return name.trim().toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
+  function FlagInUseModal({ flagName, scenes, rules, onClose }) {
+    return (0, import_react_dom4.createPortal)(
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "image-in-use-overlay", onClick: onClose, children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "image-in-use-dialog", onClick: (e2) => e2.stopPropagation(), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("strong", { children: [
+          '"',
+          flagName,
+          '" could not be deleted.'
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { className: "image-in-use-sub", children: "It is currently referenced by the following:" }),
+        scenes.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(import_jsx_runtime24.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { className: "image-in-use-sub", children: "Scenes" }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("ul", { className: "image-in-use-list", children: scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("li", { children: scene }, scene)) })
+        ] }),
+        rules.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(import_jsx_runtime24.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { className: "image-in-use-sub", children: "Rules" }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("ul", { className: "image-in-use-list", children: rules.map((rule) => /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("li", { children: rule }, rule)) })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "image-in-use-actions", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Button, { onClick: onClose, children: "OK" }) })
+      ] }) }),
+      document.body
+    );
   }
-  function FlagRow({ flag, onChange, onDelete, onNameBlur }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("tr", { className: "flags-table__row", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
-        "input",
+
+  // src/FlagsPage.tsx
+  var import_jsx_runtime25 = __toESM(require_jsx_runtime());
+  function generateUniqueId(existingIds) {
+    let id;
+    do {
+      id = crypto.randomUUID().slice(0, 8);
+    } while (existingIds.has(id));
+    return id;
+  }
+  function FlagRow({ flag, isEditing, isDuplicate, onEdit, onAccept, onCancel, onChange, onDefaultActiveChange, onDelete }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("tr", { className: `flags-table__row${isDuplicate ? " flags-table__row--error" : ""}`, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+        "div",
         {
-          className: "flags-table__input",
-          value: flag.id,
-          onChange: (e2) => onChange({ ...flag, id: e2.target.value }),
-          placeholder: "flag_id",
-          spellCheck: false
+          className: "flags-table__name-cell",
+          onBlur: (e2) => {
+            if (!e2.currentTarget.contains(e2.relatedTarget)) onCancel();
+          },
+          children: isEditing ? /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(import_jsx_runtime25.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+              "input",
+              {
+                className: `flags-table__input${isDuplicate ? " flags-table__input--error" : ""}`,
+                value: flag.name,
+                onChange: (e2) => onChange({ ...flag, name: e2.target.value }),
+                onKeyDown: (e2) => {
+                  if (e2.key === "Enter" && !isDuplicate) onAccept();
+                },
+                placeholder: "Flag Name",
+                autoFocus: true
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Button, { onClick: onAccept, children: "\u2713" }),
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Button, { onClick: onCancel, children: "\u2717" })
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(import_jsx_runtime25.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "flags-table__name", children: flag.name }),
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Button, { onClick: onEdit, children: "Edit" })
+          ] })
         }
       ) }),
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
-        "input",
-        {
-          className: "flags-table__input",
-          value: flag.name,
-          onChange: (e2) => onChange({ ...flag, name: e2.target.value }),
-          onBlur: onNameBlur,
-          placeholder: "Display Name"
-        }
-      ) }),
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("td", { className: "flags-table__center", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "flags-table__key", children: flag.id }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("td", { className: "flags-table__center", children: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
         "input",
         {
           type: "checkbox",
           checked: flag.defaultActive ?? false,
-          onChange: (e2) => onChange({ ...flag, defaultActive: e2.target.checked })
+          onChange: (e2) => onDefaultActiveChange(e2.target.checked)
         }
       ) }),
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Button, { variant: "danger", onClick: onDelete, children: "Delete" }) })
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Button, { variant: "danger", onClick: onDelete, children: "Delete" }) })
     ] });
   }
   function FlagsPage({ projectId, projectName, onBack }) {
     const [flags, setFlags] = (0, import_react25.useState)([]);
     const [loading, setLoading] = (0, import_react25.useState)(true);
     const [saving, setSaving] = (0, import_react25.useState)(false);
-    const [dirty, setDirty] = (0, import_react25.useState)(false);
     const [error, setError] = (0, import_react25.useState)(null);
+    const [editingState, setEditingState] = (0, import_react25.useState)(null);
+    const [inUseModal, setInUseModal] = (0, import_react25.useState)(null);
     (0, import_react25.useEffect)(() => {
       flagsApi.list(projectId).then((data) => {
         setFlags(data);
@@ -71562,82 +71608,147 @@ ${e2}`);
         setLoading(false);
       });
     }, [projectId]);
+    const duplicateKeys = (0, import_react25.useMemo)(() => {
+      const indicesByKey = /* @__PURE__ */ new Map();
+      flags.forEach((flag, index) => {
+        if (flag.id) {
+          const existing = indicesByKey.get(flag.id) ?? [];
+          existing.push(index);
+          indicesByKey.set(flag.id, existing);
+        }
+      });
+      const duplicateIndices = /* @__PURE__ */ new Set();
+      indicesByKey.forEach((indices) => {
+        if (indices.length > 1) indices.forEach((index) => duplicateIndices.add(index));
+      });
+      return duplicateIndices;
+    }, [flags]);
+    const hasDuplicates = duplicateKeys.size > 0;
+    const save = (0, import_react25.useCallback)(async (flagsToSave) => {
+      setSaving(true);
+      setError(null);
+      try {
+        await flagsApi.save(projectId, flagsToSave);
+      } catch (err) {
+        setError(String(err));
+      } finally {
+        setSaving(false);
+      }
+    }, [projectId]);
     const updateFlag = (0, import_react25.useCallback)((index, updated) => {
       setFlags((prev) => {
         const next = [...prev];
         next[index] = updated;
         return next;
       });
-      setDirty(true);
     }, []);
-    const deleteFlag = (0, import_react25.useCallback)((index) => {
-      setFlags((prev) => prev.filter((_, i2) => i2 !== index));
-      setDirty(true);
-    }, []);
-    const addFlag = (0, import_react25.useCallback)(() => {
-      setFlags((prev) => [...prev, { id: "", name: "", defaultActive: false }]);
-      setDirty(true);
-    }, []);
-    const handleNameBlur = (0, import_react25.useCallback)((index) => {
-      setFlags((prev) => {
-        const flag = prev[index];
-        if (flag && !flag.id && flag.name) {
+    const handleDefaultActiveChange = (0, import_react25.useCallback)((index, defaultActive) => {
+      const newFlags = flags.map((flag, i2) => i2 === index ? { ...flag, defaultActive } : flag);
+      setFlags(newFlags);
+      save(newFlags);
+    }, [flags, save]);
+    const startEditing = (0, import_react25.useCallback)((index) => {
+      if (editingState !== null) {
+        setFlags((prev) => {
           const next = [...prev];
-          next[index] = { ...flag, id: generateId(flag.name) };
+          next[editingState.index] = editingState.original;
           return next;
+        });
+      }
+      setEditingState({ index, original: flags[index] });
+    }, [editingState, flags]);
+    const acceptEditing = (0, import_react25.useCallback)(() => {
+      setEditingState(null);
+      save(flags);
+    }, [flags, save]);
+    const cancelEditing = (0, import_react25.useCallback)(() => {
+      if (editingState === null) return;
+      setFlags((prev) => {
+        const next = [...prev];
+        next[editingState.index] = editingState.original;
+        return next;
+      });
+      setEditingState(null);
+    }, [editingState]);
+    const deleteFlag = (0, import_react25.useCallback)(async (index) => {
+      const flag = flags[index];
+      if (flag.id) {
+        const usage = await flagsApi.checkUsage(projectId, flag.id).catch(() => null);
+        if (usage && (usage.scenes.length > 0 || usage.rules.length > 0)) {
+          setInUseModal({ flagName: flag.name, scenes: usage.scenes, rules: usage.rules });
+          return;
         }
+      }
+      const newFlags = flags.filter((_, i2) => i2 !== index);
+      setFlags(newFlags);
+      setEditingState((prev) => {
+        if (prev === null || prev.index === index) return null;
+        if (prev.index > index) return { ...prev, index: prev.index - 1 };
         return prev;
       });
-    }, []);
-    const save = (0, import_react25.useCallback)(async () => {
-      setError(null);
-      setSaving(true);
-      try {
-        await flagsApi.save(projectId, flags);
-        setDirty(false);
-      } catch (err) {
-        setError(String(err));
-      } finally {
-        setSaving(false);
+      save(newFlags);
+    }, [flags, projectId, save]);
+    const addFlag = (0, import_react25.useCallback)(() => {
+      const existingIds = new Set(flags.map((flag) => flag.id));
+      const newFlag = { id: generateUniqueId(existingIds), name: "", defaultActive: false };
+      const newIndex = flags.length;
+      if (editingState !== null) {
+        setFlags((prev) => {
+          const next = [...prev];
+          next[editingState.index] = editingState.original;
+          return [...next, newFlag];
+        });
+      } else {
+        setFlags((prev) => [...prev, newFlag]);
       }
-    }, [projectId, flags]);
-    const handleBack = (0, import_react25.useCallback)(() => {
-      if (dirty && !window.confirm("You have unsaved changes. Leave without saving?")) return;
-      onBack();
-    }, [dirty, onBack]);
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(PageLayout, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(PageHeader, { title: `${projectName} \u2014 Flags`, left: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Button, { onClick: handleBack, children: "\u2190" }), children: [
-        dirty && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Button, { variant: "primary", onClick: save, disabled: saving, children: saving ? "Saving\u2026" : "Save" }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Button, { onClick: addFlag, children: "+ Flag" })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(PageBody, { children: [
-        loading && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: { padding: "1rem" }, children: "Loading\u2026" }),
-        error && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: { padding: "1rem", color: "red" }, children: error }),
-        !loading && /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(import_jsx_runtime24.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("p", { style: { padding: "0.5rem 1rem", color: "#aaa", fontSize: "0.85rem" }, children: [
-            "Flags are the binary on/off states that drive scene selection and sprite visibility. The ",
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("strong", { children: "id" }),
-            " must be a stable snake_case identifier \u2014 it is referenced by rules and scenes."
-          ] }),
-          flags.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: { padding: "1rem", color: "#888" }, children: "No flags defined yet. Click \u201C+ Flag\u201D to add one." }) : /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("table", { className: "flags-table", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("tr", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("th", { children: "ID" }),
-              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("th", { children: "Display Name" }),
-              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("th", { className: "flags-table__center", children: "Default Active" }),
-              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("th", {})
-            ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("tbody", { children: flags.map((flag, i2) => /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
-              FlagRow,
-              {
-                flag,
-                onChange: (updated) => updateFlag(i2, updated),
-                onDelete: () => deleteFlag(i2),
-                onNameBlur: () => handleNameBlur(i2)
-              },
-              i2
-            )) })
-          ] }),
-          flags.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: { padding: "0.75rem 1rem" }, children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Button, { onClick: addFlag, children: "+ Flag" }) })
+      setEditingState({ index: newIndex, original: newFlag });
+    }, [editingState, flags]);
+    return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(import_jsx_runtime25.Fragment, { children: [
+      inUseModal && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+        FlagInUseModal,
+        {
+          flagName: inUseModal.flagName,
+          scenes: inUseModal.scenes,
+          rules: inUseModal.rules,
+          onClose: () => setInUseModal(null)
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(PageLayout, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(PageHeader, { title: `${projectName} \u2014 Flags`, left: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Button, { onClick: onBack, children: "\u2190" }), children: [
+          saving && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { style: { color: "#aaa", fontSize: "0.85rem" }, children: "Saving\u2026" }),
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Button, { onClick: addFlag, children: "+ Flag" })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(PageBody, { children: [
+          loading && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: { padding: "1rem" }, children: "Loading\u2026" }),
+          error && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: { padding: "1rem", color: "red" }, children: error }),
+          !loading && /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(import_jsx_runtime25.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: { padding: "0.5rem 1rem", color: "#aaa", fontSize: "0.85rem" }, children: "Flags are the binary on/off states that drive scene selection and sprite visibility." }),
+            hasDuplicates && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: { padding: "0.5rem 1rem", color: "#e05555", fontSize: "0.85rem" }, children: "Duplicate flag names detected \u2014 each flag must have a unique name." }),
+            flags.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: { padding: "1rem", color: "#888" }, children: "No flags defined yet. Click \u201C+ Flag\u201D to add one." }) : /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("table", { className: "flags-table", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("tr", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("th", { children: "Name" }),
+                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("th", { children: "Key" }),
+                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("th", { className: "flags-table__center", children: "Default Active" }),
+                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("th", {})
+              ] }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("tbody", { children: flags.map((flag, i2) => /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+                FlagRow,
+                {
+                  flag,
+                  isEditing: editingState?.index === i2,
+                  isDuplicate: duplicateKeys.has(i2),
+                  onEdit: () => startEditing(i2),
+                  onAccept: acceptEditing,
+                  onCancel: cancelEditing,
+                  onChange: (updated) => updateFlag(i2, updated),
+                  onDefaultActiveChange: (checked) => handleDefaultActiveChange(i2, checked),
+                  onDelete: () => deleteFlag(i2)
+                },
+                i2
+              )) })
+            ] }),
+            flags.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { style: { padding: "0.75rem 1rem" }, children: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Button, { onClick: addFlag, children: "+ Flag" }) })
+          ] })
         ] })
       ] })
     ] });
@@ -71645,7 +71756,7 @@ ${e2}`);
 
   // src/RulesPage.tsx
   var import_react26 = __toESM(require_react());
-  var import_jsx_runtime25 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime26 = __toESM(require_jsx_runtime());
   function generateRuleId(name) {
     return name.trim().toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
   }
@@ -71700,23 +71811,23 @@ ${e2}`);
       }
       onChange(base);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "condition-row", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("select", { value: condition.type, onChange: (e2) => typeChanged(e2.target.value), children: CONDITION_TYPES.map((t2) => /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: t2.value, children: t2.label }, t2.value)) }),
-      (condition.type === "flag_active" || condition.type === "flag_inactive") && /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("select", { value: condition.flagId ?? "", onChange: (e2) => set({ flagId: e2.target.value }), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
-        flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
+    return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "condition-row", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("select", { value: condition.type, onChange: (e2) => typeChanged(e2.target.value), children: CONDITION_TYPES.map((t2) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: t2.value, children: t2.label }, t2.value)) }),
+      (condition.type === "flag_active" || condition.type === "flag_inactive") && /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("select", { value: condition.flagId ?? "", onChange: (e2) => set({ flagId: e2.target.value }), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
+        flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
       ] }),
-      condition.type === "time_of_day" && /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(import_jsx_runtime25.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("label", { children: "Start" }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("input", { type: "number", min: 0, max: 23, value: condition.startHour ?? 0, onChange: (e2) => set({ startHour: +e2.target.value }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("label", { children: "End" }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("input", { type: "number", min: 0, max: 23, value: condition.endHour ?? 0, onChange: (e2) => set({ endHour: +e2.target.value }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "condition-hint", children: "(exclusive; 22\u20136 = overnight wrap)" })
+      condition.type === "time_of_day" && /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(import_jsx_runtime26.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("label", { children: "Start" }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("input", { type: "number", min: 0, max: 23, value: condition.startHour ?? 0, onChange: (e2) => set({ startHour: +e2.target.value }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("label", { children: "End" }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("input", { type: "number", min: 0, max: 23, value: condition.endHour ?? 0, onChange: (e2) => set({ endHour: +e2.target.value }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "condition-hint", children: "(exclusive; 22\u20136 = overnight wrap)" })
       ] }),
-      condition.type === "day_of_week" && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "condition-days", children: DAY_LABELS.map((label, i2) => {
+      condition.type === "day_of_week" && /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "condition-days", children: DAY_LABELS.map((label, i2) => {
         const checked = (condition.daysOfWeek ?? []).includes(i2);
-        return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { className: "condition-day-label", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+        return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("label", { className: "condition-day-label", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
             "input",
             {
               type: "checkbox",
@@ -71730,37 +71841,37 @@ ${e2}`);
           label
         ] }, i2);
       }) }),
-      (condition.type === "scene_count" || condition.type === "install_duration_hours") && /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(import_jsx_runtime25.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("select", { value: condition.operator ?? ">=", onChange: (e2) => set({ operator: e2.target.value }), children: [">=", "<=", "==", ">", "<"].map((op) => /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: op, children: op }, op)) }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("input", { type: "number", min: 0, value: condition.intValue ?? 0, onChange: (e2) => set({ intValue: +e2.target.value }) })
+      (condition.type === "scene_count" || condition.type === "install_duration_hours") && /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(import_jsx_runtime26.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("select", { value: condition.operator ?? ">=", onChange: (e2) => set({ operator: e2.target.value }), children: [">=", "<=", "==", ">", "<"].map((op) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: op, children: op }, op)) }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("input", { type: "number", min: 0, value: condition.intValue ?? 0, onChange: (e2) => set({ intValue: +e2.target.value }) })
       ] }),
-      condition.type === "time_since_flag_change" && /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(import_jsx_runtime25.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("select", { value: condition.flagId ?? "", onChange: (e2) => set({ flagId: e2.target.value }), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
-          flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
+      condition.type === "time_since_flag_change" && /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(import_jsx_runtime26.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("select", { value: condition.flagId ?? "", onChange: (e2) => set({ flagId: e2.target.value }), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
+          flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("select", { value: condition.flagChangeType ?? "activated", onChange: (e2) => set({ flagChangeType: e2.target.value }), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "activated", children: "was activated" }),
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "deactivated", children: "was deactivated" })
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("select", { value: condition.flagChangeType ?? "activated", onChange: (e2) => set({ flagChangeType: e2.target.value }), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: "activated", children: "was activated" }),
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: "deactivated", children: "was deactivated" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("select", { value: condition.operator ?? ">=", onChange: (e2) => set({ operator: e2.target.value }), children: [">=", "<=", "==", ">", "<"].map((op) => /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: op, children: op }, op)) }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("input", { type: "number", min: 0, value: condition.intValue ?? 0, onChange: (e2) => set({ intValue: +e2.target.value }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "condition-hint", children: "hours" })
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("select", { value: condition.operator ?? ">=", onChange: (e2) => set({ operator: e2.target.value }), children: [">=", "<=", "==", ">", "<"].map((op) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: op, children: op }, op)) }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("input", { type: "number", min: 0, value: condition.intValue ?? 0, onChange: (e2) => set({ intValue: +e2.target.value }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "condition-hint", children: "hours" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("button", { className: "condition-delete", onClick: onDelete, title: "Remove condition", children: "\u2715" })
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("button", { className: "condition-delete", onClick: onDelete, title: "Remove condition", children: "\u2715" })
     ] });
   }
   function ActionEditor({ action, flags, onChange, onDelete }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "action-row", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("select", { value: action.type, onChange: (e2) => onChange({ ...action, type: e2.target.value }), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "activate_flag", children: "Activate flag" }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "deactivate_flag", children: "Deactivate flag" })
+    return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "action-row", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("select", { value: action.type, onChange: (e2) => onChange({ ...action, type: e2.target.value }), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: "activate_flag", children: "Activate flag" }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: "deactivate_flag", children: "Deactivate flag" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("select", { value: action.flagId ?? "", onChange: (e2) => onChange({ ...action, flagId: e2.target.value }), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
-        flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("select", { value: action.flagId ?? "", onChange: (e2) => onChange({ ...action, flagId: e2.target.value }), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
+        flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("button", { className: "condition-delete", onClick: onDelete, title: "Remove action", children: "\u2715" })
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("button", { className: "condition-delete", onClick: onDelete, title: "Remove action", children: "\u2715" })
     ] });
   }
   function RuleEditModal({ rule: initial, flags, onSave, onCancel }) {
@@ -71777,11 +71888,11 @@ ${e2}`);
     const handleNameBlur = () => {
       if (!rule.id && rule.name) setField("id", generateRuleId(rule.name));
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "modal-overlay", onClick: onCancel, children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "modal-box rule-modal", onClick: (e2) => e2.stopPropagation(), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("h2", { className: "modal-title", children: initial.id ? "Edit Rule" : "New Rule" }),
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "form-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("label", { children: "Name" }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "modal-overlay", onClick: onCancel, children: /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "modal-box rule-modal", onClick: (e2) => e2.stopPropagation(), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("h2", { className: "modal-title", children: initial.id ? "Edit Rule" : "New Rule" }),
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "form-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("label", { children: "Name" }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
           "input",
           {
             value: rule.name,
@@ -71791,9 +71902,9 @@ ${e2}`);
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "form-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("label", { children: "ID" }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "form-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("label", { children: "ID" }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
           "input",
           {
             value: rule.id,
@@ -71803,28 +71914,28 @@ ${e2}`);
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "form-row", children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("label", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("input", { type: "checkbox", checked: rule.oneShot ?? false, onChange: (e2) => setField("oneShot", e2.target.checked) }),
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "form-row", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("label", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("input", { type: "checkbox", checked: rule.oneShot ?? false, onChange: (e2) => setField("oneShot", e2.target.checked) }),
         " ",
         "One-shot (fires only once ever)"
       ] }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("h3", { className: "section-title", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("h3", { className: "section-title", children: [
         "Conditions",
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(
           "select",
           {
             value: conditions.operator,
             onChange: (e2) => setConditions({ ...conditions, operator: e2.target.value }),
             style: { marginLeft: "0.5rem", fontSize: "0.85rem" },
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "AND", children: "ALL must pass (AND)" }),
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("option", { value: "OR", children: "ANY must pass (OR)" })
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: "AND", children: "ALL must pass (AND)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: "OR", children: "ANY must pass (OR)" })
             ]
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { className: "section-hint", children: "Leave empty to always fire." }),
-      conditions.checks.map((c2, i2) => /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { className: "section-hint", children: "Leave empty to always fire." }),
+      conditions.checks.map((c2, i2) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
         ConditionEditor,
         {
           condition: c2,
@@ -71834,9 +71945,9 @@ ${e2}`);
         },
         i2
       )),
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Button, { onClick: addCondition, style: { marginBottom: "1rem" }, children: "+ Condition" }),
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("h3", { className: "section-title", children: "Actions" }),
-      rule.actions.map((a2, i2) => /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Button, { onClick: addCondition, style: { marginBottom: "1rem" }, children: "+ Condition" }),
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("h3", { className: "section-title", children: "Actions" }),
+      rule.actions.map((a2, i2) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
         ActionEditor,
         {
           action: a2,
@@ -71846,10 +71957,10 @@ ${e2}`);
         },
         i2
       )),
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Button, { onClick: addAction, style: { marginBottom: "1rem" }, children: "+ Action" }),
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "modal-footer", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Button, { variant: "primary", onClick: () => onSave(rule), children: "Save Rule" })
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Button, { onClick: addAction, style: { marginBottom: "1rem" }, children: "+ Action" }),
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "modal-footer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Button, { variant: "primary", onClick: () => onSave(rule), children: "Save Rule" })
       ] })
     ] }) });
   }
@@ -71913,46 +72024,46 @@ ${e2}`);
       if (dirty && !window.confirm("You have unsaved changes. Leave without saving?")) return;
       onBack();
     }, [dirty, onBack]);
-    return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(PageLayout, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(PageHeader, { title: `${projectName} \u2014 Rules`, left: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Button, { onClick: handleBack, children: "\u2190" }), children: [
-        dirty && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Button, { variant: "primary", onClick: save, disabled: saving, children: saving ? "Saving\u2026" : "Save" }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Button, { onClick: openNew, children: "+ Rule" })
+    return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(PageLayout, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(PageHeader, { title: `${projectName} \u2014 Rules`, left: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Button, { onClick: handleBack, children: "\u2190" }), children: [
+        dirty && /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Button, { variant: "primary", onClick: save, disabled: saving, children: saving ? "Saving\u2026" : "Save" }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Button, { onClick: openNew, children: "+ Rule" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(PageBody, { children: [
-        loading && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: { padding: "1rem" }, children: "Loading\u2026" }),
-        error && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: { padding: "1rem", color: "red" }, children: error }),
-        !loading && /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(import_jsx_runtime25.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: { padding: "0.5rem 1rem", color: "#aaa", fontSize: "0.85rem" }, children: "Rules are evaluated every 5 minutes when the wallpaper is visible. When a rule's conditions pass, its actions fire and flags are updated. One-shot rules fire at most once." }),
-          rules.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: { padding: "1rem", color: "#888" }, children: "No rules defined. Click \u201C+ Rule\u201D to create one." }) : /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("table", { className: "rules-table", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("tr", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("th", { children: "Name" }),
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("th", { children: "ID" }),
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("th", { children: "Conditions" }),
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("th", { children: "Actions" }),
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("th", { children: "One-shot" }),
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("th", {})
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(PageBody, { children: [
+        loading && /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { style: { padding: "1rem" }, children: "Loading\u2026" }),
+        error && /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { style: { padding: "1rem", color: "red" }, children: error }),
+        !loading && /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(import_jsx_runtime26.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { style: { padding: "0.5rem 1rem", color: "#aaa", fontSize: "0.85rem" }, children: "Rules are evaluated every 5 minutes when the wallpaper is visible. When a rule's conditions pass, its actions fire and flags are updated. One-shot rules fire at most once." }),
+          rules.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { style: { padding: "1rem", color: "#888" }, children: "No rules defined. Click \u201C+ Rule\u201D to create one." }) : /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("table", { className: "rules-table", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("tr", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("th", { children: "Name" }),
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("th", { children: "ID" }),
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("th", { children: "Conditions" }),
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("th", { children: "Actions" }),
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("th", { children: "One-shot" }),
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("th", {})
             ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("tbody", { children: rules.map((rule, i2) => /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("tr", { className: "rules-table__row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("td", { children: rule.name || /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { style: { color: "#666" }, children: "(unnamed)" }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("code", { children: rule.id || "\u2014" }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("td", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("tbody", { children: rules.map((rule, i2) => /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("tr", { className: "rules-table__row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("td", { children: rule.name || /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { style: { color: "#666" }, children: "(unnamed)" }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("code", { children: rule.id || "\u2014" }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("td", { children: [
                 rule.conditions?.checks?.length ?? 0,
                 " check(s)"
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("td", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("td", { children: [
                 rule.actions?.length ?? 0,
                 " action(s)"
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("td", { children: rule.oneShot ? "Yes" : "No" }),
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("td", { className: "rules-table__actions", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Button, { onClick: () => openEdit(i2), children: "Edit" }),
-                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Button, { variant: "danger", onClick: () => deleteRule(i2), children: "Delete" })
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("td", { children: rule.oneShot ? "Yes" : "No" }),
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("td", { className: "rules-table__actions", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Button, { onClick: () => openEdit(i2), children: "Edit" }),
+                /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Button, { variant: "danger", onClick: () => deleteRule(i2), children: "Delete" })
               ] })
             ] }, i2)) })
           ] })
         ] })
       ] }),
-      editingIndex !== null && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+      editingIndex !== null && /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
         RuleEditModal,
         {
           rule: rules[editingIndex],
@@ -71966,7 +72077,7 @@ ${e2}`);
 
   // src/LoginPage.tsx
   var import_react27 = __toESM(require_react());
-  var import_jsx_runtime26 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime27 = __toESM(require_jsx_runtime());
   function LoginPage({ onAuthenticated }) {
     const [mode, setMode] = (0, import_react27.useState)("login");
     const [email, setEmail] = (0, import_react27.useState)("");
@@ -71990,11 +72101,11 @@ ${e2}`);
         setLoading(false);
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "login-page", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("form", { className: "login-card", onSubmit: handleSubmit, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "login-title", children: "Live Wallpaper Editor" }),
-      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "login-field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("label", { htmlFor: "email", children: "Email" }),
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "login-page", children: /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("form", { className: "login-card", onSubmit: handleSubmit, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "login-title", children: "Live Wallpaper Editor" }),
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "login-field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("label", { htmlFor: "email", children: "Email" }),
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
           "input",
           {
             id: "email",
@@ -72006,9 +72117,9 @@ ${e2}`);
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "login-field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("label", { htmlFor: "password", children: "Password" }),
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "login-field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("label", { htmlFor: "password", children: "Password" }),
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
           "input",
           {
             id: "password",
@@ -72020,17 +72131,17 @@ ${e2}`);
           }
         )
       ] }),
-      error && /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "login-error", children: error }),
-      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("button", { className: "login-submit", type: "submit", disabled: loading, children: loading ? "Please wait\u2026" : mode === "login" ? "Log in" : "Create account" }),
-      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "login-toggle", children: mode === "login" ? /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(import_jsx_runtime26.Fragment, { children: [
+      error && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "login-error", children: error }),
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("button", { className: "login-submit", type: "submit", disabled: loading, children: loading ? "Please wait\u2026" : mode === "login" ? "Log in" : "Create account" }),
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "login-toggle", children: mode === "login" ? /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(import_jsx_runtime27.Fragment, { children: [
         "No account? ",
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("button", { type: "button", onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("button", { type: "button", onClick: () => {
           setMode("register");
           setError("");
         }, children: "Register" })
-      ] }) : /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(import_jsx_runtime26.Fragment, { children: [
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(import_jsx_runtime27.Fragment, { children: [
         "Already have an account? ",
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("button", { type: "button", onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("button", { type: "button", onClick: () => {
           setMode("login");
           setError("");
         }, children: "Log in" })
@@ -72039,7 +72150,7 @@ ${e2}`);
   }
 
   // src/client.tsx
-  var import_jsx_runtime27 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime28 = __toESM(require_jsx_runtime());
   console.log("[bundle] loaded \u2014 build b85774b");
   function pageFromPath() {
     const sceneMatch = window.location.pathname.match(/^\/project\/([^/]+)\/scene\/([^/]+)$/);
@@ -72047,6 +72158,14 @@ ${e2}`);
       const projectId = decodeURIComponent(sceneMatch[1]);
       const sceneId = decodeURIComponent(sceneMatch[2]);
       return { type: "scene", sceneId, project: { id: projectId, name: "" } };
+    }
+    const flagsMatch = window.location.pathname.match(/^\/project\/([^/]+)\/flags$/);
+    if (flagsMatch) {
+      return { type: "flags", project: { id: decodeURIComponent(flagsMatch[1]), name: "" } };
+    }
+    const rulesMatch = window.location.pathname.match(/^\/project\/([^/]+)\/rules$/);
+    if (rulesMatch) {
+      return { type: "rules", project: { id: decodeURIComponent(rulesMatch[1]), name: "" } };
     }
     const projectMatch = window.location.pathname.match(/^\/project\/([^/]+)$/);
     if (projectMatch) {
@@ -72122,10 +72241,10 @@ ${e2}`);
       return null;
     }
     if (authState.status === "unauthenticated") {
-      return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(LoginPage, { onAuthenticated: (user) => setAuthState({ status: "authenticated", user }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(LoginPage, { onAuthenticated: (user) => setAuthState({ status: "authenticated", user }) });
     }
     if (page.type === "scene") {
-      return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
         ScenePage,
         {
           initialSceneId: page.sceneId,
@@ -72137,7 +72256,7 @@ ${e2}`);
       );
     }
     if (page.type === "flags") {
-      return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
         FlagsPage,
         {
           projectId: page.project.id,
@@ -72147,7 +72266,7 @@ ${e2}`);
       );
     }
     if (page.type === "rules") {
-      return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
         RulesPage,
         {
           projectId: page.project.id,
@@ -72157,7 +72276,7 @@ ${e2}`);
       );
     }
     if (page.type === "scenes") {
-      return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
         SceneListPage,
         {
           onSelect: (scene) => navigateToScene(scene, page.project),
@@ -72171,11 +72290,11 @@ ${e2}`);
         }
       );
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(ProjectListPage, { onSelect: navigateToProject, onLogout: handleLogout });
+    return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(ProjectListPage, { onSelect: navigateToProject, onLogout: handleLogout });
   }
   window.addEventListener("DOMContentLoaded", () => {
     const root = (0, import_client.createRoot)(document.body);
-    root.render(/* @__PURE__ */ (0, import_jsx_runtime27.jsx)(App, {}));
+    root.render(/* @__PURE__ */ (0, import_jsx_runtime28.jsx)(App, {}));
   });
 })();
 /*! Bundled license information:

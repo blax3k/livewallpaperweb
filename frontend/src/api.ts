@@ -142,6 +142,10 @@ export const flagsApi = {
       body: JSON.stringify(flags),
     });
   },
+
+  checkUsage(projectId: string, flagId: string): Promise<{ scenes: string[]; rules: string[] }> {
+    return request<{ scenes: string[]; rules: string[] }>(`/api/projects/${projectId}/flags/${flagId}/usage`);
+  },
 };
 
 export const rulesApi = {
