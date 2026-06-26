@@ -191,6 +191,11 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     setSelectedSprite(prev => prev ? { ...prev, width, height } : null);
   }, [setSelectedSprite]);
 
+  const handleImageReplaced = useCallback(async (oldResource: string, newResource: string) => {
+    await rendererRef.current?.replaceTexture(oldResource, newResource);
+    markDirty();
+  }, [rendererRef, markDirty]);
+
   const handleTextureApply = useCallback((index: number, textureResource: string, width: number, height: number, texCoordinates: number[]) => {
     rendererRef.current?.changeTexture(index, textureResource, { width, height }, texCoordinates);
     setSelectedSprite(prev => prev?.index === index ? { ...prev, width, height } : prev);
@@ -413,6 +418,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
         onGyroModeToggle={handleGyroModeToggle}
         sceneSizeLabel={sceneSize?.label}
         sceneSizeTitle={sceneSize?.title}
+        onImageReplaced={handleImageReplaced}
       />
       <div className="app-content">
         <SceneEditorPanel

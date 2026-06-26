@@ -85,7 +85,8 @@
     border-color: rgba(255, 255, 255, 0.2);
 
     .image-item-overlay,
-    .image-item-overlay-btn--delete {
+    .image-item-overlay-btn--delete,
+    .image-item-overlay-btn--replace {
       opacity: 1;
     }
   }
@@ -138,6 +139,17 @@
       background: rgba(180, 60, 60, 0.85);
       border-color: rgba(220, 80, 80, 0.6);
     }
+  }
+
+  &.image-item-overlay-btn--replace {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    padding: 5% 5%;
+    font-size: 13px;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 1;
   }
 
   &.image-item-overlay-btn--preview {

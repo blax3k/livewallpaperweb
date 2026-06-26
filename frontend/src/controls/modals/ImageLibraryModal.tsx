@@ -1,15 +1,45 @@
+import { useRef } from 'react';
 import { createPortal } from 'react-dom';
 import './ImageLibraryModal.scss';
 import { Button } from '../../components/Button';
 import { ImageInUseModal } from '../../components/ImageInUseModal';
 import { useImageLibrary, getUploadUrl, getImageThumbnailUrl } from '../../hooks/useImageLibrary';
 import { formatBytes } from '../../utils/sceneSize';
+import type { ImageRecord } from '../../api';
 
-export function ImageLibraryModal({ projectId, onClose }: { projectId: string, onClose: () => void }) {
+function ReplaceButton({ image, uploading, onReplace }: {
+  image: ImageRecord;
+  uploading: boolean;
+  onReplace: (image: ImageRecord, e: React.ChangeEvent<HTMLInputElement>) => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  return (
+    <>
+      <button
+        className="image-item-overlay-btn image-item-overlay-btn--replace"
+        disabled={uploading}
+        onClick={() => inputRef.current?.click()}
+        title="Replace"
+      >
+        &#128260;
+      </button>
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/png,image/jpeg,image/gif,image/webp"
+        style={{ display: 'none' }}
+        onChange={(e) => onReplace(image, e)}
+      />
+    </>
+  );
+}
+
+export function ImageLibraryModal({ projectId, onClose, onImageReplaced }: { projectId: string, onClose: () => void, onImageReplaced?: (oldResource: string, newResource: string) => void }) {
   const {
     images,
     loading,
     uploading,
+    replacing,
     previewImage,
     setPreviewImage,
     confirmDelete,
@@ -17,10 +47,11 @@ export function ImageLibraryModal({ projectId, onClose }: { projectId: string, o
     inUseScenes,
     setInUseScenes,
     fileInputRef,
+    handleReplace,
     handleDelete,
     handleDeleteConfirmed,
     handleFileChange,
-  } = useImageLibrary(projectId);
+  } = useImageLibrary(projectId, undefined, onImageReplaced);
 
   return createPortal(
     <>
@@ -77,6 +108,8 @@ export function ImageLibraryModal({ projectId, onClose }: { projectId: string, o
               >
                 &#128465;
               </button>
+
+            <ReplaceButton image={image} uploading={replacing} onReplace={handleReplace} />
             </div>
           ))}
         </div>

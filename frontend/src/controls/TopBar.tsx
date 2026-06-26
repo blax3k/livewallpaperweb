@@ -23,9 +23,10 @@ interface TopBarProps {
   onZoomOut: () => void;
   onCenter: () => void;
   onGyroModeToggle: () => void;
+  onImageReplaced?: (oldResource: string, newResource: string) => void;
 }
 
-export function TopBar({projectId, scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, sceneSizeLabel, sceneSizeTitle, onBack, onSceneSelect, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }: TopBarProps) {
+export function TopBar({projectId, scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, sceneSizeLabel, sceneSizeTitle, onBack, onSceneSelect, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle, onImageReplaced }: TopBarProps) {
   const [libraryOpen, setLibraryOpen] = useState(false);
 
 
@@ -39,6 +40,7 @@ export function TopBar({projectId, scenes, currentSceneName, sceneLoaded, isSavi
         <ImageLibraryModal
           onClose={() => setLibraryOpen(false)}
           projectId={projectId}
+          onImageReplaced={onImageReplaced}
         />
       )}
       <PhoneGuideControl

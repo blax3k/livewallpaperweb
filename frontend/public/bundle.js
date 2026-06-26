@@ -64176,11 +64176,11 @@ ${parts.join("\n")}
   });
 
   // src/client.tsx
-  var import_react28 = __toESM(require_react());
+  var import_react29 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/ScenePage.tsx
-  var import_react18 = __toESM(require_react());
+  var import_react19 = __toESM(require_react());
 
   // src/controls/panels/SpriteListPanel.tsx
   var import_react3 = __toESM(require_react());
@@ -64314,6 +64314,11 @@ ${parts.join("\n")}
       form.append("file", file);
       return request(`/api/images?projectId=${encodeURIComponent(projectId)}`, { method: "POST", body: form });
     },
+    replace(imageId, projectId, file) {
+      const form = new FormData();
+      form.append("file", file);
+      return request(`/api/images/${imageId}?projectId=${encodeURIComponent(projectId)}`, { method: "POST", body: form });
+    },
     checkUsage(imageId) {
       return request(`/api/images/${imageId}/usage`);
     },
@@ -64394,10 +64399,11 @@ ${parts.join("\n")}
   function getImageThumbnailUrl(thumbFilename) {
     return `/image-thumbnails/${thumbFilename}`;
   }
-  function useImageLibrary(projectId, onImageDeleted) {
+  function useImageLibrary(projectId, onImageDeleted, onImageReplaced) {
     const [images, setImages] = (0, import_react.useState)([]);
     const [loading, setLoading] = (0, import_react.useState)(true);
     const [uploading, setUploading] = (0, import_react.useState)(false);
+    const [replacing, setReplacing] = (0, import_react.useState)(false);
     const [previewImage, setPreviewImage] = (0, import_react.useState)(null);
     const [confirmDelete, setConfirmDelete] = (0, import_react.useState)(null);
     const [inUseScenes, setInUseScenes] = (0, import_react.useState)(null);
@@ -64415,6 +64421,19 @@ ${parts.join("\n")}
         setInUseScenes(scenes);
       } else {
         setConfirmDelete(image);
+      }
+    };
+    const handleReplace = async (image, e2) => {
+      const file = e2.target.files?.[0];
+      if (!file) return;
+      setReplacing(true);
+      try {
+        const record = await imagesApi.replace(image.id, projectId, file);
+        setImages((prev) => prev.map((i2) => i2.id === image.id ? record : i2));
+        onImageReplaced?.(`/uploads/${image.filename}`, `/uploads/${record.filename}`);
+      } finally {
+        setReplacing(false);
+        e2.target.value = "";
       }
     };
     const handleDeleteConfirmed = async () => {
@@ -64447,6 +64466,8 @@ ${parts.join("\n")}
       inUseScenes,
       setInUseScenes,
       fileInputRef,
+      replacing,
+      handleReplace,
       handleDelete,
       handleDeleteConfirmed,
       handleFileChange
@@ -65543,7 +65564,7 @@ ${parts.join("\n")}
   }
 
   // src/controls/TopBar.tsx
-  var import_react11 = __toESM(require_react());
+  var import_react12 = __toESM(require_react());
 
   // src/controls/PhoneGuideControl.tsx
   var import_jsx_runtime11 = __toESM(require_jsx_runtime());
@@ -65564,13 +65585,40 @@ ${parts.join("\n")}
   }
 
   // src/controls/modals/ImageLibraryModal.tsx
+  var import_react11 = __toESM(require_react());
   var import_react_dom3 = __toESM(require_react_dom());
   var import_jsx_runtime12 = __toESM(require_jsx_runtime());
-  function ImageLibraryModal({ projectId, onClose }) {
+  function ReplaceButton({ image, uploading, onReplace }) {
+    const inputRef = (0, import_react11.useRef)(null);
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_jsx_runtime12.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+        "button",
+        {
+          className: "image-item-overlay-btn image-item-overlay-btn--replace",
+          disabled: uploading,
+          onClick: () => inputRef.current?.click(),
+          title: "Replace",
+          children: "\u{1F504}"
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+        "input",
+        {
+          ref: inputRef,
+          type: "file",
+          accept: "image/png,image/jpeg,image/gif,image/webp",
+          style: { display: "none" },
+          onChange: (e2) => onReplace(image, e2)
+        }
+      )
+    ] });
+  }
+  function ImageLibraryModal({ projectId, onClose, onImageReplaced }) {
     const {
       images,
       loading,
       uploading,
+      replacing,
       previewImage,
       setPreviewImage,
       confirmDelete,
@@ -65578,10 +65626,11 @@ ${parts.join("\n")}
       inUseScenes,
       setInUseScenes,
       fileInputRef,
+      handleReplace,
       handleDelete,
       handleDeleteConfirmed,
       handleFileChange
-    } = useImageLibrary(projectId);
+    } = useImageLibrary(projectId, void 0, onImageReplaced);
     return (0, import_react_dom3.createPortal)(
       /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_jsx_runtime12.Fragment, { children: [
         /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "add-sprite-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "add-sprite-modal", onClick: (e2) => e2.stopPropagation(), children: [
@@ -65648,7 +65697,8 @@ ${parts.join("\n")}
                       title: "Delete",
                       children: "\u{1F5D1}"
                     }
-                  )
+                  ),
+                  /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ReplaceButton, { image, uploading: replacing, onReplace: handleReplace })
                 ]
               },
               image.id
@@ -65679,8 +65729,8 @@ ${parts.join("\n")}
 
   // src/controls/TopBar.tsx
   var import_jsx_runtime13 = __toESM(require_jsx_runtime());
-  function TopBar({ projectId, scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, sceneSizeLabel, sceneSizeTitle, onBack, onSceneSelect, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle }) {
-    const [libraryOpen, setLibraryOpen] = (0, import_react11.useState)(false);
+  function TopBar({ projectId, scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, sceneSizeLabel, sceneSizeTitle, onBack, onSceneSelect, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle, onImageReplaced }) {
+    const [libraryOpen, setLibraryOpen] = (0, import_react12.useState)(false);
     return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "top-bar", children: [
       onBack && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Button, { onClick: onBack, title: "Back to scenes", children: "\u2190 Scenes" }),
       /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Button, { onClick: () => setLibraryOpen(true), title: "Browse and upload images", children: "Image Library" }),
@@ -65688,7 +65738,8 @@ ${parts.join("\n")}
         ImageLibraryModal,
         {
           onClose: () => setLibraryOpen(false),
-          projectId
+          projectId,
+          onImageReplaced
         }
       ),
       /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
@@ -65729,7 +65780,7 @@ ${parts.join("\n")}
   }
 
   // src/controls/modals/EditTextureModal.tsx
-  var import_react12 = __toESM(require_react());
+  var import_react13 = __toESM(require_react());
 
   // ../node_modules/pixi.js/lib/environment-browser/browserExt.mjs
   init_Extensions();
@@ -68498,26 +68549,26 @@ ${e2}`);
     onApply,
     onClose
   }) {
-    const originalTexCoords = (0, import_react12.useRef)(texCoordinates);
-    const originalWidth = (0, import_react12.useRef)(initWidth);
-    const originalHeight = (0, import_react12.useRef)(initHeight);
-    const [state, setState] = (0, import_react12.useState)(() => ({
+    const originalTexCoords = (0, import_react13.useRef)(texCoordinates);
+    const originalWidth = (0, import_react13.useRef)(initWidth);
+    const originalHeight = (0, import_react13.useRef)(initHeight);
+    const [state, setState] = (0, import_react13.useState)(() => ({
       width: initWidth,
       height: initHeight,
       textureScale: extractInitialScale(texCoordinates),
       offsetU: 0,
       offsetV: 0
     }));
-    const stateRef = (0, import_react12.useRef)(state);
+    const stateRef = (0, import_react13.useRef)(state);
     stateRef.current = state;
-    const containerRef = (0, import_react12.useRef)(null);
-    const pixiAppRef = (0, import_react12.useRef)(null);
-    const pixiSpriteRef = (0, import_react12.useRef)(null);
-    const pixiHighlightRef = (0, import_react12.useRef)(null);
-    const baseTextureRef = (0, import_react12.useRef)(null);
-    const dragging = (0, import_react12.useRef)(false);
-    const lastMousePos = (0, import_react12.useRef)({ x: 0, y: 0 });
-    const updatePixiSprite = (0, import_react12.useCallback)((s2) => {
+    const containerRef = (0, import_react13.useRef)(null);
+    const pixiAppRef = (0, import_react13.useRef)(null);
+    const pixiSpriteRef = (0, import_react13.useRef)(null);
+    const pixiHighlightRef = (0, import_react13.useRef)(null);
+    const baseTextureRef = (0, import_react13.useRef)(null);
+    const dragging = (0, import_react13.useRef)(false);
+    const lastMousePos = (0, import_react13.useRef)({ x: 0, y: 0 });
+    const updatePixiSprite = (0, import_react13.useCallback)((s2) => {
       const sprite = pixiSpriteRef.current;
       const highlight = pixiHighlightRef.current;
       const baseTexture = baseTextureRef.current;
@@ -68558,7 +68609,7 @@ ${e2}`);
         highlight.moveTo(left, top).lineTo(left + sprite.width, top).lineTo(left + sprite.width, top + sprite.height).lineTo(left, top + sprite.height).lineTo(left, top).stroke({ color: 65280, width: 2, alpha: 0.85 });
       }
     }, []);
-    (0, import_react12.useEffect)(() => {
+    (0, import_react13.useEffect)(() => {
       let app = null;
       let cancelled = false;
       const init2 = async () => {
@@ -68610,10 +68661,10 @@ ${e2}`);
         }
       };
     }, [textureResource]);
-    (0, import_react12.useEffect)(() => {
+    (0, import_react13.useEffect)(() => {
       updatePixiSprite(state);
     }, [state, updatePixiSprite]);
-    (0, import_react12.useEffect)(() => {
+    (0, import_react13.useEffect)(() => {
       const onMove = (e2) => {
         if (!dragging.current || !containerRef.current) return;
         const dx = e2.clientX - lastMousePos.current.x;
@@ -68750,10 +68801,10 @@ ${e2}`);
   }
 
   // src/hooks/useUndoHistory.ts
-  var import_react13 = __toESM(require_react());
+  var import_react14 = __toESM(require_react());
   function useUndoHistory() {
-    const past = (0, import_react13.useRef)([]);
-    const future = (0, import_react13.useRef)([]);
+    const past = (0, import_react14.useRef)([]);
+    const future = (0, import_react14.useRef)([]);
     function push(action) {
       past.current = [...past.current, action];
       future.current = [];
@@ -68780,10 +68831,10 @@ ${e2}`);
   }
 
   // src/hooks/useNotifications.ts
-  var import_react14 = __toESM(require_react());
+  var import_react15 = __toESM(require_react());
   function useNotifications() {
-    const [notifications, setNotifications] = (0, import_react14.useState)([]);
-    const notify = (0, import_react14.useCallback)((message) => {
+    const [notifications, setNotifications] = (0, import_react15.useState)([]);
+    const notify = (0, import_react15.useCallback)((message) => {
       const id = Date.now();
       setNotifications((prev) => [...prev, { id, message }]);
       setTimeout(() => {
@@ -68794,7 +68845,7 @@ ${e2}`);
   }
 
   // src/hooks/useSceneRenderer.ts
-  var import_react15 = __toESM(require_react());
+  var import_react16 = __toESM(require_react());
 
   // src/renderers/PhoneGuide.ts
   var PhoneGuide = class {
@@ -69957,6 +70008,40 @@ ${e2}`);
       return result;
     }
     /**
+     * Swap a texture resource across all sprites that reference it.
+     * Evicts the old URL from PixiJS's asset cache so the new file is fetched fresh.
+     */
+    async replaceTexture(oldResource, newResource) {
+      const affected = this.sprites.filter(
+        (s2) => this.spriteMetadata.get(s2)?.textureResource === oldResource
+      );
+      if (affected.length === 0) return;
+      await this.loadTexture(newResource);
+      const newTexture = this.textures.get(newResource);
+      if (!newTexture) return;
+      for (const sprite of affected) {
+        const metadata = this.spriteMetadata.get(sprite);
+        if (!metadata) continue;
+        metadata.textureResource = newResource;
+        const block = this.selectedConditionBlockBySprite.get(sprite);
+        let texCoords;
+        if (block) {
+          const mod = block.modifications.find((m2) => m2.type === "texture_coordinates");
+          texCoords = mod?.texCoordinates ?? this.conditionPreviewState.get(sprite)?.baseTexCoordinates;
+        } else {
+          const original = this.originalSceneData?.sprites.find((s2) => s2.name === metadata.name);
+          texCoords = original?.texCoordinates;
+        }
+        sprite.texture = texCoords?.length === 8 ? this.cropTexture(newTexture, texCoords) : newTexture;
+      }
+      if (this.originalSceneData) {
+        for (const s2 of this.originalSceneData.sprites) {
+          if (s2.textureResource === oldResource) s2.textureResource = newResource;
+        }
+      }
+      this.textures.delete(oldResource);
+    }
+    /**
      * Destroy the renderer and clean up resources
      */
     destroy() {
@@ -69979,25 +70064,25 @@ ${e2}`);
 
   // src/hooks/useSceneRenderer.ts
   function useSceneRenderer(onNotify, onSaved) {
-    const [showSceneControls, setShowSceneControls] = (0, import_react15.useState)(false);
-    const [currentSceneId, setCurrentSceneId] = (0, import_react15.useState)(null);
-    const [xFocus, setXFocus] = (0, import_react15.useState)(0.5);
-    const [startTime, setStartTime] = (0, import_react15.useState)(0);
-    const [endTime, setEndTime] = (0, import_react15.useState)(1439);
-    const [spriteEntries, setSpriteEntries] = (0, import_react15.useState)([]);
-    const [selectedSprite, setSelectedSprite] = (0, import_react15.useState)(null);
-    const [isSaving, setIsSaving] = (0, import_react15.useState)(false);
-    const [isDirty, setIsDirty] = (0, import_react15.useState)(false);
-    const isDirtyRef = (0, import_react15.useRef)(false);
-    const [phoneGuideVisible, setPhoneGuideVisible] = (0, import_react15.useState)(true);
-    const [zoom, setZoom] = (0, import_react15.useState)(1);
-    const onNotifyRef = (0, import_react15.useRef)(onNotify);
+    const [showSceneControls, setShowSceneControls] = (0, import_react16.useState)(false);
+    const [currentSceneId, setCurrentSceneId] = (0, import_react16.useState)(null);
+    const [xFocus, setXFocus] = (0, import_react16.useState)(0.5);
+    const [startTime, setStartTime] = (0, import_react16.useState)(0);
+    const [endTime, setEndTime] = (0, import_react16.useState)(1439);
+    const [spriteEntries, setSpriteEntries] = (0, import_react16.useState)([]);
+    const [selectedSprite, setSelectedSprite] = (0, import_react16.useState)(null);
+    const [isSaving, setIsSaving] = (0, import_react16.useState)(false);
+    const [isDirty, setIsDirty] = (0, import_react16.useState)(false);
+    const isDirtyRef = (0, import_react16.useRef)(false);
+    const [phoneGuideVisible, setPhoneGuideVisible] = (0, import_react16.useState)(true);
+    const [zoom, setZoom] = (0, import_react16.useState)(1);
+    const onNotifyRef = (0, import_react16.useRef)(onNotify);
     onNotifyRef.current = onNotify;
-    const onSavedRef = (0, import_react15.useRef)(onSaved);
+    const onSavedRef = (0, import_react16.useRef)(onSaved);
     onSavedRef.current = onSaved;
-    const [conditionsVersion, setConditionsVersion] = (0, import_react15.useState)(0);
-    const bumpConditionsVersion = (0, import_react15.useCallback)(() => setConditionsVersion((v2) => v2 + 1), []);
-    const handleSelectConditionSet = (0, import_react15.useCallback)((spriteIndex, conditionIndex) => {
+    const [conditionsVersion, setConditionsVersion] = (0, import_react16.useState)(0);
+    const bumpConditionsVersion = (0, import_react16.useCallback)(() => setConditionsVersion((v2) => v2 + 1), []);
+    const handleSelectConditionSet = (0, import_react16.useCallback)((spriteIndex, conditionIndex) => {
       const renderer = rendererRef.current;
       if (!renderer) return;
       if (conditionIndex === -1) {
@@ -70013,24 +70098,24 @@ ${e2}`);
         setSelectedSprite((prev) => prev && prev.index === spriteIndex ? { ...prev, x: pos.x, y: pos.y, width: scale.width, height: scale.height, depth: parallax } : prev);
       }
     }, [bumpConditionsVersion]);
-    const markDirty = (0, import_react15.useCallback)(() => {
+    const markDirty = (0, import_react16.useCallback)(() => {
       if (isDirtyRef.current) return;
       isDirtyRef.current = true;
       setIsDirty(true);
     }, []);
-    const markClean = (0, import_react15.useCallback)(() => {
+    const markClean = (0, import_react16.useCallback)(() => {
       isDirtyRef.current = false;
       setIsDirty(false);
     }, []);
-    const phoneGuideVisibleRef = (0, import_react15.useRef)(true);
-    const canvasRef = (0, import_react15.useRef)(null);
-    const rendererRef = (0, import_react15.useRef)(null);
-    const sceneIdRef = (0, import_react15.useRef)(null);
-    const sceneLabelRef = (0, import_react15.useRef)(null);
-    const refreshSpriteList = (0, import_react15.useCallback)((r2) => {
+    const phoneGuideVisibleRef = (0, import_react16.useRef)(true);
+    const canvasRef = (0, import_react16.useRef)(null);
+    const rendererRef = (0, import_react16.useRef)(null);
+    const sceneIdRef = (0, import_react16.useRef)(null);
+    const sceneLabelRef = (0, import_react16.useRef)(null);
+    const refreshSpriteList = (0, import_react16.useCallback)((r2) => {
       setSpriteEntries([...r2.getSpriteEntries()]);
     }, []);
-    const loadScene = (0, import_react15.useCallback)(async (sceneId) => {
+    const loadScene = (0, import_react16.useCallback)(async (sceneId) => {
       try {
         const scene = await scenesApi.get(sceneId);
         const sceneData = scene.data;
@@ -70066,7 +70151,7 @@ ${e2}`);
         console.error("Failed to load scene:", error);
       }
     }, [refreshSpriteList, markClean, bumpConditionsVersion]);
-    const saveScene = (0, import_react15.useCallback)(async () => {
+    const saveScene = (0, import_react16.useCallback)(async () => {
       const sceneId = sceneIdRef.current;
       const label = sceneLabelRef.current;
       const data = rendererRef.current?.getSceneData();
@@ -70088,33 +70173,33 @@ ${e2}`);
         setIsSaving(false);
       }
     }, [markClean]);
-    const handleXFocusChange = (0, import_react15.useCallback)((value) => {
+    const handleXFocusChange = (0, import_react16.useCallback)((value) => {
       setXFocus(value);
       rendererRef.current?.setScrollOffset(value);
       markDirty();
     }, [markDirty]);
-    const handleStartTimeChange = (0, import_react15.useCallback)((value) => {
+    const handleStartTimeChange = (0, import_react16.useCallback)((value) => {
       setStartTime(value);
       rendererRef.current?.setStartTime(value);
       markDirty();
     }, [markDirty]);
-    const handleEndTimeChange = (0, import_react15.useCallback)((value) => {
+    const handleEndTimeChange = (0, import_react16.useCallback)((value) => {
       setEndTime(value);
       rendererRef.current?.setEndTime(value);
       markDirty();
     }, [markDirty]);
-    const handlePhoneGuideToggle = (0, import_react15.useCallback)((visible) => {
+    const handlePhoneGuideToggle = (0, import_react16.useCallback)((visible) => {
       phoneGuideVisibleRef.current = visible;
       setPhoneGuideVisible(visible);
       if (visible) rendererRef.current?.showGuide();
       else rendererRef.current?.hideGuide();
     }, []);
-    const handleSpriteToggle = (0, import_react15.useCallback)((index) => {
+    const handleSpriteToggle = (0, import_react16.useCallback)((index) => {
       rendererRef.current?.toggleSpriteByIndex(index);
       if (rendererRef.current) refreshSpriteList(rendererRef.current);
       markDirty();
     }, [refreshSpriteList, markDirty]);
-    const handleSpriteSelect = (0, import_react15.useCallback)((index) => {
+    const handleSpriteSelect = (0, import_react16.useCallback)((index) => {
       const pos = rendererRef.current?.getSpritePosition(index);
       const scaleInfo = rendererRef.current?.getSpriteScale(index);
       const name = spriteEntries[index]?.name || `Sprite ${index}`;
@@ -70123,7 +70208,7 @@ ${e2}`);
         rendererRef.current?.setSelectedSpriteHighlight(index);
       }
     }, [spriteEntries]);
-    const handleSpritePositionChange = (0, import_react15.useCallback)((x2, y2) => {
+    const handleSpritePositionChange = (0, import_react16.useCallback)((x2, y2) => {
       if (!rendererRef.current) return;
       setSelectedSprite((prev) => {
         if (!prev) return null;
@@ -70132,7 +70217,7 @@ ${e2}`);
       });
       markDirty();
     }, [markDirty]);
-    const handleSpriteSizeChange = (0, import_react15.useCallback)((width, height) => {
+    const handleSpriteSizeChange = (0, import_react16.useCallback)((width, height) => {
       setSelectedSprite((prev) => {
         if (!prev) return null;
         rendererRef.current?.setSpriteSize(prev.index, width, height);
@@ -70140,7 +70225,7 @@ ${e2}`);
       });
       markDirty();
     }, [markDirty]);
-    const handleSpriteDepthChange = (0, import_react15.useCallback)((depth) => {
+    const handleSpriteDepthChange = (0, import_react16.useCallback)((depth) => {
       setSelectedSprite((prev) => {
         if (!prev) return null;
         rendererRef.current?.setSpriteParallax(prev.index, depth);
@@ -70155,7 +70240,7 @@ ${e2}`);
       });
       markDirty();
     }, [refreshSpriteList, markDirty]);
-    const handleSpriteDepthApply = (0, import_react15.useCallback)((depth, spriteIndex) => {
+    const handleSpriteDepthApply = (0, import_react16.useCallback)((depth, spriteIndex) => {
       if (!rendererRef.current) return;
       rendererRef.current.setSpriteParallax(spriteIndex, depth);
       const newIndex = rendererRef.current.sortSpritesByParallax(spriteIndex);
@@ -70163,7 +70248,7 @@ ${e2}`);
       setSelectedSprite((prev) => prev ? { ...prev, index: newIndex, depth } : null);
       markDirty();
     }, [refreshSpriteList, markDirty]);
-    const handleAddSprite = (0, import_react15.useCallback)(async (textureResource) => {
+    const handleAddSprite = (0, import_react16.useCallback)(async (textureResource) => {
       if (!rendererRef.current) return;
       const newIndex = await rendererRef.current.addSprite(textureResource, 5, 5, 1);
       if (newIndex < 0) return;
@@ -70176,7 +70261,7 @@ ${e2}`);
       rendererRef.current.setSelectedSpriteHighlight(newIndex);
       markDirty();
     }, [refreshSpriteList, markDirty]);
-    const handleChangeTexture = (0, import_react15.useCallback)(async (index, textureResource) => {
+    const handleChangeTexture = (0, import_react16.useCallback)(async (index, textureResource) => {
       await rendererRef.current?.changeTexture(index, textureResource);
       const scaleInfo = rendererRef.current?.getSpriteScale(index);
       if (scaleInfo) {
@@ -70184,7 +70269,7 @@ ${e2}`);
       }
       markDirty();
     }, [markDirty]);
-    const handleDeleteSprite = (0, import_react15.useCallback)((index) => {
+    const handleDeleteSprite = (0, import_react16.useCallback)((index) => {
       if (!rendererRef.current) return;
       rendererRef.current.removeSpriteByIndex(index);
       refreshSpriteList(rendererRef.current);
@@ -70196,14 +70281,14 @@ ${e2}`);
       });
       markDirty();
     }, [refreshSpriteList, markDirty]);
-    const handleSpriteConditions = (0, import_react15.useCallback)((index) => {
+    const handleSpriteConditions = (0, import_react16.useCallback)((index) => {
       return rendererRef.current?.getSpriteConditions(index) ?? [];
     }, []);
-    const handleSaveSpriteConditions = (0, import_react15.useCallback)((index, conditions) => {
+    const handleSaveSpriteConditions = (0, import_react16.useCallback)((index, conditions) => {
       rendererRef.current?.setSpriteConditions(index, conditions);
       markDirty();
     }, [markDirty]);
-    const handleAddConditionSet = (0, import_react15.useCallback)((spriteIndex) => {
+    const handleAddConditionSet = (0, import_react16.useCallback)((spriteIndex) => {
       const renderer = rendererRef.current;
       if (!renderer) return;
       const newIndex = renderer.addConditionBlock(spriteIndex);
@@ -70213,7 +70298,7 @@ ${e2}`);
         handleSelectConditionSet(spriteIndex, newIndex);
       }
     }, [bumpConditionsVersion, markDirty, handleSelectConditionSet]);
-    const handleRemoveConditionSet = (0, import_react15.useCallback)((spriteIndex, conditionIndex) => {
+    const handleRemoveConditionSet = (0, import_react16.useCallback)((spriteIndex, conditionIndex) => {
       const renderer = rendererRef.current;
       if (!renderer) return;
       renderer.removeConditionBlock(spriteIndex, conditionIndex);
@@ -70226,16 +70311,16 @@ ${e2}`);
         setSelectedSprite((prev) => prev && prev.index === spriteIndex ? { ...prev, x: pos.x, y: pos.y, width: scale.width, height: scale.height, depth: parallax } : prev);
       }
     }, [bumpConditionsVersion, markDirty]);
-    const handleRenameConditionSet = (0, import_react15.useCallback)((spriteIndex, conditionIndex, name) => {
+    const handleRenameConditionSet = (0, import_react16.useCallback)((spriteIndex, conditionIndex, name) => {
       rendererRef.current?.setConditionBlockName(spriteIndex, conditionIndex, name);
       bumpConditionsVersion();
     }, [bumpConditionsVersion]);
-    const handleSetConditionSetFlags = (0, import_react15.useCallback)((spriteIndex, conditionIndex, conditions) => {
+    const handleSetConditionSetFlags = (0, import_react16.useCallback)((spriteIndex, conditionIndex, conditions) => {
       rendererRef.current?.setConditionBlockFlags(spriteIndex, conditionIndex, conditions);
       bumpConditionsVersion();
       markDirty();
     }, [bumpConditionsVersion, markDirty]);
-    const handleRenameSprite = (0, import_react15.useCallback)((index, newName) => {
+    const handleRenameSprite = (0, import_react16.useCallback)((index, newName) => {
       if (!rendererRef.current) return;
       rendererRef.current.renameSpriteByIndex(index, newName);
       refreshSpriteList(rendererRef.current);
@@ -70246,15 +70331,15 @@ ${e2}`);
       }
     }, [refreshSpriteList]);
     const ZOOM_FACTOR = 1.25;
-    const handleZoomIn = (0, import_react15.useCallback)(() => {
+    const handleZoomIn = (0, import_react16.useCallback)(() => {
       rendererRef.current?.zoomAtCenter(ZOOM_FACTOR);
       setZoom(rendererRef.current?.getZoom() ?? 1);
     }, []);
-    const handleZoomOut = (0, import_react15.useCallback)(() => {
+    const handleZoomOut = (0, import_react16.useCallback)(() => {
       rendererRef.current?.zoomAtCenter(1 / ZOOM_FACTOR);
       setZoom(rendererRef.current?.getZoom() ?? 1);
     }, []);
-    const handleZoomAtPoint = (0, import_react15.useCallback)((cssX, cssY, factor) => {
+    const handleZoomAtPoint = (0, import_react16.useCallback)((cssX, cssY, factor) => {
       if (factor >= 1) {
         rendererRef.current?.zoomAt(cssX, cssY, factor);
       } else {
@@ -70262,12 +70347,12 @@ ${e2}`);
       }
       setZoom(rendererRef.current?.getZoom() ?? 1);
     }, []);
-    const handleCenter = (0, import_react15.useCallback)(() => {
+    const handleCenter = (0, import_react16.useCallback)(() => {
       rendererRef.current?.resetView();
       setZoom(1);
     }, []);
-    const [gyroMode, setGyroMode] = (0, import_react15.useState)(false);
-    const handleGyroModeToggle = (0, import_react15.useCallback)(() => {
+    const [gyroMode, setGyroMode] = (0, import_react16.useState)(false);
+    const handleGyroModeToggle = (0, import_react16.useCallback)(() => {
       setGyroMode((prev) => {
         if (prev) {
           rendererRef.current?.clearGyroOffset();
@@ -70278,7 +70363,7 @@ ${e2}`);
         return !prev;
       });
     }, []);
-    const handleGyroOffset = (0, import_react15.useCallback)((deltaX, deltaY, canvasWidth, canvasHeight) => {
+    const handleGyroOffset = (0, import_react16.useCallback)((deltaX, deltaY, canvasWidth, canvasHeight) => {
       const gyroX = deltaX / canvasWidth * 2;
       const gyroY = deltaY / canvasHeight * 2;
       rendererRef.current?.setGyroOffset(gyroX, gyroY);
@@ -70334,15 +70419,15 @@ ${e2}`);
   }
 
   // src/hooks/useSpriteDrag.ts
-  var import_react16 = __toESM(require_react());
+  var import_react17 = __toESM(require_react());
   function useSpriteDrag({
     selectedSprite,
     rendererRef,
     onSpriteMove,
     onDragCommit
   }) {
-    const canvasDragState = (0, import_react16.useRef)(null);
-    const handleCanvasMouseDown = (0, import_react16.useCallback)((event) => {
+    const canvasDragState = (0, import_react17.useRef)(null);
+    const handleCanvasMouseDown = (0, import_react17.useCallback)((event) => {
       if (event.button !== 0) return;
       if (!selectedSprite || !rendererRef.current) return;
       const canvas = rendererRef.current.getCanvas();
@@ -70361,9 +70446,9 @@ ${e2}`);
         startSpriteY: selectedSprite.y
       };
     }, [selectedSprite, rendererRef]);
-    const dragCallbacksRef = (0, import_react16.useRef)({ onSpriteMove, onDragCommit });
+    const dragCallbacksRef = (0, import_react17.useRef)({ onSpriteMove, onDragCommit });
     dragCallbacksRef.current = { onSpriteMove, onDragCommit };
-    (0, import_react16.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       const handleMouseMove = (event) => {
         const drag = canvasDragState.current;
         if (!drag || !rendererRef.current) return;
@@ -70402,14 +70487,14 @@ ${e2}`);
         window.removeEventListener("mouseup", handleMouseUp);
       };
     }, [rendererRef]);
-    const cancelDrag = (0, import_react16.useCallback)(() => {
+    const cancelDrag = (0, import_react17.useCallback)(() => {
       canvasDragState.current = null;
     }, []);
     return { handleCanvasMouseDown, cancelDrag };
   }
 
   // src/hooks/useKeyboardControls.ts
-  var import_react17 = __toESM(require_react());
+  var import_react18 = __toESM(require_react());
   var ARROW_STEP = 0.05;
   function useKeyboardControls({
     selectedSprite,
@@ -70424,7 +70509,7 @@ ${e2}`);
     onTextureApply,
     onMarkDirty
   }) {
-    (0, import_react17.useEffect)(() => {
+    (0, import_react18.useEffect)(() => {
       const handleKeyDown = (e2) => {
         if ((e2.ctrlKey || e2.metaKey) && e2.key === "z" && !e2.shiftKey) {
           e2.preventDefault();
@@ -70493,19 +70578,19 @@ ${e2}`);
   // src/ScenePage.tsx
   var import_jsx_runtime16 = __toESM(require_jsx_runtime());
   function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyChange }) {
-    const [scenes, setScenes] = (0, import_react18.useState)([]);
-    const [availableFlags, setAvailableFlags] = (0, import_react18.useState)([]);
+    const [scenes, setScenes] = (0, import_react19.useState)([]);
+    const [availableFlags, setAvailableFlags] = (0, import_react19.useState)([]);
     const history = useUndoHistory();
     const { notifications, notify } = useNotifications();
-    const dragStartPos = (0, import_react18.useRef)(null);
-    const dragStartSize = (0, import_react18.useRef)(null);
-    const dragStartDepth = (0, import_react18.useRef)(null);
-    const dragStartXFocus = (0, import_react18.useRef)(null);
-    const midDragStart = (0, import_react18.useRef)(null);
-    const [isPanning, setIsPanning] = (0, import_react18.useState)(false);
-    const isGyroDragging = (0, import_react18.useRef)(false);
-    const gyroOrigin = (0, import_react18.useRef)(null);
-    const [editTextureIndex, setEditTextureIndex] = (0, import_react18.useState)(null);
+    const dragStartPos = (0, import_react19.useRef)(null);
+    const dragStartSize = (0, import_react19.useRef)(null);
+    const dragStartDepth = (0, import_react19.useRef)(null);
+    const dragStartXFocus = (0, import_react19.useRef)(null);
+    const midDragStart = (0, import_react19.useRef)(null);
+    const [isPanning, setIsPanning] = (0, import_react19.useState)(false);
+    const isGyroDragging = (0, import_react19.useRef)(false);
+    const gyroOrigin = (0, import_react19.useRef)(null);
+    const [editTextureIndex, setEditTextureIndex] = (0, import_react19.useState)(null);
     const {
       canvasRef,
       rendererRef,
@@ -70552,8 +70637,8 @@ ${e2}`);
       handleGyroModeToggle,
       handleGyroOffset
     } = useSceneRenderer(notify, onSaved);
-    const [sceneSize, setSceneSize] = (0, import_react18.useState)(null);
-    (0, import_react18.useEffect)(() => {
+    const [sceneSize, setSceneSize] = (0, import_react19.useState)(null);
+    (0, import_react19.useEffect)(() => {
       const sceneData = rendererRef.current?.getSceneData();
       if (!sceneData) {
         setSceneSize(null);
@@ -70575,10 +70660,10 @@ ${e2}`);
         cancelled = true;
       };
     }, [spriteEntries, conditionsVersion, rendererRef]);
-    (0, import_react18.useEffect)(() => {
+    (0, import_react19.useEffect)(() => {
       onDirtyChange?.(isDirty);
     }, [isDirty, onDirtyChange]);
-    (0, import_react18.useEffect)(() => {
+    (0, import_react19.useEffect)(() => {
       if (!isDirty) return;
       const onBeforeUnload = (e2) => {
         e2.preventDefault();
@@ -70586,43 +70671,43 @@ ${e2}`);
       window.addEventListener("beforeunload", onBeforeUnload);
       return () => window.removeEventListener("beforeunload", onBeforeUnload);
     }, [isDirty]);
-    const handleBack = (0, import_react18.useCallback)(() => {
+    const handleBack = (0, import_react19.useCallback)(() => {
       if (isDirty && !window.confirm("You have unsaved changes. Leave without saving?")) return;
       onBack?.();
     }, [isDirty, onBack]);
-    const handleSceneSelect = (0, import_react18.useCallback)((sceneId) => {
+    const handleSceneSelect = (0, import_react19.useCallback)((sceneId) => {
       if (isDirty && !window.confirm("You have unsaved changes. Switch scenes without saving?")) return;
       loadScene(sceneId);
     }, [isDirty, loadScene]);
-    const ensureSpriteSelected = (0, import_react18.useCallback)((spriteIndex) => {
+    const ensureSpriteSelected = (0, import_react19.useCallback)((spriteIndex) => {
       if (selectedSprite?.index !== spriteIndex) {
         handleSpriteSelect(spriteIndex);
       }
     }, [selectedSprite, handleSpriteSelect]);
-    const handleSelectConditionSetForSprite = (0, import_react18.useCallback)((spriteIndex, conditionIndex) => {
+    const handleSelectConditionSetForSprite = (0, import_react19.useCallback)((spriteIndex, conditionIndex) => {
       ensureSpriteSelected(spriteIndex);
       handleSelectConditionSet(spriteIndex, conditionIndex);
     }, [ensureSpriteSelected, handleSelectConditionSet]);
-    const handleAddConditionSetForSprite = (0, import_react18.useCallback)((spriteIndex) => {
+    const handleAddConditionSetForSprite = (0, import_react19.useCallback)((spriteIndex) => {
       ensureSpriteSelected(spriteIndex);
       handleAddConditionSet(spriteIndex);
     }, [ensureSpriteSelected, handleAddConditionSet]);
-    const handleRemoveConditionSetForSprite = (0, import_react18.useCallback)((spriteIndex, conditionIndex) => {
+    const handleRemoveConditionSetForSprite = (0, import_react19.useCallback)((spriteIndex, conditionIndex) => {
       ensureSpriteSelected(spriteIndex);
       handleRemoveConditionSet(spriteIndex, conditionIndex);
     }, [ensureSpriteSelected, handleRemoveConditionSet]);
-    const handleRenameConditionSetForSprite = (0, import_react18.useCallback)((spriteIndex, conditionIndex, name) => {
+    const handleRenameConditionSetForSprite = (0, import_react19.useCallback)((spriteIndex, conditionIndex, name) => {
       ensureSpriteSelected(spriteIndex);
       handleRenameConditionSet(spriteIndex, conditionIndex, name);
     }, [ensureSpriteSelected, handleRenameConditionSet]);
-    const handleSetConditionSetFlagsForSprite = (0, import_react18.useCallback)((spriteIndex, conditionIndex, conditions) => {
+    const handleSetConditionSetFlagsForSprite = (0, import_react19.useCallback)((spriteIndex, conditionIndex, conditions) => {
       ensureSpriteSelected(spriteIndex);
       handleSetConditionSetFlags(spriteIndex, conditionIndex, conditions);
     }, [ensureSpriteSelected, handleSetConditionSetFlags]);
-    const getConditionsForSprite = (0, import_react18.useCallback)((spriteIndex) => {
+    const getConditionsForSprite = (0, import_react19.useCallback)((spriteIndex) => {
       return rendererRef.current?.getSpriteConditions(spriteIndex) ?? [];
     }, [rendererRef]);
-    const getActiveConditionIndexForSprite = (0, import_react18.useCallback)((spriteIndex) => {
+    const getActiveConditionIndexForSprite = (0, import_react19.useCallback)((spriteIndex) => {
       return rendererRef.current?.getSelectedConditionIndex(spriteIndex) ?? null;
     }, [rendererRef]);
     const activeConditionSet = selectedSprite !== null ? (() => {
@@ -70630,13 +70715,17 @@ ${e2}`);
       return conditionIndex !== null && conditionIndex !== -1 ? { spriteIndex: selectedSprite.index, conditionIndex } : null;
     })() : null;
     const activeConditionLabel = activeConditionSet ? getConditionsForSprite(activeConditionSet.spriteIndex)[activeConditionSet.conditionIndex]?.name ?? `Set ${activeConditionSet.conditionIndex + 1}` : null;
-    const applySelectedSpriteMove = (0, import_react18.useCallback)((x2, y2) => {
+    const applySelectedSpriteMove = (0, import_react19.useCallback)((x2, y2) => {
       setSelectedSprite((prev) => prev ? { ...prev, x: x2, y: y2 } : null);
     }, [setSelectedSprite]);
-    const applySelectedSpriteSize = (0, import_react18.useCallback)((width, height) => {
+    const applySelectedSpriteSize = (0, import_react19.useCallback)((width, height) => {
       setSelectedSprite((prev) => prev ? { ...prev, width, height } : null);
     }, [setSelectedSprite]);
-    const handleTextureApply = (0, import_react18.useCallback)((index, textureResource, width, height, texCoordinates) => {
+    const handleImageReplaced = (0, import_react19.useCallback)(async (oldResource, newResource) => {
+      await rendererRef.current?.replaceTexture(oldResource, newResource);
+      markDirty();
+    }, [rendererRef, markDirty]);
+    const handleTextureApply = (0, import_react19.useCallback)((index, textureResource, width, height, texCoordinates) => {
       rendererRef.current?.changeTexture(index, textureResource, { width, height }, texCoordinates);
       setSelectedSprite((prev) => prev?.index === index ? { ...prev, width, height } : prev);
       markDirty();
@@ -70663,21 +70752,21 @@ ${e2}`);
       onTextureApply: handleTextureApply,
       onMarkDirty: markDirty
     });
-    (0, import_react18.useEffect)(() => {
+    (0, import_react19.useEffect)(() => {
       scenesApi.list().then(
         (data) => setScenes(data.map((s2) => ({ value: s2.id, label: s2.label, thumbnail_url: s2.thumbnail_url })))
       ).catch(() => {
       });
     }, []);
-    (0, import_react18.useEffect)(() => {
+    (0, import_react19.useEffect)(() => {
       if (!projectId) return;
       flagsApi.list(projectId).then(setAvailableFlags).catch(() => {
       });
     }, [projectId]);
-    (0, import_react18.useEffect)(() => {
+    (0, import_react19.useEffect)(() => {
       if (initialSceneId) loadScene(initialSceneId);
     }, []);
-    (0, import_react18.useEffect)(() => {
+    (0, import_react19.useEffect)(() => {
       const el = canvasRef.current;
       if (!el) return;
       const onWheel = (e2) => {
@@ -70691,7 +70780,7 @@ ${e2}`);
       el.addEventListener("wheel", onWheel, { passive: false });
       return () => el.removeEventListener("wheel", onWheel);
     }, [canvasRef, rendererRef, handleZoomAtPoint]);
-    (0, import_react18.useEffect)(() => {
+    (0, import_react19.useEffect)(() => {
       const el = canvasRef.current;
       if (!el) return;
       const onMouseDown = (e2) => {
@@ -70723,7 +70812,7 @@ ${e2}`);
         window.removeEventListener("mouseup", onMouseUp);
       };
     }, [canvasRef, rendererRef, cancelDrag]);
-    (0, import_react18.useEffect)(() => {
+    (0, import_react19.useEffect)(() => {
       const el = canvasRef.current;
       if (!el) return;
       const onMouseDown = (e2) => {
@@ -70756,10 +70845,10 @@ ${e2}`);
         window.removeEventListener("mouseup", onMouseUp);
       };
     }, [canvasRef, rendererRef, gyroMode, handleGyroOffset, cancelDrag]);
-    const handleSpritePositionChangeStart = (0, import_react18.useCallback)((x2, y2) => {
+    const handleSpritePositionChangeStart = (0, import_react19.useCallback)((x2, y2) => {
       dragStartPos.current = { x: x2, y: y2 };
     }, []);
-    const handleSpritePositionCommit = (0, import_react18.useCallback)((x2, y2) => {
+    const handleSpritePositionCommit = (0, import_react19.useCallback)((x2, y2) => {
       if (!selectedSprite || !dragStartPos.current || activeConditionSet !== null) return;
       const before = dragStartPos.current;
       dragStartPos.current = null;
@@ -70767,10 +70856,10 @@ ${e2}`);
         history.push({ type: "position", spriteIndex: selectedSprite.index, before, after: { x: x2, y: y2 } });
       }
     }, [selectedSprite, history, activeConditionSet]);
-    const handleSpriteSizeChangeStart = (0, import_react18.useCallback)(() => {
+    const handleSpriteSizeChangeStart = (0, import_react19.useCallback)(() => {
       if (selectedSprite) dragStartSize.current = { width: selectedSprite.width, height: selectedSprite.height };
     }, [selectedSprite]);
-    const handleSpriteSizeCommit = (0, import_react18.useCallback)((width, height) => {
+    const handleSpriteSizeCommit = (0, import_react19.useCallback)((width, height) => {
       if (!selectedSprite || !dragStartSize.current || activeConditionSet !== null) return;
       const before = dragStartSize.current;
       dragStartSize.current = null;
@@ -70778,7 +70867,7 @@ ${e2}`);
         history.push({ type: "scale", spriteIndex: selectedSprite.index, before, after: { width, height } });
       }
     }, [selectedSprite, history, activeConditionSet]);
-    const handleChangeTextureWithHistory = (0, import_react18.useCallback)(async (index, textureResource) => {
+    const handleChangeTextureWithHistory = (0, import_react19.useCallback)(async (index, textureResource) => {
       const beforeTexture = rendererRef.current?.getSpriteTextureResource(index) ?? "";
       const beforeSize = rendererRef.current?.getSpriteScale(index);
       const beforeTexCoords = rendererRef.current?.getSpriteTexCoordinates(index) ?? [0, 1, 0, 0, 1, 1, 1, 0];
@@ -70791,13 +70880,13 @@ ${e2}`);
         after: { textureResource, width: afterSize?.width ?? 0, height: afterSize?.height ?? 0, texCoordinates: [0, 1, 0, 0, 1, 1, 1, 0] }
       });
     }, [handleChangeTexture, rendererRef, history]);
-    const handleSpriteDepthChangeStart = (0, import_react18.useCallback)((depth) => {
+    const handleSpriteDepthChangeStart = (0, import_react19.useCallback)((depth) => {
       dragStartDepth.current = depth;
     }, []);
-    const handleXFocusChangeStart = (0, import_react18.useCallback)((value) => {
+    const handleXFocusChangeStart = (0, import_react19.useCallback)((value) => {
       dragStartXFocus.current = value;
     }, []);
-    const handleXFocusCommit = (0, import_react18.useCallback)((value) => {
+    const handleXFocusCommit = (0, import_react19.useCallback)((value) => {
       if (dragStartXFocus.current === null) return;
       const before = dragStartXFocus.current;
       dragStartXFocus.current = null;
@@ -70805,7 +70894,7 @@ ${e2}`);
         history.push({ type: "xFocus", before, after: value });
       }
     }, [history]);
-    const handleSpriteDepthCommit = (0, import_react18.useCallback)((depth) => {
+    const handleSpriteDepthCommit = (0, import_react19.useCallback)((depth) => {
       if (!selectedSprite || dragStartDepth.current === null || activeConditionSet !== null) return;
       const before = dragStartDepth.current;
       dragStartDepth.current = null;
@@ -70834,7 +70923,8 @@ ${e2}`);
           gyroMode,
           onGyroModeToggle: handleGyroModeToggle,
           sceneSizeLabel: sceneSize?.label,
-          sceneSizeTitle: sceneSize?.title
+          sceneSizeTitle: sceneSize?.title,
+          onImageReplaced: handleImageReplaced
         }
       ),
       /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "app-content", children: [
@@ -70924,14 +71014,14 @@ ${e2}`);
   }
 
   // src/SceneListPage.tsx
-  var import_react22 = __toESM(require_react());
+  var import_react23 = __toESM(require_react());
 
   // src/components/SceneCard.tsx
-  var import_react19 = __toESM(require_react());
+  var import_react20 = __toESM(require_react());
   var import_jsx_runtime17 = __toESM(require_jsx_runtime());
   function SceneCard({ label, thumbnail_url, selected, onClick, thumbBuster = 0 }) {
-    const [thumbFailed, setThumbFailed] = (0, import_react19.useState)(false);
-    (0, import_react19.useEffect)(() => {
+    const [thumbFailed, setThumbFailed] = (0, import_react20.useState)(false);
+    (0, import_react20.useEffect)(() => {
       setThumbFailed(false);
     }, [thumbnail_url, thumbBuster]);
     const thumbnailSrc = thumbnail_url ? `${thumbnail_url}${thumbnail_url.includes("?") ? "&" : "?"}v=${thumbBuster}` : null;
@@ -70973,13 +71063,13 @@ ${e2}`);
   }
 
   // src/controls/modals/NewSceneDialog.tsx
-  var import_react20 = __toESM(require_react());
+  var import_react21 = __toESM(require_react());
   var import_jsx_runtime19 = __toESM(require_jsx_runtime());
   function NewSceneDialog({ onConfirm, onCancel, scenes = [] }) {
-    const [name, setName] = (0, import_react20.useState)("");
-    const [copyFromId, setCopyFromId] = (0, import_react20.useState)(void 0);
-    const inputRef = (0, import_react20.useRef)(null);
-    (0, import_react20.useEffect)(() => {
+    const [name, setName] = (0, import_react21.useState)("");
+    const [copyFromId, setCopyFromId] = (0, import_react21.useState)(void 0);
+    const inputRef = (0, import_react21.useRef)(null);
+    (0, import_react21.useEffect)(() => {
       inputRef.current?.focus();
     }, []);
     const handleSubmit = (e2) => {
@@ -71039,7 +71129,7 @@ ${e2}`);
   }
 
   // src/controls/modals/SceneFlagsModal.tsx
-  var import_react21 = __toESM(require_react());
+  var import_react22 = __toESM(require_react());
   var import_jsx_runtime20 = __toESM(require_jsx_runtime());
   function FlagCheckList({
     label,
@@ -71113,10 +71203,10 @@ ${e2}`);
     ] });
   }
   function SceneFlagsModal({ sceneName, flags, declarations, onSave, onClose }) {
-    const [required, setRequired] = (0, import_react21.useState)(declarations.required ?? []);
-    const [excluded, setExcluded] = (0, import_react21.useState)(declarations.excluded ?? []);
-    const [scored, setScored] = (0, import_react21.useState)(declarations.scored ?? []);
-    const handleSave = (0, import_react21.useCallback)(() => {
+    const [required, setRequired] = (0, import_react22.useState)(declarations.required ?? []);
+    const [excluded, setExcluded] = (0, import_react22.useState)(declarations.excluded ?? []);
+    const [scored, setScored] = (0, import_react22.useState)(declarations.scored ?? []);
+    const handleSave = (0, import_react22.useCallback)(() => {
       const result = {};
       if (required.length > 0) result.required = required;
       if (excluded.length > 0) result.excluded = excluded;
@@ -71169,23 +71259,23 @@ ${e2}`);
   // src/SceneListPage.tsx
   var import_jsx_runtime21 = __toESM(require_jsx_runtime());
   function SceneListPage({ onSelect, onBack, onFlags, onRules, projectId, projectname, projectSize, thumbBuster = 0 }) {
-    const [scenes, setScenes] = (0, import_react22.useState)([]);
-    const [loading, setLoading] = (0, import_react22.useState)(true);
-    const [showNewSceneDialog, setShowNewSceneDialog] = (0, import_react22.useState)(false);
-    const [fetchedName, setFetchedName] = (0, import_react22.useState)(void 0);
-    const [fetchedSize, setFetchedSize] = (0, import_react22.useState)(void 0);
-    const [deleteScene, setDeleteScene] = (0, import_react22.useState)(null);
-    const [flagsScene, setFlagsScene] = (0, import_react22.useState)(null);
-    const [flagsModalData, setFlagsModalData] = (0, import_react22.useState)(null);
-    const [availableFlags, setAvailableFlags] = (0, import_react22.useState)([]);
-    const [flagsModalLoading, setFlagsModalLoading] = (0, import_react22.useState)(false);
-    (0, import_react22.useEffect)(() => {
+    const [scenes, setScenes] = (0, import_react23.useState)([]);
+    const [loading, setLoading] = (0, import_react23.useState)(true);
+    const [showNewSceneDialog, setShowNewSceneDialog] = (0, import_react23.useState)(false);
+    const [fetchedName, setFetchedName] = (0, import_react23.useState)(void 0);
+    const [fetchedSize, setFetchedSize] = (0, import_react23.useState)(void 0);
+    const [deleteScene, setDeleteScene] = (0, import_react23.useState)(null);
+    const [flagsScene, setFlagsScene] = (0, import_react23.useState)(null);
+    const [flagsModalData, setFlagsModalData] = (0, import_react23.useState)(null);
+    const [availableFlags, setAvailableFlags] = (0, import_react23.useState)([]);
+    const [flagsModalLoading, setFlagsModalLoading] = (0, import_react23.useState)(false);
+    (0, import_react23.useEffect)(() => {
       scenesApi.list(projectId).then((records) => {
         setScenes(records);
         setLoading(false);
       }).catch(() => setLoading(false));
     }, []);
-    (0, import_react22.useEffect)(() => {
+    (0, import_react23.useEffect)(() => {
       if (!projectId || projectname && projectSize !== void 0) return;
       projectsApi.get(projectId).then((p2) => {
         if (!projectname) setFetchedName(p2.name);
@@ -71206,7 +71296,7 @@ ${e2}`);
         window.alert(message);
       });
     };
-    const handleDeleteScene = (0, import_react22.useCallback)(async () => {
+    const handleDeleteScene = (0, import_react23.useCallback)(async () => {
       if (!deleteScene) return;
       try {
         await scenesApi.delete(deleteScene.id);
@@ -71217,7 +71307,7 @@ ${e2}`);
         setDeleteScene(null);
       }
     }, [deleteScene]);
-    const openSceneFlags = (0, import_react22.useCallback)(async (scene) => {
+    const openSceneFlags = (0, import_react23.useCallback)(async (scene) => {
       setFlagsScene(scene);
       setFlagsModalLoading(true);
       try {
@@ -71234,7 +71324,7 @@ ${e2}`);
         setFlagsModalLoading(false);
       }
     }, [projectId]);
-    const handleSaveSceneFlags = (0, import_react22.useCallback)(async (declarations) => {
+    const handleSaveSceneFlags = (0, import_react23.useCallback)(async (declarations) => {
       if (!flagsScene || !flagsModalData) return;
       try {
         const sceneDetail = await scenesApi.get(flagsScene.id);
@@ -71338,15 +71428,15 @@ ${e2}`);
   }
 
   // src/ProjectListPage.tsx
-  var import_react24 = __toESM(require_react());
+  var import_react25 = __toESM(require_react());
 
   // src/controls/modals/NewProjectDialog.tsx
-  var import_react23 = __toESM(require_react());
+  var import_react24 = __toESM(require_react());
   var import_jsx_runtime22 = __toESM(require_jsx_runtime());
   function NewProjectDialog({ onConfirm, onCancel }) {
-    const [name, setName] = (0, import_react23.useState)("");
-    const inputRef = (0, import_react23.useRef)(null);
-    (0, import_react23.useEffect)(() => {
+    const [name, setName] = (0, import_react24.useState)("");
+    const inputRef = (0, import_react24.useRef)(null);
+    (0, import_react24.useEffect)(() => {
       inputRef.current?.focus();
     }, []);
     const handleSubmit = (e2) => {
@@ -71385,7 +71475,7 @@ ${e2}`);
   // src/ProjectListPage.tsx
   var import_jsx_runtime23 = __toESM(require_jsx_runtime());
   function ProjectCollage({ sceneIds, sceneThumbnailUrls }) {
-    const [failedThumbs, setFailedThumbs] = (0, import_react24.useState)(/* @__PURE__ */ new Set());
+    const [failedThumbs, setFailedThumbs] = (0, import_react25.useState)(/* @__PURE__ */ new Set());
     if (!sceneIds || sceneIds.length === 0) {
       return /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "project-card-icon", children: "\u{1F4C1}" });
     }
@@ -71404,11 +71494,11 @@ ${e2}`);
     }) });
   }
   function ProjectListPage({ onSelect, onLogout }) {
-    const [projects, setProjects] = (0, import_react24.useState)([]);
-    const [loading, setLoading] = (0, import_react24.useState)(true);
-    const [showDialog, setShowDialog] = (0, import_react24.useState)(false);
-    const [showArchived, setShowArchived] = (0, import_react24.useState)(false);
-    (0, import_react24.useEffect)(() => {
+    const [projects, setProjects] = (0, import_react25.useState)([]);
+    const [loading, setLoading] = (0, import_react25.useState)(true);
+    const [showDialog, setShowDialog] = (0, import_react25.useState)(false);
+    const [showArchived, setShowArchived] = (0, import_react25.useState)(false);
+    (0, import_react25.useEffect)(() => {
       projectsApi.list().then((records) => {
         setProjects(records);
         setLoading(false);
@@ -71512,7 +71602,7 @@ ${e2}`);
   }
 
   // src/FlagsPage.tsx
-  var import_react25 = __toESM(require_react());
+  var import_react26 = __toESM(require_react());
 
   // src/components/FlagInUseModal.tsx
   var import_react_dom4 = __toESM(require_react_dom());
@@ -71593,13 +71683,13 @@ ${e2}`);
     ] });
   }
   function FlagsPage({ projectId, projectName, onBack }) {
-    const [flags, setFlags] = (0, import_react25.useState)([]);
-    const [loading, setLoading] = (0, import_react25.useState)(true);
-    const [saving, setSaving] = (0, import_react25.useState)(false);
-    const [error, setError] = (0, import_react25.useState)(null);
-    const [editingState, setEditingState] = (0, import_react25.useState)(null);
-    const [inUseModal, setInUseModal] = (0, import_react25.useState)(null);
-    (0, import_react25.useEffect)(() => {
+    const [flags, setFlags] = (0, import_react26.useState)([]);
+    const [loading, setLoading] = (0, import_react26.useState)(true);
+    const [saving, setSaving] = (0, import_react26.useState)(false);
+    const [error, setError] = (0, import_react26.useState)(null);
+    const [editingState, setEditingState] = (0, import_react26.useState)(null);
+    const [inUseModal, setInUseModal] = (0, import_react26.useState)(null);
+    (0, import_react26.useEffect)(() => {
       flagsApi.list(projectId).then((data) => {
         setFlags(data);
         setLoading(false);
@@ -71608,7 +71698,7 @@ ${e2}`);
         setLoading(false);
       });
     }, [projectId]);
-    const duplicateKeys = (0, import_react25.useMemo)(() => {
+    const duplicateKeys = (0, import_react26.useMemo)(() => {
       const indicesByKey = /* @__PURE__ */ new Map();
       flags.forEach((flag, index) => {
         if (flag.id) {
@@ -71624,7 +71714,7 @@ ${e2}`);
       return duplicateIndices;
     }, [flags]);
     const hasDuplicates = duplicateKeys.size > 0;
-    const save = (0, import_react25.useCallback)(async (flagsToSave) => {
+    const save = (0, import_react26.useCallback)(async (flagsToSave) => {
       setSaving(true);
       setError(null);
       try {
@@ -71635,19 +71725,19 @@ ${e2}`);
         setSaving(false);
       }
     }, [projectId]);
-    const updateFlag = (0, import_react25.useCallback)((index, updated) => {
+    const updateFlag = (0, import_react26.useCallback)((index, updated) => {
       setFlags((prev) => {
         const next = [...prev];
         next[index] = updated;
         return next;
       });
     }, []);
-    const handleDefaultActiveChange = (0, import_react25.useCallback)((index, defaultActive) => {
+    const handleDefaultActiveChange = (0, import_react26.useCallback)((index, defaultActive) => {
       const newFlags = flags.map((flag, i2) => i2 === index ? { ...flag, defaultActive } : flag);
       setFlags(newFlags);
       save(newFlags);
     }, [flags, save]);
-    const startEditing = (0, import_react25.useCallback)((index) => {
+    const startEditing = (0, import_react26.useCallback)((index) => {
       if (editingState !== null) {
         setFlags((prev) => {
           const next = [...prev];
@@ -71657,11 +71747,11 @@ ${e2}`);
       }
       setEditingState({ index, original: flags[index] });
     }, [editingState, flags]);
-    const acceptEditing = (0, import_react25.useCallback)(() => {
+    const acceptEditing = (0, import_react26.useCallback)(() => {
       setEditingState(null);
       save(flags);
     }, [flags, save]);
-    const cancelEditing = (0, import_react25.useCallback)(() => {
+    const cancelEditing = (0, import_react26.useCallback)(() => {
       if (editingState === null) return;
       setFlags((prev) => {
         const next = [...prev];
@@ -71670,7 +71760,7 @@ ${e2}`);
       });
       setEditingState(null);
     }, [editingState]);
-    const deleteFlag = (0, import_react25.useCallback)(async (index) => {
+    const deleteFlag = (0, import_react26.useCallback)(async (index) => {
       const flag = flags[index];
       if (flag.id) {
         const usage = await flagsApi.checkUsage(projectId, flag.id).catch(() => null);
@@ -71688,7 +71778,7 @@ ${e2}`);
       });
       save(newFlags);
     }, [flags, projectId, save]);
-    const addFlag = (0, import_react25.useCallback)(() => {
+    const addFlag = (0, import_react26.useCallback)(() => {
       const existingIds = new Set(flags.map((flag) => flag.id));
       const newFlag = { id: generateUniqueId(existingIds), name: "", defaultActive: false };
       const newIndex = flags.length;
@@ -71755,7 +71845,7 @@ ${e2}`);
   }
 
   // src/RulesPage.tsx
-  var import_react26 = __toESM(require_react());
+  var import_react27 = __toESM(require_react());
   var import_jsx_runtime26 = __toESM(require_jsx_runtime());
   function generateRuleId(name) {
     return name.trim().toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
@@ -71875,7 +71965,7 @@ ${e2}`);
     ] });
   }
   function RuleEditModal({ rule: initial, flags, onSave, onCancel }) {
-    const [rule, setRule] = (0, import_react26.useState)(() => JSON.parse(JSON.stringify(initial)));
+    const [rule, setRule] = (0, import_react27.useState)(() => JSON.parse(JSON.stringify(initial)));
     const setField = (key, value) => setRule((r2) => ({ ...r2, [key]: value }));
     const conditions = rule.conditions ?? { operator: "AND", checks: [] };
     const setConditions = (g2) => setField("conditions", g2);
@@ -71965,15 +72055,15 @@ ${e2}`);
     ] }) });
   }
   function RulesPage({ projectId, projectName, onBack }) {
-    const [rules, setRules] = (0, import_react26.useState)([]);
-    const [flags, setFlags] = (0, import_react26.useState)([]);
-    const [loading, setLoading] = (0, import_react26.useState)(true);
-    const [saving, setSaving] = (0, import_react26.useState)(false);
-    const [dirty, setDirty] = (0, import_react26.useState)(false);
-    const [error, setError] = (0, import_react26.useState)(null);
-    const [editingIndex, setEditingIndex] = (0, import_react26.useState)(null);
-    const [isNewRule, setIsNewRule] = (0, import_react26.useState)(false);
-    (0, import_react26.useEffect)(() => {
+    const [rules, setRules] = (0, import_react27.useState)([]);
+    const [flags, setFlags] = (0, import_react27.useState)([]);
+    const [loading, setLoading] = (0, import_react27.useState)(true);
+    const [saving, setSaving] = (0, import_react27.useState)(false);
+    const [dirty, setDirty] = (0, import_react27.useState)(false);
+    const [error, setError] = (0, import_react27.useState)(null);
+    const [editingIndex, setEditingIndex] = (0, import_react27.useState)(null);
+    const [isNewRule, setIsNewRule] = (0, import_react27.useState)(false);
+    (0, import_react27.useEffect)(() => {
       Promise.all([rulesApi.list(projectId), flagsApi.list(projectId)]).then(([r2, f2]) => {
         setRules(r2);
         setFlags(f2);
@@ -71983,7 +72073,7 @@ ${e2}`);
         setLoading(false);
       });
     }, [projectId]);
-    const save = (0, import_react26.useCallback)(async () => {
+    const save = (0, import_react27.useCallback)(async () => {
       setError(null);
       setSaving(true);
       try {
@@ -72020,7 +72110,7 @@ ${e2}`);
       setRules((prev) => prev.filter((_, i2) => i2 !== index));
       setDirty(true);
     };
-    const handleBack = (0, import_react26.useCallback)(() => {
+    const handleBack = (0, import_react27.useCallback)(() => {
       if (dirty && !window.confirm("You have unsaved changes. Leave without saving?")) return;
       onBack();
     }, [dirty, onBack]);
@@ -72076,14 +72166,14 @@ ${e2}`);
   }
 
   // src/LoginPage.tsx
-  var import_react27 = __toESM(require_react());
+  var import_react28 = __toESM(require_react());
   var import_jsx_runtime27 = __toESM(require_jsx_runtime());
   function LoginPage({ onAuthenticated }) {
-    const [mode, setMode] = (0, import_react27.useState)("login");
-    const [email, setEmail] = (0, import_react27.useState)("");
-    const [password, setPassword] = (0, import_react27.useState)("");
-    const [error, setError] = (0, import_react27.useState)("");
-    const [loading, setLoading] = (0, import_react27.useState)(false);
+    const [mode, setMode] = (0, import_react28.useState)("login");
+    const [email, setEmail] = (0, import_react28.useState)("");
+    const [password, setPassword] = (0, import_react28.useState)("");
+    const [error, setError] = (0, import_react28.useState)("");
+    const [loading, setLoading] = (0, import_react28.useState)(false);
     const handleSubmit = async (e2) => {
       e2.preventDefault();
       setError("");
@@ -72174,28 +72264,28 @@ ${e2}`);
     return { type: "projects" };
   }
   function App() {
-    const [authState, setAuthState] = (0, import_react28.useState)({ status: "loading" });
-    const [page, setPage] = (0, import_react28.useState)(pageFromPath);
-    const [thumbBuster, setThumbBuster] = (0, import_react28.useState)(0);
-    const isDirtyRef = (0, import_react28.useRef)(false);
-    const pageRef = (0, import_react28.useRef)(page);
-    (0, import_react28.useEffect)(() => {
+    const [authState, setAuthState] = (0, import_react29.useState)({ status: "loading" });
+    const [page, setPage] = (0, import_react29.useState)(pageFromPath);
+    const [thumbBuster, setThumbBuster] = (0, import_react29.useState)(0);
+    const isDirtyRef = (0, import_react29.useRef)(false);
+    const pageRef = (0, import_react29.useRef)(page);
+    (0, import_react29.useEffect)(() => {
       pageRef.current = page;
     }, [page]);
-    (0, import_react28.useEffect)(() => {
+    (0, import_react29.useEffect)(() => {
       setUnauthorizedHandler(() => setAuthState({ status: "unauthenticated" }));
       authApi.me().then((user) => setAuthState({ status: "authenticated", user })).catch(() => {
       });
     }, []);
-    const handleLogout = (0, import_react28.useCallback)(async () => {
+    const handleLogout = (0, import_react29.useCallback)(async () => {
       await authApi.logout().catch(() => {
       });
       setAuthState({ status: "unauthenticated" });
     }, []);
-    const handleDirtyChange = (0, import_react28.useCallback)((dirty) => {
+    const handleDirtyChange = (0, import_react29.useCallback)((dirty) => {
       isDirtyRef.current = dirty;
     }, []);
-    (0, import_react28.useEffect)(() => {
+    (0, import_react29.useEffect)(() => {
       const onPopState = () => {
         const currentPage = pageRef.current;
         if (currentPage.type !== "scene" || !isDirtyRef.current) {
@@ -72212,31 +72302,31 @@ ${e2}`);
       window.addEventListener("popstate", onPopState);
       return () => window.removeEventListener("popstate", onPopState);
     }, []);
-    const navigateToProject = (0, import_react28.useCallback)((project) => {
+    const navigateToProject = (0, import_react29.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
       setPage({ type: "scenes", project });
     }, []);
-    const navigateToScene = (0, import_react28.useCallback)((scene, project) => {
+    const navigateToScene = (0, import_react29.useCallback)((scene, project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/scene/${encodeURIComponent(scene.id)}`);
       setPage({ type: "scene", sceneId: scene.id, project });
     }, []);
-    const navigateBackToProjects = (0, import_react28.useCallback)(() => {
+    const navigateBackToProjects = (0, import_react29.useCallback)(() => {
       window.history.pushState(null, "", "/");
       setPage({ type: "projects" });
     }, []);
-    const navigateBackToScenes = (0, import_react28.useCallback)((project) => {
+    const navigateBackToScenes = (0, import_react29.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
       setPage({ type: "scenes", project });
     }, []);
-    const navigateToFlags = (0, import_react28.useCallback)((project) => {
+    const navigateToFlags = (0, import_react29.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/flags`);
       setPage({ type: "flags", project });
     }, []);
-    const navigateToRules = (0, import_react28.useCallback)((project) => {
+    const navigateToRules = (0, import_react29.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/rules`);
       setPage({ type: "rules", project });
     }, []);
-    const handleSaved = (0, import_react28.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
+    const handleSaved = (0, import_react29.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
     if (authState.status === "loading") {
       return null;
     }

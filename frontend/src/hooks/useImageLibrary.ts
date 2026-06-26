@@ -10,10 +10,11 @@ export function getImageThumbnailUrl(thumbFilename: string) {
   return `/image-thumbnails/${thumbFilename}`;
 }
 
-export function useImageLibrary(projectId: string, onImageDeleted?: (image: ImageRecord) => void) {
+export function useImageLibrary(projectId: string, onImageDeleted?: (image: ImageRecord) => void, onImageReplaced?: (oldResource: string, newResource: string) => void) {
   const [images, setImages] = useState<ImageRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [replacing, setReplacing] = useState(false);
   const [previewImage, setPreviewImage] = useState<ImageRecord | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<ImageRecord | null>(null);
   const [inUseScenes, setInUseScenes] = useState<string[] | null>(null);
@@ -32,6 +33,20 @@ export function useImageLibrary(projectId: string, onImageDeleted?: (image: Imag
       setInUseScenes(scenes);
     } else {
       setConfirmDelete(image);
+    }
+  };
+
+  const handleReplace = async (image: ImageRecord, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setReplacing(true);
+    try {
+      const record = await imagesApi.replace(image.id, projectId, file);
+      setImages(prev => prev.map(i => i.id === image.id ? record : i));
+      onImageReplaced?.(`/uploads/${image.filename}`, `/uploads/${record.filename}`);
+    } finally {
+      setReplacing(false);
+      e.target.value = '';
     }
   };
 
@@ -67,6 +82,8 @@ export function useImageLibrary(projectId: string, onImageDeleted?: (image: Imag
     inUseScenes,
     setInUseScenes,
     fileInputRef,
+    replacing,
+    handleReplace,
     handleDelete,
     handleDeleteConfirmed,
     handleFileChange,

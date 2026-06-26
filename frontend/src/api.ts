@@ -113,6 +113,13 @@ export const imagesApi = {
     return request<ImageRecord>(`/api/images?projectId=${encodeURIComponent(projectId)}`, { method: 'POST', body: form });
   },
 
+  replace(imageId: string, projectId: string, file: File): Promise<ImageRecord> {
+    const form = new FormData();
+    form.append('file', file);
+    return request<ImageRecord>(`/api/images/${imageId}?projectId=${encodeURIComponent(projectId)}`, { method: 'POST', body: form });
+
+  },
+
   checkUsage(imageId: string): Promise<{ scenes: string[] }> {
     return request<{ scenes: string[] }>(`/api/images/${imageId}/usage`);
   },

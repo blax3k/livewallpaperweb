@@ -1306,6 +1306,52 @@ export class SceneRenderer {
   }
 
   /**
+   * Swap a texture resource across all sprites that reference it.
+   * Evicts the old URL from PixiJS's asset cache so the new file is fetched fresh.
+   */
+  async replaceTexture(oldResource: string, newResource: string): Promise<void> {
+    const affected = this.sprites.filter(
+      s => this.spriteMetadata.get(s)?.textureResource === oldResource,
+    );
+    if (affected.length === 0) return;
+
+    // Load the new texture before touching any sprites so the render loop
+    // never sees a frame where the old GPU source has been destroyed.
+    await this.loadTexture(newResource);
+    const newTexture = this.textures.get(newResource);
+    if (!newTexture) return;
+
+    for (const sprite of affected) {
+      const metadata = this.spriteMetadata.get(sprite);
+      if (!metadata) continue;
+      metadata.textureResource = newResource;
+
+      // Re-apply whichever UV crop is currently active for this sprite.
+      const block = this.selectedConditionBlockBySprite.get(sprite);
+      let texCoords: number[] | undefined;
+      if (block) {
+        const mod = block.modifications.find(m => m.type === 'texture_coordinates');
+        texCoords = mod?.texCoordinates ?? this.conditionPreviewState.get(sprite)?.baseTexCoordinates;
+      } else {
+        const original = this.originalSceneData?.sprites.find(s => s.name === metadata.name);
+        texCoords = original?.texCoordinates;
+      }
+
+      sprite.texture = texCoords?.length === 8 ? this.cropTexture(newTexture, texCoords) : newTexture;
+    }
+
+    if (this.originalSceneData) {
+      for (const s of this.originalSceneData.sprites) {
+        if (s.textureResource === oldResource) s.textureResource = newResource;
+      }
+    }
+
+    // Safe to evict the old entry now that no sprites reference it.
+    // Filenames are UUIDs so no cache-busting needed — just drop our local ref.
+    this.textures.delete(oldResource);
+  }
+
+  /**
    * Destroy the renderer and clean up resources
    */
   destroy(): void {
