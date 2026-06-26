@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import type { ImageStorage } from '../../storage';
-import { deleteImage, getImageSizesByFilenames, ImageInUseError, ImageUploadError, listImages, uploadImage, checkImageUsage } from './imageService';
+import { deleteImage, getImageSizesByFilenames, ImageInUseError, ImageUploadError, listImages, uploadImage, replaceImage, checkImageUsage } from './imageService';
 import { HttpStatus } from '../../utils/httpStatus';
 
 interface ImageRouteDeps {
@@ -37,6 +37,20 @@ export async function registerImageRoutes(
   server.get<{ Params: { id: string } }>('/api/images/:id/usage', async (req) => {
     const scenes = await checkImageUsage(req.params.id);
     return { scenes };
+  });
+
+  server.post<{ Params: { fileId: string }; Querystring: { projectId?: string } }>('/api/images/:fileId', async (req, reply) => {
+    try {
+      const projectId = req.query.projectId;
+      const image = await replaceImage(req.params.fileId, projectId, await req.file(), deps.storage, deps.thumbnailStorage);
+
+      return reply.status(HttpStatus.OK).send(image);
+    } catch (err) {
+      if (err instanceof ImageUploadError) {
+        return reply.status(err.statusCode).send(err.payload);
+      }
+      throw err;
+    }
   });
 
   server.delete<{ Params: { id: string } }>('/api/images/:id', async (req, reply) => {

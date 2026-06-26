@@ -2,7 +2,7 @@ import type { MultipartFile } from '@fastify/multipart';
 import { randomUUID } from 'crypto';
 import sharp from 'sharp';
 import type { ImageStorage } from '../../storage';
-import { deleteImageRecordById, insertImageRecord, selectImages, selectImageSizesByFilenames, selectScenesUsingImage } from './imageRepository';
+import { deleteImageRecordById, insertImageRecord, selectImageById, selectImages, selectImageSizesByFilenames, selectScenesUsingImage, updateImageRecord } from './imageRepository';
 import { HttpStatus } from '../../utils/httpStatus';
 
 const ALLOWED_MIME_TYPES = new Set(['image/png', 'image/jpeg', 'image/gif', 'image/webp']);
@@ -90,6 +90,46 @@ export async function uploadImage(projectId: string | undefined, part: Multipart
       projectId: projectId,
       thumbFilename,
     });
+  } catch (err) {
+    await storage.delete(upload.filename);
+    if (thumbFilename) await thumbnailStorage.delete(thumbFilename);
+    throw err;
+  }
+}
+
+
+export async function replaceImage(imageId: string, projectId: string | undefined, part: MultipartFile | undefined, storage: ImageStorage, thumbnailStorage: ImageStorage) {
+  const originalImage = await selectImageById(imageId);
+  if(!originalImage)
+  {
+    throw Error('image' + imageId + ' does not exist');
+  }
+  const upload = await buildImageUpload(part);
+  await storage.save(upload.filename, upload.buffer);
+
+  let thumbFilename: string | null = null;
+  try {
+    const thumbBuffer = await generateThumbnail(upload.buffer);
+    thumbFilename = `${randomUUID()}.jpg`;
+    await thumbnailStorage.save(thumbFilename, thumbBuffer);
+  } catch {
+    // thumbnail generation is best-effort; proceed without it
+  }
+
+  try {
+    const imageRecord = await updateImageRecord(imageId, {
+      filename: upload.filename,
+      originalName: upload.originalName,
+      mimeType: upload.mimeType,
+      sizeBytes: upload.sizeBytes,
+      projectId: projectId,
+      thumbFilename,
+    });
+
+    await storage.delete(originalImage.filename);
+    if (originalImage.thumb_filename) await thumbnailStorage.delete(originalImage.thumb_filename);
+
+    return imageRecord;
   } catch (err) {
     await storage.delete(upload.filename);
     if (thumbFilename) await thumbnailStorage.delete(thumbFilename);

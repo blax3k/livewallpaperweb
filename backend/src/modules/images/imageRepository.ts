@@ -5,6 +5,11 @@ export async function selectImages(projectId: string) {
   return result.rows;
 }
 
+export async function selectImageById(imageId: string){
+  const result = await pool.query('SELECT * FROM images where id = $1', [imageId]);
+  return result.rows[0];
+}
+
 export async function insertImageRecord(input: {
   filename: string;
   originalName: string;
@@ -19,6 +24,22 @@ export async function insertImageRecord(input: {
   );
 
   return result.rows[0];
+}
+
+export async function updateImageRecord(id: string, input: {
+  filename: string;
+  originalName: string;
+  mimeType: string;
+  sizeBytes: number;
+  thumbFilename: string | null;
+  projectId: string | undefined;
+}) {
+  const result = await pool.query(
+    `UPDATE images SET filename=$1, original_name=$2, mime_type=$3, size_bytes=$4, thumb_filename=$5, project_id=$6
+     WHERE id=$7 RETURNING *`,
+    [input.filename, input.originalName, input.mimeType, input.sizeBytes, input.thumbFilename, input.projectId, id],
+  );
+  return result.rows[0] ?? null;
 }
 
 export async function deleteImageRecordById(id: string) {
