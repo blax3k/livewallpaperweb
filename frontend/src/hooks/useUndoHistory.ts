@@ -27,6 +27,12 @@ export interface XFocusAction {
   after: number;
 }
 
+export interface YFocusAction {
+  type: 'yFocus';
+  before: number;
+  after: number;
+}
+
 export interface TextureAction {
   type: 'texture';
   spriteIndex: number;
@@ -34,7 +40,7 @@ export interface TextureAction {
   after: { textureResource: string; width: number; height: number; texCoordinates: number[] };
 }
 
-export type HistoryAction = PositionAction | ScaleAction | DepthAction | XFocusAction | TextureAction;
+export type HistoryAction = PositionAction | ScaleAction | DepthAction | XFocusAction | YFocusAction | TextureAction;
 
 export function useUndoHistory() {
   const past = useRef<HistoryAction[]>([]);

@@ -223,6 +223,7 @@ export interface Sprite {
 export interface Scene {
   sprites: Sprite[];
   xFocus: number;
+  yFocus: number;
   /**
    * Flag-based scene selection declarations.
    * This is the primary mechanism for controlling when this scene is shown.

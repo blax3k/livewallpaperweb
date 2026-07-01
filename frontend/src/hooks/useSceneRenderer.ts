@@ -19,6 +19,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
   const [showSceneControls, setShowSceneControls] = useState(false);
   const [currentSceneId, setCurrentSceneId] = useState<string | null>(null);
   const [xFocus, setXFocus] = useState(0.5);
+  const [yFocus, setYFocus] = useState(0.5);
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(1439);
   const [spriteEntries, setSpriteEntries] = useState<SpriteEntry[]>([]);
@@ -106,6 +107,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
 
       const focus = sceneData.xFocus ?? 0.5;
       setXFocus(focus);
+      setYFocus(sceneData.yFocus ?? 0.5);
       setStartTime(sceneData.startTime ?? 0);
       setEndTime(sceneData.endTime ?? 1439);
       setShowSceneControls(true);
@@ -156,6 +158,12 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
   const handleXFocusChange = useCallback((value: number) => {
     setXFocus(value);
     rendererRef.current?.setScrollOffset(value);
+    markDirty();
+  }, [markDirty]);
+
+  const handleYFocusChange = useCallback((value: number) => {
+    setYFocus(value);
+    rendererRef.current?.setYFocus(value);
     markDirty();
   }, [markDirty]);
 
@@ -399,6 +407,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     showSceneControls,
     currentSceneId,
     xFocus,
+    yFocus,
     startTime,
     endTime,
     spriteEntries,
@@ -411,6 +420,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     loadScene,
     saveScene,
     handleXFocusChange,
+    handleYFocusChange,
     handleStartTimeChange,
     handleEndTimeChange,
     handlePhoneGuideToggle,

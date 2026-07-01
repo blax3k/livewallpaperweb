@@ -1,6 +1,6 @@
 import React from 'react';
 import { SpriteListPanel, SpriteEntry } from './SpriteListPanel';
-import { XFocusControl } from '../XFocusControl';
+import { FocusControl } from '../FocusControl';
 import { SpritePanelControl } from './SpritePanelControl';
 
 export type { SceneOption } from '../SceneSelectorControl';
@@ -18,6 +18,7 @@ interface SelectedSprite {
 interface SceneEditorPanelProps {
   sceneLoaded: boolean;
   xFocus: number;
+  yFocus: number;
   startTime: number;
   endTime: number;
   spriteEntries: SpriteEntry[];
@@ -26,6 +27,9 @@ interface SceneEditorPanelProps {
   onXFocusChange: (value: number) => void;
   onXFocusChangeStart?: (value: number) => void;
   onXFocusCommit?: (value: number) => void;
+  onYFocusChange: (value: number) => void;
+  onYFocusChangeStart?: (value: number) => void;
+  onYFocusCommit?: (value: number) => void;
   onStartTimeChange: (value: number) => void;
   onEndTimeChange: (value: number) => void;
   onSpriteToggle: (index: number) => void;
@@ -53,6 +57,7 @@ interface SceneEditorPanelProps {
 export function SceneEditorPanel({
   sceneLoaded,
   xFocus,
+  yFocus,
   startTime,
   endTime,
   spriteEntries,
@@ -61,6 +66,9 @@ export function SceneEditorPanel({
   onXFocusChange,
   onXFocusChangeStart,
   onXFocusCommit,
+  onYFocusChange,
+  onYFocusChangeStart,
+  onYFocusCommit,
   onStartTimeChange,
   onEndTimeChange,
   onSpriteToggle,
@@ -86,7 +94,8 @@ export function SceneEditorPanel({
   return (
     <div className="controls">
       <h2>Scene</h2>
-      <XFocusControl disabled={!sceneLoaded} value={xFocus} onChange={onXFocusChange} onChangeStart={onXFocusChangeStart} onChangeCommit={onXFocusCommit} />
+      <FocusControl axis="X" disabled={!sceneLoaded} value={xFocus} onChange={onXFocusChange} onChangeStart={onXFocusChangeStart} onChangeCommit={onXFocusCommit} />
+      <FocusControl axis="Y" disabled={!sceneLoaded} value={yFocus} onChange={onYFocusChange} onChangeStart={onYFocusChangeStart} onChangeCommit={onYFocusCommit} />
       <h2>Sprites</h2>
       <div className="control-group">
         <SpriteListPanel

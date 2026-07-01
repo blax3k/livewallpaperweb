@@ -75,6 +75,7 @@ describe('SceneRenderer', () => {
     it('should load a scene with valid sprite data', async () => {
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'room',
@@ -97,6 +98,7 @@ describe('SceneRenderer', () => {
     it('should handle scene with multiple sprites', async () => {
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'room',
@@ -128,6 +130,7 @@ describe('SceneRenderer', () => {
     it('should clear previous scene before loading new scene', async () => {
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'room',
@@ -151,6 +154,7 @@ describe('SceneRenderer', () => {
     it('should handle scene with empty sprites array', async () => {
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [],
       };
 
@@ -164,6 +168,7 @@ describe('SceneRenderer', () => {
       
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'missing',
@@ -195,6 +200,7 @@ describe('SceneRenderer', () => {
     it('should apply parallax offset at xFocus=0.5 (center)', async () => {
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'room',
@@ -220,6 +226,7 @@ describe('SceneRenderer', () => {
     it('should shift sprites left at xFocus=0.2', async () => {
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'room',
@@ -245,6 +252,7 @@ describe('SceneRenderer', () => {
     it('should shift sprites right at xFocus=0.8', async () => {
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'room',
@@ -270,6 +278,7 @@ describe('SceneRenderer', () => {
     it('should respect parallaxMultiplier for different layers', async () => {
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'background',
@@ -306,6 +315,7 @@ describe('SceneRenderer', () => {
     it('should handle boundary values (xFocus=0 and xFocus=1)', async () => {
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'room',
@@ -341,6 +351,7 @@ describe('SceneRenderer', () => {
     it('should cache textures to avoid reloading', async () => {
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'sprite1',
@@ -376,6 +387,7 @@ describe('SceneRenderer', () => {
     it('should apply UV texture coordinate mapping', async () => {
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'spritesheet',
@@ -398,6 +410,7 @@ describe('SceneRenderer', () => {
     it('should handle sprites without UV coordinates', async () => {
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'fullTexture',
@@ -427,6 +440,7 @@ describe('SceneRenderer', () => {
     it('should set sprite anchor to center (0.5, 0.5)', async () => {
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'centered',
@@ -449,6 +463,7 @@ describe('SceneRenderer', () => {
     it('should correctly set sprite position from scene data', async () => {
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'positioned',
@@ -471,6 +486,7 @@ describe('SceneRenderer', () => {
     it('should correctly set sprite dimensions', async () => {
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'sized',
@@ -500,6 +516,7 @@ describe('SceneRenderer', () => {
     it('should calculate bounds with multiple sprites', async () => {
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'left',
@@ -532,6 +549,7 @@ describe('SceneRenderer', () => {
     it('should handle single sprite scene', async () => {
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'solo',
@@ -554,6 +572,7 @@ describe('SceneRenderer', () => {
     it('should maintain aspect ratio when fitting scene', async () => {
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'wide',
@@ -641,6 +660,7 @@ describe('SceneRenderer', () => {
     it('should handle very large xFocus values', async () => {
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'room',
@@ -665,6 +685,7 @@ describe('SceneRenderer', () => {
     it('should handle zero-dimension sprites', async () => {
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'zero',
@@ -687,6 +708,7 @@ describe('SceneRenderer', () => {
     it('should handle negative sprite positions', async () => {
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'negative',
@@ -709,6 +731,7 @@ describe('SceneRenderer', () => {
     it('should handle very high parallax multipliers', async () => {
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'high_parallax',
@@ -732,6 +755,7 @@ describe('SceneRenderer', () => {
     it('should handle zero parallax multiplier', async () => {
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'no_parallax',
@@ -760,6 +784,7 @@ describe('SceneRenderer', () => {
 
       const mockScene1: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'room1',
@@ -776,6 +801,7 @@ describe('SceneRenderer', () => {
 
       const mockScene2: Scene = {
         xFocus: 0.7,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'room2',
@@ -811,6 +837,7 @@ describe('SceneRenderer', () => {
 
       const mockScene: Scene = {
         xFocus: 0.5,
+        yFocus: 0.5,
         sprites: [
           {
             name: 'bg',

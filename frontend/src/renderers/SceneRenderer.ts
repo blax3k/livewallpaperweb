@@ -35,6 +35,7 @@ export class SceneRenderer {
   private phoneGuide: PhoneGuide | null = null;
   private showPhoneGuideFlag: boolean = false;
   private currentXFocus: number = 0.5;
+  private currentYFocus: number = 0.5;
   private currentStartTime: number = 0;
   private currentEndTime: number = 1439;
   private selectionHighlight: PIXI.Graphics | null = null;
@@ -164,6 +165,7 @@ export class SceneRenderer {
 
     // Store original scene data for later serialization
     this.originalSceneData = sceneData;
+    this.currentYFocus = sceneData.yFocus ?? 0.5;
     this.currentStartTime = sceneData.startTime ?? 0;
     this.currentEndTime = sceneData.endTime ?? 1439;
 
@@ -350,6 +352,11 @@ export class SceneRenderer {
     this.applyAllPositions();
   }
 
+  setYFocus(value: number): void {
+    this.currentYFocus = value;
+    this.applyAllPositions();
+  }
+
   setStartTime(value: number): void {
     this.currentStartTime = value;
   }
@@ -361,12 +368,13 @@ export class SceneRenderer {
   private applyAllPositions(): void {
     const SCROLL_SCALE = 5.0;
     const scrollOffset = (0.5 - this.currentXFocus) * SCROLL_SCALE;
+    const scrollOffsetY = (0.5 - this.currentYFocus) * SCROLL_SCALE;
 
     for (const sprite of this.sprites) {
       const metadata = this.spriteMetadata.get(sprite);
       if (metadata) {
         sprite.x = metadata.x + (scrollOffset + this.gyroOffsetX) * metadata.parallaxMultiplier;
-        sprite.y = -metadata.y + this.gyroOffsetY * metadata.parallaxMultiplier;
+        sprite.y = -metadata.y + (scrollOffsetY + this.gyroOffsetY) * metadata.parallaxMultiplier;
       }
     }
 
@@ -747,6 +755,7 @@ export class SceneRenderer {
     return {
       ...this.originalSceneData,
       xFocus: this.currentXFocus,
+      yFocus: this.currentYFocus,
       startTime: this.currentStartTime,
       endTime: this.currentEndTime,
       sprites: this.sprites.map((sprite) => {

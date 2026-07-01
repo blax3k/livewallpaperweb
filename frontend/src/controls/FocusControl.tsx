@@ -2,7 +2,8 @@ import React from 'react';
 import { SliderRow } from '../components/SliderRow';
 import { DISPLAY_SCALE, toDisplay, toInternal } from '../displayScale';
 
-interface XFocusControlProps {
+interface FocusControlProps {
+  axis: 'X' | 'Y';
   disabled?: boolean;
   value: number;
   onChange: (value: number) => void;
@@ -10,11 +11,11 @@ interface XFocusControlProps {
   onChangeCommit?: (value: number) => void;
 }
 
-export function XFocusControl({ disabled, value, onChange, onChangeStart, onChangeCommit }: XFocusControlProps) {
+export function FocusControl({ axis, disabled, value, onChange, onChangeStart, onChangeCommit }: FocusControlProps) {
   return (
     <div style={{ marginBottom: 12 }}>
       <SliderRow
-        label="Focus"
+        label={`${axis} Focus`}
         min={0} max={DISPLAY_SCALE} step={1}
         value={Math.round(toDisplay(value))}
         disabled={disabled}

@@ -30,6 +30,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
   const dragStartSize = useRef<{ width: number; height: number } | null>(null);
   const dragStartDepth = useRef<number | null>(null);
   const dragStartXFocus = useRef<number | null>(null);
+  const dragStartYFocus = useRef<number | null>(null);
   const midDragStart = useRef<{ x: number; y: number } | null>(null);
   const [isPanning, setIsPanning] = useState(false);
   const isGyroDragging = useRef(false);
@@ -42,6 +43,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     showSceneControls,
     currentSceneId,
     xFocus,
+    yFocus,
     startTime,
     endTime,
     spriteEntries,
@@ -54,6 +56,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     loadScene,
     saveScene,
     handleXFocusChange,
+    handleYFocusChange,
     handleStartTimeChange,
     handleEndTimeChange,
     handlePhoneGuideToggle,
@@ -219,6 +222,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     onScaleApply: applySelectedSpriteSize,
     onDepthApply: handleSpriteDepthApply,
     onXFocusApply: handleXFocusChange,
+    onYFocusApply: handleYFocusChange,
     onTextureApply: handleTextureApply,
     onMarkDirty: markDirty,
   });
@@ -388,6 +392,19 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     }
   }, [history]);
 
+  const handleYFocusChangeStart = useCallback((value: number) => {
+    dragStartYFocus.current = value;
+  }, []);
+
+  const handleYFocusCommit = useCallback((value: number) => {
+    if (dragStartYFocus.current === null) return;
+    const before = dragStartYFocus.current;
+    dragStartYFocus.current = null;
+    if (before !== value) {
+      history.push({ type: 'yFocus', before, after: value });
+    }
+  }, [history]);
+
   const handleSpriteDepthCommit = useCallback((depth: number) => {
     if (!selectedSprite || dragStartDepth.current === null || activeConditionSet !== null) return;
     const before = dragStartDepth.current;
@@ -424,6 +441,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
         <SceneEditorPanel
           sceneLoaded={showSceneControls}
           xFocus={xFocus}
+          yFocus={yFocus}
           startTime={startTime}
           endTime={endTime}
           projectId={projectId}
@@ -432,6 +450,9 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
           onXFocusChange={handleXFocusChange}
           onXFocusChangeStart={handleXFocusChangeStart}
           onXFocusCommit={handleXFocusCommit}
+          onYFocusChange={handleYFocusChange}
+          onYFocusChangeStart={handleYFocusChangeStart}
+          onYFocusCommit={handleYFocusCommit}
           onStartTimeChange={handleStartTimeChange}
           onEndTimeChange={handleEndTimeChange}
           onSpriteToggle={handleSpriteToggle}
