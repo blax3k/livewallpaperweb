@@ -13,6 +13,7 @@ import {
 import { replaceSpritesForScene } from '../sprites/spriteRepository';
 
 const DEFAULT_XFOCUS = 0.5;
+const DEFAULT_YFOCUS = 0.5;
 
 export async function listScenes(projectId?: string) {
   return attachSceneThumbnailUrls(await selectSceneSummaries(projectId));
@@ -39,6 +40,7 @@ export async function createScene(
   }else{
     //set default values
     sceneData.xFocus = DEFAULT_XFOCUS;
+    sceneData.yFocus = DEFAULT_YFOCUS;
   }
 
   const client = await pool.connect();

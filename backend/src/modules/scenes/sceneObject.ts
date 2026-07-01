@@ -12,6 +12,7 @@ type SceneSummaryRow = {
 
 type SceneRow = SceneSummaryRow & {
   x_focus: number;
+  y_focus: number;
   start_time: number | null;
   end_time: number | null;
   flag_declarations: import('@livewallpaper/types').SceneFlagDeclarations | null;
@@ -42,6 +43,7 @@ export class SceneObject extends ObjectModel {
   static fromRow(row: SceneRow): SceneObject {
     const data: Scene = {
       xFocus: row.x_focus,
+      yFocus: row.y_focus,
       ...(row.start_time != null && { startTime: row.start_time }),
       ...(row.end_time != null && { endTime: row.end_time }),
       ...(row.flag_declarations != null && { flags: row.flag_declarations }),
