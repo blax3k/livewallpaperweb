@@ -365,10 +365,31 @@ export class SceneRenderer {
     this.currentEndTime = value;
   }
 
+  // Historical design max for xFocus/yFocus pan (world units), calibrated against a typical
+  // narrow phone. Mirrors LiveWallpaperSceneManager.MAX_FOCUS_PAN_OFFSET on Android.
+  private readonly MAX_FOCUS_PAN_OFFSET = 2.5;
+  // Reserved slack (world units) held back from panning so simultaneous gyro-driven parallax
+  // doesn't reveal a sprite's edge. Mirrors LiveWallpaperSceneManager.GYRO_BUFFER on Android.
+  private readonly GYRO_BUFFER = 0.25;
+
+  /**
+   * Maximum offset magnitude (world units) that xFocus/yFocus panning may reach, derived from
+   * the same slack calculation as the Android renderer: how much room the reference phone
+   * guide shape has within the WORLD_HEIGHT square before its own edge would leave the guide's
+   * bounds. A guide shape that fills the square exactly (e.g. if it were ever made square)
+   * would have zero slack and thus no pan at all.
+   */
+  private getMaxScrollOffset(): number {
+    const halfWorldContent = this.DEFAULT_WORLD_SIZE / 2;
+    const halfGuideWidth = this.phoneGuide?.getHalfWidth() ?? halfWorldContent;
+    const slack = Math.max(0, halfWorldContent - halfGuideWidth - this.GYRO_BUFFER);
+    return Math.min(this.MAX_FOCUS_PAN_OFFSET, slack);
+  }
+
   private applyAllPositions(): void {
-    const SCROLL_SCALE = 5.0;
-    const scrollOffset = (0.5 - this.currentXFocus) * SCROLL_SCALE;
-    const scrollOffsetY = (0.5 - this.currentYFocus) * SCROLL_SCALE;
+    const maxScrollOffset = this.getMaxScrollOffset();
+    const scrollOffset = (0.5 - this.currentXFocus) * 2 * maxScrollOffset;
+    const scrollOffsetY = (0.5 - this.currentYFocus) * 2 * maxScrollOffset;
 
     for (const sprite of this.sprites) {
       const metadata = this.spriteMetadata.get(sprite);

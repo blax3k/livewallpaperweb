@@ -21,20 +21,7 @@ export class PhoneGuide {
    * Create the phone guide graphics
    */
   createGraphics(): PIXI.Graphics {
-    // Calculate dimensions
-    const visibleWorldBound = this.WORLD_HEIGHT / 2; // = 5.0
-    let height = this.GUIDE_HEIGHT;
-    let width = height * this.ASPECT_RATIO;
-
-    // Clamp width to visible bounds
-    const maxWidth = visibleWorldBound * 2; // = 10.0
-    if (width > maxWidth) {
-      width = maxWidth;
-      height = width / this.ASPECT_RATIO;
-    }
-
-    const halfWidth = width / 2;
-    const halfHeight = height / 2;
+    const { halfWidth, halfHeight } = this.computeDimensions();
 
     // Create graphics
     const g = new PIXI.Graphics();
@@ -69,6 +56,33 @@ export class PhoneGuide {
    */
   getGraphics(): PIXI.Graphics | null {
     return this.graphics;
+  }
+
+  /**
+   * Compute the guide rectangle's half-width/half-height (world units), clamped so it
+   * never exceeds the WORLD_HEIGHT square.
+   */
+  private computeDimensions(): { halfWidth: number; halfHeight: number } {
+    const visibleWorldBound = this.WORLD_HEIGHT / 2; // = 5.0
+    let height = this.GUIDE_HEIGHT;
+    let width = height * this.ASPECT_RATIO;
+
+    const maxWidth = visibleWorldBound * 2; // = 10.0
+    if (width > maxWidth) {
+      width = maxWidth;
+      height = width / this.ASPECT_RATIO;
+    }
+
+    return { halfWidth: width / 2, halfHeight: height / 2 };
+  }
+
+  /**
+   * Half-width of the guide rectangle (world units). Used by SceneRenderer to derive how
+   * much xFocus/yFocus panning this reference phone shape has room for, mirroring the
+   * Android renderer's viewport slack calculation.
+   */
+  getHalfWidth(): number {
+    return this.computeDimensions().halfWidth;
   }
 
   /**
