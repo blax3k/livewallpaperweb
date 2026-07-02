@@ -50,7 +50,7 @@ export function useKeyboardControls({
           } else if (action.type === 'depth') {
             onDepthApply?.(action.before, action.spriteIndex);
           } else if (action.type === 'xFocus') {
-            rendererRef.current?.setScrollOffset(action.before);
+            rendererRef.current?.setXFocus(action.before);
             onXFocusApply?.(action.before);
           } else if (action.type === 'yFocus') {
             onYFocusApply?.(action.before);
@@ -74,7 +74,7 @@ export function useKeyboardControls({
           } else if (action.type === 'depth') {
             onDepthApply?.(action.after, action.spriteIndex);
           } else if (action.type === 'xFocus') {
-            rendererRef.current?.setScrollOffset(action.after);
+            rendererRef.current?.setXFocus(action.after);
             onXFocusApply?.(action.after);
           } else if (action.type === 'yFocus') {
             onYFocusApply?.(action.after);

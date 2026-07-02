@@ -29,6 +29,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
   const isDirtyRef = useRef(false);
   const [phoneGuideVisible, setPhoneGuideVisible] = useState(true);
   const [zoom, setZoom] = useState(1.0);
+  const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
   const onNotifyRef = useRef(onNotify);
   onNotifyRef.current = onNotify;
   const onSavedRef = useRef(onSaved);
@@ -76,6 +77,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     setIsDirty(false);
   }, []);
   const phoneGuideVisibleRef = useRef(true);
+  const orientationRef = useRef<'portrait' | 'landscape'>('portrait');
   const canvasRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<SceneRenderer | null>(null);
   const sceneIdRef = useRef<string | null>(null);
@@ -102,11 +104,12 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
       await renderer.loadScene(sceneData);
       rendererRef.current = renderer;
       if (phoneGuideVisibleRef.current) renderer.showGuide();
+      renderer.setOrientation(orientationRef.current);
+
 
       setZoom(1.0);
 
-      const focus = sceneData.xFocus ?? 0.5;
-      setXFocus(focus);
+      setXFocus(sceneData.xFocus ?? 0.5);
       setYFocus(sceneData.yFocus ?? 0.5);
       setStartTime(sceneData.startTime ?? 0);
       setEndTime(sceneData.endTime ?? 1439);
@@ -157,7 +160,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
 
   const handleXFocusChange = useCallback((value: number) => {
     setXFocus(value);
-    rendererRef.current?.setScrollOffset(value);
+    rendererRef.current?.setXFocus(value);
     markDirty();
   }, [markDirty]);
 
@@ -184,6 +187,16 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     setPhoneGuideVisible(visible);
     if (visible) rendererRef.current?.showGuide();
     else rendererRef.current?.hideGuide();
+  }, []);
+
+  const handleOrientationToggle = useCallback(() => {
+    // Purely a preview toggle — SceneRenderer.setOrientation() decides which of
+    // xFocus/yFocus actually contributes an offset (see applyAllPositions), so neither value
+    // needs to be touched here, and nothing about the persisted scene changes.
+    const next = orientationRef.current === 'portrait' ? 'landscape' : 'portrait';
+    orientationRef.current = next;
+    setOrientation(next);
+    rendererRef.current?.setOrientation(next);
   }, []);
 
   const handleSpriteToggle = useCallback((index: number) => {
@@ -417,6 +430,8 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     isDirty,
     markDirty,
     phoneGuideVisible,
+    orientation,
+    handleOrientationToggle,
     loadScene,
     saveScene,
     handleXFocusChange,

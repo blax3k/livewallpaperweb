@@ -60,6 +60,7 @@ jest.mock('pixi.js', () => {
         moveTo: jest.fn(function() { return this; }),
         lineTo: jest.fn(function() { return this; }),
         stroke: jest.fn(function() { return this; }),
+        clear: jest.fn(function() { return this; }),
         destroy: jest.fn(),
       };
     }),

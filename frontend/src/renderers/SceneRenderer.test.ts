@@ -216,7 +216,7 @@ describe('SceneRenderer', () => {
       };
 
       await renderer.loadScene(mockScene);
-      renderer.setScrollOffset(0.5);
+      renderer.setXFocus(0.5);
 
       // At xFocus=0.5, scrollOffset should be 0
       // sprite.x = original.x + 0 * parallaxMultiplier = original.x
@@ -242,7 +242,7 @@ describe('SceneRenderer', () => {
       };
 
       await renderer.loadScene(mockScene);
-      renderer.setScrollOffset(0.2);
+      renderer.setXFocus(0.2);
 
       // At xFocus=0.2: scrollOffset = (0.5 - 0.2) * 5.0 = 1.5
       // sprite.x = 0 + 1.5 * 1.0 = 1.5
@@ -268,7 +268,7 @@ describe('SceneRenderer', () => {
       };
 
       await renderer.loadScene(mockScene);
-      renderer.setScrollOffset(0.8);
+      renderer.setXFocus(0.8);
 
       // At xFocus=0.8: scrollOffset = (0.5 - 0.8) * 5.0 = -1.5
       // sprite.x = 0 + (-1.5) * 1.0 = -1.5
@@ -304,7 +304,7 @@ describe('SceneRenderer', () => {
       };
 
       await renderer.loadScene(mockScene);
-      renderer.setScrollOffset(0.3);
+      renderer.setXFocus(0.3);
 
       // At xFocus=0.3: scrollOffset = (0.5 - 0.3) * 5.0 = 1.0
       // Background: sprite.x = 0 + 1.0 * 0.5 = 0.5
@@ -332,13 +332,79 @@ describe('SceneRenderer', () => {
 
       await renderer.loadScene(mockScene);
       
-      renderer.setScrollOffset(0);
+      renderer.setXFocus(0);
       // xFocus=0: scrollOffset = (0.5 - 0) * 5.0 = 2.5
       
-      renderer.setScrollOffset(1);
+      renderer.setXFocus(1);
       // xFocus=1: scrollOffset = (0.5 - 1) * 5.0 = -2.5
       
       expect(true).toBe(true);
+    });
+  });
+
+  describe('Orientation-aware focus application', () => {
+    const singleSpriteScene: Scene = {
+      xFocus: 0.5,
+      yFocus: 0.5,
+      sprites: [
+        {
+          name: 'room',
+          positionX: 0,
+          positionY: 0,
+          width: 5,
+          height: 10,
+          parallaxMultiplier: 1.0,
+          textureResource: 'room',
+          texCoordinates: [0, 0, 1, 0, 1, 1, 0, 1],
+        },
+      ],
+    };
+
+    beforeEach(async () => {
+      renderer = new SceneRenderer(container);
+      await new Promise(resolve => setTimeout(resolve, 150));
+    });
+
+    it('does not persist a neutral value for the axis hidden by orientation', async () => {
+      await renderer.loadScene(singleSpriteScene);
+      renderer.setXFocus(0.2);
+
+      // Switching orientation is a preview-only concern — the real xFocus must survive it.
+      renderer.setOrientation('landscape');
+      expect(renderer.getSceneData()?.xFocus).toBe(0.2);
+
+      renderer.setOrientation('portrait');
+      expect(renderer.getSceneData()?.xFocus).toBe(0.2);
+    });
+
+    it('zeroes out the inactive axis on screen without touching its stored value', async () => {
+      await renderer.loadScene(singleSpriteScene);
+      renderer.setXFocus(0.2);
+      const sprites = (renderer as unknown as { sprites: PIXI.Sprite[] }).sprites;
+
+      // Portrait active: xFocus contributes its full offset.
+      expect(sprites[0].x).toBeCloseTo(1.5, 5);
+
+      // Landscape active: xFocus is now the hidden axis, so it contributes nothing on screen...
+      renderer.setOrientation('landscape');
+      expect(sprites[0].x).toBeCloseTo(0, 5);
+      // ...but its real value is untouched, so switching back re-applies it immediately.
+      renderer.setOrientation('portrait');
+      expect(sprites[0].x).toBeCloseTo(1.5, 5);
+    });
+
+    it('applies the same neutral/preserve behavior for yFocus in the opposite orientation', async () => {
+      await renderer.loadScene(singleSpriteScene);
+      renderer.setOrientation('landscape');
+      renderer.setYFocus(0.8);
+      const sprites = (renderer as unknown as { sprites: PIXI.Sprite[] }).sprites;
+
+      // Landscape active: yFocus = 0.8 -> scrollOffsetY = (0.5 - 0.8) * 2 * 2.5 = -1.5
+      expect(sprites[0].y).toBeCloseTo(-1.5, 5);
+
+      renderer.setOrientation('portrait');
+      expect(sprites[0].y).toBeCloseTo(0, 5);
+      expect(renderer.getSceneData()?.yFocus).toBe(0.8);
     });
   });
 
@@ -676,8 +742,8 @@ describe('SceneRenderer', () => {
       };
 
       await renderer.loadScene(mockScene);
-      renderer.setScrollOffset(10);
-      renderer.setScrollOffset(-5);
+      renderer.setXFocus(10);
+      renderer.setXFocus(-5);
       // Should handle gracefully
       expect(true).toBe(true);
     });
@@ -747,7 +813,7 @@ describe('SceneRenderer', () => {
       };
 
       await renderer.loadScene(mockScene);
-      renderer.setScrollOffset(0.2);
+      renderer.setXFocus(0.2);
       // Should handle high parallax values
       expect(true).toBe(true);
     });
@@ -771,7 +837,7 @@ describe('SceneRenderer', () => {
       };
 
       await renderer.loadScene(mockScene);
-      renderer.setScrollOffset(0.2);
+      renderer.setXFocus(0.2);
       // Sprite with 0 parallax should not move
       expect(true).toBe(true);
     });
@@ -818,15 +884,15 @@ describe('SceneRenderer', () => {
 
       // Load first scene
       await renderer.loadScene(mockScene1);
-      renderer.setScrollOffset(0.3);
+      renderer.setXFocus(0.3);
 
       // Load second scene
       await renderer.loadScene(mockScene2);
-      renderer.setScrollOffset(0.8);
+      renderer.setXFocus(0.8);
 
       // Reload first scene
       await renderer.loadScene(mockScene1);
-      renderer.setScrollOffset(0.2);
+      renderer.setXFocus(0.2);
 
       expect(true).toBe(true);
     });
@@ -866,7 +932,7 @@ describe('SceneRenderer', () => {
       
       // Perform multiple scroll operations
       for (let i = 0; i <= 10; i++) {
-        renderer.setScrollOffset(i * 0.1);
+        renderer.setXFocus(i * 0.1);
       }
 
       // Trigger resize

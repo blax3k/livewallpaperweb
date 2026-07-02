@@ -53,6 +53,8 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     isDirty,
     markDirty,
     phoneGuideVisible,
+    orientation,
+    handleOrientationToggle,
     loadScene,
     saveScene,
     handleXFocusChange,
@@ -423,9 +425,11 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
         sceneLoaded={showSceneControls}
         isSaving={isSaving}
         phoneGuideVisible={phoneGuideVisible}
+        orientation={orientation}
         onBack={handleBack}
         onSceneSelect={handleSceneSelect}
         onPhoneGuideToggle={handlePhoneGuideToggle}
+        onOrientationToggle={handleOrientationToggle}
         onSave={saveScene}
         onZoomIn={handleZoomIn}
         onZoomOut={handleZoomOut}
@@ -440,6 +444,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
       <div className="app-content">
         <SceneEditorPanel
           sceneLoaded={showSceneControls}
+          orientation={orientation}
           xFocus={xFocus}
           yFocus={yFocus}
           startTime={startTime}

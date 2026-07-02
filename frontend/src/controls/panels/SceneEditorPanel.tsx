@@ -17,6 +17,7 @@ interface SelectedSprite {
 
 interface SceneEditorPanelProps {
   sceneLoaded: boolean;
+  orientation: 'portrait' | 'landscape';
   xFocus: number;
   yFocus: number;
   startTime: number;
@@ -56,6 +57,7 @@ interface SceneEditorPanelProps {
 
 export function SceneEditorPanel({
   sceneLoaded,
+  orientation,
   xFocus,
   yFocus,
   startTime,
@@ -94,8 +96,9 @@ export function SceneEditorPanel({
   return (
     <div className="controls">
       <h2>Scene</h2>
-      <FocusControl axis="X" disabled={!sceneLoaded} value={xFocus} onChange={onXFocusChange} onChangeStart={onXFocusChangeStart} onChangeCommit={onXFocusCommit} />
-      <FocusControl axis="Y" disabled={!sceneLoaded} value={yFocus} onChange={onYFocusChange} onChangeStart={onYFocusChangeStart} onChangeCommit={onYFocusCommit} />
+      {orientation === 'portrait'
+        ? <FocusControl axis="X" disabled={!sceneLoaded} value={xFocus} onChange={onXFocusChange} onChangeStart={onXFocusChangeStart} onChangeCommit={onXFocusCommit} />
+        : <FocusControl axis="Y" disabled={!sceneLoaded} value={yFocus} onChange={onYFocusChange} onChangeStart={onYFocusChangeStart} onChangeCommit={onYFocusCommit} />}
       <h2>Sprites</h2>
       <div className="control-group">
         <SpriteListPanel

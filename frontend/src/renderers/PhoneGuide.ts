@@ -8,6 +8,7 @@ import * as PIXI from 'pixi.js';
 export class PhoneGuide {
   private graphics: PIXI.Graphics | null = null;
   private xOffset: number = 0;
+  private orientation: 'portrait' | 'landscape' = 'portrait';
   private readonly ASPECT_RATIO = 9 / 21; // 21:9
   private readonly WORLD_HEIGHT = 10; // Match world height
   private readonly GUIDE_HEIGHT = 9.99; // Slightly smaller than world height
@@ -21,34 +22,61 @@ export class PhoneGuide {
    * Create the phone guide graphics
    */
   createGraphics(): PIXI.Graphics {
-    const { halfWidth, halfHeight } = this.computeDimensions();
+    this.graphics = new PIXI.Graphics();
+    this.draw();
+    return this.graphics;
+  }
 
-    // Create graphics
-    const g = new PIXI.Graphics();
+  /**
+   * Set the guide's orientation and redraw. In landscape the rectangle is drawn wide/short
+   * (rotated 90°) with a horizontal center line marking the vertical center (the yFocus
+   * reference), mirroring the vertical line's role marking the xFocus reference in portrait.
+   */
+  setOrientation(orientation: 'portrait' | 'landscape'): void {
+    this.orientation = orientation;
+    this.draw();
+  }
+
+  private draw(): void {
+    const g = this.graphics;
+    if (!g) return;
+    g.clear();
+
+    const { halfWidth, halfHeight } = this.computeDimensions();
+    const rectHalfWidth = this.orientation === 'landscape' ? halfHeight : halfWidth;
+    const rectHalfHeight = this.orientation === 'landscape' ? halfWidth : halfHeight;
 
     // Draw rectangle outline with stroke
-    g.moveTo(-halfWidth, halfHeight)
-      .lineTo(halfWidth, halfHeight)
-      .lineTo(halfWidth, -halfHeight)
-      .lineTo(-halfWidth, -halfHeight)
-      .lineTo(-halfWidth, halfHeight)
+    g.moveTo(-rectHalfWidth, rectHalfHeight)
+      .lineTo(rectHalfWidth, rectHalfHeight)
+      .lineTo(rectHalfWidth, -rectHalfHeight)
+      .lineTo(-rectHalfWidth, -rectHalfHeight)
+      .lineTo(-rectHalfWidth, rectHalfHeight)
       .stroke({
         width: this.LINE_WIDTH,
         color: this.LINE_COLOR,
         alpha: this.LINE_ALPHA,
       });
 
-    // Draw vertical center line
-    g.moveTo(0, halfHeight)
-      .lineTo(0, -halfHeight)
-      .stroke({
-        width: this.LINE_WIDTH,
-        color: this.LINE_COLOR,
-        alpha: this.LINE_ALPHA,
-      });
-
-    this.graphics = g;
-    return g;
+    // Draw center line: vertical (marks horizontal/xFocus center) in portrait,
+    // horizontal (marks vertical/yFocus center) in landscape.
+    if (this.orientation === 'landscape') {
+      g.moveTo(-rectHalfWidth, 0)
+        .lineTo(rectHalfWidth, 0)
+        .stroke({
+          width: this.LINE_WIDTH,
+          color: this.LINE_COLOR,
+          alpha: this.LINE_ALPHA,
+        });
+    } else {
+      g.moveTo(0, rectHalfHeight)
+        .lineTo(0, -rectHalfHeight)
+        .stroke({
+          width: this.LINE_WIDTH,
+          color: this.LINE_COLOR,
+          alpha: this.LINE_ALPHA,
+        });
+    }
   }
 
   /**

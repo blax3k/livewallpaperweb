@@ -34,6 +34,7 @@ export class SceneRenderer {
   private resizeHandler: () => void;
   private phoneGuide: PhoneGuide | null = null;
   private showPhoneGuideFlag: boolean = false;
+  private orientation: 'portrait' | 'landscape' = 'portrait';
   private currentXFocus: number = 0.5;
   private currentYFocus: number = 0.5;
   private currentStartTime: number = 0;
@@ -161,6 +162,7 @@ export class SceneRenderer {
       const guideGraphics = this.phoneGuide.createGraphics();
       this.app.stage.addChild(guideGraphics);
       guideGraphics.visible = this.showPhoneGuideFlag;
+      this.phoneGuide.setOrientation(this.orientation);
     }
 
     // Store original scene data for later serialization
@@ -183,7 +185,7 @@ export class SceneRenderer {
     // Reset user zoom and fit scene to view
     this.userZoom = 1.0;
     this.fitSceneToView();
-    this.setScrollOffset(sceneData.xFocus);
+    this.setXFocus(sceneData.xFocus);
   }
 
   /**
@@ -291,7 +293,7 @@ export class SceneRenderer {
     }
 
     const newIndex = this.sortSpritesByParallax(this.sprites.length - 1);
-    this.setScrollOffset(this.currentXFocus);
+    this.setXFocus(this.currentXFocus);
 
     return newIndex;
   }
@@ -347,7 +349,7 @@ export class SceneRenderer {
    * Update sprite positions based on xFocus parallax value
    * @param xFocus Camera focus in [0..1] where 0.5 is center
    */
-  setScrollOffset(xFocus: number): void {
+  setXFocus(xFocus: number): void {
     this.currentXFocus = xFocus;
     this.applyAllPositions();
   }
@@ -388,8 +390,13 @@ export class SceneRenderer {
 
   private applyAllPositions(): void {
     const maxScrollOffset = this.getMaxScrollOffset();
-    const scrollOffset = (0.5 - this.currentXFocus) * 2 * maxScrollOffset;
-    const scrollOffsetY = (0.5 - this.currentYFocus) * 2 * maxScrollOffset;
+    // Only the axis matching the current orientation is ever applied — mirrors the Android
+    // app, which only ever applies one of xFocus/yFocus depending on real device orientation.
+    // currentXFocus/currentYFocus themselves are untouched by orientation switching, so the
+    // inactive axis's true value is preserved (and still what getSceneData() persists) even
+    // though it contributes no offset while hidden.
+    const scrollOffset = this.orientation === 'portrait' ? (0.5 - this.currentXFocus) * 2 * maxScrollOffset : 0;
+    const scrollOffsetY = this.orientation === 'landscape' ? (0.5 - this.currentYFocus) * 2 * maxScrollOffset : 0;
 
     for (const sprite of this.sprites) {
       const metadata = this.spriteMetadata.get(sprite);
@@ -412,7 +419,7 @@ export class SceneRenderer {
     }
     sprite.width = width;
     sprite.height = height;
-    this.setScrollOffset(this.currentXFocus);
+    this.setXFocus(this.currentXFocus);
     this.updateSelectionHighlight();
   }
 
@@ -533,6 +540,17 @@ export class SceneRenderer {
     return this.showPhoneGuideFlag;
   }
 
+  /**
+   * Set which orientation the editor is previewing, rotating the phone guide to match.
+   * Editor-only state — xFocus/yFocus are both always persisted on the scene and both
+   * keep being applied regardless of orientation (see applyAllPositions).
+   */
+  setOrientation(orientation: 'portrait' | 'landscape'): void {
+    this.orientation = orientation;
+    this.phoneGuide?.setOrientation(orientation);
+    this.applyAllPositions();
+  }
+
   getSpriteEntries(): SpriteEntry[] {
     return this.sprites.map((sprite, index) => {
       const metadata = this.spriteMetadata.get(sprite);
@@ -574,7 +592,7 @@ export class SceneRenderer {
     const metadata = this.spriteMetadata.get(this.sprites[index]);
     if (metadata) {
       metadata.parallaxMultiplier = value;
-      this.setScrollOffset(this.currentXFocus);
+      this.setXFocus(this.currentXFocus);
     }
   }
 
@@ -642,7 +660,7 @@ export class SceneRenderer {
       original.height = height;
     }
 
-    this.setScrollOffset(this.currentXFocus);
+    this.setXFocus(this.currentXFocus);
     this.updateSelectionHighlight();
   }
 
@@ -721,7 +739,7 @@ export class SceneRenderer {
       original.height = newHeight;
     }
 
-    this.setScrollOffset(this.currentXFocus);
+    this.setXFocus(this.currentXFocus);
     this.updateSelectionHighlight();
   }
 
@@ -1306,11 +1324,13 @@ export class SceneRenderer {
 
     // Save current state
     const savedXFocus = this.currentXFocus;
+    const savedYFocus = this.currentYFocus;
     const guideGraphics = this.phoneGuide?.getGraphics() ?? null;
     const savedGuideVisible = guideGraphics?.visible ?? false;
 
     // Apply thumbnail state: center the scene, hide overlay graphics
-    this.setScrollOffset(0.5);
+    this.setXFocus(0.5);
+    this.setYFocus(0.5);
     if (guideGraphics) guideGraphics.visible = false;
     if (this.selectionHighlight) this.selectionHighlight.visible = false;
 
@@ -1328,7 +1348,8 @@ export class SceneRenderer {
     const result = ctx ? offscreen.toDataURL('image/jpeg', 0.85) : null;
 
     // Restore original state
-    this.setScrollOffset(savedXFocus);
+    this.setXFocus(savedXFocus);
+    this.setYFocus(savedYFocus);
     if (guideGraphics) guideGraphics.visible = savedGuideVisible;
     if (this.selectionHighlight) this.selectionHighlight.visible = true;
 

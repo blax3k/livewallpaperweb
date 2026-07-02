@@ -11,6 +11,7 @@ interface TopBarProps {
   sceneLoaded: boolean;
   isSaving: boolean;
   phoneGuideVisible: boolean;
+  orientation: 'portrait' | 'landscape';
   zoom: number;
   gyroMode: boolean;
   sceneSizeLabel?: string;
@@ -18,6 +19,7 @@ interface TopBarProps {
   onBack?: () => void;
   onSceneSelect: (sceneName: string) => void;
   onPhoneGuideToggle: (visible: boolean) => void;
+  onOrientationToggle: () => void;
   onSave: () => void;
   onZoomIn: () => void;
   onZoomOut: () => void;
@@ -26,7 +28,7 @@ interface TopBarProps {
   onImageReplaced?: (oldResource: string, newResource: string) => void;
 }
 
-export function TopBar({projectId, scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, zoom, gyroMode, sceneSizeLabel, sceneSizeTitle, onBack, onSceneSelect, onPhoneGuideToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle, onImageReplaced }: TopBarProps) {
+export function TopBar({projectId, scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, orientation, zoom, gyroMode, sceneSizeLabel, sceneSizeTitle, onBack, onSceneSelect, onPhoneGuideToggle, onOrientationToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle, onImageReplaced }: TopBarProps) {
   const [libraryOpen, setLibraryOpen] = useState(false);
 
 
@@ -48,6 +50,14 @@ export function TopBar({projectId, scenes, currentSceneName, sceneLoaded, isSavi
         disabled={!sceneLoaded}
         onChange={onPhoneGuideToggle}
       />
+      <Button
+        onClick={onOrientationToggle}
+        disabled={!sceneLoaded}
+        title={orientation === 'landscape' ? 'Switch to portrait editing (X Focus)' : 'Switch to landscape editing (Y Focus)'}
+        className={orientation === 'landscape' ? 'active' : ''}
+      >
+        {orientation === 'landscape' ? '📱 Landscape' : '📱 Portrait'}
+      </Button>
       <Button onClick={onZoomOut} disabled={!sceneLoaded} title="Zoom out">－</Button>
       <span className="zoom-indicator">{Math.round(zoom * 100)}%</span>
       <Button onClick={onZoomIn} disabled={!sceneLoaded} title="Zoom in">＋</Button>
