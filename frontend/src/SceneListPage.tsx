@@ -21,13 +21,14 @@ interface SceneListPageProps {
   onBack?: () => void;
   onFlags?: () => void;
   onRules?: () => void;
+  onSimulator?: () => void;
   projectname: string;
   projectId?: string;
   projectSize?: number;
   thumbBuster?: number;
 }
 
-export function SceneListPage({ onSelect, onBack, onFlags, onRules, projectId, projectname, projectSize, thumbBuster = 0 }: SceneListPageProps) {
+export function SceneListPage({ onSelect, onBack, onFlags, onRules, onSimulator, projectId, projectname, projectSize, thumbBuster = 0 }: SceneListPageProps) {
   const [scenes, setScenes] = useState<SceneRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [showNewSceneDialog, setShowNewSceneDialog] = useState(false);
@@ -133,6 +134,7 @@ export function SceneListPage({ onSelect, onBack, onFlags, onRules, projectId, p
       >
         {onFlags && <Button onClick={onFlags}>Flags</Button>}
         {onRules && <Button onClick={onRules}>Rules</Button>}
+        {onSimulator && <Button onClick={onSimulator}>Simulator</Button>}
         <Button onClick={() => setShowNewSceneDialog(true)}>+ Scene</Button>
       </PageHeader>
       <PageBody>

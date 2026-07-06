@@ -7,6 +7,7 @@ import { SceneListPage } from './SceneListPage';
 import { ProjectListPage } from './ProjectListPage';
 import { FlagsPage } from './FlagsPage';
 import { RulesPage } from './RulesPage';
+import { SimulatorPage } from './SimulatorPage';
 import { LoginPage } from './LoginPage';
 import { authApi, setUnauthorizedHandler } from './api';
 
@@ -26,7 +27,8 @@ type Page =
   | { type: 'scenes'; project: ProjectRecord }
   | { type: 'scene'; sceneId: string; project: ProjectRecord }
   | { type: 'flags'; project: ProjectRecord }
-  | { type: 'rules'; project: ProjectRecord };
+  | { type: 'rules'; project: ProjectRecord }
+  | { type: 'simulator'; project: ProjectRecord };
 
 function pageFromPath(): Page {
   const sceneMatch = window.location.pathname.match(/^\/project\/([^/]+)\/scene\/([^/]+)$/);
@@ -42,6 +44,10 @@ function pageFromPath(): Page {
   const rulesMatch = window.location.pathname.match(/^\/project\/([^/]+)\/rules$/);
   if (rulesMatch) {
     return { type: 'rules', project: { id: decodeURIComponent(rulesMatch[1]), name: '' } };
+  }
+  const simulatorMatch = window.location.pathname.match(/^\/project\/([^/]+)\/simulator$/);
+  if (simulatorMatch) {
+    return { type: 'simulator', project: { id: decodeURIComponent(simulatorMatch[1]), name: '' } };
   }
   const projectMatch = window.location.pathname.match(/^\/project\/([^/]+)$/);
   if (projectMatch) {
@@ -130,6 +136,11 @@ function App() {
     setPage({ type: 'rules', project });
   }, []);
 
+  const navigateToSimulator = useCallback((project: ProjectRecord) => {
+    window.history.pushState(null, '', `/project/${encodeURIComponent(project.id)}/simulator`);
+    setPage({ type: 'simulator', project });
+  }, []);
+
   const handleSaved = useCallback(() => setThumbBuster(b => b + 1), []);
 
   if (authState.status === 'loading') {
@@ -172,6 +183,16 @@ function App() {
     );
   }
 
+  if (page.type === 'simulator') {
+    return (
+      <SimulatorPage
+        projectId={page.project.id}
+        projectName={page.project.name}
+        onBack={() => navigateBackToScenes(page.project)}
+      />
+    );
+  }
+
   if (page.type === 'scenes') {
     return (
       <SceneListPage
@@ -179,6 +200,7 @@ function App() {
         onBack={navigateBackToProjects}
         onFlags={() => navigateToFlags(page.project)}
         onRules={() => navigateToRules(page.project)}
+        onSimulator={() => navigateToSimulator(page.project)}
         projectname={page.project.name}
         projectId={page.project.id}
         projectSize={page.project.total_size_bytes}

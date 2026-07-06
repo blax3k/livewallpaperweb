@@ -8250,14 +8250,14 @@
               1,
               badgeFormat + " " + error[0],
               badgeStyle,
-              pad + JSCompiler_inline_result + pad,
+              pad2 + JSCompiler_inline_result + pad2,
               resetStyle
             ) : error.splice(
               0,
               0,
               badgeFormat,
               badgeStyle,
-              pad + JSCompiler_inline_result + pad,
+              pad2 + JSCompiler_inline_result + pad2,
               resetStyle
             );
             error.unshift(console);
@@ -21221,7 +21221,7 @@
           _currentValue: NotPendingTransition,
           _currentValue2: NotPendingTransition,
           _threadCount: 0
-        }, badgeFormat = "%c%s%c", badgeStyle = "background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px", resetStyle = "", pad = " ", bind = Function.prototype.bind;
+        }, badgeFormat = "%c%s%c", badgeStyle = "background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px", resetStyle = "", pad2 = " ", bind = Function.prototype.bind;
         var didWarnAboutNestedUpdates = false;
         var overrideHookState = null, overrideHookStateDeletePath = null, overrideHookStateRenamePath = null, overrideProps = null, overridePropsDeletePath = null, overridePropsRenamePath = null, scheduleUpdate = null, scheduleRetry = null, setErrorHandler = null, setSuspenseHandler = null;
         overrideHookState = function(fiber, id, path2, value) {
@@ -64176,7 +64176,7 @@ ${parts.join("\n")}
   });
 
   // src/client.tsx
-  var import_react31 = __toESM(require_react());
+  var import_react32 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/ScenePage.tsx
@@ -79229,7 +79229,7 @@ ${e2}`);
 
   // src/SceneListPage.tsx
   var import_jsx_runtime44 = __toESM(require_jsx_runtime());
-  function SceneListPage({ onSelect, onBack, onFlags, onRules, projectId, projectname, projectSize, thumbBuster = 0 }) {
+  function SceneListPage({ onSelect, onBack, onFlags, onRules, onSimulator, projectId, projectname, projectSize, thumbBuster = 0 }) {
     const [scenes, setScenes] = (0, import_react25.useState)([]);
     const [loading, setLoading] = (0, import_react25.useState)(true);
     const [showNewSceneDialog, setShowNewSceneDialog] = (0, import_react25.useState)(false);
@@ -79319,6 +79319,7 @@ ${e2}`);
           children: [
             onFlags && /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(Button, { onClick: onFlags, children: "Flags" }),
             onRules && /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(Button, { onClick: onRules, children: "Rules" }),
+            onSimulator && /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(Button, { onClick: onSimulator, children: "Simulator" }),
             /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(Button, { onClick: () => setShowNewSceneDialog(true), children: "+ Scene" })
           ]
         }
@@ -80136,15 +80137,302 @@ ${e2}`);
     ] });
   }
 
-  // src/LoginPage.tsx
+  // src/SimulatorPage.tsx
   var import_react30 = __toESM(require_react());
   var import_jsx_runtime50 = __toESM(require_jsx_runtime());
+  var DAY_LABELS2 = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  function pad(n2) {
+    return String(n2 ?? 0).padStart(2, "0");
+  }
+  function flagLabel(flagId, flagsById) {
+    if (!flagId) return "(no flag)";
+    return flagsById.get(flagId)?.name || flagId;
+  }
+  function summarizeCondition(c2, flagsById) {
+    switch (c2.type) {
+      case "flag_active":
+        return `${flagLabel(c2.flagId, flagsById)} active`;
+      case "flag_inactive":
+        return `${flagLabel(c2.flagId, flagsById)} inactive`;
+      case "time_of_day":
+        return `time ${pad(c2.startHour)}:00\u2013${pad(c2.endHour)}:00`;
+      case "day_of_week":
+        return `day ${(c2.daysOfWeek ?? []).map((d2) => DAY_LABELS2[d2]).join(",") || "\u2014"}`;
+      case "scene_count":
+        return `scene views ${c2.operator ?? ">="} ${c2.intValue ?? 0}`;
+      case "install_duration_hours":
+        return `install age ${c2.operator ?? ">="} ${c2.intValue ?? 0}h`;
+      case "time_since_flag_change":
+        return `${flagLabel(c2.flagId, flagsById)} ${c2.flagChangeType ?? "activated"} ${c2.operator ?? ">="} ${c2.intValue ?? 0}h ago`;
+      default:
+        return c2.type;
+    }
+  }
+  function summarizeConditions(rule, flagsById) {
+    const group = rule.conditions;
+    if (!group || group.checks.length === 0) return "always";
+    const joiner = group.operator === "OR" ? " or " : " + ";
+    return group.checks.map((c2) => summarizeCondition(c2, flagsById)).join(joiner);
+  }
+  function summarizeActions(rule, flagsById) {
+    if (rule.actions.length === 0) return "\u2014";
+    return rule.actions.map((a2) => `${a2.type === "deactivate_flag" ? "\xAC" : ""}${flagLabel(a2.flagId, flagsById)}`).join(", ");
+  }
+  function CollapsibleGroup({ title, count: count4, children }) {
+    const [open, setOpen] = (0, import_react30.useState)(true);
+    return /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-group", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-group__header", onClick: () => setOpen((o2) => !o2), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-group__caret", children: open ? "\u25BE" : "\u25B8" }),
+        title,
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("span", { className: "simulator-group__count", children: [
+          "\xB7 ",
+          count4
+        ] })
+      ] }),
+      open && children
+    ] });
+  }
+  function SimulatorPage({ projectId, projectName, onBack }) {
+    const [rules, setRules] = (0, import_react30.useState)([]);
+    const [flags, setFlags] = (0, import_react30.useState)([]);
+    const [loading, setLoading] = (0, import_react30.useState)(true);
+    const [error, setError] = (0, import_react30.useState)(null);
+    const [orderBy, setOrderBy] = (0, import_react30.useState)("least_shown");
+    (0, import_react30.useEffect)(() => {
+      Promise.all([rulesApi.list(projectId), flagsApi.list(projectId)]).then(([r2, f2]) => {
+        setRules(r2);
+        setFlags(f2);
+        setLoading(false);
+      }).catch((err) => {
+        setError(String(err));
+        setLoading(false);
+      });
+    }, [projectId]);
+    const flagsById = (0, import_react30.useMemo)(() => new Map(flags.map((f2) => [f2.id, f2])), [flags]);
+    return /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(PageLayout, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(PageHeader, { title: `${projectName} \u2014 Simulator`, left: /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(Button, { onClick: onBack, children: "\u2190" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(PageBody, { children: [
+        loading && /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("p", { style: { padding: "var(--size-16)" }, children: "Loading\u2026" }),
+        error && /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("p", { style: { padding: "var(--size-16)", color: "var(--color-danger)" }, children: error }),
+        !loading && /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-root", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-state", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-hud", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("span", { className: "simulator-hud__title", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-hud__dot" }),
+                "Simulated state"
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-hud__divider" }),
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("span", { className: "simulator-hud__stat", children: [
+                "Chapter ",
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("b", { children: "2 \xB7 The Deep Wood" })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-hud__divider" }),
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("span", { className: "simulator-hud__stat", children: [
+                "Ambient ",
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("b", { children: "Night \xB7 Tue" })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-hud__divider" }),
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("span", { className: "simulator-hud__stat", children: [
+                "Active days ",
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("b", { children: "8" }),
+                " \xB7 Wakes ",
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("b", { children: "34" })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-hud__tabs", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-hud__tab simulator-hud__tab--active", children: "Simulator" }),
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("span", { className: "simulator-hud__tab", onClick: onBack, children: [
+                  "Scene editor ",
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { children: "\u25B8" })
+                ] })
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-spine", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("span", { className: "simulator-spine__label", children: [
+                "Spine ",
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { children: "\xB7 2/14" })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-spine__track", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "simulator-spine__node simulator-spine__node--done", children: "1" }),
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-spine__node simulator-spine__node--current", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-spine__node-num", children: "2" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-spine__node-name", children: "The Deep Wood" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-spine__node-here", children: "\u2605 here" })
+                ] }),
+                [3, 4, 5, 6, 7, 8].map((n2) => /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "simulator-spine__node simulator-spine__node--locked", children: n2 }, n2)),
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "simulator-spine__node simulator-spine__node--overflow", children: "+6" })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-spine__add", children: "+ Chapter" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-engagement-ambient", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-column simulator-column--divided", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-column__title", children: [
+                  "Engagement ",
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { children: "fuels progression \xB7 idle never advances" })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-column__fields", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(Stepper, { label: "Active days", value: 8 }),
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(Stepper, { label: "Total wakes", value: 34 }),
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(Stepper, { label: "Forest views", value: 5 })
+                ] })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-column", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-column__title", children: [
+                  "Ambient ",
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { children: "mood \xB7 re-checked every wake" })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-column__fields", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(DropdownField, { label: "Time of day", value: "21:30 \xB7 Night" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(DropdownField, { label: "Weekday", value: "Tue" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(DropdownField, { label: "Persona", value: "Power user" })
+                ] })
+              ] })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-pipeline", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-pipeline__header", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-pipeline__title", children: "Rule pipeline" }),
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-pipeline__hint", children: "rules set flags \u2192 flags pick the scene \xB7 resolved at each wake" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-pipeline__row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-panel simulator-panel--rules", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-panel__header", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("span", { children: [
+                    "Rules \xB7 ",
+                    rules.length
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-panel__search", children: "\u2315" })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(CollapsibleGroup, { title: "RULES", count: rules.length, children: [
+                  rules.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("p", { className: "simulator-empty", children: "No rules defined." }),
+                  rules.map((rule) => /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-rule-row", children: [
+                    rule.oneShot ? /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-rule-row__lock", children: "\u{1F512}" }) : /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-rule-row__dot" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-rule-row__condition", children: summarizeConditions(rule, flagsById) }),
+                    /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-rule-row__flag", children: summarizeActions(rule, flagsById) })
+                  ] }, rule.id))
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-new-rule", children: "+ New rule" })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(Arrow3, {}),
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-panel simulator-panel--flags", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "simulator-panel__header", children: /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("span", { children: [
+                  "Flags \xB7 ",
+                  flags.length
+                ] }) }),
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(CollapsibleGroup, { title: "FLAGS", count: flags.length, children: [
+                  flags.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("p", { className: "simulator-empty", children: "No flags defined." }),
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "simulator-chip-row", children: flags.map((flag) => /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("span", { className: `simulator-chip ${flag.defaultActive ? "simulator-chip--on" : "simulator-chip--off"}`, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-chip__dot" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { children: flag.name || flag.id })
+                  ] }, flag.id)) })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-flag-info", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "simulator-flag-info__selected", children: "selected: forest_regular" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "simulator-flag-info__link", children: "drives 3 sprites \xB7 2 scenes \u25B8" })
+                ] })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(Arrow3, {}),
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-panel simulator-panel--preview", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-panel__header", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { children: "Preview" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-panel__hint", children: "composited \xB7 real sprites" })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-preview-body", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-phone-wrap", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-phone", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "simulator-phone__bezel" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-phone__badge", children: "ON SCREEN" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "simulator-phone__sprite simulator-phone__sprite--tree", children: "tree" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "simulator-phone__sprite simulator-phone__sprite--fox", children: "fox" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "simulator-phone__sprite simulator-phone__sprite--aurora", children: "aurora band" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-phone__scene-name", children: "Aurora Forest" })
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "simulator-edit-scene-link", children: "\u270E Edit scene \u25B8" })
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-selection-list", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-qualify-caption", children: "3 qualify at this wake" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-order-toggle", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { children: "Order by" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
+                        "span",
+                        {
+                          className: `simulator-order-toggle__option ${orderBy === "least_shown" ? "simulator-order-toggle__option--active" : ""}`,
+                          onClick: () => setOrderBy("least_shown"),
+                          children: "Least shown"
+                        }
+                      ),
+                      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
+                        "span",
+                        {
+                          className: `simulator-order-toggle__option ${orderBy === "points" ? "simulator-order-toggle__option--active" : ""}`,
+                          onClick: () => setOrderBy("points"),
+                          children: "Points"
+                        }
+                      )
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-scene-row simulator-scene-row--wins", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-scene-row__badge", children: "WINS" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-scene-row__name", children: "Aurora Forest" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-scene-row__value", children: "3\xD7" })
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-scene-row", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-scene-row__badge", children: "#2" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-scene-row__name", children: "Night City" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-scene-row__value", children: "12\xD7" })
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-scene-row simulator-scene-row--out", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-scene-row__badge", children: "OUT" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-scene-row__name", children: "Day Forest" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-scene-row__reason", children: "needs day" })
+                    ] })
+                  ] })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-stale-banner", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { children: "\u27F3" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { children: "Stale \u2014 re-picked only on wake" })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "simulator-wake-button", children: "\u25D0 Wake screen \u2014 pick a scene now" })
+              ] })
+            ] })
+          ] })
+        ] })
+      ] })
+    ] });
+  }
+  function Stepper({ label, value }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-field", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-field-label", children: label }),
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-stepper", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-stepper__btn", children: "\u2212" }),
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-stepper__value", children: value }),
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-stepper__btn", children: "+" })
+      ] })
+    ] });
+  }
+  function DropdownField({ label, value }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-field", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-field-label", children: label }),
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("span", { className: "simulator-dropdown-field", children: [
+        value,
+        " \u25BE"
+      ] })
+    ] });
+  }
+  function Arrow3() {
+    return /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "simulator-arrow", children: /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("svg", { width: "24", height: "16", viewBox: "0 0 24 16", fill: "none", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("path", { d: "M2 8 H17", stroke: "#3f3f46", strokeWidth: "1.5" }),
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("path", { d: "M13 3 L18 8 L13 13", stroke: "#3f3f46", strokeWidth: "1.5", strokeLinecap: "round", strokeLinejoin: "round" })
+    ] }) });
+  }
+
+  // src/LoginPage.tsx
+  var import_react31 = __toESM(require_react());
+  var import_jsx_runtime51 = __toESM(require_jsx_runtime());
   function LoginPage({ onAuthenticated }) {
-    const [mode, setMode] = (0, import_react30.useState)("login");
-    const [email, setEmail] = (0, import_react30.useState)("");
-    const [password, setPassword] = (0, import_react30.useState)("");
-    const [error, setError] = (0, import_react30.useState)("");
-    const [loading, setLoading] = (0, import_react30.useState)(false);
+    const [mode, setMode] = (0, import_react31.useState)("login");
+    const [email, setEmail] = (0, import_react31.useState)("");
+    const [password, setPassword] = (0, import_react31.useState)("");
+    const [error, setError] = (0, import_react31.useState)("");
+    const [loading, setLoading] = (0, import_react31.useState)(false);
     const handleSubmit = async (e2) => {
       e2.preventDefault();
       setError("");
@@ -80162,11 +80450,11 @@ ${e2}`);
         setLoading(false);
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "login-page", children: /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("form", { className: "login-card", onSubmit: handleSubmit, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "login-title", children: "Live Wallpaper Editor" }),
-      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "login-field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("label", { htmlFor: "email", children: "Email" }),
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("div", { className: "login-page", children: /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("form", { className: "login-card", onSubmit: handleSubmit, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("div", { className: "login-title", children: "Live Wallpaper Editor" }),
+      /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "login-field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("label", { htmlFor: "email", children: "Email" }),
+        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
           "input",
           {
             id: "email",
@@ -80178,9 +80466,9 @@ ${e2}`);
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "login-field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("label", { htmlFor: "password", children: "Password" }),
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "login-field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("label", { htmlFor: "password", children: "Password" }),
+        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
           "input",
           {
             id: "password",
@@ -80192,17 +80480,17 @@ ${e2}`);
           }
         )
       ] }),
-      error && /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "login-error", children: error }),
-      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("button", { className: "login-submit", type: "submit", disabled: loading, children: loading ? "Please wait\u2026" : mode === "login" ? "Log in" : "Create account" }),
-      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "login-toggle", children: mode === "login" ? /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(import_jsx_runtime50.Fragment, { children: [
+      error && /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("div", { className: "login-error", children: error }),
+      /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("button", { className: "login-submit", type: "submit", disabled: loading, children: loading ? "Please wait\u2026" : mode === "login" ? "Log in" : "Create account" }),
+      /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("div", { className: "login-toggle", children: mode === "login" ? /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)(import_jsx_runtime51.Fragment, { children: [
         "No account? ",
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("button", { type: "button", onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("button", { type: "button", onClick: () => {
           setMode("register");
           setError("");
         }, children: "Register" })
-      ] }) : /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(import_jsx_runtime50.Fragment, { children: [
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)(import_jsx_runtime51.Fragment, { children: [
         "Already have an account? ",
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("button", { type: "button", onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("button", { type: "button", onClick: () => {
           setMode("login");
           setError("");
         }, children: "Log in" })
@@ -80211,7 +80499,7 @@ ${e2}`);
   }
 
   // src/client.tsx
-  var import_jsx_runtime51 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime52 = __toESM(require_jsx_runtime());
   console.log("[bundle] loaded \u2014 build b85774b");
   function pageFromPath() {
     const sceneMatch = window.location.pathname.match(/^\/project\/([^/]+)\/scene\/([^/]+)$/);
@@ -80228,6 +80516,10 @@ ${e2}`);
     if (rulesMatch) {
       return { type: "rules", project: { id: decodeURIComponent(rulesMatch[1]), name: "" } };
     }
+    const simulatorMatch = window.location.pathname.match(/^\/project\/([^/]+)\/simulator$/);
+    if (simulatorMatch) {
+      return { type: "simulator", project: { id: decodeURIComponent(simulatorMatch[1]), name: "" } };
+    }
     const projectMatch = window.location.pathname.match(/^\/project\/([^/]+)$/);
     if (projectMatch) {
       return { type: "scenes", project: { id: decodeURIComponent(projectMatch[1]), name: "" } };
@@ -80235,28 +80527,28 @@ ${e2}`);
     return { type: "projects" };
   }
   function App() {
-    const [authState, setAuthState] = (0, import_react31.useState)({ status: "loading" });
-    const [page, setPage] = (0, import_react31.useState)(pageFromPath);
-    const [thumbBuster, setThumbBuster] = (0, import_react31.useState)(0);
-    const isDirtyRef = (0, import_react31.useRef)(false);
-    const pageRef = (0, import_react31.useRef)(page);
-    (0, import_react31.useEffect)(() => {
+    const [authState, setAuthState] = (0, import_react32.useState)({ status: "loading" });
+    const [page, setPage] = (0, import_react32.useState)(pageFromPath);
+    const [thumbBuster, setThumbBuster] = (0, import_react32.useState)(0);
+    const isDirtyRef = (0, import_react32.useRef)(false);
+    const pageRef = (0, import_react32.useRef)(page);
+    (0, import_react32.useEffect)(() => {
       pageRef.current = page;
     }, [page]);
-    (0, import_react31.useEffect)(() => {
+    (0, import_react32.useEffect)(() => {
       setUnauthorizedHandler(() => setAuthState({ status: "unauthenticated" }));
       authApi.me().then((user) => setAuthState({ status: "authenticated", user })).catch(() => {
       });
     }, []);
-    const handleLogout = (0, import_react31.useCallback)(async () => {
+    const handleLogout = (0, import_react32.useCallback)(async () => {
       await authApi.logout().catch(() => {
       });
       setAuthState({ status: "unauthenticated" });
     }, []);
-    const handleDirtyChange = (0, import_react31.useCallback)((dirty) => {
+    const handleDirtyChange = (0, import_react32.useCallback)((dirty) => {
       isDirtyRef.current = dirty;
     }, []);
-    (0, import_react31.useEffect)(() => {
+    (0, import_react32.useEffect)(() => {
       const onPopState = () => {
         const currentPage = pageRef.current;
         if (currentPage.type !== "scene" || !isDirtyRef.current) {
@@ -80273,39 +80565,43 @@ ${e2}`);
       window.addEventListener("popstate", onPopState);
       return () => window.removeEventListener("popstate", onPopState);
     }, []);
-    const navigateToProject = (0, import_react31.useCallback)((project) => {
+    const navigateToProject = (0, import_react32.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
       setPage({ type: "scenes", project });
     }, []);
-    const navigateToScene = (0, import_react31.useCallback)((scene, project) => {
+    const navigateToScene = (0, import_react32.useCallback)((scene, project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/scene/${encodeURIComponent(scene.id)}`);
       setPage({ type: "scene", sceneId: scene.id, project });
     }, []);
-    const navigateBackToProjects = (0, import_react31.useCallback)(() => {
+    const navigateBackToProjects = (0, import_react32.useCallback)(() => {
       window.history.pushState(null, "", "/");
       setPage({ type: "projects" });
     }, []);
-    const navigateBackToScenes = (0, import_react31.useCallback)((project) => {
+    const navigateBackToScenes = (0, import_react32.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
       setPage({ type: "scenes", project });
     }, []);
-    const navigateToFlags = (0, import_react31.useCallback)((project) => {
+    const navigateToFlags = (0, import_react32.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/flags`);
       setPage({ type: "flags", project });
     }, []);
-    const navigateToRules = (0, import_react31.useCallback)((project) => {
+    const navigateToRules = (0, import_react32.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/rules`);
       setPage({ type: "rules", project });
     }, []);
-    const handleSaved = (0, import_react31.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
+    const navigateToSimulator = (0, import_react32.useCallback)((project) => {
+      window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/simulator`);
+      setPage({ type: "simulator", project });
+    }, []);
+    const handleSaved = (0, import_react32.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
     if (authState.status === "loading") {
       return null;
     }
     if (authState.status === "unauthenticated") {
-      return /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(LoginPage, { onAuthenticated: (user) => setAuthState({ status: "authenticated", user }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(LoginPage, { onAuthenticated: (user) => setAuthState({ status: "authenticated", user }) });
     }
     if (page.type === "scene") {
-      return /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
         ScenePage,
         {
           initialSceneId: page.sceneId,
@@ -80317,7 +80613,7 @@ ${e2}`);
       );
     }
     if (page.type === "flags") {
-      return /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
         FlagsPage,
         {
           projectId: page.project.id,
@@ -80327,7 +80623,7 @@ ${e2}`);
       );
     }
     if (page.type === "rules") {
-      return /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
         RulesPage,
         {
           projectId: page.project.id,
@@ -80336,14 +80632,25 @@ ${e2}`);
         }
       );
     }
+    if (page.type === "simulator") {
+      return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
+        SimulatorPage,
+        {
+          projectId: page.project.id,
+          projectName: page.project.name,
+          onBack: () => navigateBackToScenes(page.project)
+        }
+      );
+    }
     if (page.type === "scenes") {
-      return /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
         SceneListPage,
         {
           onSelect: (scene) => navigateToScene(scene, page.project),
           onBack: navigateBackToProjects,
           onFlags: () => navigateToFlags(page.project),
           onRules: () => navigateToRules(page.project),
+          onSimulator: () => navigateToSimulator(page.project),
           projectname: page.project.name,
           projectId: page.project.id,
           projectSize: page.project.total_size_bytes,
@@ -80351,11 +80658,11 @@ ${e2}`);
         }
       );
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(ProjectListPage, { onSelect: navigateToProject, onLogout: handleLogout });
+    return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(ProjectListPage, { onSelect: navigateToProject, onLogout: handleLogout });
   }
   window.addEventListener("DOMContentLoaded", () => {
     const root = (0, import_client.createRoot)(document.body);
-    root.render(/* @__PURE__ */ (0, import_jsx_runtime51.jsx)(App, {}));
+    root.render(/* @__PURE__ */ (0, import_jsx_runtime52.jsx)(App, {}));
   });
 })();
 /*! Bundled license information:
