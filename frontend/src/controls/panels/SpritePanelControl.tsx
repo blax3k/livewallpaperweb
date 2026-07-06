@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link2, Unlink2 } from 'lucide-react';
-import './SpritePanelControl.scss';
 import { SliderRow } from '../../components/SliderRow';
 import { DISPLAY_SCALE, toDisplay, toInternal } from '../../displayScale';
+import './SpritePanelControl.scss';
 
 interface SpritePanelControlProps {
   spriteName: string;
@@ -96,11 +96,10 @@ export function SpritePanelControl({ spriteName, x, y, depth, width, height, dis
   const displayHeight = Math.min(SIZE_MAX, Math.max(SIZE_MIN, toDisplay(height)));
 
   return (
-    <div id="sprite-panel-control" className={disabled ? 'sprite-panel-control--disabled' : undefined}>
-      <div className="sprite-panel-name">{disabled ? 'No sprite selected' : spriteName}</div>
+    <div className={`sprite-panel-control ${disabled ? 'sprite-panel-control--disabled' : ''}`.trim()}>
       <SliderRow
         label="X" min={COORD_MIN} max={COORD_MAX} step={COORD_STEP}
-        value={toDisplay(x)} disabled={disabled} labelWidth={12} decimalPlaces={0}
+        value={toDisplay(x)} disabled={disabled} labelWidth={14} decimalPlaces={0}
         onPointerDown={() => onChangeStart?.(x, y)}
         onChange={(v) => onChange(toInternal(v), y)}
         onPointerUp={(v) => onChangeCommit?.(toInternal(v), y)}
@@ -109,7 +108,7 @@ export function SpritePanelControl({ spriteName, x, y, depth, width, height, dis
       />
       <SliderRow
         label="Y" min={COORD_MIN} max={COORD_MAX} step={COORD_STEP}
-        value={toDisplay(y)} disabled={disabled} labelWidth={12} decimalPlaces={0}
+        value={toDisplay(y)} disabled={disabled} labelWidth={14} decimalPlaces={0}
         onPointerDown={() => onChangeStart?.(x, y)}
         onChange={(v) => onChange(x, toInternal(v))}
         onPointerUp={(v) => onChangeCommit?.(x, toInternal(v))}
@@ -118,43 +117,86 @@ export function SpritePanelControl({ spriteName, x, y, depth, width, height, dis
       />
       <SliderRow
         label="Z" min={DEPTH_MIN} max={DEPTH_MAX} step={DEPTH_STEP}
-        value={displayDepth} disabled={disabled} labelWidth={12} decimalPlaces={0}
+        value={displayDepth} disabled={disabled} labelWidth={14} decimalPlaces={0}
         onPointerDown={() => onDepthChangeStart?.(depth)}
         onChange={(v) => onDepthChange(toInternal(v))}
         onPointerUp={(v) => onDepthCommit?.(toInternal(v))}
         onFocus={() => onDepthChangeStart?.(depth)}
         onCommit={(v) => { if (toInternal(v) >= toInternal(DEPTH_MIN)) onDepthCommit?.(toInternal(v)); }}
       />
-      <div className="size-controls">
-        <SliderRow
-          label="W" min={SIZE_MIN} max={SIZE_MAX} step={SIZE_STEP}
-          value={displayWidth} disabled={disabled} labelWidth={12} decimalPlaces={0}
-          onPointerDown={() => onSizeChangeStart?.()}
-          onChange={(v) => { if (toInternal(v) >= toInternal(SIZE_MIN)) handleWidthChange(v); }}
-          onPointerUp={(v) => handleSizeCommit(v, 'width')}
+      <div className="sprite-panel-control__size-row">
+        <span className="sprite-panel-control__size-label">W</span>
+        <SizeField
+          value={displayWidth} min={SIZE_MIN} max={SIZE_MAX} disabled={disabled}
           onFocus={() => onSizeChangeStart?.()}
+          onChange={(v) => { if (toInternal(v) >= toInternal(SIZE_MIN)) handleWidthChange(v); }}
           onCommit={(v) => handleSizeCommit(v, 'width')}
         />
-        <SliderRow
-          label="H" min={SIZE_MIN} max={SIZE_MAX} step={SIZE_STEP}
-          value={displayHeight} disabled={disabled} labelWidth={12} decimalPlaces={0}
-          onPointerDown={() => onSizeChangeStart?.()}
-          onChange={(v) => { if (toInternal(v) >= toInternal(SIZE_MIN)) handleHeightChange(v); }}
-          onPointerUp={(v) => handleSizeCommit(v, 'height')}
+        <span className="sprite-panel-control__size-label sprite-panel-control__size-label--right">H</span>
+        <SizeField
+          value={displayHeight} min={SIZE_MIN} max={SIZE_MAX} disabled={disabled}
           onFocus={() => onSizeChangeStart?.()}
+          onChange={(v) => { if (toInternal(v) >= toInternal(SIZE_MIN)) handleHeightChange(v); }}
           onCommit={(v) => handleSizeCommit(v, 'height')}
         />
-        <div className="aspect-ratio-toggle">
-          <button
-            className={`aspect-ratio-toggle__btn${linked ? ' aspect-ratio-toggle__btn--linked' : ''}`}
-            onClick={handleToggleLinked}
-            title={linked ? 'Unlink width and height' : 'Link width and height'}
-            tabIndex={-1}
-          >
-            {linked ? <Link2 size={LINK_ICON_SIZE} /> : <Unlink2 size={LINK_ICON_SIZE} />}
-          </button>
-        </div>
+        <button
+          className={`sprite-panel-control__link-btn ${linked ? 'sprite-panel-control__link-btn--linked' : ''}`.trim()}
+          onClick={handleToggleLinked}
+          title={linked ? 'Unlink width and height' : 'Link width and height'}
+          tabIndex={-1}
+        >
+          {linked ? <Link2 size={LINK_ICON_SIZE} /> : <Unlink2 size={LINK_ICON_SIZE} />}
+        </button>
       </div>
     </div>
+  );
+}
+
+// Plain editable number field used for W/H — unlike X/Y/Z these are dense grid
+// cells with no room for a slider track, but they preserve the same
+// live-change (onChange) / blur-or-enter (onCommit) contract as SliderRow.
+interface SizeFieldProps {
+  value: number;
+  min: number;
+  max: number;
+  disabled?: boolean;
+  onFocus: () => void;
+  onChange: (value: number) => void;
+  onCommit: (value: number) => void;
+}
+
+function SizeField({ value, min, max, disabled, onFocus, onChange, onCommit }: SizeFieldProps) {
+  const [localText, setLocalText] = useState(() => String(Math.round(value)));
+  const [isFocused, setIsFocused] = useState(false);
+
+  useEffect(() => {
+    if (!isFocused) setLocalText(String(Math.round(value)));
+  }, [value, isFocused]);
+
+  const commit = (text: string) => {
+    const v = parseFloat(text);
+    const finalValue = (text === '' || isNaN(v)) ? min : Math.min(max, Math.max(min, v));
+    onChange(finalValue);
+    onCommit(finalValue);
+    setLocalText(String(Math.round(finalValue)));
+  };
+
+  return (
+    <input
+      type="text"
+      inputMode="decimal"
+      disabled={disabled}
+      value={localText}
+      className="sprite-panel-control__size-field"
+      onFocus={(e) => { setIsFocused(true); onFocus(); e.target.select(); }}
+      onChange={(e) => {
+        const text = e.target.value;
+        setLocalText(text);
+        const v = parseFloat(text);
+        if (text !== '' && !isNaN(v) && v >= min && v <= max) onChange(v);
+      }}
+      onBlur={() => { setIsFocused(false); commit(localText); }}
+      onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
+    />
   );
 }

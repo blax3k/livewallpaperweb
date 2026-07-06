@@ -27,6 +27,11 @@ export function SliderRow({
   if (labelWidth !== undefined) labelStyle.width = labelWidth;
   if (labelAlign !== undefined) labelStyle.textAlign = labelAlign;
 
+  const percent = max > min ? ((value - min) / (max - min)) * 100 : 0;
+  const trackStyle = {
+    '--lw-track-fill': `linear-gradient(to right, var(--color-accent) ${percent}%, var(--color-track) ${percent}%)`,
+  } as React.CSSProperties;
+
   const formatValue = (v: number) => String(parseFloat(v.toFixed(decimalPlaces)));
 
   const [localText, setLocalText] = React.useState(() => formatValue(value));
@@ -69,6 +74,7 @@ export function SliderRow({
       </label>
       <input
         type="range"
+        style={disabled ? undefined : trackStyle}
         min={min}
         max={max}
         step={step}

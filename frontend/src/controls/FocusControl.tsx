@@ -13,17 +13,16 @@ interface FocusControlProps {
 
 export function FocusControl({ axis, disabled, value, onChange, onChangeStart, onChangeCommit }: FocusControlProps) {
   return (
-    <div style={{ marginBottom: 12 }}>
-      <SliderRow
-        label={`${axis} Focus`}
-        min={0} max={DISPLAY_SCALE} step={1}
-        value={Math.round(toDisplay(value))}
-        disabled={disabled}
-        decimalPlaces={0}
-        onChange={(v) => onChange(toInternal(v))}
-        onPointerDown={() => onChangeStart?.(value)}
-        onPointerUp={(v) => onChangeCommit?.(toInternal(v))}
-      />
-    </div>
+    <SliderRow
+      label={`${axis} Focus`}
+      min={0} max={DISPLAY_SCALE} step={1}
+      value={Math.round(toDisplay(value))}
+      disabled={disabled}
+      decimalPlaces={0}
+      labelWidth={44}
+      onChange={(v) => onChange(toInternal(v))}
+      onPointerDown={() => onChangeStart?.(value)}
+      onPointerUp={(v) => onChangeCommit?.(toInternal(v))}
+    />
   );
 }

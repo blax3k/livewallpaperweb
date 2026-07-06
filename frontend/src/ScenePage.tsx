@@ -1,9 +1,12 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
 import { SceneEditorPanel, SceneOption } from './controls/panels/SceneEditorPanel';
+import { SpriteConditionsPanel } from './controls/panels/SpriteConditionsPanel';
 import { AllConditionsPanel } from './controls/panels/AllConditionsPanel';
 import { TopBar } from './controls/TopBar';
 import { NotificationStack } from './controls/NotificationStack';
 import { EditTextureModal } from './controls/modals/EditTextureModal';
+import { Dialog, DialogContent } from './components/ui/dialog';
+import './ScenePage.scss';
 import { useUndoHistory } from './hooks/useUndoHistory';
 import { useNotifications } from './hooks/useNotifications';
 import { useSceneRenderer } from './hooks/useSceneRenderer';
@@ -36,6 +39,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
   const isGyroDragging = useRef(false);
   const gyroOrigin = useRef<{ x: number; y: number } | null>(null);
   const [editTextureIndex, setEditTextureIndex] = useState<number | null>(null);
+  const [allConditionsModalOpen, setAllConditionsModalOpen] = useState(false);
 
   const {
     canvasRef,
@@ -145,6 +149,13 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     ensureSpriteSelected(spriteIndex);
     handleSelectConditionSet(spriteIndex, conditionIndex);
   }, [ensureSpriteSelected, handleSelectConditionSet]);
+
+  // Same as above, but also used from the "All conditions" modal — picking a set there
+  // both previews it and returns focus to the editor.
+  const handleSelectConditionSetFromModal = useCallback((spriteIndex: number, conditionIndex: number) => {
+    handleSelectConditionSetForSprite(spriteIndex, conditionIndex);
+    setAllConditionsModalOpen(false);
+  }, [handleSelectConditionSetForSprite]);
 
   const handleAddConditionSetForSprite = useCallback((spriteIndex: number) => {
     ensureSpriteSelected(spriteIndex);
@@ -417,7 +428,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
   }, [selectedSprite, history, activeConditionSet]);
 
   return (
-    <>
+    <div className="scene-page">
       <TopBar
         projectId={projectId}
         scenes={scenes}
@@ -441,7 +452,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
         sceneSizeTitle={sceneSize?.title}
         onImageReplaced={handleImageReplaced}
       />
-      <div className="app-content">
+      <div className="scene-page__row">
         <SceneEditorPanel
           sceneLoaded={showSceneControls}
           orientation={orientation}
@@ -467,6 +478,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
           onDeleteSprite={handleDeleteSprite}
           onRenameSprite={handleRenameSprite}
           onEditTexture={setEditTextureIndex}
+          onEditConditions={handleSpriteSelect}
           activeConditionLabel={activeConditionLabel}
           onSpritePositionChange={handleSpritePositionChange}
           onSpritePositionChangeStart={handleSpritePositionChangeStart}
@@ -478,10 +490,11 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
           onSpriteSizeChangeStart={handleSpriteSizeChangeStart}
           onSpriteSizeCommit={handleSpriteSizeCommit}
         />
-        <div className="main-content">
+        <div className="scene-page__canvas">
           <div
             id="canvas-container"
             ref={canvasRef}
+            className="scene-page__canvas-inner"
             onMouseDown={gyroMode ? undefined : handleCanvasMouseDown}
             style={
               gyroMode
@@ -495,21 +508,37 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
           />
         </div>
         {showSceneControls && (
-          <AllConditionsPanel
-            spriteEntries={spriteEntries}
-            getConditionsForSprite={getConditionsForSprite}
+          <SpriteConditionsPanel
+            selectedSprite={selectedSprite}
+            conditionBlocks={selectedSprite ? getConditionsForSprite(selectedSprite.index) : []}
             availableFlags={availableFlags}
-            selectedSpriteIndex={selectedSprite?.index ?? null}
-            getActiveConditionIndexForSprite={getActiveConditionIndexForSprite}
-            onSelectConditionSet={handleSelectConditionSetForSprite}
-            onAddConditionSet={handleAddConditionSetForSprite}
-            onRemoveConditionSet={handleRemoveConditionSetForSprite}
-            onRenameConditionSet={handleRenameConditionSetForSprite}
-            onSetConditionSetFlags={handleSetConditionSetFlagsForSprite}
+            activeConditionIndex={activeConditionSet?.conditionIndex ?? null}
+            onSelectCondition={handleSelectConditionSetForSprite}
+            onAdd={handleAddConditionSetForSprite}
+            onRemove={handleRemoveConditionSetForSprite}
+            onRename={handleRenameConditionSetForSprite}
+            onSetFlags={handleSetConditionSetFlagsForSprite}
+            onOpenAllConditions={() => setAllConditionsModalOpen(true)}
           />
         )}
       </div>
-      <NotificationStack notifications={notifications} />
+
+      <div className="scene-page__toast-wrap">
+        <NotificationStack notifications={notifications} />
+      </div>
+
+      <Dialog open={allConditionsModalOpen} onOpenChange={setAllConditionsModalOpen}>
+        <DialogContent showClose={false} className="dialog-content--fit">
+          <AllConditionsPanel
+            spriteEntries={spriteEntries}
+            getConditionsForSprite={getConditionsForSprite}
+            selectedSpriteIndex={selectedSprite?.index ?? null}
+            getActiveConditionIndexForSprite={getActiveConditionIndexForSprite}
+            onSelectConditionSet={handleSelectConditionSetFromModal}
+          />
+        </DialogContent>
+      </Dialog>
+
       {editTextureIndex !== null && (() => {
         const texData = rendererRef.current?.getSpriteTexData(editTextureIndex);
         if (!texData) return null;
@@ -531,7 +560,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
           />
         );
       })()}
-    </>
+    </div>
   );
 }
 

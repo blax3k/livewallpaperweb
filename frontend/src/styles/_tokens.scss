@@ -1,0 +1,125 @@
+// "Zinc" scene-editor design tokens — see design_handoff_scene_editor/README.md.
+// Dark-only. Shared as CSS custom properties so every component's own .scss file
+// can reference them (var(--color-panel), etc.) without duplicating hex values —
+// or, for the numeric scales below, duplicating magic numbers.
+
+:root {
+  --font-sans: 'Geist', system-ui, sans-serif;
+
+  // surfaces
+  --color-bg: #09090b;
+  --color-panel: #131316;
+  --color-panel-inset: #0e0e11;
+  --color-elevated: #17171c;
+  --color-input: #1c1c21;
+  --color-hover: #1a1a1f;
+  --color-selected: #22242f;
+
+  // borders
+  --color-border: #232327;
+  --color-border-strong: #2b2b31;
+  --color-border-subtle: #1e1e22;
+
+  // text
+  --color-fg: #fafafa;
+  --color-fg-default: #e4e4e7;
+  --color-fg-muted: #d4d4d8;
+  --color-fg-subtle: #8b8b93;
+  --color-fg-faint: #71717a;
+  --color-fg-faintest: #5b5b63;
+
+  // accent (indigo)
+  --color-accent: #5b63e8;
+  --color-accent-fg: #a5adff;
+  --color-accent-bright: #7c86ff;
+  --color-accent-bg: #1e2038;
+  --color-accent-bg-strong: #252840;
+  --color-accent-border: #3c3f6e;
+  --color-accent-panel: #1a1c2c;
+  --color-accent-panel-border: #2c2e46;
+  --color-accent-input: #14151f;
+  --color-accent-icon: #6a6d94;
+  --color-accent-dim: #8b8fb8;
+
+  // semantic
+  --color-success: #4ade80;
+  --color-danger: #e06c75;
+
+  // one-off surfaces pulled from the mockup that don't have a token name in the
+  // README's table
+  --color-track: #26262b;
+  --color-chip: #1f1f23;
+  --color-pill-active: #2e2e36;
+  --color-meta: #4b4b52;
+  --color-toast: #18181b;
+  --color-toast-border: #2a2a2e;
+
+  // ── Type scale ──────────────────────────────────────────────────────────
+  // Named directly by pixel value — the design calls for half-pixel steps for
+  // a few specific labels, so a handful of named steps (xs/sm/md) wouldn't
+  // leave room for those without overloading a name to mean two sizes.
+  --text-10: 10px;   // section headings, badges, meta text
+  --text-10-5: 10.5px; // "Match" label / ALL-ANY toggle
+  --text-11: 11px;   // values, axis labels
+  --text-11-5: 11.5px; // All-conditions modal "Done" button
+  --text-12: 12px;   // body copy, list rows — the most common size
+  --text-12-5: 12.5px; // scene name in the top bar
+  --text-13: 13px;   // modal titles
+
+  // ── Size scale ──────────────────────────────────────────────────────────
+  // One shared ramp for anything measured in whole pixels: border-radius,
+  // control/row heights (and the matching width of square icon buttons),
+  // gaps, padding, margin. Reusing one scale instead of parallel
+  // radius/height/space scales means a given pixel value only has one name
+  // anywhere in the codebase.
+  --size-1: 1px;
+  --size-2: 2px;
+  --size-4: 4px;
+  --size-5: 5px;
+  --size-6: 6px;
+  --size-7: 7px;
+  --size-8: 8px;
+  --size-9: 9px;
+  --size-10: 10px;
+  --size-12: 12px;
+  --size-14: 14px;
+  --size-16: 16px;
+  --size-18: 18px;
+  --size-20: 20px;
+  --size-22: 22px;
+  --size-24: 24px;
+  --size-26: 26px;
+  --size-28: 28px;
+  --size-30: 30px;
+  --size-32: 32px;
+  --size-44: 44px;
+
+  // ── Motion ──────────────────────────────────────────────────────────────
+  --duration-fast: 0.15s;   // hover/color transitions
+  --duration-fade: 150ms;   // overlay fade-in
+  --duration-scale: 140ms;  // dropdown/select/popover scale-in
+  --duration-modal: 160ms;  // dialog scale-in
+  --duration-toast: 200ms;  // toast fade-in
+
+  // ── Layering ────────────────────────────────────────────────────────────
+  --z-overlay: 50;
+
+  // ── Shadows ─────────────────────────────────────────────────────────────
+  --shadow-panel: 0 4px 16px rgba(0, 0, 0, 0.35);
+  --shadow-modal: 0 24px 64px rgba(0, 0, 0, 0.6);
+  --shadow-toast: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-thumb: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes lw-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes lw-scale-in {
+  from { opacity: 0; transform: scale(0.96) translateY(-2px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes lw-modal-in {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.97); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}

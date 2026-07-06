@@ -1,206 +1,197 @@
-#sprite-list-panel {
-  .sprite-list-title {
-    font-size: 12px;
-    font-weight: bold;
-    margin-bottom: 8px;
-    color: #ccc;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .sprite-list-add-btn {
-    background: none;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: #ccc;
-    border-radius: 4px;
-    width: 20px;
-    height: 20px;
-    font-size: 16px;
-    line-height: 1;
-    cursor: pointer;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.15);
-      color: #fff;
-    }
-  }
-
-  .sprite-list {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .sprite-list-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    padding: 4px 5px;
-    border-radius: 4px;
-    user-select: none;
-    transition: background-color 0.15s;
-    font-size: 12px;
-    position: relative;
-
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-
-    &.sprite-list-item--selected {
-      background-color: rgba(255, 255, 255, 0.15);
-      outline: 1px solid rgba(255, 255, 255, 0.3);
-    }
-  }
-
-  .sprite-eye-icon {
-    font-size: 14px;
-    min-width: 20px;
-    text-align: center;
-  }
-
-  .sprite-label {
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .sprite-label-input {
-    flex: 1;
-    min-width: 0;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 3px;
-    color: #fff;
-    font-size: 12px;
-    padding: 0 4px;
-    outline: none;
-
-    &:focus {
-      border-color: rgba(255, 255, 255, 0.7);
-    }
-  }
-
-  .sprite-parallax {
-    font-size: 11px;
-    color: #888;
-    white-space: nowrap;
-    min-width: 32px;
-    text-align: right;
-  }
-
-  .sprite-menu-trigger {
-    font-size: 16px;
-    color: #666;
-    cursor: pointer;
-    padding: 0 2px;
-    line-height: 1;
-    border-radius: 3px;
-    user-select: none;
-    flex-shrink: 0;
-
-    &:hover {
-      color: #ccc;
-      background: rgba(255, 255, 255, 0.1);
-    }
-  }
-
-  .sprite-menu-popover {
-    position: absolute;
-    right: 0;
-    top: 100%;
-    z-index: 200;
-    background: #2a2a2a;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 6px;
-    padding: 4px;
-    min-width: 100px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-  }
-
-  .sprite-menu-item {
-    display: block;
-    width: 100%;
-    background: none;
-    border: none;
-    text-align: left;
-    padding: 5px 10px;
-    font-size: 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    color: #ccc;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    &.sprite-menu-item--danger {
-      color: #e06c75;
-
-      &:hover {
-        background: rgba(224, 108, 117, 0.15);
-      }
-    }
-  }
-
+.sprite-list-count {
+  color: var(--color-meta);
 }
 
-.sprite-confirm-dialog {
-  background: #2a2a2a;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  padding: 20px 24px;
-  min-width: 260px;
-  text-align: center;
+.sprite-list-add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-20);
+  height: var(--size-20);
+  border-radius: var(--size-6);
+  color: var(--color-fg-muted);
+  transition: background-color var(--duration-fast), color var(--duration-fast);
 
-  p {
-    color: #ccc;
-    font-size: 13px;
-    margin: 0 0 16px;
+  &:hover {
+    background: var(--color-hover);
+    color: var(--color-fg);
   }
+}
+
+.sprite-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-1);
+}
+
+.sprite-list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--size-8);
+  height: var(--size-28);
+  padding: 0 var(--size-6);
+  border-radius: var(--size-7);
+  cursor: pointer;
+  user-select: none;
+
+  &:hover {
+    background: var(--color-hover);
+  }
+
+  &--hidden {
+    opacity: 0.5;
+  }
+
+  &--selected {
+    background: var(--color-selected);
+    box-shadow: inset var(--size-2) 0 0 var(--color-accent);
+
+    &:hover {
+      background: var(--color-selected);
+    }
+  }
+}
+
+.sprite-list-item__eye {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-fg-faint);
+
+  .sprite-list-item--selected & {
+    color: var(--color-accent-fg);
+  }
+}
+
+.thumbnail-chip {
+  flex-shrink: 0;
+  width: var(--size-18);
+  height: var(--size-18);
+  border-radius: var(--size-5);
+  background: repeating-linear-gradient(45deg, #26262b, #26262b 3px, #1c1c21 3px, #1c1c21 6px);
+
+  &--selected {
+    background: repeating-linear-gradient(45deg, #2c2e40, #2c2e40 3px, #232534 3px, #232534 6px);
+  }
+
+  &--sm {
+    width: var(--size-16);
+    height: var(--size-16);
+  }
+}
+
+.sprite-list-item__name-input {
+  min-width: 0;
+  flex: 1;
+  border-radius: var(--size-4);
+  border: 1px solid rgba(228, 228, 231, 0.4);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-fg);
+  font-size: var(--text-12);
+  padding: 0 var(--size-4);
+  outline: none;
+}
+
+.sprite-list-item__name {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-12);
+  color: var(--color-fg-default);
+
+  .sprite-list-item--selected & {
+    font-weight: 500;
+    color: var(--color-fg);
+  }
+}
+
+.sprite-list-item__parallax {
+  flex-shrink: 0;
+  border-radius: var(--size-5);
+  padding: var(--size-1) var(--size-6);
+  font-size: var(--text-10);
+  font-variant-numeric: tabular-nums;
+  background: var(--color-chip);
+  color: var(--color-fg-subtle);
+
+  .sprite-list-item--selected & {
+    background: var(--color-accent-bg-strong);
+    color: var(--color-accent-fg);
+  }
+}
+
+.sprite-list-item__menu-trigger {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--size-4);
+  padding: var(--size-2);
+  color: var(--color-fg-faint);
+  opacity: 0;
+  transition: opacity var(--duration-fast), color var(--duration-fast);
+
+  &:hover {
+    color: var(--color-fg-muted);
+  }
+
+  .sprite-list-item:hover &,
+  .sprite-list-item--selected & {
+    opacity: 1;
+  }
+}
+
+// ── Delete confirmation (AlertDialog content) ──────────────────────────────
+
+.sprite-delete-dialog__title {
+  font-size: var(--text-12);
+  font-weight: 500;
+  color: var(--color-fg);
+}
+
+.sprite-delete-dialog__description {
+  margin-top: var(--size-6);
+  font-size: var(--text-11);
+  color: var(--color-fg-subtle);
 
   strong {
-    color: #fff;
+    color: var(--color-fg-default);
   }
 }
 
-.sprite-confirm-actions {
+.sprite-delete-dialog__actions {
+  margin-top: var(--size-16);
   display: flex;
-  gap: 10px;
   justify-content: center;
+  gap: var(--size-10);
 }
 
-.sprite-confirm-yes,
-.sprite-confirm-no {
-  padding: 6px 18px;
-  border-radius: 5px;
-  border: none;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.sprite-confirm-yes {
-  background: #e06c75;
+.sprite-delete-dialog__confirm-btn {
+  border-radius: var(--size-6);
+  background: var(--color-danger);
+  padding: var(--size-6) var(--size-16);
+  font-size: var(--text-11);
+  font-weight: 500;
   color: #fff;
+  transition: background-color var(--duration-fast);
 
   &:hover {
-    background: #c85a63;
+    background: rgba(224, 108, 117, 0.85);
   }
 }
 
-.sprite-confirm-no {
-  background: rgba(255, 255, 255, 0.1);
-  color: #ccc;
+.sprite-delete-dialog__cancel-btn {
+  border-radius: var(--size-6);
+  border: 1px solid var(--color-border-strong);
+  padding: var(--size-6) var(--size-16);
+  font-size: var(--text-11);
+  color: var(--color-fg-muted);
+  transition: background-color var(--duration-fast);
 
   &:hover {
-    background: rgba(255, 255, 255, 0.18);
+    background: var(--color-input);
   }
 }

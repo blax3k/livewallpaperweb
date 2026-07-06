@@ -1,34 +1,87 @@
 .slider-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--size-8);
 
   label {
-    font-size: 12px;
-    color: #aaa;
     flex-shrink: 0;
+    font-size: var(--text-11);
+    color: var(--color-fg-subtle);
   }
 
   input[type='range'] {
+    appearance: none;
+    -webkit-appearance: none;
     flex: 1;
     min-width: 0;
+    height: var(--size-12);
+    border-radius: var(--size-2);
+    background: transparent;
+    cursor: pointer;
+
+    // WebKit doesn't auto-center the thumb on the track — offset it by half the
+    // (thumb - track) height difference so it sits mid-track instead of hanging
+    // from the track's top edge. Firefox centers ::-moz-range-thumb natively.
+    &::-webkit-slider-thumb {
+      appearance: none;
+      -webkit-appearance: none;
+      width: var(--size-12);
+      height: var(--size-12);
+      border-radius: 50%;
+      background: var(--color-fg-default);
+      box-shadow: var(--shadow-thumb);
+      margin-top: calc((var(--size-4) - var(--size-12)) / 2);
+    }
+
+    &::-moz-range-thumb {
+      width: var(--size-12);
+      height: var(--size-12);
+      border: none;
+      border-radius: 50%;
+      background: var(--color-fg-default);
+      box-shadow: var(--shadow-thumb);
+    }
+
+    // The accent fill up to the current value is set per-instance via the
+    // --lw-track-fill custom property (see SliderRow.tsx), falling back to a
+    // flat track color when disabled.
+    &::-moz-range-track {
+      height: var(--size-4);
+      border-radius: var(--size-2);
+      background: var(--lw-track-fill, var(--color-track));
+    }
+
+    &::-webkit-slider-runnable-track {
+      height: var(--size-4);
+      border-radius: var(--size-2);
+      background: var(--lw-track-fill, var(--color-track));
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
   }
 
   input[type='text'] {
-    width: 58px;
+    width: var(--size-44);
     flex-shrink: 0;
-    background: #1e1e1e;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
-    color: #ccc;
-    font-size: 12px;
-    padding: 3px 6px;
+    border-radius: var(--size-6);
+    border: 1px solid var(--color-border-strong);
+    background: var(--color-input);
+    color: var(--color-fg-muted);
+    font-size: var(--text-11);
+    padding: var(--size-4) var(--size-6);
     text-align: right;
+    font-variant-numeric: tabular-nums;
+    outline: none;
 
     &:focus {
-      outline: none;
-      border-color: #888;
+      border-color: var(--color-fg-faint);
     }
 
+    &:disabled {
+      opacity: 0.4;
+    }
   }
 }

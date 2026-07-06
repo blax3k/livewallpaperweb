@@ -1,0 +1,21 @@
+.section-heading {
+  margin-bottom: var(--size-10);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  &--tight {
+    margin-bottom: var(--size-2);
+  }
+}
+
+.section-heading__label {
+  display: flex;
+  align-items: center;
+  gap: var(--size-6);
+  font-size: var(--text-10);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-fg-faint);
+}

@@ -1,0 +1,45 @@
+.scene-page {
+  position: relative;
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--size-10);
+  background: var(--color-bg);
+  padding: var(--size-10);
+  font-family: var(--font-sans);
+}
+
+.scene-page__row {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  gap: var(--size-10);
+}
+
+.scene-page__canvas {
+  position: relative;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  border-radius: var(--size-12);
+  border: 1px solid var(--color-input);
+  background: var(--color-panel-inset);
+}
+
+.scene-page__canvas-inner {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.scene-page__toast-wrap {
+  position: absolute;
+  bottom: var(--size-20);
+  // 294px = right panel width (264px) + row gap (10px) + shell padding (10px)
+  // + a hair more — a one-off placement, not a shared scale value.
+  right: 294px;
+}

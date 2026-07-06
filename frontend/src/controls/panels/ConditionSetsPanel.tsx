@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import './ConditionSetsPanel.scss';
+import { X } from 'lucide-react';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/ui/select';
 import type { SpriteConditionBlock, RuleConditionGroup, RuleCondition, FlagDefinition } from '@livewallpaper/types';
+import './ConditionSetsPanel.scss';
 
 interface ConditionSetsPanelProps {
   spriteIndex: number;
@@ -12,6 +14,12 @@ interface ConditionSetsPanelProps {
   onRemove: (spriteIndex: number, conditionIndex: number) => void;
   onRename: (spriteIndex: number, conditionIndex: number, name: string) => void;
   onSetFlags: (spriteIndex: number, conditionIndex: number, conditions: RuleConditionGroup) => void;
+}
+
+function summarize(block: SpriteConditionBlock) {
+  return block.conditions?.checks.length
+    ? `${block.conditions.operator} (${block.conditions.checks.length})`
+    : 'always';
 }
 
 export function ConditionSetsPanel({
@@ -47,31 +55,37 @@ export function ConditionSetsPanel({
   };
 
   return (
-    <div className="csp">
-      <div className="csp__header">
-        <span className="csp__title">Condition Sets</span>
-        <button className="csp__add-btn" onClick={() => onAdd(spriteIndex)} title="Add condition set">+</button>
-      </div>
-
-      <div className={`csp__set csp__set--default${isDefaultActive ? ' csp__set--active' : ''}`}>
-        <div className="csp__set-row" onClick={handleDefaultClick}>
-          <span className="csp__set-name">Default</span>
-          <span className="csp__set-summary">base values</span>
-        </div>
+    <div className="condition-sets">
+      <div
+        onClick={handleDefaultClick}
+        className="condition-sets__default-row"
+      >
+        <span className={`condition-set__dot ${isDefaultActive ? 'condition-set__dot--active' : ''}`.trim()} />
+        <span className={`condition-sets__default-label ${isDefaultActive ? 'condition-sets__default-label--active' : ''}`.trim()}>Default</span>
+        <span className="condition-sets__faint-summary">no checks</span>
       </div>
 
       {conditionBlocks.length === 0 && (
-        <div className="csp__empty">Add a condition set to override this sprite's properties based on flags.</div>
+        <div className="condition-sets__empty">
+          Add a condition set to override this sprite's properties based on flags.
+        </div>
       )}
 
       {conditionBlocks.map((block, i) => {
         const isActive = activeConditionIndex === i;
         return (
-          <div key={i} className={`csp__set${isActive ? ' csp__set--active' : ''}`}>
-            <div className="csp__set-row" onClick={() => handleRowClick(i)}>
+          <div
+            key={i}
+            className={`condition-set ${isActive ? 'condition-set--active' : ''}`.trim()}
+          >
+            <div
+              onClick={() => handleRowClick(i)}
+              className="condition-set__row"
+            >
+              <span className={`condition-set__dot ${isActive ? 'condition-set__dot--active' : ''}`.trim()} />
               {editingNameIndex === i ? (
                 <input
-                  className="csp__name-input"
+                  className="condition-set__name-input"
                   value={nameValue}
                   autoFocus
                   onClick={e => e.stopPropagation()}
@@ -84,7 +98,7 @@ export function ConditionSetsPanel({
                 />
               ) : (
                 <span
-                  className="csp__set-name"
+                  className={`condition-set__name ${isActive ? 'condition-set__name--active' : ''}`.trim()}
                   onDoubleClick={e => {
                     e.stopPropagation();
                     setEditingNameIndex(i);
@@ -95,18 +109,29 @@ export function ConditionSetsPanel({
                   {block.name ?? `Set ${i + 1}`}
                 </span>
               )}
-              <span className="csp__set-summary">
-                {block.conditions?.checks.length
-                  ? `${block.conditions.operator} (${block.conditions.checks.length})`
-                  : 'always'}
-              </span>
-              <button
-                className="csp__delete-btn"
-                title="Remove condition set"
-                onClick={e => { e.stopPropagation(); onRemove(spriteIndex, i); }}
-              >
-                ×
-              </button>
+              {isActive ? (
+                <span className="condition-set__previewing-label">previewing</span>
+              ) : (
+                <span className="condition-set__summary">{summarize(block)}</span>
+              )}
+              {isActive && (
+                <button
+                  title="Deselect"
+                  onClick={e => { e.stopPropagation(); onSelectCondition(spriteIndex, -1); }}
+                  className="condition-set__deselect-btn"
+                >
+                  <X size={12} />
+                </button>
+              )}
+              {!isActive && (
+                <button
+                  title="Remove condition set"
+                  onClick={e => { e.stopPropagation(); onRemove(spriteIndex, i); }}
+                  className="condition-set__remove-btn"
+                >
+                  <X size={12} />
+                </button>
+              )}
             </div>
 
             {isActive && (
@@ -121,6 +146,13 @@ export function ConditionSetsPanel({
           </div>
         );
       })}
+
+      <button
+        onClick={() => onAdd(spriteIndex)}
+        className="condition-sets__add-btn"
+      >
+        + Add condition set
+      </button>
     </div>
   );
 }
@@ -158,58 +190,65 @@ function FlagConditionEditor({ spriteIndex, conditionIndex, group, availableFlag
     update({ ...group, checks: next });
   };
 
-  const flagChecks = group.checks.filter(c => c.type === 'flag_active' || c.type === 'flag_inactive');
-
   return (
-    <div className="csp__editor" onClick={e => e.stopPropagation()}>
-      <div className="csp__editor-header">
-        <span className="csp__editor-label">When:</span>
-        <label className="csp__op-label">
-          <input
-            type="radio" name={`op-${spriteIndex}-${conditionIndex}`}
-            checked={group.operator === 'AND'}
-            onChange={() => setOperator('AND')}
-          /> ALL
-        </label>
-        <label className="csp__op-label">
-          <input
-            type="radio" name={`op-${spriteIndex}-${conditionIndex}`}
-            checked={group.operator === 'OR'}
-            onChange={() => setOperator('OR')}
-          /> ANY
-        </label>
-        <span className="csp__editor-label">of these flags match:</span>
+    <div onClick={e => e.stopPropagation()} className="condition-editor">
+      <div className="condition-editor__match-row">
+        <span className="condition-editor__match-label">Match</span>
+        <div className="condition-editor__match-toggle">
+          <button
+            onClick={() => setOperator('AND')}
+            className={`condition-editor__match-btn ${group.operator === 'AND' ? 'condition-editor__match-btn--active' : ''}`.trim()}
+          >
+            ALL
+          </button>
+          <button
+            onClick={() => setOperator('OR')}
+            className={`condition-editor__match-btn ${group.operator === 'OR' ? 'condition-editor__match-btn--active' : ''}`.trim()}
+          >
+            ANY
+          </button>
+        </div>
       </div>
 
-      {flagChecks.length === 0 && group.checks.length === 0 && (
-        <div className="csp__no-checks">No conditions — this set always applies.</div>
+      {group.checks.length === 0 && (
+        <div className="condition-editor__empty">No conditions — this set always applies.</div>
       )}
 
-      {group.checks.map((check, idx) => (
-        <div key={idx} className="csp__check-row">
-          <select
-            className="csp__flag-select"
-            value={check.flagId ?? ''}
-            onChange={e => updateCheck(idx, { flagId: e.target.value })}
-          >
-            {availableFlags.length === 0 && <option value="">— no flags defined —</option>}
-            {availableFlags.map(f => (
-              <option key={f.id} value={f.id}>{f.name}</option>
-            ))}
-          </select>
-          <select
-            className="csp__type-select"
-            value={check.type}
-            onChange={e => updateCheck(idx, { type: e.target.value as RuleCondition['type'] })}
-          >
-            <option value="flag_active">is active</option>
-            <option value="flag_inactive">is inactive</option>
-          </select>
-          <button className="csp__check-delete" onClick={() => removeCheck(idx)}>×</button>
-        </div>
-      ))}
+      <div className="condition-editor__checks">
+        {group.checks.map((check, idx) => (
+          <div key={idx} className="condition-editor__check-row">
+            <Select value={check.flagId ?? ''} onValueChange={(v) => updateCheck(idx, { flagId: v })}>
+              <SelectTrigger>
+                <SelectValue placeholder="— no flags —" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableFlags.map(f => (
+                  <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={check.type} onValueChange={(v) => updateCheck(idx, { type: v as RuleCondition['type'] })}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="flag_active">is active</SelectItem>
+                <SelectItem value="flag_inactive">is inactive</SelectItem>
+              </SelectContent>
+            </Select>
+            <button onClick={() => removeCheck(idx)} className="condition-editor__check-remove-btn">
+              <X size={12} />
+            </button>
+          </div>
+        ))}
+      </div>
 
-      <button className="csp__add-check" onClick={addCheck}>+ Add condition</button>
+      <button
+        onClick={addCheck}
+        className="condition-editor__add-check-btn"
+      >
+        + Add check
+      </button>
     </div>
   );
 }

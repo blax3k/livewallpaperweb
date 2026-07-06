@@ -2,6 +2,8 @@ import React from 'react';
 import { SpriteListPanel, SpriteEntry } from './SpriteListPanel';
 import { FocusControl } from '../FocusControl';
 import { SpritePanelControl } from './SpritePanelControl';
+import { SectionHeading } from './SectionHeading';
+import './SceneEditorPanel.scss';
 
 export type { SceneOption } from '../SceneSelectorControl';
 
@@ -42,7 +44,7 @@ interface SceneEditorPanelProps {
   onEditTexture: (index: number) => void;
   onEditConditions?: (index: number) => void;
   // Name of the condition set currently being previewed for this sprite, if any.
-  // Condition sets themselves live in the AllConditionsPanel on the right.
+  // Condition sets themselves live in the sprite conditions panel on the right.
   activeConditionLabel?: string | null;
   onSpritePositionChange: (x: number, y: number) => void;
   onSpritePositionChangeStart?: (x: number, y: number) => void;
@@ -60,8 +62,6 @@ export function SceneEditorPanel({
   orientation,
   xFocus,
   yFocus,
-  startTime,
-  endTime,
   spriteEntries,
   projectId,
   selectedSprite,
@@ -71,8 +71,6 @@ export function SceneEditorPanel({
   onYFocusChange,
   onYFocusChangeStart,
   onYFocusCommit,
-  onStartTimeChange,
-  onEndTimeChange,
   onSpriteToggle,
   onSpriteSelect,
   onAddSprite,
@@ -94,13 +92,15 @@ export function SceneEditorPanel({
 }: SceneEditorPanelProps) {
 
   return (
-    <div className="controls">
-      <h2>Scene</h2>
-      {orientation === 'portrait'
-        ? <FocusControl axis="X" disabled={!sceneLoaded} value={xFocus} onChange={onXFocusChange} onChangeStart={onXFocusChangeStart} onChangeCommit={onXFocusCommit} />
-        : <FocusControl axis="Y" disabled={!sceneLoaded} value={yFocus} onChange={onYFocusChange} onChangeStart={onYFocusChangeStart} onChangeCommit={onYFocusCommit} />}
-      <h2>Sprites</h2>
-      <div className="control-group">
+    <div className="scene-editor-panel">
+      <div className="scene-editor-panel__section">
+        <SectionHeading>Scene</SectionHeading>
+        {orientation === 'portrait'
+          ? <FocusControl axis="X" disabled={!sceneLoaded} value={xFocus} onChange={onXFocusChange} onChangeStart={onXFocusChangeStart} onChangeCommit={onXFocusCommit} />
+          : <FocusControl axis="Y" disabled={!sceneLoaded} value={yFocus} onChange={onYFocusChange} onChangeStart={onYFocusChangeStart} onChangeCommit={onYFocusCommit} />}
+      </div>
+
+      <div className="scene-editor-panel__section">
         <SpriteListPanel
           entries={spriteEntries}
           projectId={projectId}
@@ -113,18 +113,18 @@ export function SceneEditorPanel({
           onRename={onRenameSprite}
           onEditTexture={onEditTexture}
           onEditConditions={onEditConditions}
-
         />
       </div>
-      <h2 style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        Sprite
-        {activeConditionLabel && selectedSprite && (
-          <span style={{ fontSize: 10, fontWeight: 400, background: '#143050', color: '#4a9eff', border: '1px solid #224', borderRadius: 3, padding: '1px 5px' }}>
-            {activeConditionLabel}
-          </span>
-        )}
-      </h2>
-      <div className="control-group">
+
+      <div className="scene-editor-panel__section">
+        <SectionHeading>
+          {selectedSprite ? selectedSprite.name : 'No sprite selected'}
+          {activeConditionLabel && selectedSprite && (
+            <span className="scene-editor-panel__condition-badge">
+              {activeConditionLabel}
+            </span>
+          )}
+        </SectionHeading>
         <SpritePanelControl
           spriteName={selectedSprite?.name ?? ''}
           x={selectedSprite?.x ?? 0}
@@ -147,5 +147,3 @@ export function SceneEditorPanel({
     </div>
   );
 }
-
-

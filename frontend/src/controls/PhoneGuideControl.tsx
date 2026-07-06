@@ -1,4 +1,5 @@
 import React from 'react';
+import { Smartphone } from 'lucide-react';
 import './PhoneGuideControl.scss';
 
 interface PhoneGuideControlProps {
@@ -9,15 +10,15 @@ interface PhoneGuideControlProps {
 
 export function PhoneGuideControl({ checked, disabled, onChange }: PhoneGuideControlProps) {
   return (
-    <label className="guide-label">
-      <input
-        type="checkbox"
-        className="guide-checkbox"
-        checked={checked}
-        disabled={disabled}
-        onChange={(e) => onChange(e.target.checked)}
-      />
-      <span>Phone Guide</span>
-    </label>
+    <button
+      type="button"
+      disabled={disabled}
+      title={checked ? 'Phone guide on' : 'Phone guide off'}
+      onClick={() => onChange(!checked)}
+      className={`guide-toggle ${checked ? 'guide-toggle--on' : ''}`.trim()}
+    >
+      <Smartphone size={13} />
+      Guide
+    </button>
   );
 }

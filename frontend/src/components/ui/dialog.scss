@@ -1,0 +1,59 @@
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  background: rgba(0, 0, 0, 0.55);
+
+  &[data-state='open'] {
+    animation: lw-fade-in var(--duration-fade) ease;
+  }
+}
+
+.dialog-content {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: var(--z-overlay);
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: 600px;
+  width: 560px;
+  border-radius: var(--size-14);
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-panel);
+  box-shadow: var(--shadow-modal);
+
+  &[data-state='open'] {
+    animation: lw-modal-in var(--duration-modal) ease;
+  }
+
+  // Lets a specific dialog's content dictate its own size (e.g. the
+  // "All conditions" modal) instead of using this component's defaults.
+  &--fit {
+    width: auto;
+    max-width: none;
+    max-height: none;
+    padding: 0;
+  }
+}
+
+.dialog-close-button {
+  position: absolute;
+  right: var(--size-12);
+  top: var(--size-12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-26);
+  height: var(--size-26);
+  border-radius: var(--size-6);
+  color: var(--color-fg-subtle);
+  transition: background-color var(--duration-fast), color var(--duration-fast);
+
+  &:hover {
+    background: var(--color-elevated);
+    color: var(--color-fg);
+  }
+}
