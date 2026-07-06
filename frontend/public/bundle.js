@@ -79611,7 +79611,7 @@ ${e2}`);
     } while (existingIds.has(id));
     return id;
   }
-  function FlagRow({ flag, isEditing, isDuplicate, onEdit, onAccept, onCancel, onChange, onDefaultActiveChange, onDelete }) {
+  function FlagRow({ flag, isEditing, isDuplicate, onEdit, onAccept, onCancel, onChange, onDefaultActiveChange, onGroupChange, onGroupCommit, onDelete }) {
     return /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("tr", { className: `flags-table__row${isDuplicate ? " flags-table__row--error" : ""}`, children: [
       /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
         "div",
@@ -79643,6 +79643,16 @@ ${e2}`);
         }
       ) }),
       /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "flags-table__key", children: flag.id }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+        "input",
+        {
+          className: "flags-table__input",
+          value: flag.group ?? "",
+          onChange: (e2) => onGroupChange(e2.target.value),
+          onBlur: onGroupCommit,
+          placeholder: "(ungrouped)"
+        }
+      ) }),
       /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("td", { className: "flags-table__center", children: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
         "input",
         {
@@ -79708,6 +79718,12 @@ ${e2}`);
       const newFlags = flags.map((flag, i2) => i2 === index2 ? { ...flag, defaultActive } : flag);
       setFlags(newFlags);
       save(newFlags);
+    }, [flags, save]);
+    const handleGroupChange = (0, import_react28.useCallback)((index2, group) => {
+      setFlags((prev) => prev.map((flag, i2) => i2 === index2 ? { ...flag, group } : flag));
+    }, []);
+    const handleGroupCommit = (0, import_react28.useCallback)(() => {
+      save(flags);
     }, [flags, save]);
     const startEditing = (0, import_react28.useCallback)((index2) => {
       if (editingState !== null) {
@@ -79790,6 +79806,7 @@ ${e2}`);
               /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("tr", { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("th", { children: "Name" }),
                 /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("th", { children: "Key" }),
+                /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("th", { children: "Group" }),
                 /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("th", { className: "flags-table__center", children: "Default Active" }),
                 /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("th", {})
               ] }) }),
@@ -79804,6 +79821,8 @@ ${e2}`);
                   onCancel: cancelEditing,
                   onChange: (updated) => updateFlag(i2, updated),
                   onDefaultActiveChange: (checked) => handleDefaultActiveChange(i2, checked),
+                  onGroupChange: (group) => handleGroupChange(i2, group),
+                  onGroupCommit: handleGroupCommit,
                   onDelete: () => deleteFlag(i2)
                 },
                 i2
@@ -80209,6 +80228,15 @@ ${e2}`);
       });
     }, [projectId]);
     const flagsById = (0, import_react30.useMemo)(() => new Map(flags.map((f2) => [f2.id, f2])), [flags]);
+    const flagGroups = (0, import_react30.useMemo)(() => {
+      const groups = /* @__PURE__ */ new Map();
+      for (const flag of flags) {
+        const key = flag.group?.trim() || "Ungrouped";
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(flag);
+      }
+      return Array.from(groups.entries());
+    }, [flags]);
     return /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(PageLayout, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(PageHeader, { title: `${projectName} \u2014 Simulator`, left: /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(Button, { onClick: onBack, children: "\u2190" }) }),
       /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(PageBody, { children: [
@@ -80318,13 +80346,11 @@ ${e2}`);
                   "Flags \xB7 ",
                   flags.length
                 ] }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(CollapsibleGroup, { title: "FLAGS", count: flags.length, children: [
-                  flags.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("p", { className: "simulator-empty", children: "No flags defined." }),
-                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "simulator-chip-row", children: flags.map((flag) => /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("span", { className: `simulator-chip ${flag.defaultActive ? "simulator-chip--on" : "simulator-chip--off"}`, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-chip__dot" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { children: flag.name || flag.id })
-                  ] }, flag.id)) })
-                ] }),
+                flags.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("p", { className: "simulator-empty", children: "No flags defined." }),
+                flagGroups.map(([groupName, groupFlags]) => /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(CollapsibleGroup, { title: groupName, count: groupFlags.length, children: /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "simulator-chip-row", children: groupFlags.map((flag) => /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("span", { className: `simulator-chip ${flag.defaultActive ? "simulator-chip--on" : "simulator-chip--off"}`, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-chip__dot" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { children: flag.name || flag.id })
+                ] }, flag.id)) }) }, groupName)),
                 /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-flag-info", children: [
                   /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "simulator-flag-info__selected", children: "selected: forest_regular" }),
                   /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "simulator-flag-info__link", children: "drives 3 sprites \xB7 2 scenes \u25B8" })

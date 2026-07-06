@@ -28,10 +28,12 @@ interface FlagRowProps {
   onCancel: () => void;
   onChange: (updated: FlagDefinition) => void;
   onDefaultActiveChange: (defaultActive: boolean) => void;
+  onGroupChange: (group: string) => void;
+  onGroupCommit: () => void;
   onDelete: () => void;
 }
 
-function FlagRow({ flag, isEditing, isDuplicate, onEdit, onAccept, onCancel, onChange, onDefaultActiveChange, onDelete }: FlagRowProps) {
+function FlagRow({ flag, isEditing, isDuplicate, onEdit, onAccept, onCancel, onChange, onDefaultActiveChange, onGroupChange, onGroupCommit, onDelete }: FlagRowProps) {
   return (
     <tr className={`flags-table__row${isDuplicate ? ' flags-table__row--error' : ''}`}>
       <td>
@@ -64,6 +66,15 @@ function FlagRow({ flag, isEditing, isDuplicate, onEdit, onAccept, onCancel, onC
       </td>
       <td>
         <span className="flags-table__key">{flag.id}</span>
+      </td>
+      <td>
+        <input
+          className="flags-table__input"
+          value={flag.group ?? ''}
+          onChange={e => onGroupChange(e.target.value)}
+          onBlur={onGroupCommit}
+          placeholder="(ungrouped)"
+        />
       </td>
       <td className="flags-table__center">
         <input
@@ -140,6 +151,14 @@ export function FlagsPage({ projectId, projectName, onBack }: FlagsPageProps) {
     const newFlags = flags.map((flag, i) => i === index ? { ...flag, defaultActive } : flag);
     setFlags(newFlags);
     save(newFlags);
+  }, [flags, save]);
+
+  const handleGroupChange = useCallback((index: number, group: string) => {
+    setFlags(prev => prev.map((flag, i) => i === index ? { ...flag, group } : flag));
+  }, []);
+
+  const handleGroupCommit = useCallback(() => {
+    save(flags);
   }, [flags, save]);
 
   const startEditing = useCallback((index: number) => {
@@ -239,6 +258,7 @@ export function FlagsPage({ projectId, projectName, onBack }: FlagsPageProps) {
                   <tr>
                     <th>Name</th>
                     <th>Key</th>
+                    <th>Group</th>
                     <th className="flags-table__center">Default Active</th>
                     <th></th>
                   </tr>
@@ -255,6 +275,8 @@ export function FlagsPage({ projectId, projectName, onBack }: FlagsPageProps) {
                       onCancel={cancelEditing}
                       onChange={updated => updateFlag(i, updated)}
                       onDefaultActiveChange={checked => handleDefaultActiveChange(i, checked)}
+                      onGroupChange={group => handleGroupChange(i, group)}
+                      onGroupCommit={handleGroupCommit}
                       onDelete={() => deleteFlag(i)}
                     />
                   ))}

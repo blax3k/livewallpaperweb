@@ -78,6 +78,16 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
 
   const flagsById = useMemo(() => new Map(flags.map(f => [f.id, f])), [flags]);
 
+  const flagGroups = useMemo(() => {
+    const groups = new Map<string, FlagDefinition[]>();
+    for (const flag of flags) {
+      const key = flag.group?.trim() || 'Ungrouped';
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key)!.push(flag);
+    }
+    return Array.from(groups.entries());
+  }, [flags]);
+
   return (
     <PageLayout>
       <PageHeader title={`${projectName} — Simulator`} left={<Button onClick={onBack}>←</Button>} />
@@ -174,17 +184,19 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
                   <div className="simulator-panel__header">
                     <span>Flags · {flags.length}</span>
                   </div>
-                  <CollapsibleGroup title="FLAGS" count={flags.length}>
-                    {flags.length === 0 && <p className="simulator-empty">No flags defined.</p>}
-                    <div className="simulator-chip-row">
-                      {flags.map(flag => (
-                        <span key={flag.id} className={`simulator-chip ${flag.defaultActive ? 'simulator-chip--on' : 'simulator-chip--off'}`}>
-                          <span className="simulator-chip__dot" />
-                          <span>{flag.name || flag.id}</span>
-                        </span>
-                      ))}
-                    </div>
-                  </CollapsibleGroup>
+                  {flags.length === 0 && <p className="simulator-empty">No flags defined.</p>}
+                  {flagGroups.map(([groupName, groupFlags]) => (
+                    <CollapsibleGroup key={groupName} title={groupName} count={groupFlags.length}>
+                      <div className="simulator-chip-row">
+                        {groupFlags.map(flag => (
+                          <span key={flag.id} className={`simulator-chip ${flag.defaultActive ? 'simulator-chip--on' : 'simulator-chip--off'}`}>
+                            <span className="simulator-chip__dot" />
+                            <span>{flag.name || flag.id}</span>
+                          </span>
+                        ))}
+                      </div>
+                    </CollapsibleGroup>
+                  ))}
                   <div className="simulator-flag-info">
                     <div className="simulator-flag-info__selected">selected: forest_regular</div>
                     <div className="simulator-flag-info__link">drives 3 sprites · 2 scenes ▸</div>

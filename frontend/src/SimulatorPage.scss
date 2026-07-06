@@ -393,6 +393,8 @@
     height: var(--size-18);
     color: var(--color-fg-subtle);
     font: 600 var(--text-10) var(--font-sans);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     cursor: pointer;
   }
 
