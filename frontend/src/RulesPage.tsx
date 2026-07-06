@@ -249,7 +249,7 @@ function RuleEditModal({ rule: initial, flags, onSave, onCancel }: RuleEditModal
           <select
             value={conditions.operator}
             onChange={e => setConditions({ ...conditions, operator: e.target.value as 'AND' | 'OR' })}
-            style={{ marginLeft: '0.5rem', fontSize: '0.85rem' }}
+            style={{ marginLeft: 'var(--size-8)', fontSize: 'var(--text-13)' }}
           >
             <option value="AND">ALL must pass (AND)</option>
             <option value="OR">ANY must pass (OR)</option>
@@ -265,7 +265,7 @@ function RuleEditModal({ rule: initial, flags, onSave, onCancel }: RuleEditModal
             onDelete={() => deleteCondition(i)}
           />
         ))}
-        <Button onClick={addCondition} style={{ marginBottom: '1rem' }}>+ Condition</Button>
+        <Button onClick={addCondition} style={{ marginBottom: 'var(--size-16)' }}>+ Condition</Button>
 
         <h3 className="section-title">Actions</h3>
         {rule.actions.map((a, i) => (
@@ -277,7 +277,7 @@ function RuleEditModal({ rule: initial, flags, onSave, onCancel }: RuleEditModal
             onDelete={() => deleteAction(i)}
           />
         ))}
-        <Button onClick={addAction} style={{ marginBottom: '1rem' }}>+ Action</Button>
+        <Button onClick={addAction} style={{ marginBottom: 'var(--size-16)' }}>+ Action</Button>
 
         <div className="modal-footer">
           <Button onClick={onCancel}>Cancel</Button>
@@ -371,16 +371,16 @@ export function RulesPage({ projectId, projectName, onBack }: RulesPageProps) {
         <Button onClick={openNew}>+ Rule</Button>
       </PageHeader>
       <PageBody>
-        {loading && <p style={{ padding: '1rem' }}>Loading…</p>}
-        {error && <p style={{ padding: '1rem', color: 'red' }}>{error}</p>}
+        {loading && <p style={{ padding: 'var(--size-16)' }}>Loading…</p>}
+        {error && <p style={{ padding: 'var(--size-16)', color: 'var(--color-danger)' }}>{error}</p>}
         {!loading && (
           <>
-            <p style={{ padding: '0.5rem 1rem', color: '#aaa', fontSize: '0.85rem' }}>
+            <p style={{ padding: 'var(--size-8) var(--size-16)', color: 'var(--color-fg-subtle)', fontSize: 'var(--text-13)' }}>
               Rules are evaluated every 5 minutes when the wallpaper is visible. When a rule&apos;s conditions
               pass, its actions fire and flags are updated. One-shot rules fire at most once.
             </p>
             {rules.length === 0 ? (
-              <p style={{ padding: '1rem', color: '#888' }}>No rules defined. Click &ldquo;+ Rule&rdquo; to create one.</p>
+              <p style={{ padding: 'var(--size-16)', color: 'var(--color-fg-faint)' }}>No rules defined. Click &ldquo;+ Rule&rdquo; to create one.</p>
             ) : (
               <table className="rules-table">
                 <thead>
@@ -396,7 +396,7 @@ export function RulesPage({ projectId, projectName, onBack }: RulesPageProps) {
                 <tbody>
                   {rules.map((rule, i) => (
                     <tr key={i} className="rules-table__row">
-                      <td>{rule.name || <span style={{ color: '#666' }}>(unnamed)</span>}</td>
+                      <td>{rule.name || <span style={{ color: 'var(--color-fg-faint)' }}>(unnamed)</span>}</td>
                       <td><code>{rule.id || '—'}</code></td>
                       <td>{rule.conditions?.checks?.length ?? 0} check(s)</td>
                       <td>{rule.actions?.length ?? 0} action(s)</td>

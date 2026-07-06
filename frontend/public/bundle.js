@@ -79724,16 +79724,16 @@ ${e2}`);
       ),
       /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(PageLayout, { children: [
         /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(PageHeader, { title: `${projectName} \u2014 Flags`, left: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(Button, { onClick: onBack, children: "\u2190" }), children: [
-          saving && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { style: { color: "#aaa", fontSize: "0.85rem" }, children: "Saving\u2026" }),
+          saving && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { style: { color: "var(--color-fg-subtle)", fontSize: "var(--text-13)" }, children: "Saving\u2026" }),
           /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(Button, { onClick: addFlag, children: "+ Flag" })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(PageBody, { children: [
-          loading && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("p", { style: { padding: "1rem" }, children: "Loading\u2026" }),
-          error && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("p", { style: { padding: "1rem", color: "red" }, children: error }),
+          loading && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("p", { style: { padding: "var(--size-16)" }, children: "Loading\u2026" }),
+          error && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("p", { style: { padding: "var(--size-16)", color: "var(--color-danger)" }, children: error }),
           !loading && /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(import_jsx_runtime48.Fragment, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("p", { style: { padding: "0.5rem 1rem", color: "#aaa", fontSize: "0.85rem" }, children: "Flags are the binary on/off states that drive scene selection and sprite visibility." }),
-            hasDuplicates && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("p", { style: { padding: "0.5rem 1rem", color: "#e05555", fontSize: "0.85rem" }, children: "Duplicate flag names detected \u2014 each flag must have a unique name." }),
-            flags.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("p", { style: { padding: "1rem", color: "#888" }, children: "No flags defined yet. Click \u201C+ Flag\u201D to add one." }) : /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("table", { className: "flags-table", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("p", { style: { padding: "var(--size-8) var(--size-16)", color: "var(--color-fg-subtle)", fontSize: "var(--text-13)" }, children: "Flags are the binary on/off states that drive scene selection and sprite visibility." }),
+            hasDuplicates && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("p", { style: { padding: "var(--size-8) var(--size-16)", color: "var(--color-danger)", fontSize: "var(--text-13)" }, children: "Duplicate flag names detected \u2014 each flag must have a unique name." }),
+            flags.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("p", { style: { padding: "var(--size-16)", color: "var(--color-fg-faint)" }, children: "No flags defined yet. Click \u201C+ Flag\u201D to add one." }) : /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("table", { className: "flags-table", children: [
               /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("tr", { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("th", { children: "Name" }),
                 /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("th", { children: "Key" }),
@@ -79756,7 +79756,7 @@ ${e2}`);
                 i2
               )) })
             ] }),
-            flags.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("div", { style: { padding: "0.75rem 1rem" }, children: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(Button, { onClick: addFlag, children: "+ Flag" }) })
+            flags.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("div", { style: { padding: "var(--size-12) var(--size-16)" }, children: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(Button, { onClick: addFlag, children: "+ Flag" }) })
           ] })
         ] })
       ] })
@@ -79935,7 +79935,7 @@ ${e2}`);
           {
             value: conditions.operator,
             onChange: (e2) => setConditions({ ...conditions, operator: e2.target.value }),
-            style: { marginLeft: "0.5rem", fontSize: "0.85rem" },
+            style: { marginLeft: "var(--size-8)", fontSize: "var(--text-13)" },
             children: [
               /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("option", { value: "AND", children: "ALL must pass (AND)" }),
               /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("option", { value: "OR", children: "ANY must pass (OR)" })
@@ -79954,7 +79954,7 @@ ${e2}`);
         },
         i2
       )),
-      /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(Button, { onClick: addCondition, style: { marginBottom: "1rem" }, children: "+ Condition" }),
+      /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(Button, { onClick: addCondition, style: { marginBottom: "var(--size-16)" }, children: "+ Condition" }),
       /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("h3", { className: "section-title", children: "Actions" }),
       rule.actions.map((a2, i2) => /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(
         ActionEditor,
@@ -79966,7 +79966,7 @@ ${e2}`);
         },
         i2
       )),
-      /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(Button, { onClick: addAction, style: { marginBottom: "1rem" }, children: "+ Action" }),
+      /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(Button, { onClick: addAction, style: { marginBottom: "var(--size-16)" }, children: "+ Action" }),
       /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "modal-footer", children: [
         /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
         /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(Button, { variant: "primary", onClick: () => onSave(rule), children: "Save Rule" })
@@ -80039,11 +80039,11 @@ ${e2}`);
         /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(Button, { onClick: openNew, children: "+ Rule" })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(PageBody, { children: [
-        loading && /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("p", { style: { padding: "1rem" }, children: "Loading\u2026" }),
-        error && /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("p", { style: { padding: "1rem", color: "red" }, children: error }),
+        loading && /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("p", { style: { padding: "var(--size-16)" }, children: "Loading\u2026" }),
+        error && /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("p", { style: { padding: "var(--size-16)", color: "var(--color-danger)" }, children: error }),
         !loading && /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(import_jsx_runtime49.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("p", { style: { padding: "0.5rem 1rem", color: "#aaa", fontSize: "0.85rem" }, children: "Rules are evaluated every 5 minutes when the wallpaper is visible. When a rule's conditions pass, its actions fire and flags are updated. One-shot rules fire at most once." }),
-          rules.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("p", { style: { padding: "1rem", color: "#888" }, children: "No rules defined. Click \u201C+ Rule\u201D to create one." }) : /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("table", { className: "rules-table", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("p", { style: { padding: "var(--size-8) var(--size-16)", color: "var(--color-fg-subtle)", fontSize: "var(--text-13)" }, children: "Rules are evaluated every 5 minutes when the wallpaper is visible. When a rule's conditions pass, its actions fire and flags are updated. One-shot rules fire at most once." }),
+          rules.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("p", { style: { padding: "var(--size-16)", color: "var(--color-fg-faint)" }, children: "No rules defined. Click \u201C+ Rule\u201D to create one." }) : /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("table", { className: "rules-table", children: [
             /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("tr", { children: [
               /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("th", { children: "Name" }),
               /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("th", { children: "ID" }),
@@ -80053,7 +80053,7 @@ ${e2}`);
               /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("th", {})
             ] }) }),
             /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("tbody", { children: rules.map((rule, i2) => /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("tr", { className: "rules-table__row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("td", { children: rule.name || /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { style: { color: "#666" }, children: "(unnamed)" }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("td", { children: rule.name || /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { style: { color: "var(--color-fg-faint)" }, children: "(unnamed)" }) }),
               /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("code", { children: rule.id || "\u2014" }) }),
               /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("td", { children: [
                 rule.conditions?.checks?.length ?? 0,

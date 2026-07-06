@@ -215,24 +215,24 @@ export function FlagsPage({ projectId, projectName, onBack }: FlagsPageProps) {
     )}
     <PageLayout>
       <PageHeader title={`${projectName} — Flags`} left={<Button onClick={onBack}>←</Button>}>
-        {saving && <span style={{ color: '#aaa', fontSize: '0.85rem' }}>Saving…</span>}
+        {saving && <span style={{ color: 'var(--color-fg-subtle)', fontSize: 'var(--text-13)' }}>Saving…</span>}
         <Button onClick={addFlag}>+ Flag</Button>
       </PageHeader>
       <PageBody>
-        {loading && <p style={{ padding: '1rem' }}>Loading…</p>}
-        {error && <p style={{ padding: '1rem', color: 'red' }}>{error}</p>}
+        {loading && <p style={{ padding: 'var(--size-16)' }}>Loading…</p>}
+        {error && <p style={{ padding: 'var(--size-16)', color: 'var(--color-danger)' }}>{error}</p>}
         {!loading && (
           <>
-            <p style={{ padding: '0.5rem 1rem', color: '#aaa', fontSize: '0.85rem' }}>
+            <p style={{ padding: 'var(--size-8) var(--size-16)', color: 'var(--color-fg-subtle)', fontSize: 'var(--text-13)' }}>
               Flags are the binary on/off states that drive scene selection and sprite visibility.
             </p>
             {hasDuplicates && (
-              <p style={{ padding: '0.5rem 1rem', color: '#e05555', fontSize: '0.85rem' }}>
+              <p style={{ padding: 'var(--size-8) var(--size-16)', color: 'var(--color-danger)', fontSize: 'var(--text-13)' }}>
                 Duplicate flag names detected — each flag must have a unique name.
               </p>
             )}
             {flags.length === 0 ? (
-              <p style={{ padding: '1rem', color: '#888' }}>No flags defined yet. Click &ldquo;+ Flag&rdquo; to add one.</p>
+              <p style={{ padding: 'var(--size-16)', color: 'var(--color-fg-faint)' }}>No flags defined yet. Click &ldquo;+ Flag&rdquo; to add one.</p>
             ) : (
               <table className="flags-table">
                 <thead>
@@ -262,7 +262,7 @@ export function FlagsPage({ projectId, projectName, onBack }: FlagsPageProps) {
               </table>
             )}
             {flags.length > 0 && (
-              <div style={{ padding: '0.75rem 1rem' }}>
+              <div style={{ padding: 'var(--size-12) var(--size-16)' }}>
                 <Button onClick={addFlag}>+ Flag</Button>
               </div>
             )}

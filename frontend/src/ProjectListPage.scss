@@ -1,18 +1,18 @@
 .project-list-empty {
-  color: #666;
-  font-size: 13px;
+  color: var(--color-fg-faint);
+  font-size: var(--text-13);
   text-align: center;
-  padding: 60px 0;
+  padding: var(--size-60) 0;
 }
 
 .project-list-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 16px;
+  gap: var(--size-16);
 }
 
 .project-list-grid--archived {
-  margin-top: 12px;
+  margin-top: var(--size-12);
 }
 
 .project-card {
@@ -20,17 +20,17 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 28px 16px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: #1a1a1a;
+  gap: var(--size-12);
+  padding: var(--size-28) var(--size-16);
+  border-radius: var(--size-8);
+  border: 1px solid var(--color-border);
+  background: var(--color-elevated);
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
+  transition: border-color var(--duration-fast), background-color var(--duration-fast);
 
   &:hover {
-    border-color: rgba(99, 179, 237, 0.5);
-    background: #212121;
+    border-color: var(--color-accent-border);
+    background: var(--color-hover);
   }
 }
 
@@ -39,7 +39,7 @@
 }
 
 .project-card--archived .project-card-name {
-  color: #d7d7d7;
+  color: var(--color-fg-subtle);
 }
 
 .project-card-icon {
@@ -53,14 +53,14 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  border-radius: 6px;
+  border-radius: var(--size-6);
   overflow: hidden;
-  background: #111;
+  background: var(--color-panel-inset);
   flex-shrink: 0;
 }
 
 .project-card-collage-cell {
-  background: #111;
+  background: var(--color-panel-inset);
   position: relative;
   overflow: hidden;
 
@@ -74,15 +74,15 @@
 }
 
 .project-card-name {
-  font-size: 13px;
-  color: #ccc;
+  font-size: var(--text-13);
+  color: var(--color-fg-default);
   text-align: center;
   word-break: break-word;
 }
 
 .project-card-size {
-  font-size: 11px;
-  color: #555;
+  font-size: var(--text-11);
+  color: var(--color-fg-faintest);
   text-align: center;
   margin-top: -4px;
 }
@@ -94,12 +94,12 @@
 }
 
 .project-card-action {
-  font-size: 12px;
-  padding: 4px 10px;
+  font-size: var(--text-12);
+  padding: var(--size-4) var(--size-10);
 }
 
 .project-archive-section {
-  margin-top: 18px;
+  margin-top: var(--size-18);
 }
 
 .project-archive-toggle {
@@ -107,12 +107,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--size-8);
 }
 
 .project-archive-toggle-icon {
   display: inline-block;
-  transition: transform 0.15s ease;
+  transition: transform var(--duration-fast) ease;
 }
 
 .project-archive-toggle-icon.is-open {

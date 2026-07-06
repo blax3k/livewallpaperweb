@@ -1,22 +1,22 @@
 .project-size-badge {
-  font-size: 11px;
+  font-size: var(--text-11);
   font-weight: normal;
-  color: #555;
-  margin-left: 8px;
+  color: var(--color-fg-faintest);
+  margin-left: var(--size-8);
   vertical-align: middle;
 }
 
 .scene-list-empty {
-  color: #666;
-  font-size: 13px;
+  color: var(--color-fg-faint);
+  font-size: var(--text-13);
   text-align: center;
-  padding: 60px 0;
+  padding: var(--size-60) 0;
 }
 
 .scene-list-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 16px;
+  gap: var(--size-16);
 }
 
 .scene-card-wrapper {
@@ -26,16 +26,16 @@
 .scene-flags-btn,
 .scene-delete-btn {
   position: absolute;
-  top: 6px;
+  top: var(--size-6);
   background: rgba(0, 0, 0, 0.55);
   border: none;
-  border-radius: 4px;
-  padding: 2px 5px;
-  font-size: 13px;
+  border-radius: var(--size-4);
+  padding: var(--size-2) var(--size-5);
+  font-size: var(--text-13);
   cursor: pointer;
   line-height: 1;
   opacity: 0;
-  transition: opacity 0.15s;
+  transition: opacity var(--duration-fast);
 
   .scene-card-wrapper:hover & {
     opacity: 1;
@@ -43,22 +43,24 @@
 }
 
 .scene-flags-btn {
-  right: 6px;
+  right: var(--size-6);
 }
 
 .scene-delete-btn {
+  // 34px = flags button width + its right offset + a gap — clears the flags
+  // button rather than a shared scale value.
   right: 34px;
-  color: #ff6b6b;
+  color: var(--color-danger);
 
   &:hover {
-    background: rgba(180, 40, 40, 0.75);
-    color: #fff;
+    background: rgba(224, 108, 117, 0.75);
+    color: var(--color-fg);
   }
 }
 
 .modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
-  margin-top: 16px;
+  gap: var(--size-8);
+  margin-top: var(--size-16);
 }

@@ -65,6 +65,9 @@
   --text-12: 12px;   // body copy, list rows — the most common size
   --text-12-5: 12.5px; // scene name in the top bar
   --text-13: 13px;   // modal titles
+  --text-14: 14px;   // table body copy on the legacy list/rules/flags pages
+  --text-15: 15px;   // page header titles
+  --text-18: 18px;   // login page title
 
   // ── Size scale ──────────────────────────────────────────────────────────
   // One shared ramp for anything measured in whole pixels: border-radius,
@@ -92,7 +95,10 @@
   --size-28: 28px;
   --size-30: 30px;
   --size-32: 32px;
+  --size-36: 36px;
+  --size-40: 40px;
   --size-44: 44px;
+  --size-60: 60px;
 
   // ── Motion ──────────────────────────────────────────────────────────────
   --duration-fast: 0.15s;   // hover/color transitions

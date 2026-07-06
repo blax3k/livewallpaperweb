@@ -3,69 +3,70 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: #0d0d0d;
+  background: var(--color-bg);
+  font-family: var(--font-sans);
 }
 
 .login-card {
-  background: #111;
-  border: 1px solid #333;
-  border-radius: 8px;
-  padding: 36px 40px;
+  background: var(--color-panel);
+  border: 1px solid var(--color-border);
+  border-radius: var(--size-8);
+  padding: var(--size-36) var(--size-40);
   width: 360px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--size-20);
 }
 
 .login-title {
-  font-size: 18px;
+  font-size: var(--text-18);
   font-weight: bold;
-  color: #e0e0e0;
+  color: var(--color-fg-default);
   text-align: center;
 }
 
 .login-field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--size-6);
 
   label {
-    font-size: 12px;
-    color: #aaa;
+    font-size: var(--text-12);
+    color: var(--color-fg-subtle);
   }
 
   input {
-    padding: 9px 12px;
-    background: #1a1a1a;
-    border: 1px solid #444;
-    border-radius: 4px;
-    color: #e0e0e0;
-    font-size: 14px;
+    padding: var(--size-9) var(--size-12);
+    background: var(--color-input);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--size-4);
+    color: var(--color-fg-default);
+    font-size: var(--text-14);
     outline: none;
 
     &:focus {
-      border-color: #666;
+      border-color: var(--color-fg-faint);
     }
   }
 }
 
 .login-error {
-  font-size: 13px;
-  color: #e07070;
+  font-size: var(--text-13);
+  color: var(--color-danger);
   text-align: center;
 }
 
 .login-submit {
-  padding: 10px;
-  background: #2a2a2a;
-  border: 1px solid #555;
-  border-radius: 4px;
-  color: #e0e0e0;
-  font-size: 14px;
+  padding: var(--size-10);
+  background: var(--color-accent);
+  border: 1px solid transparent;
+  border-radius: var(--size-4);
+  color: #fff;
+  font-size: var(--text-14);
   cursor: pointer;
 
   &:hover:not(:disabled) {
-    background: #333;
+    background: var(--color-accent-bright);
   }
 
   &:disabled {
@@ -75,21 +76,21 @@
 }
 
 .login-toggle {
-  font-size: 13px;
-  color: #888;
+  font-size: var(--text-13);
+  color: var(--color-fg-faint);
   text-align: center;
 
   button {
     background: none;
     border: none;
-    color: #aaa;
+    color: var(--color-fg-subtle);
     cursor: pointer;
     text-decoration: underline;
-    font-size: 13px;
+    font-size: var(--text-13);
     padding: 0;
 
     &:hover {
-      color: #ccc;
+      color: var(--color-fg-muted);
     }
   }
 }
