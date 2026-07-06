@@ -73245,316 +73245,6 @@ ${parts.join("\n")}
   // src/controls/TopBar.tsx
   var import_react14 = __toESM(require_react());
 
-  // src/controls/PhoneGuideControl.tsx
-  var import_jsx_runtime34 = __toESM(require_jsx_runtime());
-  function PhoneGuideControl({ checked, disabled, onChange }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(
-      "button",
-      {
-        type: "button",
-        disabled,
-        title: checked ? "Phone guide on" : "Phone guide off",
-        onClick: () => onChange(!checked),
-        className: `guide-toggle ${checked ? "guide-toggle--on" : ""}`.trim(),
-        children: [
-          /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Smartphone, { size: 13 }),
-          "Guide"
-        ]
-      }
-    );
-  }
-
-  // src/controls/modals/ImageLibraryModal.tsx
-  var import_react13 = __toESM(require_react());
-  var import_react_dom4 = __toESM(require_react_dom());
-  var import_jsx_runtime35 = __toESM(require_jsx_runtime());
-  function ReplaceButton({ image, uploading, onReplace }) {
-    const inputRef = (0, import_react13.useRef)(null);
-    return /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(import_jsx_runtime35.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
-        "button",
-        {
-          className: "image-item-overlay-btn image-item-overlay-btn--replace",
-          disabled: uploading,
-          onClick: () => inputRef.current?.click(),
-          title: "Replace",
-          children: "\u{1F504}"
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
-        "input",
-        {
-          ref: inputRef,
-          type: "file",
-          accept: "image/png,image/jpeg,image/gif,image/webp",
-          style: { display: "none" },
-          onChange: (e2) => onReplace(image, e2)
-        }
-      )
-    ] });
-  }
-  function ImageLibraryModal({ projectId, onClose, onImageReplaced }) {
-    const {
-      images,
-      loading,
-      uploading,
-      replacing,
-      previewImage,
-      setPreviewImage,
-      confirmDelete,
-      setConfirmDelete,
-      inUseScenes,
-      setInUseScenes,
-      fileInputRef,
-      handleReplace,
-      handleDelete,
-      handleDeleteConfirmed,
-      handleFileChange
-    } = useImageLibrary(projectId, void 0, onImageReplaced);
-    return (0, import_react_dom4.createPortal)(
-      /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(import_jsx_runtime35.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { className: "add-sprite-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "add-sprite-modal", onClick: (e2) => e2.stopPropagation(), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "add-sprite-modal-header", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("span", { children: "Image Library" }),
-            /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "add-sprite-modal-header-actions", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
-                Button,
-                {
-                  disabled: uploading,
-                  onClick: () => fileInputRef.current?.click(),
-                  children: uploading ? "Uploading\u2026" : "Upload"
-                }
-              ),
-              /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
-                "input",
-                {
-                  ref: fileInputRef,
-                  type: "file",
-                  accept: "image/png,image/jpeg,image/gif,image/webp",
-                  style: { display: "none" },
-                  onChange: handleFileChange
-                }
-              ),
-              /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("button", { className: "add-sprite-modal-close", onClick: onClose, children: "\u2715" })
-            ] })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "add-sprite-modal-body", children: [
-            loading && /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { className: "add-sprite-loading", children: "Loading\u2026" }),
-            !loading && images.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { className: "add-sprite-loading", children: "No images found. Upload one to get started." }),
-            images.map((image) => /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(
-              "div",
-              {
-                className: "add-sprite-image-item",
-                children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
-                    "img",
-                    {
-                      src: image.thumb_filename ? getImageThumbnailUrl(image.thumb_filename) : getUploadUrl(image.filename),
-                      alt: image.original_name,
-                      className: "add-sprite-thumb",
-                      loading: "lazy"
-                    }
-                  ),
-                  /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("span", { className: "add-sprite-image-name", children: image.original_name }),
-                  /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("span", { className: "image-size-label", children: formatBytes(image.size_bytes) }),
-                  /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { className: "image-item-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
-                    "button",
-                    {
-                      className: "image-item-overlay-btn image-item-overlay-btn--preview",
-                      onClick: (e2) => {
-                        e2.stopPropagation();
-                        setPreviewImage(image);
-                      },
-                      title: "Preview",
-                      children: "\u{1F441}"
-                    }
-                  ) }),
-                  /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
-                    "button",
-                    {
-                      className: "image-item-overlay-btn image-item-overlay-btn--delete",
-                      onClick: (e2) => handleDelete(image, e2),
-                      title: "Delete",
-                      children: "\u{1F5D1}"
-                    }
-                  ),
-                  /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(ReplaceButton, { image, uploading: replacing, onReplace: handleReplace })
-                ]
-              },
-              image.id
-            ))
-          ] })
-        ] }) }),
-        previewImage && /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { className: "add-sprite-preview-overlay", onClick: () => setPreviewImage(null), children: /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "add-sprite-preview-modal", onClick: (e2) => e2.stopPropagation(), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("button", { className: "add-sprite-preview-close", onClick: () => setPreviewImage(null), children: "\u2715" }),
-          /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("img", { src: getUploadUrl(previewImage.filename), alt: previewImage.original_name, className: "add-sprite-preview-img" })
-        ] }) }),
-        confirmDelete && /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { className: "add-sprite-preview-overlay", onClick: () => setConfirmDelete(null), children: /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "add-sprite-confirm-delete-dialog", onClick: (e2) => e2.stopPropagation(), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("p", { children: [
-            "Delete ",
-            /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("strong", { children: confirmDelete.original_name }),
-            "?"
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("p", { className: "add-sprite-confirm-delete-sub", children: "This cannot be undone." }),
-          /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "sprite-confirm-actions", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Button, { variant: "danger", onClick: handleDeleteConfirmed, children: "Delete" }),
-            /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Button, { onClick: () => setConfirmDelete(null), children: "Cancel" })
-          ] })
-        ] }) }),
-        inUseScenes && /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(ImageInUseModal, { scenes: inUseScenes, onClose: () => setInUseScenes(null) })
-      ] }),
-      document.body
-    );
-  }
-
-  // src/controls/TopBar.tsx
-  var import_jsx_runtime36 = __toESM(require_jsx_runtime());
-  function SegmentButton({ active, disabled, onClick, title, children }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
-      "button",
-      {
-        type: "button",
-        title,
-        disabled,
-        onClick,
-        className: `top-bar__segment-btn ${active ? "top-bar__segment-btn--active" : ""}`.trim(),
-        children
-      }
-    );
-  }
-  function TopBar({ projectId, scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, orientation, zoom, gyroMode, sceneSizeLabel, sceneSizeTitle, onBack, onSceneSelect, onPhoneGuideToggle, onOrientationToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle, onImageReplaced }) {
-    const [libraryOpen, setLibraryOpen] = (0, import_react14.useState)(false);
-    const currentScene = scenes.find((s2) => s2.value === currentSceneName);
-    const sceneLabel = currentScene?.label ?? (sceneLoaded ? currentSceneName : null) ?? "Select scene";
-    return /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("div", { className: "top-bar", children: [
-      onBack && /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
-        "button",
-        {
-          type: "button",
-          onClick: onBack,
-          title: "Back to scenes",
-          className: "top-bar__icon-btn",
-          children: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(ChevronLeft, { size: 15 })
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(DropdownMenu2, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(
-          "button",
-          {
-            type: "button",
-            disabled: scenes.length === 0,
-            className: "top-bar__scene-trigger",
-            children: [
-              sceneLabel,
-              /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(ChevronDown, { size: 13 })
-            ]
-          }
-        ) }),
-        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(DropdownMenuContent2, { align: "start", children: scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(DropdownMenuItem2, { onSelect: () => onSceneSelect(scene.value), children: scene.label }, scene.value)) })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("div", { className: "top-bar__divider" }),
-      /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(
-        "button",
-        {
-          type: "button",
-          onClick: () => setLibraryOpen(true),
-          title: "Browse and upload images",
-          className: "top-bar__images-btn",
-          children: [
-            /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Image2, { size: 13 }),
-            "Images"
-          ]
-        }
-      ),
-      libraryOpen && /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
-        ImageLibraryModal,
-        {
-          onClose: () => setLibraryOpen(false),
-          projectId,
-          onImageReplaced
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
-        PhoneGuideControl,
-        {
-          checked: phoneGuideVisible,
-          disabled: !sceneLoaded,
-          onChange: onPhoneGuideToggle
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("div", { className: "top-bar__segmented", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
-          SegmentButton,
-          {
-            active: orientation === "portrait",
-            disabled: !sceneLoaded,
-            onClick: () => {
-              if (orientation !== "portrait") onOrientationToggle();
-            },
-            children: "Portrait"
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
-          SegmentButton,
-          {
-            active: orientation === "landscape",
-            disabled: !sceneLoaded,
-            onClick: () => {
-              if (orientation !== "landscape") onOrientationToggle();
-            },
-            children: "Landscape"
-          }
-        )
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("div", { className: "top-bar__segmented", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(SegmentButton, { active: !gyroMode, disabled: !sceneLoaded, title: "Pointer", onClick: () => {
-          if (gyroMode) onGyroModeToggle();
-        }, children: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(MousePointer2, { size: 13 }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(SegmentButton, { active: gyroMode, disabled: !sceneLoaded, title: "Gyro simulation", onClick: () => {
-          if (!gyroMode) onGyroModeToggle();
-        }, children: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Radar, { size: 13 }) })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("div", { className: "top-bar__spacer", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("div", { className: "top-bar__segmented", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("button", { type: "button", onClick: onZoomOut, disabled: !sceneLoaded, title: "Zoom out", className: "top-bar__zoom-btn", children: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Minus, { size: 13 }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("span", { className: "top-bar__zoom-value", children: [
-            Math.round(zoom * 100),
-            "%"
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("button", { type: "button", onClick: onZoomIn, disabled: !sceneLoaded, title: "Zoom in", className: "top-bar__zoom-btn", children: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Plus, { size: 13 }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("button", { type: "button", onClick: onCenter, disabled: !sceneLoaded, title: "Center", className: "top-bar__zoom-btn", children: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Maximize, { size: 13 }) })
-        ] }),
-        sceneSizeLabel && /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("span", { className: "top-bar__size-label", title: sceneSizeTitle, children: sceneSizeLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(
-          "button",
-          {
-            type: "button",
-            onClick: onSave,
-            disabled: isSaving || !sceneLoaded,
-            className: "top-bar__save-btn",
-            children: [
-              /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Save, { size: 13 }),
-              isSaving ? "Saving..." : "Save"
-            ]
-          }
-        )
-      ] })
-    ] });
-  }
-
-  // src/controls/NotificationStack.tsx
-  var import_jsx_runtime37 = __toESM(require_jsx_runtime());
-  function NotificationStack({ notifications }) {
-    if (notifications.length === 0) return null;
-    return /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("div", { className: "notification-stack", children: notifications.map((n2) => /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("div", { className: "notification-card", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(CircleCheckBig, { size: 14, className: "notification-card__icon" }),
-      n2.message
-    ] }, n2.id)) });
-  }
-
-  // src/controls/modals/EditTextureModal.tsx
-  var import_react15 = __toESM(require_react());
-
   // ../node_modules/pixi.js/lib/environment-browser/browserExt.mjs
   init_Extensions();
   var browserExt = {
@@ -76232,6 +75922,454 @@ ${e2}`);
   init_eventemitter3();
   extensions.add(browserExt, webworkerExt);
 
+  // src/renderers/PhoneGuide.ts
+  var PHONE_GUIDE_ASPECT_RATIOS = ["20:9", "19.5:9", "18:9", "16:9", "7:5", "3:2", "4:3", "1:1"];
+  function aspectRatioToWidthOverHeight(aspectRatio) {
+    const [long, short] = aspectRatio.split(":").map(Number);
+    return short / long;
+  }
+  var PhoneGuide = class {
+    constructor() {
+      this.graphics = null;
+      this.xOffset = 0;
+      this.orientation = "portrait";
+      this.aspectRatio = aspectRatioToWidthOverHeight("20:9");
+      this.WORLD_HEIGHT = 10;
+      // Match world height
+      this.GUIDE_HEIGHT = 9.99;
+      // Slightly smaller than world height
+      this.LINE_WIDTH = 0.05;
+      this.LINE_COLOR = 65280;
+      // Green
+      this.LINE_ALPHA = 0.7;
+    }
+    /**
+     * Create the phone guide graphics
+     */
+    createGraphics() {
+      this.graphics = new Graphics();
+      this.draw();
+      return this.graphics;
+    }
+    /**
+     * Set the guide's orientation and redraw. In landscape the rectangle is drawn wide/short
+     * (rotated 90°) with a horizontal center line marking the vertical center (the yFocus
+     * reference), mirroring the vertical line's role marking the xFocus reference in portrait.
+     */
+    setOrientation(orientation) {
+      this.orientation = orientation;
+      this.draw();
+    }
+    /**
+     * Change the guide's aspect ratio and redraw.
+     */
+    setAspectRatio(aspectRatio) {
+      this.aspectRatio = aspectRatioToWidthOverHeight(aspectRatio);
+      this.draw();
+    }
+    draw() {
+      const g2 = this.graphics;
+      if (!g2) return;
+      g2.clear();
+      const { halfWidth, halfHeight } = this.computeDimensions();
+      const rectHalfWidth = this.orientation === "landscape" ? halfHeight : halfWidth;
+      const rectHalfHeight = this.orientation === "landscape" ? halfWidth : halfHeight;
+      g2.moveTo(-rectHalfWidth, rectHalfHeight).lineTo(rectHalfWidth, rectHalfHeight).lineTo(rectHalfWidth, -rectHalfHeight).lineTo(-rectHalfWidth, -rectHalfHeight).lineTo(-rectHalfWidth, rectHalfHeight).stroke({
+        width: this.LINE_WIDTH,
+        color: this.LINE_COLOR,
+        alpha: this.LINE_ALPHA
+      });
+      if (this.orientation === "landscape") {
+        g2.moveTo(-rectHalfWidth, 0).lineTo(rectHalfWidth, 0).stroke({
+          width: this.LINE_WIDTH,
+          color: this.LINE_COLOR,
+          alpha: this.LINE_ALPHA
+        });
+      } else {
+        g2.moveTo(0, rectHalfHeight).lineTo(0, -rectHalfHeight).stroke({
+          width: this.LINE_WIDTH,
+          color: this.LINE_COLOR,
+          alpha: this.LINE_ALPHA
+        });
+      }
+    }
+    /**
+     * Get the graphics object
+     */
+    getGraphics() {
+      return this.graphics;
+    }
+    /**
+     * Compute the guide rectangle's half-width/half-height (world units), clamped so it
+     * never exceeds the WORLD_HEIGHT square.
+     */
+    computeDimensions() {
+      const visibleWorldBound = this.WORLD_HEIGHT / 2;
+      let height = this.GUIDE_HEIGHT;
+      let width = height * this.aspectRatio;
+      const maxWidth = visibleWorldBound * 2;
+      if (width > maxWidth) {
+        width = maxWidth;
+        height = width / this.aspectRatio;
+      }
+      return { halfWidth: width / 2, halfHeight: height / 2 };
+    }
+    /**
+     * Half-width of the guide rectangle (world units). Used by SceneRenderer to derive how
+     * much xFocus/yFocus panning this reference phone shape has room for, mirroring the
+     * Android renderer's viewport slack calculation.
+     */
+    getHalfWidth() {
+      return this.computeDimensions().halfWidth;
+    }
+    /**
+     * Set the x-offset for parallax scrolling
+     */
+    setXOffset(xOffset) {
+      this.xOffset = xOffset;
+      if (this.graphics) {
+        this.graphics.x = xOffset;
+      }
+    }
+    /**
+     * Get the x-offset
+     */
+    getXOffset() {
+      return this.xOffset;
+    }
+    /**
+     * Destroy the graphics
+     */
+    destroy() {
+      if (this.graphics) {
+        this.graphics.destroy();
+        this.graphics = null;
+      }
+    }
+  };
+
+  // src/controls/PhoneGuideControl.tsx
+  var import_jsx_runtime34 = __toESM(require_jsx_runtime());
+  function PhoneGuideControl({ value, disabled, onChange }) {
+    const isOn = value !== "off";
+    return /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(DropdownMenu2, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(
+        "button",
+        {
+          type: "button",
+          disabled,
+          title: isOn ? `Phone guide: ${value}` : "Phone guide off",
+          className: `guide-toggle ${isOn ? "guide-toggle--on" : ""}`.trim(),
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Smartphone, { size: 13 }),
+            isOn ? value : "Guide"
+          ]
+        }
+      ) }),
+      /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(DropdownMenuContent2, { align: "start", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(DropdownMenuItem2, { onSelect: () => onChange("off"), children: /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("span", { className: "guide-menu-item", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Check, { size: 13, className: value === "off" ? "" : "guide-menu-item__check--hidden" }),
+          "Off"
+        ] }) }),
+        PHONE_GUIDE_ASPECT_RATIOS.map((ratio) => /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(DropdownMenuItem2, { onSelect: () => onChange(ratio), children: /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("span", { className: "guide-menu-item", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Check, { size: 13, className: value === ratio ? "" : "guide-menu-item__check--hidden" }),
+          ratio
+        ] }) }, ratio))
+      ] })
+    ] });
+  }
+
+  // src/controls/modals/ImageLibraryModal.tsx
+  var import_react13 = __toESM(require_react());
+  var import_react_dom4 = __toESM(require_react_dom());
+  var import_jsx_runtime35 = __toESM(require_jsx_runtime());
+  function ReplaceButton({ image, uploading, onReplace }) {
+    const inputRef = (0, import_react13.useRef)(null);
+    return /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(import_jsx_runtime35.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
+        "button",
+        {
+          className: "image-item-overlay-btn image-item-overlay-btn--replace",
+          disabled: uploading,
+          onClick: () => inputRef.current?.click(),
+          title: "Replace",
+          children: "\u{1F504}"
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
+        "input",
+        {
+          ref: inputRef,
+          type: "file",
+          accept: "image/png,image/jpeg,image/gif,image/webp",
+          style: { display: "none" },
+          onChange: (e2) => onReplace(image, e2)
+        }
+      )
+    ] });
+  }
+  function ImageLibraryModal({ projectId, onClose, onImageReplaced }) {
+    const {
+      images,
+      loading,
+      uploading,
+      replacing,
+      previewImage,
+      setPreviewImage,
+      confirmDelete,
+      setConfirmDelete,
+      inUseScenes,
+      setInUseScenes,
+      fileInputRef,
+      handleReplace,
+      handleDelete,
+      handleDeleteConfirmed,
+      handleFileChange
+    } = useImageLibrary(projectId, void 0, onImageReplaced);
+    return (0, import_react_dom4.createPortal)(
+      /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(import_jsx_runtime35.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { className: "add-sprite-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "add-sprite-modal", onClick: (e2) => e2.stopPropagation(), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "add-sprite-modal-header", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("span", { children: "Image Library" }),
+            /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "add-sprite-modal-header-actions", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
+                Button,
+                {
+                  disabled: uploading,
+                  onClick: () => fileInputRef.current?.click(),
+                  children: uploading ? "Uploading\u2026" : "Upload"
+                }
+              ),
+              /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
+                "input",
+                {
+                  ref: fileInputRef,
+                  type: "file",
+                  accept: "image/png,image/jpeg,image/gif,image/webp",
+                  style: { display: "none" },
+                  onChange: handleFileChange
+                }
+              ),
+              /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("button", { className: "add-sprite-modal-close", onClick: onClose, children: "\u2715" })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "add-sprite-modal-body", children: [
+            loading && /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { className: "add-sprite-loading", children: "Loading\u2026" }),
+            !loading && images.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { className: "add-sprite-loading", children: "No images found. Upload one to get started." }),
+            images.map((image) => /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(
+              "div",
+              {
+                className: "add-sprite-image-item",
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
+                    "img",
+                    {
+                      src: image.thumb_filename ? getImageThumbnailUrl(image.thumb_filename) : getUploadUrl(image.filename),
+                      alt: image.original_name,
+                      className: "add-sprite-thumb",
+                      loading: "lazy"
+                    }
+                  ),
+                  /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("span", { className: "add-sprite-image-name", children: image.original_name }),
+                  /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("span", { className: "image-size-label", children: formatBytes(image.size_bytes) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { className: "image-item-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
+                    "button",
+                    {
+                      className: "image-item-overlay-btn image-item-overlay-btn--preview",
+                      onClick: (e2) => {
+                        e2.stopPropagation();
+                        setPreviewImage(image);
+                      },
+                      title: "Preview",
+                      children: "\u{1F441}"
+                    }
+                  ) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
+                    "button",
+                    {
+                      className: "image-item-overlay-btn image-item-overlay-btn--delete",
+                      onClick: (e2) => handleDelete(image, e2),
+                      title: "Delete",
+                      children: "\u{1F5D1}"
+                    }
+                  ),
+                  /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(ReplaceButton, { image, uploading: replacing, onReplace: handleReplace })
+                ]
+              },
+              image.id
+            ))
+          ] })
+        ] }) }),
+        previewImage && /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { className: "add-sprite-preview-overlay", onClick: () => setPreviewImage(null), children: /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "add-sprite-preview-modal", onClick: (e2) => e2.stopPropagation(), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("button", { className: "add-sprite-preview-close", onClick: () => setPreviewImage(null), children: "\u2715" }),
+          /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("img", { src: getUploadUrl(previewImage.filename), alt: previewImage.original_name, className: "add-sprite-preview-img" })
+        ] }) }),
+        confirmDelete && /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { className: "add-sprite-preview-overlay", onClick: () => setConfirmDelete(null), children: /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "add-sprite-confirm-delete-dialog", onClick: (e2) => e2.stopPropagation(), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("p", { children: [
+            "Delete ",
+            /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("strong", { children: confirmDelete.original_name }),
+            "?"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("p", { className: "add-sprite-confirm-delete-sub", children: "This cannot be undone." }),
+          /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "sprite-confirm-actions", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Button, { variant: "danger", onClick: handleDeleteConfirmed, children: "Delete" }),
+            /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Button, { onClick: () => setConfirmDelete(null), children: "Cancel" })
+          ] })
+        ] }) }),
+        inUseScenes && /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(ImageInUseModal, { scenes: inUseScenes, onClose: () => setInUseScenes(null) })
+      ] }),
+      document.body
+    );
+  }
+
+  // src/controls/TopBar.tsx
+  var import_jsx_runtime36 = __toESM(require_jsx_runtime());
+  function SegmentButton({ active, disabled, onClick, title, children }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
+      "button",
+      {
+        type: "button",
+        title,
+        disabled,
+        onClick,
+        className: `top-bar__segment-btn ${active ? "top-bar__segment-btn--active" : ""}`.trim(),
+        children
+      }
+    );
+  }
+  function TopBar({ projectId, scenes, currentSceneName, sceneLoaded, isSaving, guideAspectRatio, orientation, zoom, gyroMode, sceneSizeLabel, sceneSizeTitle, onBack, onSceneSelect, onGuideAspectRatioChange, onOrientationToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle, onImageReplaced }) {
+    const [libraryOpen, setLibraryOpen] = (0, import_react14.useState)(false);
+    const currentScene = scenes.find((s2) => s2.value === currentSceneName);
+    const sceneLabel = currentScene?.label ?? (sceneLoaded ? currentSceneName : null) ?? "Select scene";
+    return /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("div", { className: "top-bar", children: [
+      onBack && /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
+        "button",
+        {
+          type: "button",
+          onClick: onBack,
+          title: "Back to scenes",
+          className: "top-bar__icon-btn",
+          children: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(ChevronLeft, { size: 15 })
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(DropdownMenu2, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(
+          "button",
+          {
+            type: "button",
+            disabled: scenes.length === 0,
+            className: "top-bar__scene-trigger",
+            children: [
+              sceneLabel,
+              /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(ChevronDown, { size: 13 })
+            ]
+          }
+        ) }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(DropdownMenuContent2, { align: "start", children: scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(DropdownMenuItem2, { onSelect: () => onSceneSelect(scene.value), children: scene.label }, scene.value)) })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("div", { className: "top-bar__divider" }),
+      /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(
+        "button",
+        {
+          type: "button",
+          onClick: () => setLibraryOpen(true),
+          title: "Browse and upload images",
+          className: "top-bar__images-btn",
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Image2, { size: 13 }),
+            "Images"
+          ]
+        }
+      ),
+      libraryOpen && /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
+        ImageLibraryModal,
+        {
+          onClose: () => setLibraryOpen(false),
+          projectId,
+          onImageReplaced
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
+        PhoneGuideControl,
+        {
+          value: guideAspectRatio,
+          disabled: !sceneLoaded,
+          onChange: onGuideAspectRatioChange
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("div", { className: "top-bar__segmented", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
+          SegmentButton,
+          {
+            active: orientation === "portrait",
+            disabled: !sceneLoaded,
+            onClick: () => {
+              if (orientation !== "portrait") onOrientationToggle();
+            },
+            children: "Portrait"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
+          SegmentButton,
+          {
+            active: orientation === "landscape",
+            disabled: !sceneLoaded,
+            onClick: () => {
+              if (orientation !== "landscape") onOrientationToggle();
+            },
+            children: "Landscape"
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("div", { className: "top-bar__segmented", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(SegmentButton, { active: !gyroMode, disabled: !sceneLoaded, title: "Pointer", onClick: () => {
+          if (gyroMode) onGyroModeToggle();
+        }, children: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(MousePointer2, { size: 13 }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(SegmentButton, { active: gyroMode, disabled: !sceneLoaded, title: "Gyro simulation", onClick: () => {
+          if (!gyroMode) onGyroModeToggle();
+        }, children: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Radar, { size: 13 }) })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("div", { className: "top-bar__spacer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("div", { className: "top-bar__segmented", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("button", { type: "button", onClick: onZoomOut, disabled: !sceneLoaded, title: "Zoom out", className: "top-bar__zoom-btn", children: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Minus, { size: 13 }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("span", { className: "top-bar__zoom-value", children: [
+            Math.round(zoom * 100),
+            "%"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("button", { type: "button", onClick: onZoomIn, disabled: !sceneLoaded, title: "Zoom in", className: "top-bar__zoom-btn", children: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Plus, { size: 13 }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("button", { type: "button", onClick: onCenter, disabled: !sceneLoaded, title: "Center", className: "top-bar__zoom-btn", children: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Maximize, { size: 13 }) })
+        ] }),
+        sceneSizeLabel && /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("span", { className: "top-bar__size-label", title: sceneSizeTitle, children: sceneSizeLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(
+          "button",
+          {
+            type: "button",
+            onClick: onSave,
+            disabled: isSaving || !sceneLoaded,
+            className: "top-bar__save-btn",
+            children: [
+              /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Save, { size: 13 }),
+              isSaving ? "Saving..." : "Save"
+            ]
+          }
+        )
+      ] })
+    ] });
+  }
+
+  // src/controls/NotificationStack.tsx
+  var import_jsx_runtime37 = __toESM(require_jsx_runtime());
+  function NotificationStack({ notifications }) {
+    if (notifications.length === 0) return null;
+    return /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("div", { className: "notification-stack", children: notifications.map((n2) => /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("div", { className: "notification-card", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(CircleCheckBig, { size: 14, className: "notification-card__icon" }),
+      n2.message
+    ] }, n2.id)) });
+  }
+
+  // src/controls/modals/EditTextureModal.tsx
+  var import_react15 = __toESM(require_react());
+
   // src/renderers/TextureCoordinateCalculator.ts
   function getNaturalTexSize(originalTexCoords, originalWidth, originalHeight) {
     if (originalTexCoords.length >= 8) {
@@ -76620,121 +76758,6 @@ ${e2}`);
   // src/hooks/useSceneRenderer.ts
   var import_react18 = __toESM(require_react());
 
-  // src/renderers/PhoneGuide.ts
-  var PhoneGuide = class {
-    constructor() {
-      this.graphics = null;
-      this.xOffset = 0;
-      this.orientation = "portrait";
-      this.ASPECT_RATIO = 9 / 21;
-      // 21:9
-      this.WORLD_HEIGHT = 10;
-      // Match world height
-      this.GUIDE_HEIGHT = 9.99;
-      // Slightly smaller than world height
-      this.LINE_WIDTH = 0.05;
-      this.LINE_COLOR = 65280;
-      // Green
-      this.LINE_ALPHA = 0.7;
-    }
-    /**
-     * Create the phone guide graphics
-     */
-    createGraphics() {
-      this.graphics = new Graphics();
-      this.draw();
-      return this.graphics;
-    }
-    /**
-     * Set the guide's orientation and redraw. In landscape the rectangle is drawn wide/short
-     * (rotated 90°) with a horizontal center line marking the vertical center (the yFocus
-     * reference), mirroring the vertical line's role marking the xFocus reference in portrait.
-     */
-    setOrientation(orientation) {
-      this.orientation = orientation;
-      this.draw();
-    }
-    draw() {
-      const g2 = this.graphics;
-      if (!g2) return;
-      g2.clear();
-      const { halfWidth, halfHeight } = this.computeDimensions();
-      const rectHalfWidth = this.orientation === "landscape" ? halfHeight : halfWidth;
-      const rectHalfHeight = this.orientation === "landscape" ? halfWidth : halfHeight;
-      g2.moveTo(-rectHalfWidth, rectHalfHeight).lineTo(rectHalfWidth, rectHalfHeight).lineTo(rectHalfWidth, -rectHalfHeight).lineTo(-rectHalfWidth, -rectHalfHeight).lineTo(-rectHalfWidth, rectHalfHeight).stroke({
-        width: this.LINE_WIDTH,
-        color: this.LINE_COLOR,
-        alpha: this.LINE_ALPHA
-      });
-      if (this.orientation === "landscape") {
-        g2.moveTo(-rectHalfWidth, 0).lineTo(rectHalfWidth, 0).stroke({
-          width: this.LINE_WIDTH,
-          color: this.LINE_COLOR,
-          alpha: this.LINE_ALPHA
-        });
-      } else {
-        g2.moveTo(0, rectHalfHeight).lineTo(0, -rectHalfHeight).stroke({
-          width: this.LINE_WIDTH,
-          color: this.LINE_COLOR,
-          alpha: this.LINE_ALPHA
-        });
-      }
-    }
-    /**
-     * Get the graphics object
-     */
-    getGraphics() {
-      return this.graphics;
-    }
-    /**
-     * Compute the guide rectangle's half-width/half-height (world units), clamped so it
-     * never exceeds the WORLD_HEIGHT square.
-     */
-    computeDimensions() {
-      const visibleWorldBound = this.WORLD_HEIGHT / 2;
-      let height = this.GUIDE_HEIGHT;
-      let width = height * this.ASPECT_RATIO;
-      const maxWidth = visibleWorldBound * 2;
-      if (width > maxWidth) {
-        width = maxWidth;
-        height = width / this.ASPECT_RATIO;
-      }
-      return { halfWidth: width / 2, halfHeight: height / 2 };
-    }
-    /**
-     * Half-width of the guide rectangle (world units). Used by SceneRenderer to derive how
-     * much xFocus/yFocus panning this reference phone shape has room for, mirroring the
-     * Android renderer's viewport slack calculation.
-     */
-    getHalfWidth() {
-      return this.computeDimensions().halfWidth;
-    }
-    /**
-     * Set the x-offset for parallax scrolling
-     */
-    setXOffset(xOffset) {
-      this.xOffset = xOffset;
-      if (this.graphics) {
-        this.graphics.x = xOffset;
-      }
-    }
-    /**
-     * Get the x-offset
-     */
-    getXOffset() {
-      return this.xOffset;
-    }
-    /**
-     * Destroy the graphics
-     */
-    destroy() {
-      if (this.graphics) {
-        this.graphics.destroy();
-        this.graphics = null;
-      }
-    }
-  };
-
   // src/renderers/SceneRenderer.ts
   var SceneRenderer = class _SceneRenderer {
     constructor(container) {
@@ -76744,6 +76767,7 @@ ${e2}`);
       this.textures = /* @__PURE__ */ new Map();
       this.phoneGuide = null;
       this.showPhoneGuideFlag = false;
+      this.guideAspectRatio = "20:9";
       this.orientation = "portrait";
       this.currentXFocus = 0.5;
       this.currentYFocus = 0.5;
@@ -76861,6 +76885,7 @@ ${e2}`);
         this.app.stage.addChild(guideGraphics);
         guideGraphics.visible = this.showPhoneGuideFlag;
         this.phoneGuide.setOrientation(this.orientation);
+        this.phoneGuide.setAspectRatio(this.guideAspectRatio);
       }
       this.originalSceneData = sceneData;
       this.currentYFocus = sceneData.yFocus ?? 0.5;
@@ -77018,11 +77043,16 @@ ${e2}`);
       this.currentEndTime = value;
     }
     /**
-     * Maximum offset magnitude (world units) that xFocus/yFocus panning may reach, derived from
-     * the same slack calculation as the Android renderer: how much room the reference phone
-     * guide shape has within the WORLD_HEIGHT square before its own edge would leave the guide's
-     * bounds. A guide shape that fills the square exactly (e.g. if it were ever made square)
-     * would have zero slack and thus no pan at all.
+     * Maximum offset magnitude (world units) that xFocus/yFocus panning may reach before
+     * clamping, derived from how much room the phone guide shape has within the WORLD_HEIGHT
+     * square before its own edge would leave the guide's bounds. A guide shape that fills the
+     * square exactly (e.g. a 1:1 ratio) would have zero slack and thus no pan at all.
+     *
+     * This mirrors LiveWallpaperSceneManager.applyPendingViewport() on Android, which clamps to
+     * the real device's screen-aspect slack. It's a hard clamp, not a rescale: EditSceneManager
+     * (the Android in-app editor) always maps xFocus/yFocus at the fixed MAX_FOCUS_PAN_OFFSET
+     * rate regardless of aspect ratio, since it never calls setMaxScrollOffset(). See
+     * applyAllPositions() below, which reproduces that same fixed-rate-then-clamp behavior.
      */
     getMaxScrollOffset() {
       const halfWorldContent = this.DEFAULT_WORLD_SIZE / 2;
@@ -77031,9 +77061,11 @@ ${e2}`);
       return Math.min(this.MAX_FOCUS_PAN_OFFSET, slack);
     }
     applyAllPositions() {
-      const maxScrollOffset = this.getMaxScrollOffset();
-      const scrollOffset = this.orientation === "portrait" ? (0.5 - this.currentXFocus) * 2 * maxScrollOffset : 0;
-      const scrollOffsetY = this.orientation === "landscape" ? (0.5 - this.currentYFocus) * 2 * maxScrollOffset : 0;
+      const clampLimit = this.getMaxScrollOffset();
+      const rawX = (0.5 - this.currentXFocus) * 2 * this.MAX_FOCUS_PAN_OFFSET;
+      const rawY = (0.5 - this.currentYFocus) * 2 * this.MAX_FOCUS_PAN_OFFSET;
+      const scrollOffset = this.orientation === "portrait" ? Math.max(-clampLimit, Math.min(clampLimit, rawX)) : 0;
+      const scrollOffsetY = this.orientation === "landscape" ? Math.max(-clampLimit, Math.min(clampLimit, rawY)) : 0;
       for (const sprite of this.sprites) {
         const metadata = this.spriteMetadata.get(sprite);
         if (metadata) {
@@ -77152,6 +77184,18 @@ ${e2}`);
      */
     isGuideVisible() {
       return this.showPhoneGuideFlag;
+    }
+    /**
+     * Change the phone guide's aspect ratio. Affects xFocus/yFocus pan slack (via
+     * getHalfWidth), so positions are reapplied same as setOrientation.
+     */
+    setGuideAspectRatio(aspectRatio) {
+      this.guideAspectRatio = aspectRatio;
+      this.phoneGuide?.setAspectRatio(aspectRatio);
+      this.applyAllPositions();
+    }
+    getGuideAspectRatio() {
+      return this.guideAspectRatio;
     }
     /**
      * Set which orientation the editor is previewing, rotating the phone guide to match.
@@ -77929,7 +77973,7 @@ ${e2}`);
     const [isSaving, setIsSaving] = (0, import_react18.useState)(false);
     const [isDirty, setIsDirty] = (0, import_react18.useState)(false);
     const isDirtyRef = (0, import_react18.useRef)(false);
-    const [phoneGuideVisible, setPhoneGuideVisible] = (0, import_react18.useState)(true);
+    const [guideAspectRatio, setGuideAspectRatioState] = (0, import_react18.useState)("20:9");
     const [zoom, setZoom] = (0, import_react18.useState)(1);
     const [orientation, setOrientation] = (0, import_react18.useState)("portrait");
     const onNotifyRef = (0, import_react18.useRef)(onNotify);
@@ -77963,7 +78007,7 @@ ${e2}`);
       isDirtyRef.current = false;
       setIsDirty(false);
     }, []);
-    const phoneGuideVisibleRef = (0, import_react18.useRef)(true);
+    const guideAspectRatioRef = (0, import_react18.useRef)("20:9");
     const orientationRef = (0, import_react18.useRef)("portrait");
     const canvasRef = (0, import_react18.useRef)(null);
     const rendererRef = (0, import_react18.useRef)(null);
@@ -77984,7 +78028,10 @@ ${e2}`);
         const renderer = new SceneRenderer(canvasRef.current);
         await renderer.loadScene(sceneData);
         rendererRef.current = renderer;
-        if (phoneGuideVisibleRef.current) renderer.showGuide();
+        if (guideAspectRatioRef.current !== "off") {
+          renderer.showGuide();
+          renderer.setGuideAspectRatio(guideAspectRatioRef.current);
+        }
         renderer.setOrientation(orientationRef.current);
         setZoom(1);
         setXFocus(sceneData.xFocus ?? 0.5);
@@ -78051,11 +78098,16 @@ ${e2}`);
       rendererRef.current?.setEndTime(value);
       markDirty();
     }, [markDirty]);
-    const handlePhoneGuideToggle = (0, import_react18.useCallback)((visible) => {
-      phoneGuideVisibleRef.current = visible;
-      setPhoneGuideVisible(visible);
-      if (visible) rendererRef.current?.showGuide();
-      else rendererRef.current?.hideGuide();
+    const handleGuideAspectRatioChange = (0, import_react18.useCallback)((value) => {
+      guideAspectRatioRef.current = value;
+      setGuideAspectRatioState(value);
+      if (value === "off") {
+        rendererRef.current?.hideGuide();
+        rendererRef.current?.setGuideAspectRatio("20:9");
+      } else {
+        rendererRef.current?.showGuide();
+        rendererRef.current?.setGuideAspectRatio(value);
+      }
     }, []);
     const handleOrientationToggle = (0, import_react18.useCallback)(() => {
       const next = orientationRef.current === "portrait" ? "landscape" : "portrait";
@@ -78252,7 +78304,7 @@ ${e2}`);
       isSaving,
       isDirty,
       markDirty,
-      phoneGuideVisible,
+      guideAspectRatio,
       orientation,
       handleOrientationToggle,
       loadScene,
@@ -78261,7 +78313,7 @@ ${e2}`);
       handleYFocusChange,
       handleStartTimeChange,
       handleEndTimeChange,
-      handlePhoneGuideToggle,
+      handleGuideAspectRatioChange,
       handleSpriteToggle,
       handleSpriteSelect,
       handleSpritePositionChange,
@@ -78486,7 +78538,7 @@ ${e2}`);
       isSaving,
       isDirty,
       markDirty,
-      phoneGuideVisible,
+      guideAspectRatio,
       orientation,
       handleOrientationToggle,
       loadScene,
@@ -78495,7 +78547,7 @@ ${e2}`);
       handleYFocusChange,
       handleStartTimeChange,
       handleEndTimeChange,
-      handlePhoneGuideToggle,
+      handleGuideAspectRatioChange,
       handleSpriteToggle,
       handleSpriteSelect,
       handleSpritePositionChange,
@@ -78811,11 +78863,11 @@ ${e2}`);
           currentSceneName: currentSceneId,
           sceneLoaded: showSceneControls,
           isSaving,
-          phoneGuideVisible,
+          guideAspectRatio,
           orientation,
           onBack: handleBack,
           onSceneSelect: handleSceneSelect,
-          onPhoneGuideToggle: handlePhoneGuideToggle,
+          onGuideAspectRatioChange: handleGuideAspectRatioChange,
           onOrientationToggle: handleOrientationToggle,
           onSave: saveScene,
           onZoomIn: handleZoomIn,

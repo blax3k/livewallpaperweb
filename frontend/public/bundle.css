@@ -1553,6 +1553,17 @@ body {
   background: var(--color-accent-bg);
   color: var(--color-accent-fg);
 }
+.guide-menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--size-6);
+}
+.guide-menu-item svg {
+  flex: none;
+}
+.guide-menu-item .guide-menu-item__check--hidden {
+  visibility: hidden;
+}
 
 /* src/controls/modals/ImageLibraryModal.scss */
 .add-sprite-overlay {

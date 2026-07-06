@@ -408,6 +408,59 @@ describe('SceneRenderer', () => {
     });
   });
 
+  describe('Guide aspect ratio affects pan clamp but not pan rate', () => {
+    const singleSpriteScene: Scene = {
+      xFocus: 0.5,
+      yFocus: 0.5,
+      sprites: [
+        {
+          name: 'room',
+          positionX: 0,
+          positionY: 0,
+          width: 5,
+          height: 10,
+          parallaxMultiplier: 1.0,
+          textureResource: 'room',
+          texCoordinates: [0, 0, 1, 0, 1, 1, 0, 1],
+        },
+      ],
+    };
+
+    beforeEach(async () => {
+      renderer = new SceneRenderer(container);
+      await new Promise(resolve => setTimeout(resolve, 150));
+      await renderer.loadScene(singleSpriteScene);
+    });
+
+    it('moves sprites by the same amount for a moderate xFocus regardless of guide aspect ratio', () => {
+      const sprites = (renderer as unknown as { sprites: PIXI.Sprite[] }).sprites;
+
+      renderer.setGuideAspectRatio('20:9');
+      renderer.setXFocus(0.4);
+      const narrowOffset = sprites[0].x;
+
+      // 4:3 has much less slack (~1.0 vs ~2.5), but a moderate xFocus stays under both limits,
+      // so it should land on the exact same offset — the rate itself doesn't rescale.
+      renderer.setGuideAspectRatio('4:3');
+      renderer.setXFocus(0.4);
+      const wideOffset = sprites[0].x;
+
+      expect(narrowOffset).toBeCloseTo(0.5, 5);
+      expect(wideOffset).toBeCloseTo(0.5, 5);
+    });
+
+    it('hard-stops at the guide-aspect-ratio slack instead of rescaling the whole range', () => {
+      const sprites = (renderer as unknown as { sprites: PIXI.Sprite[] }).sprites;
+
+      renderer.setGuideAspectRatio('4:3');
+      renderer.setXFocus(0);
+
+      // Unclamped rate would give (0.5 - 0) * 2 * 2.5 = 2.5, but 4:3's slack
+      // (5 - 3.74625 - 0.25 = 1.00375) is the hard limit.
+      expect(sprites[0].x).toBeCloseTo(1.00375, 5);
+    });
+  });
+
   describe('Texture Handling', () => {
     beforeEach(async () => {
       renderer = new SceneRenderer(container);

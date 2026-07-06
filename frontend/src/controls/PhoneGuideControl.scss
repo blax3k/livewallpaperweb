@@ -24,3 +24,17 @@
     color: var(--color-accent-fg);
   }
 }
+
+.guide-menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--size-6);
+
+  svg {
+    flex: none;
+  }
+
+  .guide-menu-item__check--hidden {
+    visibility: hidden;
+  }
+}

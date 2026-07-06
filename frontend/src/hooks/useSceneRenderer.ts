@@ -4,6 +4,7 @@ import { scenesApi, spritesApi } from '../api';
 import type { SpriteEntry } from '../controls/panels/SpriteListPanel';
 import type { Scene } from '../interfaces/Scene';
 import type { SpriteConditionBlock, RuleConditionGroup } from '@livewallpaper/types';
+import type { PhoneGuideValue } from '../controls/PhoneGuideControl';
 
 export interface SelectedSprite {
   index: number;
@@ -27,7 +28,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
   const [isSaving, setIsSaving] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const isDirtyRef = useRef(false);
-  const [phoneGuideVisible, setPhoneGuideVisible] = useState(true);
+  const [guideAspectRatio, setGuideAspectRatioState] = useState<PhoneGuideValue>('20:9');
   const [zoom, setZoom] = useState(1.0);
   const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
   const onNotifyRef = useRef(onNotify);
@@ -76,7 +77,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     isDirtyRef.current = false;
     setIsDirty(false);
   }, []);
-  const phoneGuideVisibleRef = useRef(true);
+  const guideAspectRatioRef = useRef<PhoneGuideValue>('20:9');
   const orientationRef = useRef<'portrait' | 'landscape'>('portrait');
   const canvasRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<SceneRenderer | null>(null);
@@ -103,7 +104,10 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
       const renderer = new SceneRenderer(canvasRef.current);
       await renderer.loadScene(sceneData);
       rendererRef.current = renderer;
-      if (phoneGuideVisibleRef.current) renderer.showGuide();
+      if (guideAspectRatioRef.current !== 'off') {
+        renderer.showGuide();
+        renderer.setGuideAspectRatio(guideAspectRatioRef.current);
+      }
       renderer.setOrientation(orientationRef.current);
 
 
@@ -182,11 +186,16 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     markDirty();
   }, [markDirty]);
 
-  const handlePhoneGuideToggle = useCallback((visible: boolean) => {
-    phoneGuideVisibleRef.current = visible;
-    setPhoneGuideVisible(visible);
-    if (visible) rendererRef.current?.showGuide();
-    else rendererRef.current?.hideGuide();
+  const handleGuideAspectRatioChange = useCallback((value: PhoneGuideValue) => {
+    guideAspectRatioRef.current = value;
+    setGuideAspectRatioState(value);
+    if (value === 'off') {
+      rendererRef.current?.hideGuide();
+      rendererRef.current?.setGuideAspectRatio('20:9');
+    } else {
+      rendererRef.current?.showGuide();
+      rendererRef.current?.setGuideAspectRatio(value);
+    }
   }, []);
 
   const handleOrientationToggle = useCallback(() => {
@@ -429,7 +438,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     isSaving,
     isDirty,
     markDirty,
-    phoneGuideVisible,
+    guideAspectRatio,
     orientation,
     handleOrientationToggle,
     loadScene,
@@ -438,7 +447,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     handleYFocusChange,
     handleStartTimeChange,
     handleEndTimeChange,
-    handlePhoneGuideToggle,
+    handleGuideAspectRatioChange,
     handleSpriteToggle,
     handleSpriteSelect,
     handleSpritePositionChange,

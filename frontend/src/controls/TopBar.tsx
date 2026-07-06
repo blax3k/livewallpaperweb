@@ -3,7 +3,7 @@ import {
   ChevronLeft, ChevronDown, ImageIcon, MousePointer2, Radar, Minus, Plus, Maximize, Save,
 } from 'lucide-react';
 import { SceneOption } from './SceneSelectorControl';
-import { PhoneGuideControl } from './PhoneGuideControl';
+import { PhoneGuideControl, PhoneGuideValue } from './PhoneGuideControl';
 import { ImageLibraryModal } from './modals/ImageLibraryModal';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '../components/ui/dropdown-menu';
 import './TopBar.scss';
@@ -14,7 +14,7 @@ interface TopBarProps {
   currentSceneName: string | null;
   sceneLoaded: boolean;
   isSaving: boolean;
-  phoneGuideVisible: boolean;
+  guideAspectRatio: PhoneGuideValue;
   orientation: 'portrait' | 'landscape';
   zoom: number;
   gyroMode: boolean;
@@ -22,7 +22,7 @@ interface TopBarProps {
   sceneSizeTitle?: string;
   onBack?: () => void;
   onSceneSelect: (sceneName: string) => void;
-  onPhoneGuideToggle: (visible: boolean) => void;
+  onGuideAspectRatioChange: (value: PhoneGuideValue) => void;
   onOrientationToggle: () => void;
   onSave: () => void;
   onZoomIn: () => void;
@@ -46,7 +46,7 @@ function SegmentButton({ active, disabled, onClick, title, children }: { active:
   );
 }
 
-export function TopBar({ projectId, scenes, currentSceneName, sceneLoaded, isSaving, phoneGuideVisible, orientation, zoom, gyroMode, sceneSizeLabel, sceneSizeTitle, onBack, onSceneSelect, onPhoneGuideToggle, onOrientationToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle, onImageReplaced }: TopBarProps) {
+export function TopBar({ projectId, scenes, currentSceneName, sceneLoaded, isSaving, guideAspectRatio, orientation, zoom, gyroMode, sceneSizeLabel, sceneSizeTitle, onBack, onSceneSelect, onGuideAspectRatioChange, onOrientationToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle, onImageReplaced }: TopBarProps) {
   const [libraryOpen, setLibraryOpen] = useState(false);
 
   const currentScene = scenes.find(s => s.value === currentSceneName);
@@ -105,9 +105,9 @@ export function TopBar({ projectId, scenes, currentSceneName, sceneLoaded, isSav
       )}
 
       <PhoneGuideControl
-        checked={phoneGuideVisible}
+        value={guideAspectRatio}
         disabled={!sceneLoaded}
-        onChange={onPhoneGuideToggle}
+        onChange={onGuideAspectRatioChange}
       />
 
       <div className="top-bar__segmented">

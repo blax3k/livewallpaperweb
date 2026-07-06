@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { Scene, Sprite } from '../interfaces/Scene';
-import { PhoneGuide } from './PhoneGuide';
+import { PhoneGuide, PhoneGuideAspectRatio } from './PhoneGuide';
 import type { SpriteEntry } from '../controls/panels/SpriteListPanel';
 import type { SpriteConditionBlock, SpriteModification, RuleConditionGroup } from '@livewallpaper/types';
 
@@ -34,6 +34,7 @@ export class SceneRenderer {
   private resizeHandler: () => void;
   private phoneGuide: PhoneGuide | null = null;
   private showPhoneGuideFlag: boolean = false;
+  private guideAspectRatio: PhoneGuideAspectRatio = '20:9';
   private orientation: 'portrait' | 'landscape' = 'portrait';
   private currentXFocus: number = 0.5;
   private currentYFocus: number = 0.5;
@@ -163,6 +164,7 @@ export class SceneRenderer {
       this.app.stage.addChild(guideGraphics);
       guideGraphics.visible = this.showPhoneGuideFlag;
       this.phoneGuide.setOrientation(this.orientation);
+      this.phoneGuide.setAspectRatio(this.guideAspectRatio);
     }
 
     // Store original scene data for later serialization
@@ -375,11 +377,16 @@ export class SceneRenderer {
   private readonly GYRO_BUFFER = 0.25;
 
   /**
-   * Maximum offset magnitude (world units) that xFocus/yFocus panning may reach, derived from
-   * the same slack calculation as the Android renderer: how much room the reference phone
-   * guide shape has within the WORLD_HEIGHT square before its own edge would leave the guide's
-   * bounds. A guide shape that fills the square exactly (e.g. if it were ever made square)
-   * would have zero slack and thus no pan at all.
+   * Maximum offset magnitude (world units) that xFocus/yFocus panning may reach before
+   * clamping, derived from how much room the phone guide shape has within the WORLD_HEIGHT
+   * square before its own edge would leave the guide's bounds. A guide shape that fills the
+   * square exactly (e.g. a 1:1 ratio) would have zero slack and thus no pan at all.
+   *
+   * This mirrors LiveWallpaperSceneManager.applyPendingViewport() on Android, which clamps to
+   * the real device's screen-aspect slack. It's a hard clamp, not a rescale: EditSceneManager
+   * (the Android in-app editor) always maps xFocus/yFocus at the fixed MAX_FOCUS_PAN_OFFSET
+   * rate regardless of aspect ratio, since it never calls setMaxScrollOffset(). See
+   * applyAllPositions() below, which reproduces that same fixed-rate-then-clamp behavior.
    */
   private getMaxScrollOffset(): number {
     const halfWorldContent = this.DEFAULT_WORLD_SIZE / 2;
@@ -389,14 +396,20 @@ export class SceneRenderer {
   }
 
   private applyAllPositions(): void {
-    const maxScrollOffset = this.getMaxScrollOffset();
+    // xFocus/yFocus always move sprites at the same fixed rate (MAX_FOCUS_PAN_OFFSET) — the
+    // guide's aspect ratio only imposes a hard stop once that motion would carry a sprite edge
+    // past the guide's own bounds. It does not rescale the whole range down like Android's
+    // live-wallpaper runtime does for the real device screen.
+    const clampLimit = this.getMaxScrollOffset();
+    const rawX = (0.5 - this.currentXFocus) * 2 * this.MAX_FOCUS_PAN_OFFSET;
+    const rawY = (0.5 - this.currentYFocus) * 2 * this.MAX_FOCUS_PAN_OFFSET;
     // Only the axis matching the current orientation is ever applied — mirrors the Android
     // app, which only ever applies one of xFocus/yFocus depending on real device orientation.
     // currentXFocus/currentYFocus themselves are untouched by orientation switching, so the
     // inactive axis's true value is preserved (and still what getSceneData() persists) even
     // though it contributes no offset while hidden.
-    const scrollOffset = this.orientation === 'portrait' ? (0.5 - this.currentXFocus) * 2 * maxScrollOffset : 0;
-    const scrollOffsetY = this.orientation === 'landscape' ? (0.5 - this.currentYFocus) * 2 * maxScrollOffset : 0;
+    const scrollOffset = this.orientation === 'portrait' ? Math.max(-clampLimit, Math.min(clampLimit, rawX)) : 0;
+    const scrollOffsetY = this.orientation === 'landscape' ? Math.max(-clampLimit, Math.min(clampLimit, rawY)) : 0;
 
     for (const sprite of this.sprites) {
       const metadata = this.spriteMetadata.get(sprite);
@@ -538,6 +551,20 @@ export class SceneRenderer {
    */
   isGuideVisible(): boolean {
     return this.showPhoneGuideFlag;
+  }
+
+  /**
+   * Change the phone guide's aspect ratio. Affects xFocus/yFocus pan slack (via
+   * getHalfWidth), so positions are reapplied same as setOrientation.
+   */
+  setGuideAspectRatio(aspectRatio: PhoneGuideAspectRatio): void {
+    this.guideAspectRatio = aspectRatio;
+    this.phoneGuide?.setAspectRatio(aspectRatio);
+    this.applyAllPositions();
+  }
+
+  getGuideAspectRatio(): PhoneGuideAspectRatio {
+    return this.guideAspectRatio;
   }
 
   /**

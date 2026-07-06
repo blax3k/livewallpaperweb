@@ -1,7 +1,16 @@
 import * as PIXI from 'pixi.js';
 
+/** Common phone/tablet aspect ratios (long-edge:short-edge) selectable for the guide. */
+export const PHONE_GUIDE_ASPECT_RATIOS = ['20:9', '19.5:9', '18:9', '16:9','7:5', '3:2', '4:3', '1:1'] as const;
+export type PhoneGuideAspectRatio = typeof PHONE_GUIDE_ASPECT_RATIOS[number];
+
+function aspectRatioToWidthOverHeight(aspectRatio: PhoneGuideAspectRatio): number {
+  const [long, short] = aspectRatio.split(':').map(Number);
+  return short / long;
+}
+
 /**
- * Represents a 21:9 aspect ratio guide with a vertical center line.
+ * Represents an aspect ratio guide with a vertical center line.
  * Used to show the safe area for phone displays during scene viewing.
  * This visual guide is affected by parallax scrolling (xOffset).
  */
@@ -9,7 +18,7 @@ export class PhoneGuide {
   private graphics: PIXI.Graphics | null = null;
   private xOffset: number = 0;
   private orientation: 'portrait' | 'landscape' = 'portrait';
-  private readonly ASPECT_RATIO = 9 / 21; // 21:9
+  private aspectRatio = aspectRatioToWidthOverHeight('20:9');
   private readonly WORLD_HEIGHT = 10; // Match world height
   private readonly GUIDE_HEIGHT = 9.99; // Slightly smaller than world height
   private readonly LINE_WIDTH = 0.05;
@@ -34,6 +43,14 @@ export class PhoneGuide {
    */
   setOrientation(orientation: 'portrait' | 'landscape'): void {
     this.orientation = orientation;
+    this.draw();
+  }
+
+  /**
+   * Change the guide's aspect ratio and redraw.
+   */
+  setAspectRatio(aspectRatio: PhoneGuideAspectRatio): void {
+    this.aspectRatio = aspectRatioToWidthOverHeight(aspectRatio);
     this.draw();
   }
 
@@ -93,12 +110,12 @@ export class PhoneGuide {
   private computeDimensions(): { halfWidth: number; halfHeight: number } {
     const visibleWorldBound = this.WORLD_HEIGHT / 2; // = 5.0
     let height = this.GUIDE_HEIGHT;
-    let width = height * this.ASPECT_RATIO;
+    let width = height * this.aspectRatio;
 
     const maxWidth = visibleWorldBound * 2; // = 10.0
     if (width > maxWidth) {
       width = maxWidth;
-      height = width / this.ASPECT_RATIO;
+      height = width / this.aspectRatio;
     }
 
     return { halfWidth: width / 2, halfHeight: height / 2 };

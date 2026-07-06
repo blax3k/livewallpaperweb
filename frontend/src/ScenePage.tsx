@@ -56,7 +56,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     isSaving,
     isDirty,
     markDirty,
-    phoneGuideVisible,
+    guideAspectRatio,
     orientation,
     handleOrientationToggle,
     loadScene,
@@ -65,7 +65,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     handleYFocusChange,
     handleStartTimeChange,
     handleEndTimeChange,
-    handlePhoneGuideToggle,
+    handleGuideAspectRatioChange,
     handleSpriteToggle,
     handleSpriteSelect,
     handleSpritePositionChange,
@@ -435,11 +435,11 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
         currentSceneName={currentSceneId}
         sceneLoaded={showSceneControls}
         isSaving={isSaving}
-        phoneGuideVisible={phoneGuideVisible}
+        guideAspectRatio={guideAspectRatio}
         orientation={orientation}
         onBack={handleBack}
         onSceneSelect={handleSceneSelect}
-        onPhoneGuideToggle={handlePhoneGuideToggle}
+        onGuideAspectRatioChange={handleGuideAspectRatioChange}
         onOrientationToggle={handleOrientationToggle}
         onSave={saveScene}
         onZoomIn={handleZoomIn}
