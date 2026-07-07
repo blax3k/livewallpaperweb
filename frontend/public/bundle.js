@@ -64628,6 +64628,28 @@ ${parts.join("\n")}
       return request(`/api/projects/${projectId}/flags/${flagId}/usage`);
     }
   };
+  var flagGroupsApi = {
+    list(projectId) {
+      return request(`/api/projects/${projectId}/flag-groups`);
+    },
+    create(projectId, name) {
+      return request(`/api/projects/${projectId}/flag-groups`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name })
+      });
+    },
+    rename(projectId, groupId, name) {
+      return request(`/api/projects/${projectId}/flag-groups/${groupId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name })
+      });
+    },
+    delete(projectId, groupId) {
+      return request(`/api/projects/${projectId}/flag-groups/${groupId}`, { method: "DELETE" });
+    }
+  };
   var rulesApi = {
     list(projectId) {
       return request(`/api/projects/${projectId}/rules`);
@@ -79613,6 +79635,9 @@ ${e2}`);
   }
   function FlagEditModal({ flag: initial, isNew, groups, onSave, onCancel }) {
     const [flag, setFlag] = (0, import_react28.useState)(() => ({ ...initial }));
+    const handleGroupSelect = (value) => {
+      setFlag({ ...flag, group: value || void 0 });
+    };
     return /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("div", { className: "modal-overlay", onClick: onCancel, children: /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("h2", { className: "modal-title", children: isNew ? "New Flag" : "Edit Flag" }),
       /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "form-row", children: [
@@ -79629,14 +79654,10 @@ ${e2}`);
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "form-row", children: [
         /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("label", { children: "Group" }),
-        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
-          "select",
-          {
-            value: flag.group ?? "",
-            onChange: (e2) => setFlag({ ...flag, group: e2.target.value }),
-            children: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("option", { value: "value", children: "'temp option'" })
-          }
-        )
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("select", { value: flag.group ?? "", onChange: (e2) => handleGroupSelect(e2.target.value), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("option", { value: "", children: "(ungrouped)" }),
+          groups.map((g2) => /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("option", { value: g2.name, children: g2.name }, g2.id))
+        ] })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "modal-footer", children: [
         /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
@@ -80294,6 +80315,7 @@ ${e2}`);
         "Flags \xB7 ",
         flags.length
       ] }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-new-rule", onClick: onNewFlag, children: "+ New Flag" }),
       flags.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("p", { className: "simulator-empty", children: "No flags defined." }),
       flagGroups.map(([groupName, groupFlags]) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(CollapsibleGroup, { title: groupName, count: groupFlags.length, children: /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-chip-row", children: groupFlags.map((flag) => /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)(
         "span",
@@ -80306,8 +80328,7 @@ ${e2}`);
           ]
         },
         flag.id
-      )) }) }, groupName)),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-new-rule", onClick: onNewFlag, children: "+ New Flag" })
+      )) }) }, groupName))
     ] });
   }
 
@@ -80316,6 +80337,7 @@ ${e2}`);
   function SimulatorPage({ projectId, projectName, onBack }) {
     const [rules, setRules] = (0, import_react32.useState)([]);
     const [flags, setFlags] = (0, import_react32.useState)([]);
+    const [flagGroups, setFlagGroups] = (0, import_react32.useState)([]);
     const [loading, setLoading] = (0, import_react32.useState)(true);
     const [error, setError] = (0, import_react32.useState)(null);
     const [orderBy, setOrderBy] = (0, import_react32.useState)("least_shown");
@@ -80324,15 +80346,19 @@ ${e2}`);
     const [editingFlagId, setEditingFlagId] = (0, import_react32.useState)(null);
     const [isNewFlag, setIsNewFlag] = (0, import_react32.useState)(false);
     (0, import_react32.useEffect)(() => {
-      Promise.all([rulesApi.list(projectId), flagsApi.list(projectId)]).then(([r2, f2]) => {
+      Promise.all([rulesApi.list(projectId), flagsApi.list(projectId), flagGroupsApi.list(projectId)]).then(([r2, f2, g2]) => {
         setRules(r2);
         setFlags(f2);
+        setFlagGroups(g2);
         setLoading(false);
       }).catch((err) => {
         setError(String(err));
         setLoading(false);
       });
     }, [projectId]);
+    const refreshFlagGroups = () => {
+      flagGroupsApi.list(projectId).then(setFlagGroups).catch((err) => setError(String(err)));
+    };
     const flagsById = (0, import_react32.useMemo)(() => new Map(flags.map((f2) => [f2.id, f2])), [flags]);
     const handleSaveRule = (updated) => {
       if (editingRuleIndex === null) return;
@@ -80370,7 +80396,7 @@ ${e2}`);
       setFlags(next);
       setEditingFlagId(null);
       setIsNewFlag(false);
-      flagsApi.save(projectId, next).catch((err) => setError(String(err)));
+      flagsApi.save(projectId, next).then(refreshFlagGroups).catch((err) => setError(String(err)));
     };
     const handleCancelEditFlag = () => {
       if (isNewFlag && editingFlagId !== null) {
@@ -80547,6 +80573,7 @@ ${e2}`);
         {
           flag: flags.find((f2) => f2.id === editingFlagId),
           isNew: isNewFlag,
+          groups: flagGroups,
           onSave: handleSaveFlag,
           onCancel: handleCancelEditFlag
         }

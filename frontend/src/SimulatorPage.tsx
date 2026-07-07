@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import './SimulatorPage.scss';
 import { PageLayout, PageHeader, PageBody } from './components/PageLayout';
 import { Button } from './components/Button';
-import { rulesApi, flagsApi, type RuleDefinition, type FlagDefinition } from './api';
+import { rulesApi, flagsApi, flagGroupsApi, type RuleDefinition, type FlagDefinition, type FlagGroup } from './api';
 import { RuleEditModal, emptyRule } from './RulesPage';
 import { generateUniqueId, FlagEditModal } from './FlagsPage';
 import { SimulatorRulesPanel } from './SimulatorRulesPanel';
@@ -17,6 +17,7 @@ interface SimulatorPageProps {
 export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageProps) {
   const [rules, setRules] = useState<RuleDefinition[]>([]);
   const [flags, setFlags] = useState<FlagDefinition[]>([]);
+  const [flagGroups, setFlagGroups] = useState<FlagGroup[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [orderBy, setOrderBy] = useState<'least_shown' | 'points'>('least_shown');
@@ -26,10 +27,14 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
   const [isNewFlag, setIsNewFlag] = useState(false);
 
   useEffect(() => {
-    Promise.all([rulesApi.list(projectId), flagsApi.list(projectId)])
-      .then(([r, f]) => { setRules(r); setFlags(f); setLoading(false); })
+    Promise.all([rulesApi.list(projectId), flagsApi.list(projectId), flagGroupsApi.list(projectId)])
+      .then(([r, f, g]) => { setRules(r); setFlags(f); setFlagGroups(g); setLoading(false); })
       .catch(err => { setError(String(err)); setLoading(false); });
   }, [projectId]);
+
+  const refreshFlagGroups = () => {
+    flagGroupsApi.list(projectId).then(setFlagGroups).catch(err => setError(String(err)));
+  };
 
   const flagsById = useMemo(() => new Map(flags.map(f => [f.id, f])), [flags]);
 
@@ -74,7 +79,9 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
     setFlags(next);
     setEditingFlagId(null);
     setIsNewFlag(false);
-    flagsApi.save(projectId, next).catch(err => setError(String(err)));
+    flagsApi.save(projectId, next)
+      .then(refreshFlagGroups)
+      .catch(err => setError(String(err)));
   };
 
   const handleCancelEditFlag = () => {
@@ -238,6 +245,7 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
         <FlagEditModal
           flag={flags.find(f => f.id === editingFlagId)!}
           isNew={isNewFlag}
+          groups={flagGroups}
           onSave={handleSaveFlag}
           onCancel={handleCancelEditFlag}
         />

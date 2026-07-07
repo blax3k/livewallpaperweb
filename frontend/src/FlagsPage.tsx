@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import './FlagsPage.scss';
 import { Button } from './components/Button';
 import { PageLayout, PageHeader, PageBody } from './components/PageLayout';
-import { flagsApi, type FlagDefinition } from './api';
+import { flagsApi, type FlagDefinition, type FlagGroup } from './api';
 import { FlagInUseModal } from './components/FlagInUseModal';
 
 interface FlagsPageProps {
@@ -22,13 +22,18 @@ export function generateUniqueId(existingIds: Set<string>): string {
 interface FlagEditModalProps {
   flag: FlagDefinition;
   isNew?: boolean;
-  groups?: string[];
+  groups: FlagGroup[];
   onSave: (flag: FlagDefinition) => void;
   onCancel: () => void;
 }
 
 export function FlagEditModal({ flag: initial, isNew, groups, onSave, onCancel }: FlagEditModalProps) {
-  const [flag, setFlag] = useState<FlagDefinition>(() => ({ ...initial }));
+  const [flag, setFlag] = useState<FlagDefinition>(() => ({ ...initial }))
+
+  const handleGroupSelect = (value: string) => {
+    setFlag({ ...flag, group: value || undefined });
+  };
+
 
   return (
     <div className="modal-overlay" onClick={onCancel}>
@@ -45,11 +50,10 @@ export function FlagEditModal({ flag: initial, isNew, groups, onSave, onCancel }
         </div>
         <div className="form-row">
           <label>Group</label>
-          <select
-            value={flag.group ?? ''}
-            onChange={e => setFlag({ ...flag, group: e.target.value })}
-          ><option value={'value'}>'temp option'</option>
-          </select>
+            <select value={flag.group ?? ''} onChange={e => handleGroupSelect(e.target.value)}>
+              <option value="">(ungrouped)</option>
+              {groups.map(g => <option key={g.id} value={g.name}>{g.name}</option>)}
+            </select>          
         </div>
         <div className="modal-footer">
           <Button onClick={onCancel}>Cancel</Button>

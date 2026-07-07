@@ -24,6 +24,7 @@ export function SimulatorFlagsPanel({ flags, onNewFlag, onSelectFlag }: Simulato
       <div className="simulator-panel__header">
         <span>Flags · {flags.length}</span>
       </div>
+      <span className="simulator-new-rule" onClick={onNewFlag}>+ New Flag</span>
       {flags.length === 0 && <p className="simulator-empty">No flags defined.</p>}
       {flagGroups.map(([groupName, groupFlags]) => (
         <CollapsibleGroup key={groupName} title={groupName} count={groupFlags.length}>
@@ -41,7 +42,6 @@ export function SimulatorFlagsPanel({ flags, onNewFlag, onSelectFlag }: Simulato
           </div>
         </CollapsibleGroup>
       ))}
-      <span className="simulator-new-rule" onClick={onNewFlag}>+ New Flag</span>
     </div>
   );
 }
