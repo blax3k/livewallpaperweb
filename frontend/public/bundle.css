@@ -3314,6 +3314,26 @@ body {
   font: 600 12px var(--font-sans);
   cursor: pointer;
 }
+.simulator-flags-group__menu-btn {
+  margin-left: auto;
+  flex-shrink: 0;
+  width: var(--size-18);
+  height: var(--size-18);
+  background: var(--color-input);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--size-6);
+  color: var(--color-fg-subtle);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+.simulator-flags-group__menu-caption {
+  font: 600 9px var(--font-sans);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-fg-faintest);
+  padding: var(--size-4) var(--size-8) var(--size-5);
+}
 .simulator-flags-group__rows {
   display: flex;
   flex-direction: column;
@@ -3376,6 +3396,18 @@ body {
   border-radius: var(--size-5);
   padding: var(--size-2) var(--size-7);
 }
+.simulator-flags-row__menu-btn {
+  flex-shrink: 0;
+  width: var(--size-18);
+  height: var(--size-18);
+  background: var(--color-input);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--size-6);
+  color: var(--color-fg-subtle);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
 .simulator-flags-legend {
   display: flex;
   align-items: center;
@@ -3395,6 +3427,9 @@ body {
 .simulator-flags-legend__dot--on {
   border: none;
   background: var(--color-accent-bright);
+}
+.simulator-flags-legend__hint {
+  margin-left: auto;
 }
 .simulator-preview-body {
   display: flex;

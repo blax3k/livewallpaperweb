@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { FlagDefinition, FlagGroup } from './api';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from './components/ui/dropdown-menu';
 
 type UsageCounts = Record<string, { rules: number; scenes: number }>;
 
@@ -19,6 +20,22 @@ function usageLabel(usage: { rules: number; scenes: number } | undefined): strin
   return parts.length > 0 ? parts.join(' · ') : null;
 }
 
+function FlagRowMenu() {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="simulator-flags-row__menu-btn" onClick={e => e.stopPropagation()}>⋯</button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" onClick={e => e.stopPropagation()}>
+        <DropdownMenuItem>✎ Rename…</DropdownMenuItem>
+        <DropdownMenuItem>⇄ Move to group ▸</DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem danger>✕ Remove…</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 function FlagRow({ flag, usage, onClick }: { flag: FlagDefinition; usage: { rules: number; scenes: number } | undefined; onClick: () => void }) {
   const label = usageLabel(usage);
   return (
@@ -28,7 +45,25 @@ function FlagRow({ flag, usage, onClick }: { flag: FlagDefinition; usage: { rule
       <span className="simulator-flags-row__used">
         {label ?? <span className="simulator-flags-row__unused">Unused</span>}
       </span>
+      <FlagRowMenu />
     </div>
+  );
+}
+
+function GroupHeaderMenu({ groupName }: { groupName: string }) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="simulator-flags-group__menu-btn" onClick={e => e.stopPropagation()}>⋯</button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" onClick={e => e.stopPropagation()}>
+        <div className="simulator-flags-group__menu-caption">Group &quot;{groupName}&quot;</div>
+        <DropdownMenuItem>+ Add flag to group</DropdownMenuItem>
+        <DropdownMenuItem>✎ Rename group…</DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem danger>✕ Remove group…</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -51,7 +86,7 @@ function FlagGroupSection({ title, count, ungrouped, onAdd, children }: FlagGrou
         <span className="simulator-flags-group__caret">{open ? '▾' : '▸'}</span>
         <span className="simulator-flags-group__name">{title}</span>
         <span className="simulator-flags-group__count">{count}</span>
-        {ungrouped && <span className="simulator-flags-group__hint">— flags with no group · can&apos;t be renamed or removed</span>}
+        {ungrouped && <span className="simulator-flags-group__hint"></span>}
         {onAdd && (
           <button
             className="simulator-flags-group__add"
@@ -60,6 +95,7 @@ function FlagGroupSection({ title, count, ungrouped, onAdd, children }: FlagGrou
             +
           </button>
         )}
+        {!ungrouped && <GroupHeaderMenu groupName={title} />}
       </div>
       {open && <div className="simulator-flags-group__rows">{children}</div>}
     </div>
@@ -142,6 +178,7 @@ export function SimulatorFlagsPanel({ flags, groups, usageCounts, onNewFlag, onS
         on now
         <span className="simulator-flags-legend__dot" />
         off
+        <span className="simulator-flags-legend__hint">⋯ opens rename · move · remove</span>
       </div>
     </div>
   );

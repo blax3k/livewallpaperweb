@@ -80310,12 +80310,40 @@ ${e2}`);
     if (usage.scenes > 0) parts.push(`${usage.scenes} scene${usage.scenes === 1 ? "" : "s"}`);
     return parts.length > 0 ? parts.join(" \xB7 ") : null;
   }
+  function FlagRowMenu() {
+    return /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)(DropdownMenu2, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("button", { className: "simulator-flags-row__menu-btn", onClick: (e2) => e2.stopPropagation(), children: "\u22EF" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)(DropdownMenuContent2, { align: "end", onClick: (e2) => e2.stopPropagation(), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(DropdownMenuItem2, { children: "\u270E Rename\u2026" }),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(DropdownMenuItem2, { children: "\u21C4 Move to group \u25B8" }),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(DropdownMenuSeparator2, {}),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(DropdownMenuItem2, { danger: true, children: "\u2715 Remove\u2026" })
+      ] })
+    ] });
+  }
   function FlagRow2({ flag, usage, onClick }) {
     const label = usageLabel(usage);
     return /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-flags-row", onClick, children: [
       /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: `simulator-flags-row__dot ${flag.defaultActive ? "simulator-flags-row__dot--on" : ""}` }),
       /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-row__name", children: flag.name || flag.id }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-row__used", children: label ?? /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-row__unused", children: "Unused" }) })
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-row__used", children: label ?? /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-row__unused", children: "Unused" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(FlagRowMenu, {})
+    ] });
+  }
+  function GroupHeaderMenu({ groupName }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)(DropdownMenu2, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("button", { className: "simulator-flags-group__menu-btn", onClick: (e2) => e2.stopPropagation(), children: "\u22EF" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)(DropdownMenuContent2, { align: "end", onClick: (e2) => e2.stopPropagation(), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-flags-group__menu-caption", children: [
+          'Group "',
+          groupName,
+          '"'
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(DropdownMenuItem2, { children: "+ Add flag to group" }),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(DropdownMenuItem2, { children: "\u270E Rename group\u2026" }),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(DropdownMenuSeparator2, {}),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(DropdownMenuItem2, { danger: true, children: "\u2715 Remove group\u2026" })
+      ] })
     ] });
   }
   function FlagGroupSection({ title, count: count4, ungrouped, onAdd, children }) {
@@ -80330,7 +80358,7 @@ ${e2}`);
             /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-group__caret", children: open ? "\u25BE" : "\u25B8" }),
             /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-group__name", children: title }),
             /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-group__count", children: count4 }),
-            ungrouped && /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-group__hint", children: "\u2014 flags with no group \xB7 can't be renamed or removed" }),
+            ungrouped && /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-group__hint" }),
             onAdd && /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
               "button",
               {
@@ -80341,7 +80369,8 @@ ${e2}`);
                 },
                 children: "+"
               }
-            )
+            ),
+            !ungrouped && /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(GroupHeaderMenu, { groupName: title })
           ]
         }
       ),
@@ -80407,7 +80436,8 @@ ${e2}`);
         /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-legend__dot simulator-flags-legend__dot--on" }),
         "on now",
         /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-legend__dot" }),
-        "off"
+        "off",
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-legend__hint", children: "\u22EF opens rename \xB7 move \xB7 remove" })
       ] })
     ] });
   }
