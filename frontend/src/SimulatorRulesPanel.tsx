@@ -37,9 +37,10 @@ interface SimulatorRulesPanelProps {
   rules: RuleDefinition[];
   flagsById: Map<string, FlagDefinition>;
   onSelectRule: (index: number) => void;
+  onNewRule: () => void;
 }
 
-export function SimulatorRulesPanel({ rules, flagsById, onSelectRule }: SimulatorRulesPanelProps) {
+export function SimulatorRulesPanel({ rules, flagsById, onSelectRule, onNewRule }: SimulatorRulesPanelProps) {
   return (
     <div className="simulator-panel simulator-panel--rules">
       <div className="simulator-panel__header">
@@ -63,7 +64,7 @@ export function SimulatorRulesPanel({ rules, flagsById, onSelectRule }: Simulato
           </div>
         ))}
       </CollapsibleGroup>
-      <span className="simulator-new-rule">+ New rule</span>
+      <span className="simulator-new-rule" onClick={onNewRule}>+ New rule</span>
     </div>
   );
 }

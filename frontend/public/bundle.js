@@ -80213,7 +80213,7 @@ ${e2}`);
     const joiner = group.operator === "OR" ? " or " : " + ";
     return group.checks.map((c2) => summarizeCondition(c2, flagsById)).join(joiner);
   }
-  function SimulatorRulesPanel({ rules, flagsById, onSelectRule }) {
+  function SimulatorRulesPanel({ rules, flagsById, onSelectRule, onNewRule }) {
     return /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-panel simulator-panel--rules", children: [
       /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-panel__header", children: [
         /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("span", { children: [
@@ -80239,7 +80239,7 @@ ${e2}`);
           rule.id
         ))
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { className: "simulator-new-rule", children: "+ New rule" })
+      /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { className: "simulator-new-rule", onClick: onNewRule, children: "+ New rule" })
     ] });
   }
 
@@ -80279,6 +80279,7 @@ ${e2}`);
     const [error, setError] = (0, import_react32.useState)(null);
     const [orderBy, setOrderBy] = (0, import_react32.useState)("least_shown");
     const [editingRuleIndex, setEditingRuleIndex] = (0, import_react32.useState)(null);
+    const [isNewRule, setIsNewRule] = (0, import_react32.useState)(false);
     (0, import_react32.useEffect)(() => {
       Promise.all([rulesApi.list(projectId), flagsApi.list(projectId)]).then(([r2, f2]) => {
         setRules(r2);
@@ -80295,7 +80296,20 @@ ${e2}`);
       const next = rules.map((r2, i2) => i2 === editingRuleIndex ? updated : r2);
       setRules(next);
       setEditingRuleIndex(null);
+      setIsNewRule(false);
       rulesApi.save(projectId, next).catch((err) => setError(String(err)));
+    };
+    const handleNewRule = () => {
+      setRules((prev) => [...prev, emptyRule()]);
+      setIsNewRule(true);
+      setEditingRuleIndex(rules.length);
+    };
+    const handleCancelEditRule = () => {
+      if (isNewRule && editingRuleIndex !== null) {
+        setRules((prev) => prev.filter((_, i2) => i2 !== editingRuleIndex));
+      }
+      setEditingRuleIndex(null);
+      setIsNewRule(false);
     };
     return /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(PageLayout, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(PageHeader, { title: `${projectName} \u2014 Simulator`, left: /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Button, { onClick: onBack, children: "\u2190" }) }),
@@ -80382,7 +80396,7 @@ ${e2}`);
               /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-pipeline__hint", children: "rules set flags \u2192 flags pick the scene \xB7 resolved at each wake" })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-pipeline__row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(SimulatorRulesPanel, { rules, flagsById, onSelectRule: setEditingRuleIndex }),
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(SimulatorRulesPanel, { rules, flagsById, onSelectRule: setEditingRuleIndex, onNewRule: handleNewRule }),
               /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Arrow3, {}),
               /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(SimulatorFlagsPanel, { flags }),
               /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Arrow3, {}),
@@ -80457,7 +80471,7 @@ ${e2}`);
           rule: rules[editingRuleIndex],
           flags,
           onSave: handleSaveRule,
-          onCancel: () => setEditingRuleIndex(null)
+          onCancel: handleCancelEditRule
         }
       )
     ] });

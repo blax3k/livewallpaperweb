@@ -3,7 +3,7 @@ import './SimulatorPage.scss';
 import { PageLayout, PageHeader, PageBody } from './components/PageLayout';
 import { Button } from './components/Button';
 import { rulesApi, flagsApi, type RuleDefinition, type FlagDefinition } from './api';
-import { RuleEditModal } from './RulesPage';
+import { RuleEditModal, emptyRule } from './RulesPage';
 import { SimulatorRulesPanel } from './SimulatorRulesPanel';
 import { SimulatorFlagsPanel } from './SimulatorFlagsPanel';
 
@@ -20,6 +20,7 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
   const [error, setError] = useState<string | null>(null);
   const [orderBy, setOrderBy] = useState<'least_shown' | 'points'>('least_shown');
   const [editingRuleIndex, setEditingRuleIndex] = useState<number | null>(null);
+  const [isNewRule, setIsNewRule] = useState(false);
 
   useEffect(() => {
     Promise.all([rulesApi.list(projectId), flagsApi.list(projectId)])
@@ -34,7 +35,22 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
     const next = rules.map((r, i) => i === editingRuleIndex ? updated : r);
     setRules(next);
     setEditingRuleIndex(null);
+    setIsNewRule(false);
     rulesApi.save(projectId, next).catch(err => setError(String(err)));
+  };
+
+  const handleNewRule = () => {
+    setRules(prev => [...prev, emptyRule()]);
+    setIsNewRule(true);
+    setEditingRuleIndex(rules.length);
+  };
+
+  const handleCancelEditRule = () => {
+    if (isNewRule && editingRuleIndex !== null) {
+      setRules(prev => prev.filter((_, i) => i !== editingRuleIndex));
+    }
+    setEditingRuleIndex(null);
+    setIsNewRule(false);
   };
 
   return (
@@ -106,7 +122,7 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
               </div>
               <div className="simulator-pipeline__row">
                 {/* RULES */}
-                <SimulatorRulesPanel rules={rules} flagsById={flagsById} onSelectRule={setEditingRuleIndex} />
+                <SimulatorRulesPanel rules={rules} flagsById={flagsById} onSelectRule={setEditingRuleIndex} onNewRule={handleNewRule} />
 
                 <Arrow />
 
@@ -183,7 +199,7 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
           rule={rules[editingRuleIndex]}
           flags={flags}
           onSave={handleSaveRule}
-          onCancel={() => setEditingRuleIndex(null)}
+          onCancel={handleCancelEditRule}
         />
       )}
     </PageLayout>
