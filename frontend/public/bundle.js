@@ -80303,35 +80303,112 @@ ${e2}`);
   // src/SimulatorFlagsPanel.tsx
   var import_react31 = __toESM(require_react());
   var import_jsx_runtime52 = __toESM(require_jsx_runtime());
-  function SimulatorFlagsPanel({ flags, onNewFlag, onSelectFlag }) {
-    const flagGroups = (0, import_react31.useMemo)(() => {
-      const groups = /* @__PURE__ */ new Map();
-      for (const flag of flags) {
-        const key = flag.group?.trim() || "Ungrouped";
-        if (!groups.has(key)) groups.set(key, []);
-        groups.get(key).push(flag);
-      }
-      return Array.from(groups.entries());
-    }, [flags]);
-    return /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-panel simulator-panel--flags", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-panel__header", children: /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("span", { children: [
-        "Flags \xB7 ",
-        flags.length
-      ] }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-new-rule", onClick: onNewFlag, children: "+ New Flag" }),
-      flags.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("p", { className: "simulator-empty", children: "No flags defined." }),
-      flagGroups.map(([groupName, groupFlags]) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(CollapsibleGroup, { title: groupName, count: groupFlags.length, children: /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-chip-row", children: groupFlags.map((flag) => /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)(
-        "span",
+  function usageLabel(usage) {
+    if (!usage) return null;
+    const parts = [];
+    if (usage.rules > 0) parts.push(`${usage.rules} rule${usage.rules === 1 ? "" : "s"}`);
+    if (usage.scenes > 0) parts.push(`${usage.scenes} scene${usage.scenes === 1 ? "" : "s"}`);
+    return parts.length > 0 ? parts.join(" \xB7 ") : null;
+  }
+  function FlagRow2({ flag, usage, onClick }) {
+    const label = usageLabel(usage);
+    return /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-flags-row", onClick, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: `simulator-flags-row__dot ${flag.defaultActive ? "simulator-flags-row__dot--on" : ""}` }),
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-row__name", children: flag.name || flag.id }),
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-row__used", children: label ?? /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-row__unused", children: "Unused" }) })
+    ] });
+  }
+  function FlagGroupSection({ title, count: count4, ungrouped, onAdd, children }) {
+    const [open, setOpen] = (0, import_react31.useState)(true);
+    return /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-flags-group", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)(
+        "div",
         {
-          className: `simulator-chip ${flag.defaultActive ? "simulator-chip--on" : "simulator-chip--off"}`,
-          onClick: () => onSelectFlag(flag),
+          className: `simulator-flags-group__header ${ungrouped ? "simulator-flags-group__header--ungrouped" : ""}`,
+          onClick: () => setOpen((o2) => !o2),
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-chip__dot" }),
-            /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { children: flag.name || flag.id })
+            /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-group__caret", children: open ? "\u25BE" : "\u25B8" }),
+            /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-group__name", children: title }),
+            /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-group__count", children: count4 }),
+            ungrouped && /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-group__hint", children: "\u2014 flags with no group \xB7 can't be renamed or removed" }),
+            onAdd && /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
+              "button",
+              {
+                className: "simulator-flags-group__add",
+                onClick: (e2) => {
+                  e2.stopPropagation();
+                  onAdd();
+                },
+                children: "+"
+              }
+            )
           ]
-        },
-        flag.id
-      )) }) }, groupName))
+        }
+      ),
+      open && /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-flags-group__rows", children })
+    ] });
+  }
+  function SimulatorFlagsPanel({ flags, groups, usageCounts, onNewFlag, onSelectFlag }) {
+    const [search, setSearch] = (0, import_react31.useState)("");
+    const filteredFlags = (0, import_react31.useMemo)(() => {
+      const q = search.trim().toLowerCase();
+      if (!q) return flags;
+      return flags.filter((f2) => (f2.name || f2.id).toLowerCase().includes(q));
+    }, [flags, search]);
+    const { byGroup, ungrouped } = (0, import_react31.useMemo)(() => {
+      const byGroup2 = /* @__PURE__ */ new Map();
+      for (const group of groups) byGroup2.set(group.name, []);
+      const ungrouped2 = [];
+      for (const flag of filteredFlags) {
+        const groupName = flag.group?.trim();
+        if (groupName && byGroup2.has(groupName)) {
+          byGroup2.get(groupName).push(flag);
+        } else {
+          ungrouped2.push(flag);
+        }
+      }
+      return { byGroup: byGroup2, ungrouped: ungrouped2 };
+    }, [filteredFlags, groups]);
+    const isEmpty = flags.length === 0 && groups.length === 0;
+    return /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-panel simulator-panel--flags", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-flags-header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("span", { className: "simulator-flags-header__title", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-header__dot" }),
+          "Flags"
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("span", { className: "simulator-flags-header__count", children: [
+          flags.length,
+          " flags \xB7 ",
+          groups.length + 1,
+          " groups"
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-flags-header__actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
+            "input",
+            {
+              className: "simulator-flags-header__search",
+              value: search,
+              onChange: (e2) => setSearch(e2.target.value),
+              placeholder: "Search flags"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("button", { className: "simulator-flags-header__new-btn", onClick: onNewFlag, children: "+ New flag" })
+        ] })
+      ] }),
+      !isEmpty && /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-flags-columns", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { children: "Flag" }),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-columns__used", children: "Used by" })
+      ] }),
+      isEmpty ? /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("p", { className: "simulator-empty", children: "No flags defined." }) : /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-flags-list", children: [
+        groups.map((group) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(FlagGroupSection, { title: group.name, count: (byGroup.get(group.name) ?? []).length, children: (byGroup.get(group.name) ?? []).map((flag) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(FlagRow2, { flag, usage: usageCounts[flag.id], onClick: () => onSelectFlag(flag) }, flag.id)) }, group.id)),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(FlagGroupSection, { title: "Ungrouped", count: ungrouped.length, ungrouped: true, onAdd: onNewFlag, children: ungrouped.map((flag) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(FlagRow2, { flag, usage: usageCounts[flag.id], onClick: () => onSelectFlag(flag) }, flag.id)) })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-flags-legend", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-legend__dot simulator-flags-legend__dot--on" }),
+        "on now",
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-legend__dot" }),
+        "off"
+      ] })
     ] });
   }
 
@@ -80341,6 +80418,7 @@ ${e2}`);
     const [rules, setRules] = (0, import_react32.useState)([]);
     const [flags, setFlags] = (0, import_react32.useState)([]);
     const [flagGroups, setFlagGroups] = (0, import_react32.useState)([]);
+    const [flagUsageCounts, setFlagUsageCounts] = (0, import_react32.useState)({});
     const [loading, setLoading] = (0, import_react32.useState)(true);
     const [error, setError] = (0, import_react32.useState)(null);
     const [orderBy, setOrderBy] = (0, import_react32.useState)("least_shown");
@@ -80349,10 +80427,11 @@ ${e2}`);
     const [editingFlagId, setEditingFlagId] = (0, import_react32.useState)(null);
     const [isNewFlag, setIsNewFlag] = (0, import_react32.useState)(false);
     (0, import_react32.useEffect)(() => {
-      Promise.all([rulesApi.list(projectId), flagsApi.list(projectId), flagGroupsApi.list(projectId)]).then(([r2, f2, g2]) => {
+      Promise.all([rulesApi.list(projectId), flagsApi.list(projectId), flagGroupsApi.list(projectId), flagsApi.checkUsageCounts(projectId)]).then(([r2, f2, g2, u2]) => {
         setRules(r2);
         setFlags(f2);
         setFlagGroups(g2);
+        setFlagUsageCounts(u2);
         setLoading(false);
       }).catch((err) => {
         setError(String(err));
@@ -80361,6 +80440,9 @@ ${e2}`);
     }, [projectId]);
     const refreshFlagGroups = () => {
       flagGroupsApi.list(projectId).then(setFlagGroups).catch((err) => setError(String(err)));
+    };
+    const refreshFlagUsageCounts = () => {
+      flagsApi.checkUsageCounts(projectId).then(setFlagUsageCounts).catch((err) => setError(String(err)));
     };
     const flagsById = (0, import_react32.useMemo)(() => new Map(flags.map((f2) => [f2.id, f2])), [flags]);
     const handleSaveRule = (updated) => {
@@ -80399,7 +80481,10 @@ ${e2}`);
       setFlags(next);
       setEditingFlagId(null);
       setIsNewFlag(false);
-      flagsApi.save(projectId, next).then(refreshFlagGroups).catch((err) => setError(String(err)));
+      flagsApi.save(projectId, next).then(() => {
+        refreshFlagGroups();
+        refreshFlagUsageCounts();
+      }).catch((err) => setError(String(err)));
     };
     const handleCancelEditFlag = () => {
       if (isNewFlag && editingFlagId !== null) {
@@ -80495,7 +80580,16 @@ ${e2}`);
             /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-pipeline__row", children: [
               /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(SimulatorRulesPanel, { rules, flagsById, onSelectRule: setEditingRuleIndex, onNewRule: handleNewRule }),
               /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Arrow3, {}),
-              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(SimulatorFlagsPanel, { flags, onNewFlag: handleNewFlag, onSelectFlag: handleSelectFlag }),
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+                SimulatorFlagsPanel,
+                {
+                  flags,
+                  groups: flagGroups,
+                  usageCounts: flagUsageCounts,
+                  onNewFlag: handleNewFlag,
+                  onSelectFlag: handleSelectFlag
+                }
+              ),
               /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Arrow3, {}),
               /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-panel simulator-panel--preview", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-panel__header", children: [

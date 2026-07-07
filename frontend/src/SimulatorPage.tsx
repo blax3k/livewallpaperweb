@@ -18,6 +18,7 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
   const [rules, setRules] = useState<RuleDefinition[]>([]);
   const [flags, setFlags] = useState<FlagDefinition[]>([]);
   const [flagGroups, setFlagGroups] = useState<FlagGroup[]>([]);
+  const [flagUsageCounts, setFlagUsageCounts] = useState<Record<string, { rules: number; scenes: number }>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [orderBy, setOrderBy] = useState<'least_shown' | 'points'>('least_shown');
@@ -27,13 +28,17 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
   const [isNewFlag, setIsNewFlag] = useState(false);
 
   useEffect(() => {
-    Promise.all([rulesApi.list(projectId), flagsApi.list(projectId), flagGroupsApi.list(projectId)])
-      .then(([r, f, g]) => { setRules(r); setFlags(f); setFlagGroups(g); setLoading(false); })
+    Promise.all([rulesApi.list(projectId), flagsApi.list(projectId), flagGroupsApi.list(projectId), flagsApi.checkUsageCounts(projectId)])
+      .then(([r, f, g, u]) => { setRules(r); setFlags(f); setFlagGroups(g); setFlagUsageCounts(u); setLoading(false); })
       .catch(err => { setError(String(err)); setLoading(false); });
   }, [projectId]);
 
   const refreshFlagGroups = () => {
     flagGroupsApi.list(projectId).then(setFlagGroups).catch(err => setError(String(err)));
+  };
+
+  const refreshFlagUsageCounts = () => {
+    flagsApi.checkUsageCounts(projectId).then(setFlagUsageCounts).catch(err => setError(String(err)));
   };
 
   const flagsById = useMemo(() => new Map(flags.map(f => [f.id, f])), [flags]);
@@ -80,7 +85,7 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
     setEditingFlagId(null);
     setIsNewFlag(false);
     flagsApi.save(projectId, next)
-      .then(refreshFlagGroups)
+      .then(() => { refreshFlagGroups(); refreshFlagUsageCounts(); })
       .catch(err => setError(String(err)));
   };
 
@@ -166,7 +171,13 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
                 <Arrow />
 
                 {/* FLAGS */}
-                <SimulatorFlagsPanel flags={flags} onNewFlag={handleNewFlag} onSelectFlag={handleSelectFlag} />
+                <SimulatorFlagsPanel
+                  flags={flags}
+                  groups={flagGroups}
+                  usageCounts={flagUsageCounts}
+                  onNewFlag={handleNewFlag}
+                  onSelectFlag={handleSelectFlag}
+                />
 
                 <Arrow />
 
