@@ -1,4 +1,4 @@
-import type { FlagDefinition, RuleDefinition } from '@livewallpaper/types';
+import type { RuleDefinition } from '@livewallpaper/types';
 import { pool } from '../../db';
 import { type ObjectStatus } from '../common/objectModel';
 import { ProjectObject } from './projectObject';
@@ -83,22 +83,6 @@ export async function incrementProjectVersion(projectId: string) {
   await pool.query('UPDATE projects SET version = version + 1 WHERE id = $1', [projectId]);
 }
 
-export async function selectProjectFlags(projectId: string): Promise<FlagDefinition[]> {
-  const result = await pool.query<{ flags: FlagDefinition[] }>(
-    'SELECT flags FROM projects WHERE id = $1 AND status <> $2',
-    [projectId, 'DELETED'],
-  );
-  return result.rows[0]?.flags ?? [];
-}
-
-export async function updateProjectFlags(projectId: string, flags: FlagDefinition[]): Promise<boolean> {
-  const result = await pool.query(
-    'UPDATE projects SET flags = $2, updated_at = NOW() WHERE id = $1 AND status <> $3',
-    [projectId, JSON.stringify(flags), 'DELETED'],
-  );
-  return (result.rowCount ?? 0) > 0;
-}
-
 export async function selectProjectRules(projectId: string): Promise<RuleDefinition[]> {
   const result = await pool.query<{ rules: RuleDefinition[] }>(
     'SELECT rules FROM projects WHERE id = $1 AND status <> $2',
@@ -113,38 +97,4 @@ export async function updateProjectRules(projectId: string, rules: RuleDefinitio
     [projectId, JSON.stringify(rules), 'DELETED'],
   );
   return (result.rowCount ?? 0) > 0;
-}
-
-export async function selectFlagUsage(projectId: string, flagId: string): Promise<{ scenes: string[]; rules: string[] }> {
-  const scenesResult = await pool.query<{ name: string }>(
-    `SELECT DISTINCT s.name
-     FROM scenes s
-     WHERE s.project_id = $1
-       AND s.status <> 'DELETED'
-       AND (
-         jsonb_path_exists(s.flag_declarations, '$.required[*] ? (@ == $f)', jsonb_build_object('f', $2))
-         OR jsonb_path_exists(s.flag_declarations, '$.excluded[*] ? (@ == $f)', jsonb_build_object('f', $2))
-         OR jsonb_path_exists(s.flag_declarations, '$.scored[*].flagId ? (@ == $f)', jsonb_build_object('f', $2))
-         OR EXISTS (
-           SELECT 1 FROM sprites sp WHERE sp.scene_id = s.id
-             AND jsonb_path_exists(sp.conditions, '$[*].conditions.checks[*].flagId ? (@ == $f)', jsonb_build_object('f', $2))
-         )
-       )
-     ORDER BY s.name`,
-    [projectId, flagId],
-  );
-
-  const rulesResult = await pool.query<{ rules: RuleDefinition[] }>(
-    'SELECT rules FROM projects WHERE id = $1 AND status <> $2',
-    [projectId, 'DELETED'],
-  );
-  const allRules: RuleDefinition[] = rulesResult.rows[0]?.rules ?? [];
-  const matchingRules = allRules
-    .filter(rule =>
-      rule.conditions?.checks.some(c => c.flagId === flagId) ||
-      rule.actions.some(a => a.flagId === flagId),
-    )
-    .map(rule => rule.name);
-
-  return { scenes: scenesResult.rows.map(r => r.name), rules: matchingRules };
 }

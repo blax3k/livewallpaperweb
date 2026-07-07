@@ -1,13 +1,10 @@
 import type { FastifyInstance } from 'fastify';
-import type { FlagDefinition, RuleDefinition } from '@livewallpaper/types';
+import type { RuleDefinition } from '@livewallpaper/types';
 import { HttpStatus } from '../../utils/httpStatus';
 import { archiveProject, createProject, getProject, listProjects, unarchiveProject } from './projectService';
 import {
-  selectProjectFlags,
-  updateProjectFlags,
   selectProjectRules,
   updateProjectRules,
-  selectFlagUsage,
 } from './projectRepository';
 
 export async function registerProjectRoutes(server: FastifyInstance): Promise<void> {
@@ -44,24 +41,6 @@ export async function registerProjectRoutes(server: FastifyInstance): Promise<vo
     }
 
     return project;
-  });
-
-  // ── Flags ──────────────────────────────────────────────────────────────────
-
-  server.get<{ Params: { id: string } }>('/api/projects/:id/flags', async (req, reply) => {
-    const flags = await selectProjectFlags(req.params.id);
-    if (flags === null) return reply.status(HttpStatus.NOT_FOUND).send({ error: 'Project not found' });
-    return flags;
-  });
-
-  server.put<{ Params: { id: string }; Body: FlagDefinition[] }>('/api/projects/:id/flags', async (req, reply) => {
-    const ok = await updateProjectFlags(req.params.id, req.body);
-    if (!ok) return reply.status(HttpStatus.NOT_FOUND).send({ error: 'Project not found' });
-    return reply.status(HttpStatus.NO_CONTENT).send();
-  });
-
-  server.get<{ Params: { id: string; flagId: string } }>('/api/projects/:id/flags/:flagId/usage', async (req) => {
-    return selectFlagUsage(req.params.id, req.params.flagId);
   });
 
   // ── Rules ──────────────────────────────────────────────────────────────────

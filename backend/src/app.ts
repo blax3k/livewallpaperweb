@@ -7,6 +7,7 @@ import path from 'path';
 import type { ImageStorage } from './storage';
 import authPlugin from './plugins/auth';
 import { registerAuthRoutes } from './modules/auth';
+import { registerFlagRoutes } from './modules/flags';
 import { registerImageRoutes } from './modules/images';
 import { registerProjectRoutes } from './modules/projects';
 import { registerSceneRoutes } from './modules/scenes';
@@ -80,6 +81,7 @@ export async function buildServer(deps: BuildServerDeps) {
     protected_.addHook('preHandler', server.authenticate);
 
     await registerProjectRoutes(protected_);
+    await registerFlagRoutes(protected_);
     await registerImageRoutes(protected_, { storage: deps.imageStorage, thumbnailStorage: deps.imageThumbnailStorage });
     await registerSceneRoutes(protected_, { thumbnailStorage: deps.thumbnailStorage });
     await registerThumbnailRoutes(protected_, { thumbnailStorage: deps.thumbnailStorage });

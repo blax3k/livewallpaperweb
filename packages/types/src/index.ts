@@ -12,8 +12,14 @@ export interface FlagDefinition {
   name: string;
   /** Whether this flag starts active on a fresh install. Defaults to false. */
   defaultActive?: boolean;
-  /** Free-text grouping label for editor tooling (e.g. "Ambient", "Milestones"). Ungrouped if omitted. */
+  /** Name of the FlagGroup this flag belongs to (see FlagGroup). Ungrouped if omitted. */
   group?: string;
+}
+
+/** A named grouping bucket for flags, scoped to a project. */
+export interface FlagGroup {
+  id: string;
+  name: string;
 }
 
 /** Associates a flag with a scene-specific score weight. */
