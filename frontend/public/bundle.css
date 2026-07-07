@@ -3144,6 +3144,10 @@ body {
   background: var(--color-panel-inset);
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--size-6);
+  cursor: pointer;
+}
+.simulator-rule-row:hover {
+  border-color: var(--color-border-strong);
 }
 .simulator-rule-row__dot {
   width: var(--size-6);
@@ -3166,7 +3170,7 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.simulator-rule-row__flag {
+.simulator-rule-row__name {
   font: 600 var(--text-11) var(--font-sans);
   color: var(--color-fg-subtle);
   flex-shrink: 0;

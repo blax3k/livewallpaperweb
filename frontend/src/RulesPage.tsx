@@ -183,7 +183,7 @@ interface RuleEditModalProps {
   onCancel: () => void;
 }
 
-function RuleEditModal({ rule: initial, flags, onSave, onCancel }: RuleEditModalProps) {
+export function RuleEditModal({ rule: initial, flags, onSave, onCancel }: RuleEditModalProps) {
   const [rule, setRule] = useState<RuleDefinition>(() => JSON.parse(JSON.stringify(initial)));
 
   const setField = <K extends keyof RuleDefinition>(key: K, value: RuleDefinition[K]) =>

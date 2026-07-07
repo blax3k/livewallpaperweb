@@ -2,65 +2,15 @@ import { useState, useEffect, useMemo } from 'react';
 import './SimulatorPage.scss';
 import { PageLayout, PageHeader, PageBody } from './components/PageLayout';
 import { Button } from './components/Button';
+import { CollapsibleGroup } from './components/CollapsibleGroup';
 import { rulesApi, flagsApi, type RuleDefinition, type FlagDefinition } from './api';
-import type { RuleCondition } from '@livewallpaper/types';
+import { RuleEditModal } from './RulesPage';
+import { SimulatorRulesPanel } from './SimulatorRulesPanel';
 
 interface SimulatorPageProps {
   projectId: string;
   projectName: string;
   onBack: () => void;
-}
-
-const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-function pad(n: number | undefined): string {
-  return String(n ?? 0).padStart(2, '0');
-}
-
-function flagLabel(flagId: string | undefined, flagsById: Map<string, FlagDefinition>): string {
-  if (!flagId) return '(no flag)';
-  return flagsById.get(flagId)?.name || flagId;
-}
-
-function summarizeCondition(c: RuleCondition, flagsById: Map<string, FlagDefinition>): string {
-  switch (c.type) {
-    case 'flag_active': return `${flagLabel(c.flagId, flagsById)} active`;
-    case 'flag_inactive': return `${flagLabel(c.flagId, flagsById)} inactive`;
-    case 'time_of_day': return `time ${pad(c.startHour)}:00–${pad(c.endHour)}:00`;
-    case 'day_of_week': return `day ${(c.daysOfWeek ?? []).map(d => DAY_LABELS[d]).join(',') || '—'}`;
-    case 'scene_count': return `scene views ${c.operator ?? '>='} ${c.intValue ?? 0}`;
-    case 'install_duration_hours': return `install age ${c.operator ?? '>='} ${c.intValue ?? 0}h`;
-    case 'time_since_flag_change': return `${flagLabel(c.flagId, flagsById)} ${c.flagChangeType ?? 'activated'} ${c.operator ?? '>='} ${c.intValue ?? 0}h ago`;
-    default: return c.type;
-  }
-}
-
-function summarizeConditions(rule: RuleDefinition, flagsById: Map<string, FlagDefinition>): string {
-  const group = rule.conditions;
-  if (!group || group.checks.length === 0) return 'always';
-  const joiner = group.operator === 'OR' ? ' or ' : ' + ';
-  return group.checks.map(c => summarizeCondition(c, flagsById)).join(joiner);
-}
-
-function summarizeActions(rule: RuleDefinition, flagsById: Map<string, FlagDefinition>): string {
-  if (rule.actions.length === 0) return '—';
-  return rule.actions
-    .map(a => `${a.type === 'deactivate_flag' ? '¬' : ''}${flagLabel(a.flagId, flagsById)}`)
-    .join(', ');
-}
-
-function CollapsibleGroup({ title, count, children }: { title: string; count: number; children: React.ReactNode }) {
-  const [open, setOpen] = useState(true);
-  return (
-    <div className="simulator-group">
-      <div className="simulator-group__header" onClick={() => setOpen(o => !o)}>
-        <span className="simulator-group__caret">{open ? '▾' : '▸'}</span>
-        {title}
-        <span className="simulator-group__count">· {count}</span>
-      </div>
-      {open && children}
-    </div>
-  );
 }
 
 export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageProps) {
@@ -69,6 +19,7 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [orderBy, setOrderBy] = useState<'least_shown' | 'points'>('least_shown');
+  const [editingRuleIndex, setEditingRuleIndex] = useState<number | null>(null);
 
   useEffect(() => {
     Promise.all([rulesApi.list(projectId), flagsApi.list(projectId)])
@@ -77,6 +28,14 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
   }, [projectId]);
 
   const flagsById = useMemo(() => new Map(flags.map(f => [f.id, f])), [flags]);
+
+  const handleSaveRule = (updated: RuleDefinition) => {
+    if (editingRuleIndex === null) return;
+    const next = rules.map((r, i) => i === editingRuleIndex ? updated : r);
+    setRules(next);
+    setEditingRuleIndex(null);
+    rulesApi.save(projectId, next).catch(err => setError(String(err)));
+  };
 
   const flagGroups = useMemo(() => {
     const groups = new Map<string, FlagDefinition[]>();
@@ -157,25 +116,7 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
               </div>
               <div className="simulator-pipeline__row">
                 {/* RULES */}
-                <div className="simulator-panel simulator-panel--rules">
-                  <div className="simulator-panel__header">
-                    <span>Rules · {rules.length}</span>
-                    <span className="simulator-panel__search">⌕</span>
-                  </div>
-                  <CollapsibleGroup title="RULES" count={rules.length}>
-                    {rules.length === 0 && <p className="simulator-empty">No rules defined.</p>}
-                    {rules.map(rule => (
-                      <div className="simulator-rule-row" key={rule.id}>
-                        {rule.oneShot
-                          ? <span className="simulator-rule-row__lock">🔒</span>
-                          : <span className="simulator-rule-row__dot" />}
-                        <span className="simulator-rule-row__condition">{summarizeConditions(rule, flagsById)}</span>
-                        <span className="simulator-rule-row__flag">{summarizeActions(rule, flagsById)}</span>
-                      </div>
-                    ))}
-                  </CollapsibleGroup>
-                  <span className="simulator-new-rule">+ New rule</span>
-                </div>
+                <SimulatorRulesPanel rules={rules} flagsById={flagsById} onSelectRule={setEditingRuleIndex} />
 
                 <Arrow />
 
@@ -268,6 +209,14 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
           </div>
         )}
       </PageBody>
+      {editingRuleIndex !== null && (
+        <RuleEditModal
+          rule={rules[editingRuleIndex]}
+          flags={flags}
+          onSave={handleSaveRule}
+          onCancel={() => setEditingRuleIndex(null)}
+        />
+      )}
     </PageLayout>
   );
 }
