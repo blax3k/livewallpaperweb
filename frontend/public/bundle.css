@@ -3198,6 +3198,7 @@ body {
   padding: 0 var(--size-8);
   border-radius: 11px;
   font: 500 11px var(--font-sans);
+  cursor: pointer;
 }
 .simulator-chip__dot {
   width: var(--size-6);

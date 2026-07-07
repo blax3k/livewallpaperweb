@@ -4,6 +4,7 @@ import { PageLayout, PageHeader, PageBody } from './components/PageLayout';
 import { Button } from './components/Button';
 import { rulesApi, flagsApi, type RuleDefinition, type FlagDefinition } from './api';
 import { RuleEditModal, emptyRule } from './RulesPage';
+import { generateUniqueId, FlagEditModal } from './FlagsPage';
 import { SimulatorRulesPanel } from './SimulatorRulesPanel';
 import { SimulatorFlagsPanel } from './SimulatorFlagsPanel';
 
@@ -21,6 +22,8 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
   const [orderBy, setOrderBy] = useState<'least_shown' | 'points'>('least_shown');
   const [editingRuleIndex, setEditingRuleIndex] = useState<number | null>(null);
   const [isNewRule, setIsNewRule] = useState(false);
+  const [editingFlagId, setEditingFlagId] = useState<string | null>(null);
+  const [isNewFlag, setIsNewFlag] = useState(false);
 
   useEffect(() => {
     Promise.all([rulesApi.list(projectId), flagsApi.list(projectId)])
@@ -51,6 +54,35 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
     }
     setEditingRuleIndex(null);
     setIsNewRule(false);
+  };
+
+  const handleNewFlag = () => {
+    const existingIds = new Set(flags.map(f => f.id));
+    const newFlag: FlagDefinition = { id: generateUniqueId(existingIds), name: '', defaultActive: false };
+    setFlags(prev => [...prev, newFlag]);
+    setIsNewFlag(true);
+    setEditingFlagId(newFlag.id);
+  };
+
+  const handleSelectFlag = (flag: FlagDefinition) => {
+    setIsNewFlag(false);
+    setEditingFlagId(flag.id);
+  };
+
+  const handleSaveFlag = (updated: FlagDefinition) => {
+    const next = flags.map(f => f.id === editingFlagId ? updated : f);
+    setFlags(next);
+    setEditingFlagId(null);
+    setIsNewFlag(false);
+    flagsApi.save(projectId, next).catch(err => setError(String(err)));
+  };
+
+  const handleCancelEditFlag = () => {
+    if (isNewFlag && editingFlagId !== null) {
+      setFlags(prev => prev.filter(f => f.id !== editingFlagId));
+    }
+    setEditingFlagId(null);
+    setIsNewFlag(false);
   };
 
   return (
@@ -127,7 +159,7 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
                 <Arrow />
 
                 {/* FLAGS */}
-                <SimulatorFlagsPanel flags={flags} />
+                <SimulatorFlagsPanel flags={flags} onNewFlag={handleNewFlag} onSelectFlag={handleSelectFlag} />
 
                 <Arrow />
 
@@ -200,6 +232,14 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
           flags={flags}
           onSave={handleSaveRule}
           onCancel={handleCancelEditRule}
+        />
+      )}
+      {editingFlagId !== null && (
+        <FlagEditModal
+          flag={flags.find(f => f.id === editingFlagId)!}
+          isNew={isNewFlag}
+          onSave={handleSaveFlag}
+          onCancel={handleCancelEditFlag}
         />
       )}
     </PageLayout>

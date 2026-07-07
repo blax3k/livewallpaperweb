@@ -4,9 +4,11 @@ import type { FlagDefinition } from './api';
 
 interface SimulatorFlagsPanelProps {
   flags: FlagDefinition[];
+  onNewFlag: () => void;
+  onSelectFlag: (flag: FlagDefinition) => void;
 }
 
-export function SimulatorFlagsPanel({ flags }: SimulatorFlagsPanelProps) {
+export function SimulatorFlagsPanel({ flags, onNewFlag, onSelectFlag }: SimulatorFlagsPanelProps) {
   const flagGroups = useMemo(() => {
     const groups = new Map<string, FlagDefinition[]>();
     for (const flag of flags) {
@@ -27,7 +29,11 @@ export function SimulatorFlagsPanel({ flags }: SimulatorFlagsPanelProps) {
         <CollapsibleGroup key={groupName} title={groupName} count={groupFlags.length}>
           <div className="simulator-chip-row">
             {groupFlags.map(flag => (
-              <span key={flag.id} className={`simulator-chip ${flag.defaultActive ? 'simulator-chip--on' : 'simulator-chip--off'}`}>
+              <span
+                key={flag.id}
+                className={`simulator-chip ${flag.defaultActive ? 'simulator-chip--on' : 'simulator-chip--off'}`}
+                onClick={() => onSelectFlag(flag)}
+              >
                 <span className="simulator-chip__dot" />
                 <span>{flag.name || flag.id}</span>
               </span>
@@ -35,7 +41,7 @@ export function SimulatorFlagsPanel({ flags }: SimulatorFlagsPanelProps) {
           </div>
         </CollapsibleGroup>
       ))}
-      <span className="simulator-new-rule">+ New Flag</span>
+      <span className="simulator-new-rule" onClick={onNewFlag}>+ New Flag</span>
     </div>
   );
 }

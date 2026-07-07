@@ -79611,6 +79611,39 @@ ${e2}`);
     } while (existingIds.has(id));
     return id;
   }
+  function FlagEditModal({ flag: initial, isNew, groups, onSave, onCancel }) {
+    const [flag, setFlag] = (0, import_react28.useState)(() => ({ ...initial }));
+    return /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("div", { className: "modal-overlay", onClick: onCancel, children: /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("h2", { className: "modal-title", children: isNew ? "New Flag" : "Edit Flag" }),
+      /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "form-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("label", { children: "Name" }),
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+          "input",
+          {
+            value: flag.name,
+            onChange: (e2) => setFlag({ ...flag, name: e2.target.value }),
+            placeholder: "Flag display name",
+            autoFocus: true
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "form-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("label", { children: "Group" }),
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+          "select",
+          {
+            value: flag.group ?? "",
+            onChange: (e2) => setFlag({ ...flag, group: e2.target.value }),
+            children: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("option", { value: "value", children: "'temp option'" })
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "modal-footer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(Button, { variant: "primary", disabled: !flag.name.trim(), onClick: () => onSave(flag), children: "Save Flag" })
+      ] })
+    ] }) });
+  }
   function FlagRow({ flag, isEditing, isDuplicate, onEdit, onAccept, onCancel, onChange, onDefaultActiveChange, onGroupChange, onGroupCommit, onDelete }) {
     return /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("tr", { className: `flags-table__row${isDuplicate ? " flags-table__row--error" : ""}`, children: [
       /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
@@ -80246,7 +80279,7 @@ ${e2}`);
   // src/SimulatorFlagsPanel.tsx
   var import_react31 = __toESM(require_react());
   var import_jsx_runtime52 = __toESM(require_jsx_runtime());
-  function SimulatorFlagsPanel({ flags }) {
+  function SimulatorFlagsPanel({ flags, onNewFlag, onSelectFlag }) {
     const flagGroups = (0, import_react31.useMemo)(() => {
       const groups = /* @__PURE__ */ new Map();
       for (const flag of flags) {
@@ -80262,11 +80295,19 @@ ${e2}`);
         flags.length
       ] }) }),
       flags.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("p", { className: "simulator-empty", children: "No flags defined." }),
-      flagGroups.map(([groupName, groupFlags]) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(CollapsibleGroup, { title: groupName, count: groupFlags.length, children: /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-chip-row", children: groupFlags.map((flag) => /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("span", { className: `simulator-chip ${flag.defaultActive ? "simulator-chip--on" : "simulator-chip--off"}`, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-chip__dot" }),
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { children: flag.name || flag.id })
-      ] }, flag.id)) }) }, groupName)),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-new-rule", children: "+ New Flag" })
+      flagGroups.map(([groupName, groupFlags]) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(CollapsibleGroup, { title: groupName, count: groupFlags.length, children: /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-chip-row", children: groupFlags.map((flag) => /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)(
+        "span",
+        {
+          className: `simulator-chip ${flag.defaultActive ? "simulator-chip--on" : "simulator-chip--off"}`,
+          onClick: () => onSelectFlag(flag),
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-chip__dot" }),
+            /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { children: flag.name || flag.id })
+          ]
+        },
+        flag.id
+      )) }) }, groupName)),
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-new-rule", onClick: onNewFlag, children: "+ New Flag" })
     ] });
   }
 
@@ -80280,6 +80321,8 @@ ${e2}`);
     const [orderBy, setOrderBy] = (0, import_react32.useState)("least_shown");
     const [editingRuleIndex, setEditingRuleIndex] = (0, import_react32.useState)(null);
     const [isNewRule, setIsNewRule] = (0, import_react32.useState)(false);
+    const [editingFlagId, setEditingFlagId] = (0, import_react32.useState)(null);
+    const [isNewFlag, setIsNewFlag] = (0, import_react32.useState)(false);
     (0, import_react32.useEffect)(() => {
       Promise.all([rulesApi.list(projectId), flagsApi.list(projectId)]).then(([r2, f2]) => {
         setRules(r2);
@@ -80310,6 +80353,31 @@ ${e2}`);
       }
       setEditingRuleIndex(null);
       setIsNewRule(false);
+    };
+    const handleNewFlag = () => {
+      const existingIds = new Set(flags.map((f2) => f2.id));
+      const newFlag = { id: generateUniqueId(existingIds), name: "", defaultActive: false };
+      setFlags((prev) => [...prev, newFlag]);
+      setIsNewFlag(true);
+      setEditingFlagId(newFlag.id);
+    };
+    const handleSelectFlag = (flag) => {
+      setIsNewFlag(false);
+      setEditingFlagId(flag.id);
+    };
+    const handleSaveFlag = (updated) => {
+      const next = flags.map((f2) => f2.id === editingFlagId ? updated : f2);
+      setFlags(next);
+      setEditingFlagId(null);
+      setIsNewFlag(false);
+      flagsApi.save(projectId, next).catch((err) => setError(String(err)));
+    };
+    const handleCancelEditFlag = () => {
+      if (isNewFlag && editingFlagId !== null) {
+        setFlags((prev) => prev.filter((f2) => f2.id !== editingFlagId));
+      }
+      setEditingFlagId(null);
+      setIsNewFlag(false);
     };
     return /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(PageLayout, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(PageHeader, { title: `${projectName} \u2014 Simulator`, left: /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Button, { onClick: onBack, children: "\u2190" }) }),
@@ -80398,7 +80466,7 @@ ${e2}`);
             /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-pipeline__row", children: [
               /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(SimulatorRulesPanel, { rules, flagsById, onSelectRule: setEditingRuleIndex, onNewRule: handleNewRule }),
               /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Arrow3, {}),
-              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(SimulatorFlagsPanel, { flags }),
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(SimulatorFlagsPanel, { flags, onNewFlag: handleNewFlag, onSelectFlag: handleSelectFlag }),
               /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Arrow3, {}),
               /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-panel simulator-panel--preview", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-panel__header", children: [
@@ -80472,6 +80540,15 @@ ${e2}`);
           flags,
           onSave: handleSaveRule,
           onCancel: handleCancelEditRule
+        }
+      ),
+      editingFlagId !== null && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+        FlagEditModal,
+        {
+          flag: flags.find((f2) => f2.id === editingFlagId),
+          isNew: isNewFlag,
+          onSave: handleSaveFlag,
+          onCancel: handleCancelEditFlag
         }
       )
     ] });

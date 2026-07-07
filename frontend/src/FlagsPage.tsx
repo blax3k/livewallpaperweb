@@ -11,12 +11,53 @@ interface FlagsPageProps {
   onBack: () => void;
 }
 
-function generateUniqueId(existingIds: Set<string>): string {
+export function generateUniqueId(existingIds: Set<string>): string {
   let id: string;
   do {
     id = crypto.randomUUID().slice(0, 8);
   } while (existingIds.has(id));
   return id;
+}
+
+interface FlagEditModalProps {
+  flag: FlagDefinition;
+  isNew?: boolean;
+  groups?: string[];
+  onSave: (flag: FlagDefinition) => void;
+  onCancel: () => void;
+}
+
+export function FlagEditModal({ flag: initial, isNew, groups, onSave, onCancel }: FlagEditModalProps) {
+  const [flag, setFlag] = useState<FlagDefinition>(() => ({ ...initial }));
+
+  return (
+    <div className="modal-overlay" onClick={onCancel}>
+      <div className="modal-box" onClick={e => e.stopPropagation()}>
+        <h2 className="modal-title">{isNew ? 'New Flag' : 'Edit Flag'}</h2>
+        <div className="form-row">
+          <label>Name</label>
+          <input
+            value={flag.name}
+            onChange={e => setFlag({ ...flag, name: e.target.value })}
+            placeholder="Flag display name"
+            autoFocus
+          />
+        </div>
+        <div className="form-row">
+          <label>Group</label>
+          <select
+            value={flag.group ?? ''}
+            onChange={e => setFlag({ ...flag, group: e.target.value })}
+          ><option value={'value'}>'temp option'</option>
+          </select>
+        </div>
+        <div className="modal-footer">
+          <Button onClick={onCancel}>Cancel</Button>
+          <Button variant="primary" disabled={!flag.name.trim()} onClick={() => onSave(flag)}>Save Flag</Button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 interface FlagRowProps {
