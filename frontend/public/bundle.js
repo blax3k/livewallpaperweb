@@ -64176,7 +64176,7 @@ ${parts.join("\n")}
   });
 
   // src/client.tsx
-  var import_react33 = __toESM(require_react());
+  var import_react34 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/ScenePage.tsx
@@ -80157,7 +80157,7 @@ ${e2}`);
   }
 
   // src/SimulatorPage.tsx
-  var import_react31 = __toESM(require_react());
+  var import_react32 = __toESM(require_react());
 
   // src/components/CollapsibleGroup.tsx
   var import_react30 = __toESM(require_react());
@@ -80243,33 +80243,10 @@ ${e2}`);
     ] });
   }
 
-  // src/SimulatorPage.tsx
+  // src/SimulatorFlagsPanel.tsx
+  var import_react31 = __toESM(require_react());
   var import_jsx_runtime52 = __toESM(require_jsx_runtime());
-  function SimulatorPage({ projectId, projectName, onBack }) {
-    const [rules, setRules] = (0, import_react31.useState)([]);
-    const [flags, setFlags] = (0, import_react31.useState)([]);
-    const [loading, setLoading] = (0, import_react31.useState)(true);
-    const [error, setError] = (0, import_react31.useState)(null);
-    const [orderBy, setOrderBy] = (0, import_react31.useState)("least_shown");
-    const [editingRuleIndex, setEditingRuleIndex] = (0, import_react31.useState)(null);
-    (0, import_react31.useEffect)(() => {
-      Promise.all([rulesApi.list(projectId), flagsApi.list(projectId)]).then(([r2, f2]) => {
-        setRules(r2);
-        setFlags(f2);
-        setLoading(false);
-      }).catch((err) => {
-        setError(String(err));
-        setLoading(false);
-      });
-    }, [projectId]);
-    const flagsById = (0, import_react31.useMemo)(() => new Map(flags.map((f2) => [f2.id, f2])), [flags]);
-    const handleSaveRule = (updated) => {
-      if (editingRuleIndex === null) return;
-      const next = rules.map((r2, i2) => i2 === editingRuleIndex ? updated : r2);
-      setRules(next);
-      setEditingRuleIndex(null);
-      rulesApi.save(projectId, next).catch((err) => setError(String(err)));
-    };
+  function SimulatorFlagsPanel({ flags }) {
     const flagGroups = (0, import_react31.useMemo)(() => {
       const groups = /* @__PURE__ */ new Map();
       for (const flag of flags) {
@@ -80279,131 +80256,158 @@ ${e2}`);
       }
       return Array.from(groups.entries());
     }, [flags]);
-    return /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)(PageLayout, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(PageHeader, { title: `${projectName} \u2014 Simulator`, left: /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { onClick: onBack, children: "\u2190" }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)(PageBody, { children: [
-        loading && /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("p", { style: { padding: "var(--size-16)" }, children: "Loading\u2026" }),
-        error && /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("p", { style: { padding: "var(--size-16)", color: "var(--color-danger)" }, children: error }),
-        !loading && /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-root", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-state", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-hud", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("span", { className: "simulator-hud__title", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-hud__dot" }),
+    return /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-panel simulator-panel--flags", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-panel__header", children: /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("span", { children: [
+        "Flags \xB7 ",
+        flags.length
+      ] }) }),
+      flags.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("p", { className: "simulator-empty", children: "No flags defined." }),
+      flagGroups.map(([groupName, groupFlags]) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(CollapsibleGroup, { title: groupName, count: groupFlags.length, children: /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-chip-row", children: groupFlags.map((flag) => /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("span", { className: `simulator-chip ${flag.defaultActive ? "simulator-chip--on" : "simulator-chip--off"}`, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-chip__dot" }),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { children: flag.name || flag.id })
+      ] }, flag.id)) }) }, groupName)),
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-new-rule", children: "+ New Flag" })
+    ] });
+  }
+
+  // src/SimulatorPage.tsx
+  var import_jsx_runtime53 = __toESM(require_jsx_runtime());
+  function SimulatorPage({ projectId, projectName, onBack }) {
+    const [rules, setRules] = (0, import_react32.useState)([]);
+    const [flags, setFlags] = (0, import_react32.useState)([]);
+    const [loading, setLoading] = (0, import_react32.useState)(true);
+    const [error, setError] = (0, import_react32.useState)(null);
+    const [orderBy, setOrderBy] = (0, import_react32.useState)("least_shown");
+    const [editingRuleIndex, setEditingRuleIndex] = (0, import_react32.useState)(null);
+    (0, import_react32.useEffect)(() => {
+      Promise.all([rulesApi.list(projectId), flagsApi.list(projectId)]).then(([r2, f2]) => {
+        setRules(r2);
+        setFlags(f2);
+        setLoading(false);
+      }).catch((err) => {
+        setError(String(err));
+        setLoading(false);
+      });
+    }, [projectId]);
+    const flagsById = (0, import_react32.useMemo)(() => new Map(flags.map((f2) => [f2.id, f2])), [flags]);
+    const handleSaveRule = (updated) => {
+      if (editingRuleIndex === null) return;
+      const next = rules.map((r2, i2) => i2 === editingRuleIndex ? updated : r2);
+      setRules(next);
+      setEditingRuleIndex(null);
+      rulesApi.save(projectId, next).catch((err) => setError(String(err)));
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(PageLayout, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(PageHeader, { title: `${projectName} \u2014 Simulator`, left: /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Button, { onClick: onBack, children: "\u2190" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(PageBody, { children: [
+        loading && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("p", { style: { padding: "var(--size-16)" }, children: "Loading\u2026" }),
+        error && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("p", { style: { padding: "var(--size-16)", color: "var(--color-danger)" }, children: error }),
+        !loading && /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-root", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-state", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-hud", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("span", { className: "simulator-hud__title", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-hud__dot" }),
                 "Simulated state"
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-hud__divider" }),
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("span", { className: "simulator-hud__stat", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-hud__divider" }),
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("span", { className: "simulator-hud__stat", children: [
                 "Chapter ",
-                /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("b", { children: "2 \xB7 The Deep Wood" })
+                /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("b", { children: "2 \xB7 The Deep Wood" })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-hud__divider" }),
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("span", { className: "simulator-hud__stat", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-hud__divider" }),
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("span", { className: "simulator-hud__stat", children: [
                 "Ambient ",
-                /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("b", { children: "Night \xB7 Tue" })
+                /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("b", { children: "Night \xB7 Tue" })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-hud__divider" }),
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("span", { className: "simulator-hud__stat", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-hud__divider" }),
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("span", { className: "simulator-hud__stat", children: [
                 "Active days ",
-                /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("b", { children: "8" }),
+                /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("b", { children: "8" }),
                 " \xB7 Wakes ",
-                /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("b", { children: "34" })
+                /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("b", { children: "34" })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-hud__tabs", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-hud__tab simulator-hud__tab--active", children: "Simulator" }),
-                /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("span", { className: "simulator-hud__tab", onClick: onBack, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-hud__tabs", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-hud__tab simulator-hud__tab--active", children: "Simulator" }),
+                /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("span", { className: "simulator-hud__tab", onClick: onBack, children: [
                   "Scene editor ",
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { children: "\u25B8" })
+                  /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { children: "\u25B8" })
                 ] })
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-spine", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("span", { className: "simulator-spine__label", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-spine", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("span", { className: "simulator-spine__label", children: [
                 "Spine ",
-                /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { children: "\xB7 2/14" })
+                /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { children: "\xB7 2/14" })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-spine__track", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-spine__node simulator-spine__node--done", children: "1" }),
-                /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-spine__node simulator-spine__node--current", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-spine__node-num", children: "2" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-spine__node-name", children: "The Deep Wood" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-spine__node-here", children: "\u2605 here" })
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-spine__track", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "simulator-spine__node simulator-spine__node--done", children: "1" }),
+                /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-spine__node simulator-spine__node--current", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-spine__node-num", children: "2" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-spine__node-name", children: "The Deep Wood" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-spine__node-here", children: "\u2605 here" })
                 ] }),
-                [3, 4, 5, 6, 7, 8].map((n2) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-spine__node simulator-spine__node--locked", children: n2 }, n2)),
-                /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-spine__node simulator-spine__node--overflow", children: "+6" })
+                [3, 4, 5, 6, 7, 8].map((n2) => /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "simulator-spine__node simulator-spine__node--locked", children: n2 }, n2)),
+                /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "simulator-spine__node simulator-spine__node--overflow", children: "+6" })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-spine__add", children: "+ Chapter" })
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-spine__add", children: "+ Chapter" })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-engagement-ambient", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-column simulator-column--divided", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-column__title", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-engagement-ambient", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-column simulator-column--divided", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-column__title", children: [
                   "Engagement ",
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { children: "fuels progression \xB7 idle never advances" })
+                  /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { children: "fuels progression \xB7 idle never advances" })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-column__fields", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Stepper, { label: "Active days", value: 8 }),
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Stepper, { label: "Total wakes", value: 34 }),
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Stepper, { label: "Forest views", value: 5 })
+                /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-column__fields", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Stepper, { label: "Active days", value: 8 }),
+                  /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Stepper, { label: "Total wakes", value: 34 }),
+                  /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Stepper, { label: "Forest views", value: 5 })
                 ] })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-column", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-column__title", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-column", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-column__title", children: [
                   "Ambient ",
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { children: "mood \xB7 re-checked every wake" })
+                  /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { children: "mood \xB7 re-checked every wake" })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-column__fields", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(DropdownField, { label: "Time of day", value: "21:30 \xB7 Night" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(DropdownField, { label: "Weekday", value: "Tue" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(DropdownField, { label: "Persona", value: "Power user" })
+                /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-column__fields", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(DropdownField, { label: "Time of day", value: "21:30 \xB7 Night" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(DropdownField, { label: "Weekday", value: "Tue" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(DropdownField, { label: "Persona", value: "Power user" })
                 ] })
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-pipeline", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-pipeline__header", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-pipeline__title", children: "Rule pipeline" }),
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-pipeline__hint", children: "rules set flags \u2192 flags pick the scene \xB7 resolved at each wake" })
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-pipeline", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-pipeline__header", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-pipeline__title", children: "Rule pipeline" }),
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-pipeline__hint", children: "rules set flags \u2192 flags pick the scene \xB7 resolved at each wake" })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-pipeline__row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(SimulatorRulesPanel, { rules, flagsById, onSelectRule: setEditingRuleIndex }),
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Arrow3, {}),
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-panel simulator-panel--flags", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-panel__header", children: /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("span", { children: [
-                  "Flags \xB7 ",
-                  flags.length
-                ] }) }),
-                flags.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("p", { className: "simulator-empty", children: "No flags defined." }),
-                flagGroups.map(([groupName, groupFlags]) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(CollapsibleGroup, { title: groupName, count: groupFlags.length, children: /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-chip-row", children: groupFlags.map((flag) => /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("span", { className: `simulator-chip ${flag.defaultActive ? "simulator-chip--on" : "simulator-chip--off"}`, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-chip__dot" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { children: flag.name || flag.id })
-                ] }, flag.id)) }) }, groupName)),
-                /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-flag-info", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-flag-info__selected", children: "selected: forest_regular" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-flag-info__link", children: "drives 3 sprites \xB7 2 scenes \u25B8" })
-                ] })
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Arrow3, {}),
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-panel simulator-panel--preview", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-panel__header", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { children: "Preview" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-panel__hint", children: "composited \xB7 real sprites" })
+            /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-pipeline__row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(SimulatorRulesPanel, { rules, flagsById, onSelectRule: setEditingRuleIndex }),
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Arrow3, {}),
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(SimulatorFlagsPanel, { flags }),
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Arrow3, {}),
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-panel simulator-panel--preview", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-panel__header", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { children: "Preview" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-panel__hint", children: "composited \xB7 real sprites" })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-preview-body", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-phone-wrap", children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-phone", children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-phone__bezel" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-phone__badge", children: "ON SCREEN" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-phone__sprite simulator-phone__sprite--tree", children: "tree" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-phone__sprite simulator-phone__sprite--fox", children: "fox" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-phone__sprite simulator-phone__sprite--aurora", children: "aurora band" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-phone__scene-name", children: "Aurora Forest" })
+                /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-preview-body", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-phone-wrap", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-phone", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "simulator-phone__bezel" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-phone__badge", children: "ON SCREEN" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "simulator-phone__sprite simulator-phone__sprite--tree", children: "tree" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "simulator-phone__sprite simulator-phone__sprite--fox", children: "fox" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "simulator-phone__sprite simulator-phone__sprite--aurora", children: "aurora band" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-phone__scene-name", children: "Aurora Forest" })
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-edit-scene-link", children: "\u270E Edit scene \u25B8" })
+                    /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "simulator-edit-scene-link", children: "\u270E Edit scene \u25B8" })
                   ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-selection-list", children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-qualify-caption", children: "3 qualify at this wake" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-order-toggle", children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { children: "Order by" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
+                  /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-selection-list", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-qualify-caption", children: "3 qualify at this wake" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-order-toggle", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { children: "Order by" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
                         "span",
                         {
                           className: `simulator-order-toggle__option ${orderBy === "least_shown" ? "simulator-order-toggle__option--active" : ""}`,
@@ -80411,7 +80415,7 @@ ${e2}`);
                           children: "Least shown"
                         }
                       ),
-                      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
+                      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
                         "span",
                         {
                           className: `simulator-order-toggle__option ${orderBy === "points" ? "simulator-order-toggle__option--active" : ""}`,
@@ -80420,34 +80424,34 @@ ${e2}`);
                         }
                       )
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-scene-row simulator-scene-row--wins", children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-scene-row__badge", children: "WINS" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-scene-row__name", children: "Aurora Forest" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-scene-row__value", children: "3\xD7" })
+                    /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-scene-row simulator-scene-row--wins", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-scene-row__badge", children: "WINS" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-scene-row__name", children: "Aurora Forest" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-scene-row__value", children: "3\xD7" })
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-scene-row", children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-scene-row__badge", children: "#2" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-scene-row__name", children: "Night City" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-scene-row__value", children: "12\xD7" })
+                    /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-scene-row", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-scene-row__badge", children: "#2" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-scene-row__name", children: "Night City" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-scene-row__value", children: "12\xD7" })
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-scene-row simulator-scene-row--out", children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-scene-row__badge", children: "OUT" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-scene-row__name", children: "Day Forest" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-scene-row__reason", children: "needs day" })
+                    /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-scene-row simulator-scene-row--out", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-scene-row__badge", children: "OUT" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-scene-row__name", children: "Day Forest" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-scene-row__reason", children: "needs day" })
                     ] })
                   ] })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-stale-banner", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { children: "\u27F3" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { children: "Stale \u2014 re-picked only on wake" })
+                /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-stale-banner", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { children: "\u27F3" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { children: "Stale \u2014 re-picked only on wake" })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-wake-button", children: "\u25D0 Wake screen \u2014 pick a scene now" })
+                /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "simulator-wake-button", children: "\u25D0 Wake screen \u2014 pick a scene now" })
               ] })
             ] })
           ] })
         ] })
       ] }),
-      editingRuleIndex !== null && /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
+      editingRuleIndex !== null && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
         RuleEditModal,
         {
           rule: rules[editingRuleIndex],
@@ -80459,40 +80463,40 @@ ${e2}`);
     ] });
   }
   function Stepper({ label, value }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-field", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-field-label", children: label }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-stepper", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-stepper__btn", children: "\u2212" }),
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-stepper__value", children: value }),
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-stepper__btn", children: "+" })
+    return /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-field", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-field-label", children: label }),
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-stepper", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-stepper__btn", children: "\u2212" }),
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-stepper__value", children: value }),
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-stepper__btn", children: "+" })
       ] })
     ] });
   }
   function DropdownField({ label, value }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-field", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-field-label", children: label }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("span", { className: "simulator-dropdown-field", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-field", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "simulator-field-label", children: label }),
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("span", { className: "simulator-dropdown-field", children: [
         value,
         " \u25BE"
       ] })
     ] });
   }
   function Arrow3() {
-    return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-arrow", children: /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("svg", { width: "24", height: "16", viewBox: "0 0 24 16", fill: "none", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("path", { d: "M2 8 H17", stroke: "#3f3f46", strokeWidth: "1.5" }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("path", { d: "M13 3 L18 8 L13 13", stroke: "#3f3f46", strokeWidth: "1.5", strokeLinecap: "round", strokeLinejoin: "round" })
+    return /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "simulator-arrow", children: /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("svg", { width: "24", height: "16", viewBox: "0 0 24 16", fill: "none", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("path", { d: "M2 8 H17", stroke: "#3f3f46", strokeWidth: "1.5" }),
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("path", { d: "M13 3 L18 8 L13 13", stroke: "#3f3f46", strokeWidth: "1.5", strokeLinecap: "round", strokeLinejoin: "round" })
     ] }) });
   }
 
   // src/LoginPage.tsx
-  var import_react32 = __toESM(require_react());
-  var import_jsx_runtime53 = __toESM(require_jsx_runtime());
+  var import_react33 = __toESM(require_react());
+  var import_jsx_runtime54 = __toESM(require_jsx_runtime());
   function LoginPage({ onAuthenticated }) {
-    const [mode, setMode] = (0, import_react32.useState)("login");
-    const [email, setEmail] = (0, import_react32.useState)("");
-    const [password, setPassword] = (0, import_react32.useState)("");
-    const [error, setError] = (0, import_react32.useState)("");
-    const [loading, setLoading] = (0, import_react32.useState)(false);
+    const [mode, setMode] = (0, import_react33.useState)("login");
+    const [email, setEmail] = (0, import_react33.useState)("");
+    const [password, setPassword] = (0, import_react33.useState)("");
+    const [error, setError] = (0, import_react33.useState)("");
+    const [loading, setLoading] = (0, import_react33.useState)(false);
     const handleSubmit = async (e2) => {
       e2.preventDefault();
       setError("");
@@ -80510,11 +80514,11 @@ ${e2}`);
         setLoading(false);
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "login-page", children: /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("form", { className: "login-card", onSubmit: handleSubmit, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "login-title", children: "Live Wallpaper Editor" }),
-      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "login-field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("label", { htmlFor: "email", children: "Email" }),
-        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("div", { className: "login-page", children: /* @__PURE__ */ (0, import_jsx_runtime54.jsxs)("form", { className: "login-card", onSubmit: handleSubmit, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("div", { className: "login-title", children: "Live Wallpaper Editor" }),
+      /* @__PURE__ */ (0, import_jsx_runtime54.jsxs)("div", { className: "login-field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("label", { htmlFor: "email", children: "Email" }),
+        /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
           "input",
           {
             id: "email",
@@ -80526,9 +80530,9 @@ ${e2}`);
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "login-field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("label", { htmlFor: "password", children: "Password" }),
-        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime54.jsxs)("div", { className: "login-field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("label", { htmlFor: "password", children: "Password" }),
+        /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
           "input",
           {
             id: "password",
@@ -80540,17 +80544,17 @@ ${e2}`);
           }
         )
       ] }),
-      error && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "login-error", children: error }),
-      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("button", { className: "login-submit", type: "submit", disabled: loading, children: loading ? "Please wait\u2026" : mode === "login" ? "Log in" : "Create account" }),
-      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "login-toggle", children: mode === "login" ? /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(import_jsx_runtime53.Fragment, { children: [
+      error && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("div", { className: "login-error", children: error }),
+      /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("button", { className: "login-submit", type: "submit", disabled: loading, children: loading ? "Please wait\u2026" : mode === "login" ? "Log in" : "Create account" }),
+      /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("div", { className: "login-toggle", children: mode === "login" ? /* @__PURE__ */ (0, import_jsx_runtime54.jsxs)(import_jsx_runtime54.Fragment, { children: [
         "No account? ",
-        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("button", { type: "button", onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("button", { type: "button", onClick: () => {
           setMode("register");
           setError("");
         }, children: "Register" })
-      ] }) : /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(import_jsx_runtime53.Fragment, { children: [
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime54.jsxs)(import_jsx_runtime54.Fragment, { children: [
         "Already have an account? ",
-        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("button", { type: "button", onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("button", { type: "button", onClick: () => {
           setMode("login");
           setError("");
         }, children: "Log in" })
@@ -80559,7 +80563,7 @@ ${e2}`);
   }
 
   // src/client.tsx
-  var import_jsx_runtime54 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime55 = __toESM(require_jsx_runtime());
   console.log("[bundle] loaded \u2014 build b85774b");
   function pageFromPath() {
     const sceneMatch = window.location.pathname.match(/^\/project\/([^/]+)\/scene\/([^/]+)$/);
@@ -80587,28 +80591,28 @@ ${e2}`);
     return { type: "projects" };
   }
   function App() {
-    const [authState, setAuthState] = (0, import_react33.useState)({ status: "loading" });
-    const [page, setPage] = (0, import_react33.useState)(pageFromPath);
-    const [thumbBuster, setThumbBuster] = (0, import_react33.useState)(0);
-    const isDirtyRef = (0, import_react33.useRef)(false);
-    const pageRef = (0, import_react33.useRef)(page);
-    (0, import_react33.useEffect)(() => {
+    const [authState, setAuthState] = (0, import_react34.useState)({ status: "loading" });
+    const [page, setPage] = (0, import_react34.useState)(pageFromPath);
+    const [thumbBuster, setThumbBuster] = (0, import_react34.useState)(0);
+    const isDirtyRef = (0, import_react34.useRef)(false);
+    const pageRef = (0, import_react34.useRef)(page);
+    (0, import_react34.useEffect)(() => {
       pageRef.current = page;
     }, [page]);
-    (0, import_react33.useEffect)(() => {
+    (0, import_react34.useEffect)(() => {
       setUnauthorizedHandler(() => setAuthState({ status: "unauthenticated" }));
       authApi.me().then((user) => setAuthState({ status: "authenticated", user })).catch(() => {
       });
     }, []);
-    const handleLogout = (0, import_react33.useCallback)(async () => {
+    const handleLogout = (0, import_react34.useCallback)(async () => {
       await authApi.logout().catch(() => {
       });
       setAuthState({ status: "unauthenticated" });
     }, []);
-    const handleDirtyChange = (0, import_react33.useCallback)((dirty) => {
+    const handleDirtyChange = (0, import_react34.useCallback)((dirty) => {
       isDirtyRef.current = dirty;
     }, []);
-    (0, import_react33.useEffect)(() => {
+    (0, import_react34.useEffect)(() => {
       const onPopState = () => {
         const currentPage = pageRef.current;
         if (currentPage.type !== "scene" || !isDirtyRef.current) {
@@ -80625,43 +80629,43 @@ ${e2}`);
       window.addEventListener("popstate", onPopState);
       return () => window.removeEventListener("popstate", onPopState);
     }, []);
-    const navigateToProject = (0, import_react33.useCallback)((project) => {
+    const navigateToProject = (0, import_react34.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
       setPage({ type: "scenes", project });
     }, []);
-    const navigateToScene = (0, import_react33.useCallback)((scene, project) => {
+    const navigateToScene = (0, import_react34.useCallback)((scene, project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/scene/${encodeURIComponent(scene.id)}`);
       setPage({ type: "scene", sceneId: scene.id, project });
     }, []);
-    const navigateBackToProjects = (0, import_react33.useCallback)(() => {
+    const navigateBackToProjects = (0, import_react34.useCallback)(() => {
       window.history.pushState(null, "", "/");
       setPage({ type: "projects" });
     }, []);
-    const navigateBackToScenes = (0, import_react33.useCallback)((project) => {
+    const navigateBackToScenes = (0, import_react34.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
       setPage({ type: "scenes", project });
     }, []);
-    const navigateToFlags = (0, import_react33.useCallback)((project) => {
+    const navigateToFlags = (0, import_react34.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/flags`);
       setPage({ type: "flags", project });
     }, []);
-    const navigateToRules = (0, import_react33.useCallback)((project) => {
+    const navigateToRules = (0, import_react34.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/rules`);
       setPage({ type: "rules", project });
     }, []);
-    const navigateToSimulator = (0, import_react33.useCallback)((project) => {
+    const navigateToSimulator = (0, import_react34.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/simulator`);
       setPage({ type: "simulator", project });
     }, []);
-    const handleSaved = (0, import_react33.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
+    const handleSaved = (0, import_react34.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
     if (authState.status === "loading") {
       return null;
     }
     if (authState.status === "unauthenticated") {
-      return /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(LoginPage, { onAuthenticated: (user) => setAuthState({ status: "authenticated", user }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime55.jsx)(LoginPage, { onAuthenticated: (user) => setAuthState({ status: "authenticated", user }) });
     }
     if (page.type === "scene") {
-      return /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime55.jsx)(
         ScenePage,
         {
           initialSceneId: page.sceneId,
@@ -80673,7 +80677,7 @@ ${e2}`);
       );
     }
     if (page.type === "flags") {
-      return /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime55.jsx)(
         FlagsPage,
         {
           projectId: page.project.id,
@@ -80683,7 +80687,7 @@ ${e2}`);
       );
     }
     if (page.type === "rules") {
-      return /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime55.jsx)(
         RulesPage,
         {
           projectId: page.project.id,
@@ -80693,7 +80697,7 @@ ${e2}`);
       );
     }
     if (page.type === "simulator") {
-      return /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime55.jsx)(
         SimulatorPage,
         {
           projectId: page.project.id,
@@ -80703,7 +80707,7 @@ ${e2}`);
       );
     }
     if (page.type === "scenes") {
-      return /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime55.jsx)(
         SceneListPage,
         {
           onSelect: (scene) => navigateToScene(scene, page.project),
@@ -80718,11 +80722,11 @@ ${e2}`);
         }
       );
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(ProjectListPage, { onSelect: navigateToProject, onLogout: handleLogout });
+    return /* @__PURE__ */ (0, import_jsx_runtime55.jsx)(ProjectListPage, { onSelect: navigateToProject, onLogout: handleLogout });
   }
   window.addEventListener("DOMContentLoaded", () => {
     const root = (0, import_client.createRoot)(document.body);
-    root.render(/* @__PURE__ */ (0, import_jsx_runtime54.jsx)(App, {}));
+    root.render(/* @__PURE__ */ (0, import_jsx_runtime55.jsx)(App, {}));
   });
 })();
 /*! Bundled license information:

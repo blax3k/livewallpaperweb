@@ -2,10 +2,10 @@ import { useState, useEffect, useMemo } from 'react';
 import './SimulatorPage.scss';
 import { PageLayout, PageHeader, PageBody } from './components/PageLayout';
 import { Button } from './components/Button';
-import { CollapsibleGroup } from './components/CollapsibleGroup';
 import { rulesApi, flagsApi, type RuleDefinition, type FlagDefinition } from './api';
 import { RuleEditModal } from './RulesPage';
 import { SimulatorRulesPanel } from './SimulatorRulesPanel';
+import { SimulatorFlagsPanel } from './SimulatorFlagsPanel';
 
 interface SimulatorPageProps {
   projectId: string;
@@ -36,16 +36,6 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
     setEditingRuleIndex(null);
     rulesApi.save(projectId, next).catch(err => setError(String(err)));
   };
-
-  const flagGroups = useMemo(() => {
-    const groups = new Map<string, FlagDefinition[]>();
-    for (const flag of flags) {
-      const key = flag.group?.trim() || 'Ungrouped';
-      if (!groups.has(key)) groups.set(key, []);
-      groups.get(key)!.push(flag);
-    }
-    return Array.from(groups.entries());
-  }, [flags]);
 
   return (
     <PageLayout>
@@ -121,28 +111,7 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
                 <Arrow />
 
                 {/* FLAGS */}
-                <div className="simulator-panel simulator-panel--flags">
-                  <div className="simulator-panel__header">
-                    <span>Flags · {flags.length}</span>
-                  </div>
-                  {flags.length === 0 && <p className="simulator-empty">No flags defined.</p>}
-                  {flagGroups.map(([groupName, groupFlags]) => (
-                    <CollapsibleGroup key={groupName} title={groupName} count={groupFlags.length}>
-                      <div className="simulator-chip-row">
-                        {groupFlags.map(flag => (
-                          <span key={flag.id} className={`simulator-chip ${flag.defaultActive ? 'simulator-chip--on' : 'simulator-chip--off'}`}>
-                            <span className="simulator-chip__dot" />
-                            <span>{flag.name || flag.id}</span>
-                          </span>
-                        ))}
-                      </div>
-                    </CollapsibleGroup>
-                  ))}
-                  <div className="simulator-flag-info">
-                    <div className="simulator-flag-info__selected">selected: forest_regular</div>
-                    <div className="simulator-flag-info__link">drives 3 sprites · 2 scenes ▸</div>
-                  </div>
-                </div>
+                <SimulatorFlagsPanel flags={flags} />
 
                 <Arrow />
 
