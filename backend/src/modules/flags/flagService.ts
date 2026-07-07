@@ -7,6 +7,7 @@ import {
   selectFlagGroupsForProject,
   selectFlagsForProject,
   selectFlagUsage,
+  selectFlagUsageCounts,
   updateFlagGroupName,
 } from './flagRepository';
 
@@ -25,6 +26,10 @@ export async function saveFlags(projectId: string, flags: FlagDefinition[]): Pro
 
 export async function getFlagUsage(projectId: string, flagId: string): Promise<{ scenes: string[]; rules: string[] }> {
   return selectFlagUsage(projectId, flagId);
+}
+
+export async function getFlagUsageCounts(projectId: string): Promise<Record<string, { rules: number; scenes: number }>> {
+  return selectFlagUsageCounts(projectId);
 }
 
 export async function getFlagGroups(projectId: string): Promise<FlagGroup[] | null> {

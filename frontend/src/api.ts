@@ -153,6 +153,10 @@ export const flagsApi = {
   checkUsage(projectId: string, flagId: string): Promise<{ scenes: string[]; rules: string[] }> {
     return request<{ scenes: string[]; rules: string[] }>(`/api/projects/${projectId}/flags/${flagId}/usage`);
   },
+
+  checkUsageCounts(projectId: string): Promise<Record<string, { rules: number; scenes: number }>> {
+    return request<Record<string, { rules: number; scenes: number }>>(`/api/projects/${projectId}/flags/usage`);
+  },
 };
 
 export const flagGroupsApi = {

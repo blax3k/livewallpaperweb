@@ -7,6 +7,7 @@ import {
   getFlagGroups,
   getFlags,
   getFlagUsage,
+  getFlagUsageCounts,
   renameFlagGroup,
   saveFlags,
 } from './flagService';
@@ -20,6 +21,10 @@ export async function registerFlagRoutes(server: FastifyInstance): Promise<void>
     const ok = await saveFlags(req.params.id, req.body);
     if (!ok) return reply.status(HttpStatus.NOT_FOUND).send({ error: 'Project not found' });
     return reply.status(HttpStatus.NO_CONTENT).send();
+  });
+
+  server.get<{ Params: { id: string } }>('/api/projects/:id/flags/usage', async (req) => {
+    return getFlagUsageCounts(req.params.id);
   });
 
   server.get<{ Params: { id: string; flagId: string } }>('/api/projects/:id/flags/:flagId/usage', async (req) => {

@@ -64626,6 +64626,9 @@ ${parts.join("\n")}
     },
     checkUsage(projectId, flagId) {
       return request(`/api/projects/${projectId}/flags/${flagId}/usage`);
+    },
+    checkUsageCounts(projectId) {
+      return request(`/api/projects/${projectId}/flags/usage`);
     }
   };
   var flagGroupsApi = {
