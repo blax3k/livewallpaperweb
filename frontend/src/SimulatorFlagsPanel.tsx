@@ -1,6 +1,15 @@
 import { useMemo, useState } from 'react';
 import type { FlagDefinition, FlagGroup } from './api';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from './components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+} from './components/ui/dropdown-menu';
 
 type UsageCounts = Record<string, { rules: number; scenes: number }>;
 
@@ -8,8 +17,15 @@ interface SimulatorFlagsPanelProps {
   flags: FlagDefinition[];
   groups: FlagGroup[];
   usageCounts: UsageCounts;
-  onNewFlag: () => void;
+  onNewFlag: (presetGroup?: string) => void;
   onSelectFlag: (flag: FlagDefinition) => void;
+  onRenameFlag: (flag: FlagDefinition) => void;
+  onMoveFlag: (flag: FlagDefinition, groupName: string | undefined) => void;
+  onNewGroupForFlag: (flag: FlagDefinition) => void;
+  onRemoveFlag: (flag: FlagDefinition) => void;
+  onNewGroup: () => void;
+  onRenameGroup: (group: FlagGroup) => void;
+  onRemoveGroup: (group: FlagGroup) => void;
 }
 
 function usageLabel(usage: { rules: number; scenes: number } | undefined): string | null {
@@ -20,23 +36,58 @@ function usageLabel(usage: { rules: number; scenes: number } | undefined): strin
   return parts.length > 0 ? parts.join(' · ') : null;
 }
 
-function FlagRowMenu() {
+interface FlagRowMenuProps {
+  flag: FlagDefinition;
+  groups: FlagGroup[];
+  onRename: () => void;
+  onMove: (groupName: string | undefined) => void;
+  onNewGroup: () => void;
+  onRemove: () => void;
+}
+
+function FlagRowMenu({ flag, groups, onRename, onMove, onNewGroup, onRemove }: FlagRowMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="simulator-flags-row__menu-btn" onClick={e => e.stopPropagation()}>⋯</button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" onClick={e => e.stopPropagation()}>
-        <DropdownMenuItem>✎ Rename…</DropdownMenuItem>
-        <DropdownMenuItem>⇄ Move to group ▸</DropdownMenuItem>
+        <DropdownMenuItem onSelect={onRename}>✎ Rename…</DropdownMenuItem>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>⇄ Move to group</DropdownMenuSubTrigger>
+          <DropdownMenuSubContent onClick={e => e.stopPropagation()}>
+            {groups.map(g => (
+              <DropdownMenuItem key={g.id} onSelect={() => onMove(g.name)}>
+                {flag.group === g.name ? '✓ ' : ''}{g.name}{flag.group === g.name ? ' (current)' : ''}
+              </DropdownMenuItem>
+            ))}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={() => onMove(undefined)}>
+              {!flag.group ? '✓ ' : ''}Ungrouped{!flag.group ? ' (current)' : ''}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={onNewGroup}>+ New group…</DropdownMenuItem>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
         <DropdownMenuSeparator />
-        <DropdownMenuItem danger>✕ Remove…</DropdownMenuItem>
+        <DropdownMenuItem danger onSelect={onRemove}>✕ Remove…</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
 
-function FlagRow({ flag, usage, onClick }: { flag: FlagDefinition; usage: { rules: number; scenes: number } | undefined; onClick: () => void }) {
+function FlagRow({
+  flag, usage, groups, onClick, onRename, onMove, onNewGroup, onRemove,
+}: {
+  flag: FlagDefinition;
+  usage: { rules: number; scenes: number } | undefined;
+  groups: FlagGroup[];
+  onClick: () => void;
+  onRename: () => void;
+  onMove: (groupName: string | undefined) => void;
+  onNewGroup: () => void;
+  onRemove: () => void;
+}) {
   const label = usageLabel(usage);
   return (
     <div className="simulator-flags-row" onClick={onClick}>
@@ -45,23 +96,22 @@ function FlagRow({ flag, usage, onClick }: { flag: FlagDefinition; usage: { rule
       <span className="simulator-flags-row__used">
         {label ?? <span className="simulator-flags-row__unused">Unused</span>}
       </span>
-      <FlagRowMenu />
+      <FlagRowMenu flag={flag} groups={groups} onRename={onRename} onMove={onMove} onNewGroup={onNewGroup} onRemove={onRemove} />
     </div>
   );
 }
 
-function GroupHeaderMenu({ groupName }: { groupName: string }) {
+function GroupHeaderMenu({ onAddFlag, onRename, onRemove }: { onAddFlag: () => void; onRename: () => void; onRemove: () => void }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="simulator-flags-group__menu-btn" onClick={e => e.stopPropagation()}>⋯</button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" onClick={e => e.stopPropagation()}>
-        <div className="simulator-flags-group__menu-caption">Group &quot;{groupName}&quot;</div>
-        <DropdownMenuItem>+ Add flag to group</DropdownMenuItem>
-        <DropdownMenuItem>✎ Rename group…</DropdownMenuItem>
+        <DropdownMenuItem onSelect={onAddFlag}>+ Add flag to group</DropdownMenuItem>
+        <DropdownMenuItem onSelect={onRename}>✎ Rename group…</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem danger>✕ Remove group…</DropdownMenuItem>
+        <DropdownMenuItem danger onSelect={onRemove}>✕ Remove group…</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -72,10 +122,12 @@ interface FlagGroupSectionProps {
   count: number;
   ungrouped?: boolean;
   onAdd?: () => void;
+  onRenameGroup?: () => void;
+  onRemoveGroup?: () => void;
   children: React.ReactNode;
 }
 
-function FlagGroupSection({ title, count, ungrouped, onAdd, children }: FlagGroupSectionProps) {
+function FlagGroupSection({ title, count, ungrouped, onAdd, onRenameGroup, onRemoveGroup, children }: FlagGroupSectionProps) {
   const [open, setOpen] = useState(true);
   return (
     <div className="simulator-flags-group">
@@ -95,14 +147,18 @@ function FlagGroupSection({ title, count, ungrouped, onAdd, children }: FlagGrou
             +
           </button>
         )}
-        {!ungrouped && <GroupHeaderMenu groupName={title} />}
+        {!ungrouped && onRenameGroup && onRemoveGroup && (
+          <GroupHeaderMenu onAddFlag={() => onAdd?.()} onRename={onRenameGroup} onRemove={onRemoveGroup} />
+        )}
       </div>
       {open && <div className="simulator-flags-group__rows">{children}</div>}
     </div>
   );
 }
 
-export function SimulatorFlagsPanel({ flags, groups, usageCounts, onNewFlag, onSelectFlag }: SimulatorFlagsPanelProps) {
+export function SimulatorFlagsPanel({
+  flags, groups, usageCounts, onNewFlag, onSelectFlag, onRenameFlag, onMoveFlag, onNewGroupForFlag, onRemoveFlag, onNewGroup, onRenameGroup, onRemoveGroup,
+}: SimulatorFlagsPanelProps) {
   const [search, setSearch] = useState('');
 
   const filteredFlags = useMemo(() => {
@@ -143,7 +199,8 @@ export function SimulatorFlagsPanel({ flags, groups, usageCounts, onNewFlag, onS
             onChange={e => setSearch(e.target.value)}
             placeholder="Search flags"
           />
-          <button className="simulator-flags-header__new-btn" onClick={onNewFlag}>+ New flag</button>
+          <button className="simulator-flags-header__new-group-btn" onClick={onNewGroup}>+ New group</button>
+          <button className="simulator-flags-header__new-btn" onClick={() => onNewFlag()}>+ New flag</button>
         </div>
       </div>
 
@@ -159,15 +216,42 @@ export function SimulatorFlagsPanel({ flags, groups, usageCounts, onNewFlag, onS
       ) : (
         <div className="simulator-flags-list">
           {groups.map(group => (
-            <FlagGroupSection key={group.id} title={group.name} count={(byGroup.get(group.name) ?? []).length}>
+            <FlagGroupSection
+              key={group.id}
+              title={group.name}
+              count={(byGroup.get(group.name) ?? []).length}
+              onAdd={() => onNewFlag(group.name)}
+              onRenameGroup={() => onRenameGroup(group)}
+              onRemoveGroup={() => onRemoveGroup(group)}
+            >
               {(byGroup.get(group.name) ?? []).map(flag => (
-                <FlagRow key={flag.id} flag={flag} usage={usageCounts[flag.id]} onClick={() => onSelectFlag(flag)} />
+                <FlagRow
+                  key={flag.id}
+                  flag={flag}
+                  usage={usageCounts[flag.id]}
+                  groups={groups}
+                  onClick={() => onSelectFlag(flag)}
+                  onRename={() => onRenameFlag(flag)}
+                  onMove={groupName => onMoveFlag(flag, groupName)}
+                  onNewGroup={() => onNewGroupForFlag(flag)}
+                  onRemove={() => onRemoveFlag(flag)}
+                />
               ))}
             </FlagGroupSection>
           ))}
-          <FlagGroupSection title="Ungrouped" count={ungrouped.length} ungrouped onAdd={onNewFlag}>
+          <FlagGroupSection title="Ungrouped" count={ungrouped.length} ungrouped onAdd={() => onNewFlag()}>
             {ungrouped.map(flag => (
-              <FlagRow key={flag.id} flag={flag} usage={usageCounts[flag.id]} onClick={() => onSelectFlag(flag)} />
+              <FlagRow
+                key={flag.id}
+                flag={flag}
+                usage={usageCounts[flag.id]}
+                groups={groups}
+                onClick={() => onSelectFlag(flag)}
+                onRename={() => onRenameFlag(flag)}
+                onMove={groupName => onMoveFlag(flag, groupName)}
+                onNewGroup={() => onNewGroupForFlag(flag)}
+                onRemove={() => onRemoveFlag(flag)}
+              />
             ))}
           </FlagGroupSection>
         </div>

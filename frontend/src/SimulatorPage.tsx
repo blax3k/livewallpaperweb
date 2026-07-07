@@ -2,11 +2,18 @@ import { useState, useEffect, useMemo } from 'react';
 import './SimulatorPage.scss';
 import { PageLayout, PageHeader, PageBody } from './components/PageLayout';
 import { Button } from './components/Button';
-import { rulesApi, flagsApi, flagGroupsApi, type RuleDefinition, type FlagDefinition, type FlagGroup } from './api';
+import { ApiError, rulesApi, flagsApi, flagGroupsApi, type RuleDefinition, type FlagDefinition, type FlagGroup } from './api';
 import { RuleEditModal, emptyRule } from './RulesPage';
 import { generateUniqueId, FlagEditModal } from './FlagsPage';
 import { SimulatorRulesPanel } from './SimulatorRulesPanel';
 import { SimulatorFlagsPanel } from './SimulatorFlagsPanel';
+import {
+  RenameFlagModal,
+  NewGroupModal,
+  RenameGroupModal,
+  RemoveFlagGuardedModal,
+  RemoveGroupModal,
+} from './SimulatorFlagModals';
 
 interface SimulatorPageProps {
   projectId: string;
@@ -26,6 +33,13 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
   const [isNewRule, setIsNewRule] = useState(false);
   const [editingFlagId, setEditingFlagId] = useState<string | null>(null);
   const [isNewFlag, setIsNewFlag] = useState(false);
+  const [renamingFlag, setRenamingFlag] = useState<FlagDefinition | null>(null);
+  const [removeFlagTarget, setRemoveFlagTarget] = useState<{ flag: FlagDefinition; usage: { scenes: string[]; rules: string[] } } | null>(null);
+  const [newGroupContext, setNewGroupContext] = useState<{ forFlag?: FlagDefinition } | null>(null);
+  const [newGroupError, setNewGroupError] = useState<string | null>(null);
+  const [renamingGroup, setRenamingGroup] = useState<FlagGroup | null>(null);
+  const [renameGroupError, setRenameGroupError] = useState<string | null>(null);
+  const [removingGroup, setRemovingGroup] = useState<FlagGroup | null>(null);
 
   useEffect(() => {
     Promise.all([rulesApi.list(projectId), flagsApi.list(projectId), flagGroupsApi.list(projectId), flagsApi.checkUsageCounts(projectId)])
@@ -66,9 +80,14 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
     setIsNewRule(false);
   };
 
-  const handleNewFlag = () => {
+  const handleNewFlag = (presetGroup?: string) => {
     const existingIds = new Set(flags.map(f => f.id));
-    const newFlag: FlagDefinition = { id: generateUniqueId(existingIds), name: '', defaultActive: false };
+    const newFlag: FlagDefinition = {
+      id: generateUniqueId(existingIds),
+      name: '',
+      defaultActive: false,
+      ...(presetGroup ? { group: presetGroup } : {}),
+    };
     setFlags(prev => [...prev, newFlag]);
     setIsNewFlag(true);
     setEditingFlagId(newFlag.id);
@@ -95,6 +114,108 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
     }
     setEditingFlagId(null);
     setIsNewFlag(false);
+  };
+
+  const handleSaveRenameFlag = (name: string) => {
+    if (!renamingFlag) return;
+    const next = flags.map(f => f.id === renamingFlag.id ? { ...f, name } : f);
+    setFlags(next);
+    setRenamingFlag(null);
+    flagsApi.save(projectId, next).catch(err => setError(String(err)));
+  };
+
+  const handleMoveFlag = (flag: FlagDefinition, groupName: string | undefined) => {
+    const next = flags.map(f => f.id === flag.id ? { ...f, group: groupName } : f);
+    setFlags(next);
+    flagsApi.save(projectId, next)
+      .then(() => { refreshFlagGroups(); refreshFlagUsageCounts(); })
+      .catch(err => setError(String(err)));
+  };
+
+  const handleOpenNewGroup = (forFlag?: FlagDefinition) => {
+    setNewGroupError(null);
+    setNewGroupContext({ forFlag });
+  };
+
+  const handleCreateGroup = async (name: string) => {
+    setNewGroupError(null);
+    try {
+      const group = await flagGroupsApi.create(projectId, name);
+      setFlagGroups(prev => [...prev, group].sort((a, b) => a.name.localeCompare(b.name)));
+      const forFlag = newGroupContext?.forFlag;
+      if (forFlag) {
+        const next = flags.map(f => f.id === forFlag.id ? { ...f, group: group.name } : f);
+        setFlags(next);
+        await flagsApi.save(projectId, next);
+        refreshFlagUsageCounts();
+      }
+      setNewGroupContext(null);
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 409) {
+        setNewGroupError(err.message);
+      } else {
+        setError(String(err));
+        setNewGroupContext(null);
+      }
+    }
+  };
+
+  const handleSaveRenameGroup = async (name: string) => {
+    if (!renamingGroup) return;
+    setRenameGroupError(null);
+    try {
+      const updated = await flagGroupsApi.rename(projectId, renamingGroup.id, name);
+      setFlagGroups(prev => prev.map(g => g.id === updated.id ? updated : g).sort((a, b) => a.name.localeCompare(b.name)));
+      setFlags(prev => prev.map(f => f.group === renamingGroup.name ? { ...f, group: updated.name } : f));
+      setRenamingGroup(null);
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 409) {
+        setRenameGroupError(err.message);
+      } else {
+        setError(String(err));
+        setRenamingGroup(null);
+      }
+    }
+  };
+
+  const handleConfirmRemoveGroup = async () => {
+    if (!removingGroup) return;
+    try {
+      await flagGroupsApi.delete(projectId, removingGroup.id);
+      setFlagGroups(prev => prev.filter(g => g.id !== removingGroup.id));
+      setFlags(prev => prev.map(f => f.group === removingGroup.name ? { ...f, group: undefined } : f));
+      setRemovingGroup(null);
+    } catch (err) {
+      setError(String(err));
+      setRemovingGroup(null);
+    }
+  };
+
+  const performRemoveFlag = (flag: FlagDefinition) => {
+    const next = flags.filter(f => f.id !== flag.id);
+    setFlags(next);
+    flagsApi.save(projectId, next)
+      .then(() => { refreshFlagGroups(); refreshFlagUsageCounts(); })
+      .catch(err => setError(String(err)));
+  };
+
+  const handleRemoveFlagRequest = async (flag: FlagDefinition) => {
+    try {
+      const usage = await flagsApi.checkUsage(projectId, flag.id);
+      if (usage.scenes.length === 0 && usage.rules.length === 0) {
+        performRemoveFlag(flag);
+      } else {
+        setRemoveFlagTarget({ flag, usage });
+      }
+    } catch (err) {
+      setError(String(err));
+    }
+  };
+
+  const handleConfirmRemoveFlag = () => {
+    if (!removeFlagTarget) return;
+    performRemoveFlag(removeFlagTarget.flag);
+    setRemoveFlagTarget(null);
   };
 
   return (
@@ -177,6 +298,13 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
                   usageCounts={flagUsageCounts}
                   onNewFlag={handleNewFlag}
                   onSelectFlag={handleSelectFlag}
+                  onRenameFlag={setRenamingFlag}
+                  onMoveFlag={handleMoveFlag}
+                  onNewGroupForFlag={handleOpenNewGroup}
+                  onRemoveFlag={handleRemoveFlagRequest}
+                  onNewGroup={() => handleOpenNewGroup()}
+                  onRenameGroup={setRenamingGroup}
+                  onRemoveGroup={setRemovingGroup}
                 />
 
                 <Arrow />
@@ -259,6 +387,44 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
           groups={flagGroups}
           onSave={handleSaveFlag}
           onCancel={handleCancelEditFlag}
+        />
+      )}
+      {renamingFlag && (
+        <RenameFlagModal
+          flag={renamingFlag}
+          onSave={handleSaveRenameFlag}
+          onCancel={() => setRenamingFlag(null)}
+        />
+      )}
+      {newGroupContext && (
+        <NewGroupModal
+          error={newGroupError}
+          onCreate={handleCreateGroup}
+          onCancel={() => { setNewGroupContext(null); setNewGroupError(null); }}
+        />
+      )}
+      {renamingGroup && (
+        <RenameGroupModal
+          group={renamingGroup}
+          error={renameGroupError}
+          onSave={handleSaveRenameGroup}
+          onCancel={() => { setRenamingGroup(null); setRenameGroupError(null); }}
+        />
+      )}
+      {removeFlagTarget && (
+        <RemoveFlagGuardedModal
+          flag={removeFlagTarget.flag}
+          usage={removeFlagTarget.usage}
+          onCancel={() => setRemoveFlagTarget(null)}
+          onConfirm={handleConfirmRemoveFlag}
+        />
+      )}
+      {removingGroup && (
+        <RemoveGroupModal
+          group={removingGroup}
+          affectedFlags={flags.filter(f => f.group === removingGroup.name)}
+          onCancel={() => setRemovingGroup(null)}
+          onConfirm={handleConfirmRemoveGroup}
         />
       )}
     </PageLayout>

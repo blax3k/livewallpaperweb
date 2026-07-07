@@ -519,6 +519,18 @@
     }
   }
 
+  &__new-group-btn {
+    flex-shrink: 0;
+    height: var(--size-26);
+    padding: 0 var(--size-10);
+    background: var(--color-input);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--size-8);
+    font: 600 var(--text-11) var(--font-sans);
+    color: var(--color-fg-muted);
+    cursor: pointer;
+  }
+
   &__new-btn {
     flex-shrink: 0;
     height: var(--size-26);

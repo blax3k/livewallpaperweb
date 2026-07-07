@@ -33,3 +33,21 @@ export function DropdownMenuItem({ className = '', danger, ...props }: DropdownM
 export function DropdownMenuSeparator({ className = '', ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Separator>) {
   return <DropdownMenuPrimitive.Separator className={`dropdown-menu-separator ${className}`.trim()} {...props} />;
 }
+
+export const DropdownMenuSub = DropdownMenuPrimitive.Sub;
+
+export function DropdownMenuSubTrigger({ className = '', ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.SubTrigger>) {
+  return <DropdownMenuPrimitive.SubTrigger className={`dropdown-menu-item ${className}`.trim()} {...props} />;
+}
+
+export function DropdownMenuSubContent({ className = '', sideOffset = 6, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.SubContent>) {
+  return (
+    <DropdownMenuPrimitive.Portal>
+      <DropdownMenuPrimitive.SubContent
+        sideOffset={sideOffset}
+        className={`dropdown-menu-content ${className}`.trim()}
+        {...props}
+      />
+    </DropdownMenuPrimitive.Portal>
+  );
+}
