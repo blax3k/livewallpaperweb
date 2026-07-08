@@ -4,10 +4,11 @@ import { PageLayout, PageHeader, PageBody } from './components/PageLayout';
 import { Button } from './components/Button';
 import { ApiError, rulesApi, flagsApi, flagGroupsApi, type RuleDefinition, type FlagDefinition, type FlagGroup } from './api';
 import { RuleEditModal, emptyRule } from './RulesPage';
-import { generateUniqueId, FlagEditModal } from './FlagsPage';
 import { SimulatorRulesPanel } from './SimulatorRulesPanel';
 import { SimulatorFlagsPanel } from './SimulatorFlagsPanel';
 import {
+  generateUniqueId,
+  FlagEditModal,
   RenameFlagModal,
   NewGroupModal,
   RenameGroupModal,

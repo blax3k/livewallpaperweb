@@ -5,7 +5,6 @@ import { createRoot } from 'react-dom/client';
 import { ScenePage } from './ScenePage';
 import { SceneListPage } from './SceneListPage';
 import { ProjectListPage } from './ProjectListPage';
-import { FlagsPage } from './FlagsPage';
 import { RulesPage } from './RulesPage';
 import { SimulatorPage } from './SimulatorPage';
 import { LoginPage } from './LoginPage';
@@ -26,7 +25,6 @@ type Page =
   | { type: 'projects' }
   | { type: 'scenes'; project: ProjectRecord }
   | { type: 'scene'; sceneId: string; project: ProjectRecord }
-  | { type: 'flags'; project: ProjectRecord }
   | { type: 'rules'; project: ProjectRecord }
   | { type: 'simulator'; project: ProjectRecord };
 
@@ -36,10 +34,6 @@ function pageFromPath(): Page {
     const projectId = decodeURIComponent(sceneMatch[1]);
     const sceneId = decodeURIComponent(sceneMatch[2]);
     return { type: 'scene', sceneId, project: { id: projectId, name: '' } };
-  }
-  const flagsMatch = window.location.pathname.match(/^\/project\/([^/]+)\/flags$/);
-  if (flagsMatch) {
-    return { type: 'flags', project: { id: decodeURIComponent(flagsMatch[1]), name: '' } };
   }
   const rulesMatch = window.location.pathname.match(/^\/project\/([^/]+)\/rules$/);
   if (rulesMatch) {
@@ -126,11 +120,6 @@ function App() {
     setPage({ type: 'scenes', project });
   }, []);
 
-  const navigateToFlags = useCallback((project: ProjectRecord) => {
-    window.history.pushState(null, '', `/project/${encodeURIComponent(project.id)}/flags`);
-    setPage({ type: 'flags', project });
-  }, []);
-
   const navigateToRules = useCallback((project: ProjectRecord) => {
     window.history.pushState(null, '', `/project/${encodeURIComponent(project.id)}/rules`);
     setPage({ type: 'rules', project });
@@ -163,16 +152,6 @@ function App() {
     );
   }
 
-  if (page.type === 'flags') {
-    return (
-      <FlagsPage
-        projectId={page.project.id}
-        projectName={page.project.name}
-        onBack={() => navigateBackToScenes(page.project)}
-      />
-    );
-  }
-
   if (page.type === 'rules') {
     return (
       <RulesPage
@@ -198,7 +177,6 @@ function App() {
       <SceneListPage
         onSelect={(scene) => navigateToScene(scene, page.project)}
         onBack={navigateBackToProjects}
-        onFlags={() => navigateToFlags(page.project)}
         onRules={() => navigateToRules(page.project)}
         onSimulator={() => navigateToSimulator(page.project)}
         projectname={page.project.name}

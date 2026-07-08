@@ -2,6 +2,59 @@ import { useState } from 'react';
 import { Button } from './components/Button';
 import type { FlagDefinition, FlagGroup } from './api';
 
+export function generateUniqueId(existingIds: Set<string>): string {
+  let id: string;
+  do {
+    id = crypto.randomUUID().slice(0, 8);
+  } while (existingIds.has(id));
+  return id;
+}
+
+interface FlagEditModalProps {
+  flag: FlagDefinition;
+  isNew?: boolean;
+  groups: FlagGroup[];
+  onSave: (flag: FlagDefinition) => void;
+  onCancel: () => void;
+}
+
+export function FlagEditModal({ flag: initial, isNew, groups, onSave, onCancel }: FlagEditModalProps) {
+  const [flag, setFlag] = useState<FlagDefinition>(() => ({ ...initial }))
+
+  const handleGroupSelect = (value: string) => {
+    setFlag({ ...flag, group: value || undefined });
+  };
+
+
+  return (
+    <div className="modal-overlay" onClick={onCancel}>
+      <div className="modal-box" onClick={e => e.stopPropagation()}>
+        <h2 className="modal-title">{isNew ? 'New Flag' : 'Edit Flag'}</h2>
+        <div className="form-row">
+          <label>Name</label>
+          <input
+            value={flag.name}
+            onChange={e => setFlag({ ...flag, name: e.target.value })}
+            placeholder="Flag display name"
+            autoFocus
+          />
+        </div>
+        <div className="form-row">
+          <label>Group</label>
+            <select value={flag.group ?? ''} onChange={e => handleGroupSelect(e.target.value)}>
+              <option value="">(ungrouped)</option>
+              {groups.map(g => <option key={g.id} value={g.name}>{g.name}</option>)}
+            </select>
+        </div>
+        <div className="modal-footer">
+          <Button onClick={onCancel}>Cancel</Button>
+          <Button variant="primary" disabled={!flag.name.trim()} onClick={() => onSave(flag)}>Save Flag</Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 interface RenameFlagModalProps {
   flag: FlagDefinition;
   onSave: (name: string) => void;
