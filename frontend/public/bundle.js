@@ -80329,9 +80329,6 @@ ${e2}`);
   // src/SimulatorRuleModals.tsx
   var import_react31 = __toESM(require_react());
   var import_jsx_runtime50 = __toESM(require_jsx_runtime());
-  function generateRuleId(name) {
-    return name.trim().toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
-  }
   function emptyRule() {
     return {
       id: "",
@@ -80341,18 +80338,17 @@ ${e2}`);
       oneShot: false
     };
   }
-  function conditionsToFlatGroup(conditions) {
-    const groups = (conditions ?? []).filter((g2) => g2.checks.length > 0);
-    if (groups.length === 0) return { operator: "AND", checks: [] };
-    if (groups.length === 1) return groups[0];
-    return { operator: "OR", checks: groups.flatMap((g2) => g2.checks) };
-  }
-  function flatGroupToConditions(group) {
-    if (group.checks.length === 0) return [];
-    if (group.operator === "OR" && group.checks.length > 1) {
-      return group.checks.map((c2) => ({ operator: "AND", checks: [c2] }));
+  function normalizeConditionGroups(groups) {
+    const result = [];
+    for (const g2 of groups ?? []) {
+      if (g2.checks.length === 0) continue;
+      if (g2.operator === "OR" && g2.checks.length > 1) {
+        g2.checks.forEach((c2) => result.push({ operator: "AND", checks: [c2] }));
+      } else {
+        result.push({ operator: "AND", checks: g2.checks });
+      }
     }
-    return [{ operator: "AND", checks: group.checks }];
+    return result;
   }
   function emptyCondition() {
     return { type: "flag_active", flagId: "" };
@@ -80370,6 +80366,15 @@ ${e2}`);
     { value: "time_since_flag_change", label: "Hours since flag changed" }
   ];
   var DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  var CONDITION_TYPE_MIN_WIDTH = {
+    flag_active: 108,
+    flag_inactive: 118,
+    time_of_day: 118,
+    day_of_week: 112,
+    scene_count: 140,
+    install_duration_hours: 160,
+    time_since_flag_change: 160
+  };
   function ConditionEditor({ condition, flags, onChange, onDelete }) {
     const set = (patch) => onChange({ ...condition, ...patch });
     const typeChanged = (type) => {
@@ -80396,156 +80401,201 @@ ${e2}`);
       }
       onChange(base);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "condition-row", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("select", { value: condition.type, onChange: (e2) => typeChanged(e2.target.value), children: CONDITION_TYPES.map((t2) => /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("option", { value: t2.value, children: t2.label }, t2.value)) }),
-      (condition.type === "flag_active" || condition.type === "flag_inactive") && /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("select", { value: condition.flagId ?? "", onChange: (e2) => set({ flagId: e2.target.value }), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
-        flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
-      ] }),
-      condition.type === "time_of_day" && /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(import_jsx_runtime50.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("label", { children: "Start" }),
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("input", { type: "number", min: 0, max: 23, value: condition.startHour ?? 0, onChange: (e2) => set({ startHour: +e2.target.value }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("label", { children: "End" }),
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("input", { type: "number", min: 0, max: 23, value: condition.endHour ?? 0, onChange: (e2) => set({ endHour: +e2.target.value }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "condition-hint", children: "(exclusive; 22\u20136 = overnight wrap)" })
-      ] }),
-      condition.type === "day_of_week" && /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "condition-days", children: DAY_LABELS.map((label, i2) => {
-        const checked = (condition.daysOfWeek ?? []).includes(i2);
-        return /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("label", { className: "condition-day-label", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
-            "input",
-            {
-              type: "checkbox",
-              checked,
-              onChange: () => {
-                const days = condition.daysOfWeek ?? [];
-                set({ daysOfWeek: checked ? days.filter((d2) => d2 !== i2) : [...days, i2] });
-              }
-            }
-          ),
-          label
-        ] }, i2);
-      }) }),
-      (condition.type === "scene_count" || condition.type === "install_duration_hours") && /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(import_jsx_runtime50.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("select", { value: condition.operator ?? ">=", onChange: (e2) => set({ operator: e2.target.value }), children: [">=", "<=", "==", ">", "<"].map((op) => /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("option", { value: op, children: op }, op)) }),
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("input", { type: "number", min: 0, value: condition.intValue ?? 0, onChange: (e2) => set({ intValue: +e2.target.value }) })
-      ] }),
-      condition.type === "time_since_flag_change" && /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(import_jsx_runtime50.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("select", { value: condition.flagId ?? "", onChange: (e2) => set({ flagId: e2.target.value }), children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "rule-edit-modal__row-group", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "rule-edit-modal__condition-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
+          "select",
+          {
+            className: "rule-edit-modal__type-select",
+            style: { minWidth: CONDITION_TYPE_MIN_WIDTH[condition.type] },
+            value: condition.type,
+            onChange: (e2) => typeChanged(e2.target.value),
+            children: CONDITION_TYPES.map((t2) => /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("option", { value: t2.value, children: t2.label }, t2.value))
+          }
+        ),
+        (condition.type === "flag_active" || condition.type === "flag_inactive") && /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("select", { className: "rule-edit-modal__value-select", value: condition.flagId ?? "", onChange: (e2) => set({ flagId: e2.target.value }), children: [
           /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
           flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("select", { value: condition.flagChangeType ?? "activated", onChange: (e2) => set({ flagChangeType: e2.target.value }), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("option", { value: "activated", children: "was activated" }),
-          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("option", { value: "deactivated", children: "was deactivated" })
+        condition.type === "time_of_day" && /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(import_jsx_runtime50.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "rule-edit-modal__mini-label", children: "Start" }),
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("input", { className: "rule-edit-modal__mini-input", type: "number", min: 0, max: 23, value: condition.startHour ?? 0, onChange: (e2) => set({ startHour: +e2.target.value }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "rule-edit-modal__mini-label", children: "End" }),
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("input", { className: "rule-edit-modal__mini-input", type: "number", min: 0, max: 23, value: condition.endHour ?? 0, onChange: (e2) => set({ endHour: +e2.target.value }) })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("select", { value: condition.operator ?? ">=", onChange: (e2) => set({ operator: e2.target.value }), children: [">=", "<=", "==", ">", "<"].map((op) => /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("option", { value: op, children: op }, op)) }),
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("input", { type: "number", min: 0, value: condition.intValue ?? 0, onChange: (e2) => set({ intValue: +e2.target.value }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "condition-hint", children: "hours" })
+        condition.type === "day_of_week" && /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "rule-edit-modal__days", children: DAY_LABELS.map((label, i2) => {
+          const checked = (condition.daysOfWeek ?? []).includes(i2);
+          return /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("label", { className: "rule-edit-modal__day-label", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
+              "input",
+              {
+                type: "checkbox",
+                checked,
+                onChange: () => {
+                  const days = condition.daysOfWeek ?? [];
+                  set({ daysOfWeek: checked ? days.filter((d2) => d2 !== i2) : [...days, i2] });
+                }
+              }
+            ),
+            label
+          ] }, i2);
+        }) }),
+        (condition.type === "scene_count" || condition.type === "install_duration_hours") && /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(import_jsx_runtime50.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("select", { className: "rule-edit-modal__op-select", value: condition.operator ?? ">=", onChange: (e2) => set({ operator: e2.target.value }), children: [">=", "<=", "==", ">", "<"].map((op) => /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("option", { value: op, children: op }, op)) }),
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("input", { className: "rule-edit-modal__num-input", type: "number", min: 0, value: condition.intValue ?? 0, onChange: (e2) => set({ intValue: +e2.target.value }) })
+        ] }),
+        condition.type === "time_since_flag_change" && /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(import_jsx_runtime50.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("select", { className: "rule-edit-modal__value-select", value: condition.flagId ?? "", onChange: (e2) => set({ flagId: e2.target.value }), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
+            flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("select", { className: "rule-edit-modal__op-select", value: condition.flagChangeType ?? "activated", onChange: (e2) => set({ flagChangeType: e2.target.value }), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("option", { value: "activated", children: "was activated" }),
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("option", { value: "deactivated", children: "was deactivated" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("select", { className: "rule-edit-modal__op-select", value: condition.operator ?? ">=", onChange: (e2) => set({ operator: e2.target.value }), children: [">=", "<=", "==", ">", "<"].map((op) => /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("option", { value: op, children: op }, op)) }),
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("input", { className: "rule-edit-modal__num-input", type: "number", min: 0, value: condition.intValue ?? 0, onChange: (e2) => set({ intValue: +e2.target.value }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "rule-edit-modal__mini-label", children: "hours" })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("button", { type: "button", className: "rule-edit-modal__remove", onClick: onDelete, title: "Remove condition", children: "\u2715" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("button", { className: "condition-delete", onClick: onDelete, title: "Remove condition", children: "\u2715" })
+      condition.type === "time_of_day" && /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "rule-edit-modal__hint", children: "exclusive; 22\u20136 wraps overnight" })
     ] });
   }
-  function ActionEditor({ action, flags, onChange, onDelete }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "action-row", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("select", { value: action.type, onChange: (e2) => onChange({ ...action, type: e2.target.value }), children: [
+  function ActionEditor({ index: index2, action, flags, onChange, onDelete }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "rule-edit-modal__action-row", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "rule-edit-modal__action-index", children: index2 + 1 }),
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("select", { className: "rule-edit-modal__action-type-select", value: action.type, onChange: (e2) => onChange({ ...action, type: e2.target.value }), children: [
         /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("option", { value: "activate_flag", children: "Activate flag" }),
         /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("option", { value: "deactivate_flag", children: "Deactivate flag" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("select", { value: action.flagId ?? "", onChange: (e2) => onChange({ ...action, flagId: e2.target.value }), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("select", { className: "rule-edit-modal__action-value-select", value: action.flagId ?? "", onChange: (e2) => onChange({ ...action, flagId: e2.target.value }), children: [
         /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
         flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("button", { className: "condition-delete", onClick: onDelete, title: "Remove action", children: "\u2715" })
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("button", { type: "button", className: "rule-edit-modal__remove", onClick: onDelete, title: "Remove action", children: "\u2715" })
     ] });
   }
-  function RuleEditModal({ rule: initial, flags, onSave, onCancel }) {
-    const [rule, setRule] = (0, import_react31.useState)(() => JSON.parse(JSON.stringify(initial)));
+  function RuleEditModal({ rule: initial, flags, groups, onSave, onCancel }) {
+    const [rule, setRule] = (0, import_react31.useState)(() => ({
+      ...JSON.parse(JSON.stringify(initial)),
+      conditions: normalizeConditionGroups(initial.conditions)
+    }));
     const setField = (key, value) => setRule((r2) => ({ ...r2, [key]: value }));
-    const conditions = conditionsToFlatGroup(rule.conditions);
-    const setConditions = (g2) => setField("conditions", flatGroupToConditions(g2));
-    const addCondition = () => setConditions({ ...conditions, checks: [...conditions.checks, emptyCondition()] });
-    const updateCondition = (i2, c2) => setConditions({ ...conditions, checks: conditions.checks.map((ch, idx) => idx === i2 ? c2 : ch) });
-    const deleteCondition = (i2) => setConditions({ ...conditions, checks: conditions.checks.filter((_, idx) => idx !== i2) });
+    const conditions = rule.conditions ?? [];
+    const setConditions = (next) => setField("conditions", next);
+    const addGroup = () => setConditions([...conditions, { operator: "AND", checks: [emptyCondition()] }]);
+    const addConditionToGroup = (groupIndex) => setConditions(conditions.map((g2, i2) => i2 === groupIndex ? { ...g2, checks: [...g2.checks, emptyCondition()] } : g2));
+    const updateConditionInGroup = (groupIndex, checkIndex, c2) => setConditions(conditions.map(
+      (g2, i2) => i2 === groupIndex ? { ...g2, checks: g2.checks.map((ch, j2) => j2 === checkIndex ? c2 : ch) } : g2
+    ));
+    const removeConditionInGroup = (groupIndex, checkIndex) => setConditions(
+      conditions.map((g2, i2) => i2 === groupIndex ? { ...g2, checks: g2.checks.filter((_, j2) => j2 !== checkIndex) } : g2).filter((g2) => g2.checks.length > 0)
+    );
     const addAction = () => setField("actions", [...rule.actions, emptyAction()]);
     const updateAction = (i2, a2) => setField("actions", rule.actions.map((act, idx) => idx === i2 ? a2 : act));
     const deleteAction = (i2) => setField("actions", rule.actions.filter((_, idx) => idx !== i2));
-    const handleNameBlur = () => {
-      if (!rule.id && rule.name) setField("id", generateRuleId(rule.name));
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "modal-overlay", onClick: onCancel, children: /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "modal-box rule-modal", onClick: (e2) => e2.stopPropagation(), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("h2", { className: "modal-title", children: initial.id ? "Edit Rule" : "New Rule" }),
-      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "form-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("label", { children: "Name" }),
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
-          "input",
-          {
-            value: rule.name,
-            onChange: (e2) => setField("name", e2.target.value),
-            onBlur: handleNameBlur,
-            placeholder: "Rule display name"
-          }
-        )
+    return /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "modal-overlay", onClick: onCancel, children: /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "rule-edit-modal", onClick: (e2) => e2.stopPropagation(), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "rule-edit-modal__header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "rule-edit-modal__title", children: initial.id ? "Edit rule" : "New rule" }),
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("button", { type: "button", className: "rule-edit-modal__close", onClick: onCancel, "aria-label": "Close", children: "\u2715" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "form-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("label", { children: "ID" }),
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
-          "input",
-          {
-            value: rule.id,
-            onChange: (e2) => setField("id", e2.target.value),
-            placeholder: "rule_id",
-            spellCheck: false
-          }
-        )
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "rule-edit-modal__body", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "rule-edit-modal__row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("label", { className: "rule-edit-modal__field", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "rule-edit-modal__label", children: "Name" }),
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
+              "input",
+              {
+                className: "rule-edit-modal__input",
+                value: rule.name,
+                onChange: (e2) => setField("name", e2.target.value),
+                placeholder: "Rule name",
+                autoFocus: true
+              }
+            )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("label", { className: "rule-edit-modal__field", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "rule-edit-modal__label", children: "Group" }),
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(
+              "select",
+              {
+                className: "rule-edit-modal__input rule-edit-modal__input--select",
+                value: rule.group ?? "",
+                onChange: (e2) => setField("group", e2.target.value || void 0),
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("option", { value: "", children: "Ungrouped" }),
+                  groups.map((g2) => /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("option", { value: g2.name, children: g2.name }, g2.id))
+                ]
+              }
+            )
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("label", { className: "rule-edit-modal__oneshot", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("input", { type: "checkbox", checked: rule.oneShot ?? false, onChange: (e2) => setField("oneShot", e2.target.checked) }),
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { children: "One-shot \u2014 fires only once, ever" })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "rule-edit-modal__section", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "rule-edit-modal__section-head", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "rule-edit-modal__section-title", children: "Conditions" }),
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("span", { className: "rule-edit-modal__section-hint", children: [
+              "Rows in a group must ",
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("b", { children: "all" }),
+              " pass (AND). Groups are ",
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("b", { children: "OR" }),
+              "'d \u2014 the rule fires if any one group fully matches. Leave empty to always fire."
+            ] })
+          ] }),
+          conditions.map((group, groupIndex) => /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(import_react31.Fragment, { children: [
+            groupIndex > 0 && /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "rule-edit-modal__or-divider", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", {}),
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("em", { children: "OR" }),
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", {})
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "rule-edit-modal__group", children: [
+              group.checks.map((c2, checkIndex) => /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(import_react31.Fragment, { children: [
+                checkIndex > 0 && /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "rule-edit-modal__and-divider", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", {}),
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("em", { children: "AND" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", {})
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
+                  ConditionEditor,
+                  {
+                    condition: c2,
+                    flags,
+                    onChange: (updated) => updateConditionInGroup(groupIndex, checkIndex, updated),
+                    onDelete: () => removeConditionInGroup(groupIndex, checkIndex)
+                  }
+                )
+              ] }, checkIndex)),
+              /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("button", { type: "button", className: "rule-edit-modal__dashed-btn", onClick: () => addConditionToGroup(groupIndex), children: "+ Condition" })
+            ] })
+          ] }, groupIndex)),
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("button", { type: "button", className: "rule-edit-modal__dashed-btn rule-edit-modal__dashed-btn--accent", onClick: addGroup, children: "+ Or group" })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "rule-edit-modal__section", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "rule-edit-modal__section-head", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "rule-edit-modal__section-title", children: "Actions" }),
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "rule-edit-modal__section-hint", children: "Run in order, top to bottom, whenever the conditions above resolve true." })
+          ] }),
+          rule.actions.map((a2, i2) => /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
+            ActionEditor,
+            {
+              index: i2,
+              action: a2,
+              flags,
+              onChange: (updated) => updateAction(i2, updated),
+              onDelete: () => deleteAction(i2)
+            },
+            i2
+          )),
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("button", { type: "button", className: "rule-edit-modal__dashed-btn", onClick: addAction, children: "+ Action" })
+        ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "form-row", children: /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("label", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("input", { type: "checkbox", checked: rule.oneShot ?? false, onChange: (e2) => setField("oneShot", e2.target.checked) }),
-        " ",
-        "One-shot (fires only once ever)"
-      ] }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("h3", { className: "section-title", children: [
-        "Conditions",
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(
-          "select",
-          {
-            value: conditions.operator,
-            onChange: (e2) => setConditions({ ...conditions, operator: e2.target.value }),
-            style: { marginLeft: "var(--size-8)", fontSize: "var(--text-13)" },
-            children: [
-              /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("option", { value: "AND", children: "ALL must pass (AND)" }),
-              /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("option", { value: "OR", children: "ANY must pass (OR)" })
-            ]
-          }
-        )
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("p", { className: "section-hint", children: "Leave empty to always fire." }),
-      conditions.checks.map((c2, i2) => /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
-        ConditionEditor,
-        {
-          condition: c2,
-          flags,
-          onChange: (updated) => updateCondition(i2, updated),
-          onDelete: () => deleteCondition(i2)
-        },
-        i2
-      )),
-      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(Button, { onClick: addCondition, style: { marginBottom: "var(--size-16)" }, children: "+ Condition" }),
-      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("h3", { className: "section-title", children: "Actions" }),
-      rule.actions.map((a2, i2) => /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
-        ActionEditor,
-        {
-          action: a2,
-          flags,
-          onChange: (updated) => updateAction(i2, updated),
-          onDelete: () => deleteAction(i2)
-        },
-        i2
-      )),
-      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(Button, { onClick: addAction, style: { marginBottom: "var(--size-16)" }, children: "+ Action" }),
-      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "modal-footer", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "rule-edit-modal__footer", children: [
         /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(Button, { variant: "primary", onClick: () => onSave(rule), children: "Save Rule" })
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(Button, { variant: "primary", disabled: !rule.name.trim(), onClick: () => onSave(rule), children: "Save rule" })
       ] })
     ] }) });
   }
@@ -80771,7 +80821,13 @@ ${e2}`);
       rulesApi.save(projectId, next).catch((err) => setError(String(err)));
     };
     const handleNewRule = (presetGroup) => {
-      setRules((prev) => [...prev, { ...emptyRule(), ...presetGroup ? { group: presetGroup } : {} }]);
+      const existingIds = new Set(rules.map((r2) => r2.id));
+      const newRule = {
+        ...emptyRule(),
+        id: generateUniqueId(existingIds),
+        ...presetGroup ? { group: presetGroup } : {}
+      };
+      setRules((prev) => [...prev, newRule]);
       setIsNewRule(true);
       setEditingRuleIndex(rules.length);
     };
@@ -81185,6 +81241,7 @@ ${e2}`);
         {
           rule: rules[editingRuleIndex],
           flags,
+          groups: ruleGroups,
           onSave: handleSaveRule,
           onCancel: handleCancelEditRule
         }

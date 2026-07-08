@@ -1,11 +1,7 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { Button } from './components/Button';
 import type { RuleDefinition, RuleGroup, FlagDefinition } from './api';
 import type { RuleConditionGroup, RuleCondition, RuleAction } from '@livewallpaper/types';
-
-function generateRuleId(name: string): string {
-  return name.trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
-}
 
 export function emptyRule(): RuleDefinition {
   return {
@@ -17,22 +13,21 @@ export function emptyRule(): RuleDefinition {
   };
 }
 
-// This editor only ever shows a single flat AND/OR group (the full OR-of-AND-groups
-// builder is a separate redesign). Round-trips losslessly for anything this UI can
-// produce: a single AND group, or several single-check groups standing in for one OR group.
-function conditionsToFlatGroup(conditions: RuleConditionGroup[] | undefined): RuleConditionGroup {
-  const groups = (conditions ?? []).filter(g => g.checks.length > 0);
-  if (groups.length === 0) return { operator: 'AND', checks: [] };
-  if (groups.length === 1) return groups[0];
-  return { operator: 'OR', checks: groups.flatMap(g => g.checks) };
-}
-
-function flatGroupToConditions(group: RuleConditionGroup): RuleConditionGroup[] {
-  if (group.checks.length === 0) return [];
-  if (group.operator === 'OR' && group.checks.length > 1) {
-    return group.checks.map(c => ({ operator: 'AND' as const, checks: [c] }));
+// Existing rules may carry a group with operator 'OR' from before the editor supported
+// multiple AND-groups OR'd together (each group card is AND-only; OR happens between
+// cards). Explode any such group into one single-check AND-group per check so it
+// round-trips losslessly into the new builder.
+function normalizeConditionGroups(groups: RuleConditionGroup[] | undefined): RuleConditionGroup[] {
+  const result: RuleConditionGroup[] = [];
+  for (const g of groups ?? []) {
+    if (g.checks.length === 0) continue;
+    if (g.operator === 'OR' && g.checks.length > 1) {
+      g.checks.forEach(c => result.push({ operator: 'AND', checks: [c] }));
+    } else {
+      result.push({ operator: 'AND', checks: g.checks });
+    }
   }
-  return [{ operator: 'AND', checks: group.checks }];
+  return result;
 }
 
 function emptyCondition(): RuleCondition {
@@ -54,6 +49,18 @@ const CONDITION_TYPES: { value: RuleCondition['type']; label: string }[] = [
 ];
 
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+// Roughly matches each condition type's natural label width so the row doesn't
+// jump around as the type changes.
+const CONDITION_TYPE_MIN_WIDTH: Record<RuleCondition['type'], number> = {
+  flag_active: 108,
+  flag_inactive: 118,
+  time_of_day: 118,
+  day_of_week: 112,
+  scene_count: 140,
+  install_duration_hours: 160,
+  time_since_flag_change: 160,
+};
 
 interface ConditionEditorProps {
   condition: RuleCondition;
@@ -82,100 +89,111 @@ function ConditionEditor({ condition, flags, onChange, onDelete }: ConditionEdit
   };
 
   return (
-    <div className="condition-row">
-      <select value={condition.type} onChange={e => typeChanged(e.target.value as RuleCondition['type'])}>
-        {CONDITION_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-      </select>
-
-      {(condition.type === 'flag_active' || condition.type === 'flag_inactive') && (
-        <select value={condition.flagId ?? ''} onChange={e => set({ flagId: e.target.value })}>
-          <option value="">— select flag —</option>
-          {flags.map(f => <option key={f.id} value={f.id}>{f.name || f.id}</option>)}
+    <div className="rule-edit-modal__row-group">
+      <div className="rule-edit-modal__condition-row">
+        <select
+          className="rule-edit-modal__type-select"
+          style={{ minWidth: CONDITION_TYPE_MIN_WIDTH[condition.type] }}
+          value={condition.type}
+          onChange={e => typeChanged(e.target.value as RuleCondition['type'])}
+        >
+          {CONDITION_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
         </select>
-      )}
 
-      {condition.type === 'time_of_day' && (
-        <>
-          <label>Start</label>
-          <input type="number" min={0} max={23} value={condition.startHour ?? 0} onChange={e => set({ startHour: +e.target.value })} />
-          <label>End</label>
-          <input type="number" min={0} max={23} value={condition.endHour ?? 0} onChange={e => set({ endHour: +e.target.value })} />
-          <span className="condition-hint">(exclusive; 22–6 = overnight wrap)</span>
-        </>
-      )}
-
-      {condition.type === 'day_of_week' && (
-        <div className="condition-days">
-          {DAY_LABELS.map((label, i) => {
-            const checked = (condition.daysOfWeek ?? []).includes(i);
-            return (
-              <label key={i} className="condition-day-label">
-                <input
-                  type="checkbox"
-                  checked={checked}
-                  onChange={() => {
-                    const days = condition.daysOfWeek ?? [];
-                    set({ daysOfWeek: checked ? days.filter(d => d !== i) : [...days, i] });
-                  }}
-                />
-                {label}
-              </label>
-            );
-          })}
-        </div>
-      )}
-
-      {(condition.type === 'scene_count' || condition.type === 'install_duration_hours') && (
-        <>
-          <select value={condition.operator ?? '>='} onChange={e => set({ operator: e.target.value as RuleCondition['operator'] })}>
-            {['>=', '<=', '==', '>', '<'].map(op => <option key={op} value={op}>{op}</option>)}
-          </select>
-          <input type="number" min={0} value={condition.intValue ?? 0} onChange={e => set({ intValue: +e.target.value })} />
-        </>
-      )}
-
-      {condition.type === 'time_since_flag_change' && (
-        <>
-          <select value={condition.flagId ?? ''} onChange={e => set({ flagId: e.target.value })}>
+        {(condition.type === 'flag_active' || condition.type === 'flag_inactive') && (
+          <select className="rule-edit-modal__value-select" value={condition.flagId ?? ''} onChange={e => set({ flagId: e.target.value })}>
             <option value="">— select flag —</option>
             {flags.map(f => <option key={f.id} value={f.id}>{f.name || f.id}</option>)}
           </select>
-          <select value={condition.flagChangeType ?? 'activated'} onChange={e => set({ flagChangeType: e.target.value as 'activated' | 'deactivated' })}>
-            <option value="activated">was activated</option>
-            <option value="deactivated">was deactivated</option>
-          </select>
-          <select value={condition.operator ?? '>='} onChange={e => set({ operator: e.target.value as RuleCondition['operator'] })}>
-            {['>=', '<=', '==', '>', '<'].map(op => <option key={op} value={op}>{op}</option>)}
-          </select>
-          <input type="number" min={0} value={condition.intValue ?? 0} onChange={e => set({ intValue: +e.target.value })} />
-          <span className="condition-hint">hours</span>
-        </>
-      )}
+        )}
 
-      <button className="condition-delete" onClick={onDelete} title="Remove condition">✕</button>
+        {condition.type === 'time_of_day' && (
+          <>
+            <span className="rule-edit-modal__mini-label">Start</span>
+            <input className="rule-edit-modal__mini-input" type="number" min={0} max={23} value={condition.startHour ?? 0} onChange={e => set({ startHour: +e.target.value })} />
+            <span className="rule-edit-modal__mini-label">End</span>
+            <input className="rule-edit-modal__mini-input" type="number" min={0} max={23} value={condition.endHour ?? 0} onChange={e => set({ endHour: +e.target.value })} />
+          </>
+        )}
+
+        {condition.type === 'day_of_week' && (
+          <div className="rule-edit-modal__days">
+            {DAY_LABELS.map((label, i) => {
+              const checked = (condition.daysOfWeek ?? []).includes(i);
+              return (
+                <label key={i} className="rule-edit-modal__day-label">
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => {
+                      const days = condition.daysOfWeek ?? [];
+                      set({ daysOfWeek: checked ? days.filter(d => d !== i) : [...days, i] });
+                    }}
+                  />
+                  {label}
+                </label>
+              );
+            })}
+          </div>
+        )}
+
+        {(condition.type === 'scene_count' || condition.type === 'install_duration_hours') && (
+          <>
+            <select className="rule-edit-modal__op-select" value={condition.operator ?? '>='} onChange={e => set({ operator: e.target.value as RuleCondition['operator'] })}>
+              {['>=', '<=', '==', '>', '<'].map(op => <option key={op} value={op}>{op}</option>)}
+            </select>
+            <input className="rule-edit-modal__num-input" type="number" min={0} value={condition.intValue ?? 0} onChange={e => set({ intValue: +e.target.value })} />
+          </>
+        )}
+
+        {condition.type === 'time_since_flag_change' && (
+          <>
+            <select className="rule-edit-modal__value-select" value={condition.flagId ?? ''} onChange={e => set({ flagId: e.target.value })}>
+              <option value="">— select flag —</option>
+              {flags.map(f => <option key={f.id} value={f.id}>{f.name || f.id}</option>)}
+            </select>
+            <select className="rule-edit-modal__op-select" value={condition.flagChangeType ?? 'activated'} onChange={e => set({ flagChangeType: e.target.value as 'activated' | 'deactivated' })}>
+              <option value="activated">was activated</option>
+              <option value="deactivated">was deactivated</option>
+            </select>
+            <select className="rule-edit-modal__op-select" value={condition.operator ?? '>='} onChange={e => set({ operator: e.target.value as RuleCondition['operator'] })}>
+              {['>=', '<=', '==', '>', '<'].map(op => <option key={op} value={op}>{op}</option>)}
+            </select>
+            <input className="rule-edit-modal__num-input" type="number" min={0} value={condition.intValue ?? 0} onChange={e => set({ intValue: +e.target.value })} />
+            <span className="rule-edit-modal__mini-label">hours</span>
+          </>
+        )}
+
+        <button type="button" className="rule-edit-modal__remove" onClick={onDelete} title="Remove condition">✕</button>
+      </div>
+      {condition.type === 'time_of_day' && (
+        <span className="rule-edit-modal__hint">exclusive; 22–6 wraps overnight</span>
+      )}
     </div>
   );
 }
 
 interface ActionEditorProps {
+  index: number;
   action: RuleAction;
   flags: FlagDefinition[];
   onChange: (a: RuleAction) => void;
   onDelete: () => void;
 }
 
-function ActionEditor({ action, flags, onChange, onDelete }: ActionEditorProps) {
+function ActionEditor({ index, action, flags, onChange, onDelete }: ActionEditorProps) {
   return (
-    <div className="action-row">
-      <select value={action.type} onChange={e => onChange({ ...action, type: e.target.value as RuleAction['type'] })}>
+    <div className="rule-edit-modal__action-row">
+      <span className="rule-edit-modal__action-index">{index + 1}</span>
+      <select className="rule-edit-modal__action-type-select" value={action.type} onChange={e => onChange({ ...action, type: e.target.value as RuleAction['type'] })}>
         <option value="activate_flag">Activate flag</option>
         <option value="deactivate_flag">Deactivate flag</option>
       </select>
-      <select value={action.flagId ?? ''} onChange={e => onChange({ ...action, flagId: e.target.value })}>
+      <select className="rule-edit-modal__action-value-select" value={action.flagId ?? ''} onChange={e => onChange({ ...action, flagId: e.target.value })}>
         <option value="">— select flag —</option>
         {flags.map(f => <option key={f.id} value={f.id}>{f.name || f.id}</option>)}
       </select>
-      <button className="condition-delete" onClick={onDelete} title="Remove action">✕</button>
+      <button type="button" className="rule-edit-modal__remove" onClick={onDelete} title="Remove action">✕</button>
     </div>
   );
 }
@@ -183,28 +201,42 @@ function ActionEditor({ action, flags, onChange, onDelete }: ActionEditorProps) 
 interface RuleEditModalProps {
   rule: RuleDefinition;
   flags: FlagDefinition[];
+  groups: RuleGroup[];
   onSave: (rule: RuleDefinition) => void;
   onCancel: () => void;
 }
 
-export function RuleEditModal({ rule: initial, flags, onSave, onCancel }: RuleEditModalProps) {
-  const [rule, setRule] = useState<RuleDefinition>(() => JSON.parse(JSON.stringify(initial)));
+export function RuleEditModal({ rule: initial, flags, groups, onSave, onCancel }: RuleEditModalProps) {
+  const [rule, setRule] = useState<RuleDefinition>(() => ({
+    ...JSON.parse(JSON.stringify(initial)),
+    conditions: normalizeConditionGroups(initial.conditions),
+  }));
 
   const setField = <K extends keyof RuleDefinition>(key: K, value: RuleDefinition[K]) =>
     setRule(r => ({ ...r, [key]: value }));
 
-  const conditions: RuleConditionGroup = conditionsToFlatGroup(rule.conditions);
+  const conditions = rule.conditions ?? [];
+  const setConditions = (next: RuleConditionGroup[]) => setField('conditions', next);
 
-  const setConditions = (g: RuleConditionGroup) => setField('conditions', flatGroupToConditions(g));
+  const addGroup = () =>
+    setConditions([...conditions, { operator: 'AND', checks: [emptyCondition()] }]);
 
-  const addCondition = () =>
-    setConditions({ ...conditions, checks: [...conditions.checks, emptyCondition()] });
+  const addConditionToGroup = (groupIndex: number) =>
+    setConditions(conditions.map((g, i) => i === groupIndex ? { ...g, checks: [...g.checks, emptyCondition()] } : g));
 
-  const updateCondition = (i: number, c: RuleCondition) =>
-    setConditions({ ...conditions, checks: conditions.checks.map((ch, idx) => idx === i ? c : ch) });
+  const updateConditionInGroup = (groupIndex: number, checkIndex: number, c: RuleCondition) =>
+    setConditions(conditions.map((g, i) =>
+      i === groupIndex ? { ...g, checks: g.checks.map((ch, j) => j === checkIndex ? c : ch) } : g
+    ));
 
-  const deleteCondition = (i: number) =>
-    setConditions({ ...conditions, checks: conditions.checks.filter((_, idx) => idx !== i) });
+  // Removing a group's last row removes the group itself (its AND-join disappears
+  // along with it); removing the last group falls back to "always fire".
+  const removeConditionInGroup = (groupIndex: number, checkIndex: number) =>
+    setConditions(
+      conditions
+        .map((g, i) => i === groupIndex ? { ...g, checks: g.checks.filter((_, j) => j !== checkIndex) } : g)
+        .filter(g => g.checks.length > 0)
+    );
 
   const addAction = () => setField('actions', [...rule.actions, emptyAction()]);
 
@@ -214,78 +246,105 @@ export function RuleEditModal({ rule: initial, flags, onSave, onCancel }: RuleEd
   const deleteAction = (i: number) =>
     setField('actions', rule.actions.filter((_, idx) => idx !== i));
 
-  const handleNameBlur = () => {
-    if (!rule.id && rule.name) setField('id', generateRuleId(rule.name));
-  };
-
   return (
     <div className="modal-overlay" onClick={onCancel}>
-      <div className="modal-box rule-modal" onClick={e => e.stopPropagation()}>
-        <h2 className="modal-title">{initial.id ? 'Edit Rule' : 'New Rule'}</h2>
+      <div className="rule-edit-modal" onClick={e => e.stopPropagation()}>
+        <div className="rule-edit-modal__header">
+          <span className="rule-edit-modal__title">{initial.id ? 'Edit rule' : 'New rule'}</span>
+          <button type="button" className="rule-edit-modal__close" onClick={onCancel} aria-label="Close">✕</button>
+        </div>
 
-        <div className="form-row">
-          <label>Name</label>
-          <input
-            value={rule.name}
-            onChange={e => setField('name', e.target.value)}
-            onBlur={handleNameBlur}
-            placeholder="Rule display name"
-          />
-        </div>
-        <div className="form-row">
-          <label>ID</label>
-          <input
-            value={rule.id}
-            onChange={e => setField('id', e.target.value)}
-            placeholder="rule_id"
-            spellCheck={false}
-          />
-        </div>
-        <div className="form-row">
-          <label>
+        <div className="rule-edit-modal__body">
+          <div className="rule-edit-modal__row">
+            <label className="rule-edit-modal__field">
+              <span className="rule-edit-modal__label">Name</span>
+              <input
+                className="rule-edit-modal__input"
+                value={rule.name}
+                onChange={e => setField('name', e.target.value)}
+                placeholder="Rule name"
+                autoFocus
+              />
+            </label>
+            <label className="rule-edit-modal__field">
+              <span className="rule-edit-modal__label">Group</span>
+              <select
+                className="rule-edit-modal__input rule-edit-modal__input--select"
+                value={rule.group ?? ''}
+                onChange={e => setField('group', e.target.value || undefined)}
+              >
+                <option value="">Ungrouped</option>
+                {groups.map(g => <option key={g.id} value={g.name}>{g.name}</option>)}
+              </select>
+            </label>
+          </div>
+
+          <label className="rule-edit-modal__oneshot">
             <input type="checkbox" checked={rule.oneShot ?? false} onChange={e => setField('oneShot', e.target.checked)} />
-            {' '}One-shot (fires only once ever)
+            <span>One-shot — fires only once, ever</span>
           </label>
+
+          <div className="rule-edit-modal__section">
+            <div className="rule-edit-modal__section-head">
+              <span className="rule-edit-modal__section-title">Conditions</span>
+              <span className="rule-edit-modal__section-hint">
+                Rows in a group must <b>all</b> pass (AND). Groups are <b>OR</b>&apos;d — the rule fires if any one group fully matches. Leave empty to always fire.
+              </span>
+            </div>
+
+            {conditions.map((group, groupIndex) => (
+              <Fragment key={groupIndex}>
+                {groupIndex > 0 && (
+                  <div className="rule-edit-modal__or-divider"><span /><em>OR</em><span /></div>
+                )}
+                <div className="rule-edit-modal__group">
+                  {group.checks.map((c, checkIndex) => (
+                    <Fragment key={checkIndex}>
+                      {checkIndex > 0 && (
+                        <div className="rule-edit-modal__and-divider"><span /><em>AND</em><span /></div>
+                      )}
+                      <ConditionEditor
+                        condition={c}
+                        flags={flags}
+                        onChange={updated => updateConditionInGroup(groupIndex, checkIndex, updated)}
+                        onDelete={() => removeConditionInGroup(groupIndex, checkIndex)}
+                      />
+                    </Fragment>
+                  ))}
+                  <button type="button" className="rule-edit-modal__dashed-btn" onClick={() => addConditionToGroup(groupIndex)}>
+                    + Condition
+                  </button>
+                </div>
+              </Fragment>
+            ))}
+
+            <button type="button" className="rule-edit-modal__dashed-btn rule-edit-modal__dashed-btn--accent" onClick={addGroup}>
+              + Or group
+            </button>
+          </div>
+
+          <div className="rule-edit-modal__section">
+            <div className="rule-edit-modal__section-head">
+              <span className="rule-edit-modal__section-title">Actions</span>
+              <span className="rule-edit-modal__section-hint">Run in order, top to bottom, whenever the conditions above resolve true.</span>
+            </div>
+            {rule.actions.map((a, i) => (
+              <ActionEditor
+                key={i}
+                index={i}
+                action={a}
+                flags={flags}
+                onChange={updated => updateAction(i, updated)}
+                onDelete={() => deleteAction(i)}
+              />
+            ))}
+            <button type="button" className="rule-edit-modal__dashed-btn" onClick={addAction}>+ Action</button>
+          </div>
         </div>
 
-        <h3 className="section-title">
-          Conditions
-          <select
-            value={conditions.operator}
-            onChange={e => setConditions({ ...conditions, operator: e.target.value as 'AND' | 'OR' })}
-            style={{ marginLeft: 'var(--size-8)', fontSize: 'var(--text-13)' }}
-          >
-            <option value="AND">ALL must pass (AND)</option>
-            <option value="OR">ANY must pass (OR)</option>
-          </select>
-        </h3>
-        <p className="section-hint">Leave empty to always fire.</p>
-        {conditions.checks.map((c, i) => (
-          <ConditionEditor
-            key={i}
-            condition={c}
-            flags={flags}
-            onChange={updated => updateCondition(i, updated)}
-            onDelete={() => deleteCondition(i)}
-          />
-        ))}
-        <Button onClick={addCondition} style={{ marginBottom: 'var(--size-16)' }}>+ Condition</Button>
-
-        <h3 className="section-title">Actions</h3>
-        {rule.actions.map((a, i) => (
-          <ActionEditor
-            key={i}
-            action={a}
-            flags={flags}
-            onChange={updated => updateAction(i, updated)}
-            onDelete={() => deleteAction(i)}
-          />
-        ))}
-        <Button onClick={addAction} style={{ marginBottom: 'var(--size-16)' }}>+ Action</Button>
-
-        <div className="modal-footer">
+        <div className="rule-edit-modal__footer">
           <Button onClick={onCancel}>Cancel</Button>
-          <Button variant="primary" onClick={() => onSave(rule)}>Save Rule</Button>
+          <Button variant="primary" disabled={!rule.name.trim()} onClick={() => onSave(rule)}>Save rule</Button>
         </div>
       </div>
     </div>

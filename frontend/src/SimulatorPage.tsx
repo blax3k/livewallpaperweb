@@ -99,7 +99,13 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
   };
 
   const handleNewRule = (presetGroup?: string) => {
-    setRules(prev => [...prev, { ...emptyRule(), ...(presetGroup ? { group: presetGroup } : {}) }]);
+    const existingIds = new Set(rules.map(r => r.id));
+    const newRule: RuleDefinition = {
+      ...emptyRule(),
+      id: generateUniqueId(existingIds),
+      ...(presetGroup ? { group: presetGroup } : {}),
+    };
+    setRules(prev => [...prev, newRule]);
     setIsNewRule(true);
     setEditingRuleIndex(rules.length);
   };
@@ -518,6 +524,7 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
         <RuleEditModal
           rule={rules[editingRuleIndex]}
           flags={flags}
+          groups={ruleGroups}
           onSave={handleSaveRule}
           onCancel={handleCancelEditRule}
         />
