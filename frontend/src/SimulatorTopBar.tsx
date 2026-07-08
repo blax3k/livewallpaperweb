@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import type { FlagDefinition } from './api';
+import { TIME_OPTIONS, DAY_OPTIONS } from './useSimulatedState';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -7,9 +7,6 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from './components/ui/dropdown-menu';
-
-const TIME_OPTIONS = ['06:00 · Morning', '12:00 · Midday', '17:00 · Evening', '21:30 · Night'];
-const DAY_OPTIONS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 interface SimulatorTopBarProps {
   projectName: string;
@@ -19,6 +16,16 @@ interface SimulatorTopBarProps {
   onSelectChapter: (id: string) => void;
   onNewChapter: () => void;
   onRemoveChapter: (chapter: FlagDefinition) => void;
+  timeOfDay: string;
+  onTimeOfDayChange: (v: string) => void;
+  dayOfWeek: string;
+  onDayOfWeekChange: (v: string) => void;
+  daysSinceInstall: number;
+  onDaysSinceInstallChange: (v: number | ((prev: number) => number)) => void;
+  lastSceneShown: string;
+  totalWakes: number;
+  onTotalWakesChange: (v: number | ((prev: number) => number)) => void;
+  onReset: () => void;
 }
 
 export function SimulatorTopBar({
@@ -29,22 +36,19 @@ export function SimulatorTopBar({
   onSelectChapter,
   onNewChapter,
   onRemoveChapter,
+  timeOfDay,
+  onTimeOfDayChange,
+  dayOfWeek,
+  onDayOfWeekChange,
+  daysSinceInstall,
+  onDaysSinceInstallChange,
+  lastSceneShown,
+  totalWakes,
+  onTotalWakesChange,
+  onReset,
 }: SimulatorTopBarProps) {
-  const [time, setTime] = useState(TIME_OPTIONS[3]);
-  const [day, setDay] = useState(DAY_OPTIONS[1]);
-  const [sinceInstall, setSinceInstall] = useState(8);
-  const [wakes, setWakes] = useState(34);
-  const [lastShown] = useState('—');
-
   const currentChapter = chapters.find(c => c.id === currentChapterId) ?? null;
   const currentIndex = currentChapter ? chapters.indexOf(currentChapter) : -1;
-
-  const handleReset = () => {
-    setTime(TIME_OPTIONS[3]);
-    setDay(DAY_OPTIONS[1]);
-    setSinceInstall(8);
-    setWakes(34);
-  };
 
   return (
     <div className="simulator-topbar">
@@ -105,14 +109,14 @@ export function SimulatorTopBar({
           <DropdownMenuTrigger asChild>
             <div className="simulator-topbar-field">
               <span className="simulator-topbar-field__label">TIME</span>
-              <span className="simulator-topbar-field__value">{time.split(' · ')[0]}</span>
+              <span className="simulator-topbar-field__value">{timeOfDay.split(' · ')[0]}</span>
               <span className="simulator-topbar-field__caret">▾</span>
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
             {TIME_OPTIONS.map(opt => (
-              <DropdownMenuItem key={opt} onSelect={() => setTime(opt)}>
-                {opt === time ? '✓ ' : ''}{opt}
+              <DropdownMenuItem key={opt} onSelect={() => onTimeOfDayChange(opt)}>
+                {opt === timeOfDay ? '✓ ' : ''}{opt}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
@@ -122,14 +126,14 @@ export function SimulatorTopBar({
           <DropdownMenuTrigger asChild>
             <div className="simulator-topbar-field">
               <span className="simulator-topbar-field__label">DAY</span>
-              <span className="simulator-topbar-field__value">{day}</span>
+              <span className="simulator-topbar-field__value">{dayOfWeek}</span>
               <span className="simulator-topbar-field__caret">▾</span>
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
             {DAY_OPTIONS.map(opt => (
-              <DropdownMenuItem key={opt} onSelect={() => setDay(opt)}>
-                {opt === day ? '✓ ' : ''}{opt}
+              <DropdownMenuItem key={opt} onSelect={() => onDayOfWeekChange(opt)}>
+                {opt === dayOfWeek ? '✓ ' : ''}{opt}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
@@ -137,30 +141,30 @@ export function SimulatorTopBar({
 
         <div className="simulator-topbar-field">
           <span className="simulator-topbar-field__label">SINCE INSTALL</span>
-          <span className="simulator-topbar-field__value">{sinceInstall}</span>
+          <span className="simulator-topbar-field__value">{daysSinceInstall}</span>
           <span className="simulator-topbar-field__unit">d</span>
           <span className="simulator-topbar-field__steppers">
-            <span className="simulator-topbar-field__btn" onClick={() => setSinceInstall(v => Math.max(0, v - 1))}>−</span>
-            <span className="simulator-topbar-field__btn" onClick={() => setSinceInstall(v => v + 1)}>+</span>
+            <span className="simulator-topbar-field__btn" onClick={() => onDaysSinceInstallChange(v => Math.max(0, v - 1))}>−</span>
+            <span className="simulator-topbar-field__btn" onClick={() => onDaysSinceInstallChange(v => v + 1)}>+</span>
           </span>
         </div>
 
         <div className="simulator-topbar-field simulator-topbar-field--last-shown">
           <span className="simulator-topbar-field__label">LAST SHOWN</span>
-          <span className="simulator-topbar-field__value">{lastShown}</span>
+          <span className="simulator-topbar-field__value">{lastSceneShown}</span>
         </div>
 
         <div className="simulator-topbar-field">
           <span className="simulator-topbar-field__label">WAKES</span>
-          <span className="simulator-topbar-field__value">{wakes}</span>
+          <span className="simulator-topbar-field__value">{totalWakes}</span>
           <span className="simulator-topbar-field__steppers">
-            <span className="simulator-topbar-field__btn" onClick={() => setWakes(v => Math.max(0, v - 1))}>−</span>
-            <span className="simulator-topbar-field__btn" onClick={() => setWakes(v => v + 1)}>+</span>
+            <span className="simulator-topbar-field__btn" onClick={() => onTotalWakesChange(v => Math.max(0, v - 1))}>−</span>
+            <span className="simulator-topbar-field__btn" onClick={() => onTotalWakesChange(v => v + 1)}>+</span>
           </span>
         </div>
       </div>
 
-      <span className="simulator-topbar__reset" onClick={handleReset}>↺ Reset</span>
+      <span className="simulator-topbar__reset" onClick={onReset}>↺ Reset</span>
     </div>
   );
 }

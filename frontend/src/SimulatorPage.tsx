@@ -3,6 +3,7 @@ import './SimulatorPage.scss';
 import { PageLayout, PageBody } from './components/PageLayout';
 import { ApiError, rulesApi, ruleGroupsApi, flagsApi, flagGroupsApi, type RuleDefinition, type RuleGroup, type FlagDefinition, type FlagGroup } from './api';
 import { SimulatorTopBar } from './SimulatorTopBar';
+import { useSimulatedState } from './useSimulatedState';
 import { SimulatorRulesPanel, COMBO_CONDITION_TYPES } from './SimulatorRulesPanel';
 import { SimulatorFlagsPanel } from './SimulatorFlagsPanel';
 import { generateUniqueId as generateUniqueFlagId } from './SimulatorFlagModals';
@@ -59,7 +60,6 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
   const [renamingRuleGroup, setRenamingRuleGroup] = useState<RuleGroup | null>(null);
   const [renameRuleGroupError, setRenameRuleGroupError] = useState<string | null>(null);
   const [removingRuleGroup, setRemovingRuleGroup] = useState<RuleGroup | null>(null);
-  const [currentChapterId, setCurrentChapterId] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([rulesApi.list(projectId), ruleGroupsApi.list(projectId), flagsApi.list(projectId), flagGroupsApi.list(projectId), flagsApi.checkUsageCounts(projectId)])
@@ -86,10 +86,7 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
     [flags],
   );
 
-  useEffect(() => {
-    if (currentChapterId !== null && chapters.some(c => c.id === currentChapterId)) return;
-    setCurrentChapterId(chapters.length > 0 ? chapters[0].id : null);
-  }, [chapters, currentChapterId]);
+  const sim = useSimulatedState(projectId, chapters);
 
   const handleNewChapter = () => {
     const existingIds = new Set(flags.map(f => f.id));
@@ -388,10 +385,20 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
         projectName={projectName}
         onBack={onBack}
         chapters={chapters}
-        currentChapterId={currentChapterId}
-        onSelectChapter={setCurrentChapterId}
+        currentChapterId={sim.chapterId}
+        onSelectChapter={sim.setChapterId}
         onNewChapter={handleNewChapter}
         onRemoveChapter={handleRemoveFlagRequest}
+        timeOfDay={sim.timeOfDay}
+        onTimeOfDayChange={sim.setTimeOfDay}
+        dayOfWeek={sim.dayOfWeek}
+        onDayOfWeekChange={sim.setDayOfWeek}
+        daysSinceInstall={sim.daysSinceInstall}
+        onDaysSinceInstallChange={sim.setDaysSinceInstall}
+        lastSceneShown={sim.lastSceneShown}
+        totalWakes={sim.totalWakes}
+        onTotalWakesChange={sim.setTotalWakes}
+        onReset={sim.handleReset}
       />
       <PageBody>
         {loading && <p style={{ padding: 'var(--size-16)' }}>Loading…</p>}
@@ -455,7 +462,7 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
                         <div className="simulator-phone__sprite simulator-phone__sprite--tree">tree</div>
                         <div className="simulator-phone__sprite simulator-phone__sprite--fox">fox</div>
                         <div className="simulator-phone__sprite simulator-phone__sprite--aurora">aurora band</div>
-                        <span className="simulator-phone__scene-name">Aurora Forest</span>
+                        <span className="simulator-phone__scene-name">{sim.lastSceneShown}</span>
                       </div>
                       <div className="simulator-edit-scene-link">✎ Edit scene ▸</div>
                     </div>
@@ -493,11 +500,13 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
                       </div>
                     </div>
                   </div>
-                  <div className="simulator-stale-banner">
-                    <span>⟳</span>
-                    <span>Stale — re-picked only on wake</span>
-                  </div>
-                  <div className="simulator-wake-button">◐ Wake screen — pick a scene now</div>
+                  {sim.stale && (
+                    <div className="simulator-stale-banner">
+                      <span>⟳</span>
+                      <span>Stale — re-picked only on wake</span>
+                    </div>
+                  )}
+                  <div className="simulator-wake-button" onClick={sim.handleWake}>◐ Wake screen — pick a scene now</div>
                 </div>
               </div>
             </div>

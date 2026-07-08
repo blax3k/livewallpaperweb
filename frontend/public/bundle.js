@@ -79650,11 +79650,93 @@ ${e2}`);
   // src/SimulatorPage.tsx
   var import_react33 = __toESM(require_react());
 
-  // src/SimulatorTopBar.tsx
+  // src/useSimulatedState.ts
   var import_react28 = __toESM(require_react());
-  var import_jsx_runtime47 = __toESM(require_jsx_runtime());
   var TIME_OPTIONS = ["06:00 \xB7 Morning", "12:00 \xB7 Midday", "17:00 \xB7 Evening", "21:30 \xB7 Night"];
   var DAY_OPTIONS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  var SCENE_OPTIONS = ["Aurora Forest", "Night City", "Day Forest"];
+  var DEFAULTS = {
+    chapterId: null,
+    timeOfDay: TIME_OPTIONS[3],
+    dayOfWeek: DAY_OPTIONS[1],
+    daysSinceInstall: 8,
+    totalWakes: 34,
+    lastSceneShown: SCENE_OPTIONS[0]
+  };
+  function storageKey(projectId) {
+    return `simulator-state:${projectId}`;
+  }
+  function loadPersisted(projectId) {
+    try {
+      const raw = localStorage.getItem(storageKey(projectId));
+      if (!raw) return DEFAULTS;
+      return { ...DEFAULTS, ...JSON.parse(raw) };
+    } catch {
+      return DEFAULTS;
+    }
+  }
+  function useSimulatedState(projectId, chapters) {
+    const [fields, setFields] = (0, import_react28.useState)(() => loadPersisted(projectId));
+    const [stale, setStale] = (0, import_react28.useState)(false);
+    const loadedProjectId = (0, import_react28.useRef)(projectId);
+    (0, import_react28.useEffect)(() => {
+      if (loadedProjectId.current === projectId) return;
+      loadedProjectId.current = projectId;
+      setFields(loadPersisted(projectId));
+      setStale(false);
+    }, [projectId]);
+    (0, import_react28.useEffect)(() => {
+      localStorage.setItem(storageKey(projectId), JSON.stringify(fields));
+    }, [projectId, fields]);
+    (0, import_react28.useEffect)(() => {
+      if (fields.chapterId !== null && chapters.some((c2) => c2.id === fields.chapterId)) return;
+      const fallback = chapters.length > 0 ? chapters[0].id : null;
+      if (fallback !== fields.chapterId) {
+        setFields((f2) => ({ ...f2, chapterId: fallback }));
+      }
+    }, [chapters, fields.chapterId]);
+    function updateField(key, valueOrFn) {
+      setFields((f2) => ({
+        ...f2,
+        [key]: typeof valueOrFn === "function" ? valueOrFn(f2[key]) : valueOrFn
+      }));
+      setStale(true);
+    }
+    const handleReset = () => {
+      setFields((f2) => ({
+        ...f2,
+        timeOfDay: DEFAULTS.timeOfDay,
+        dayOfWeek: DEFAULTS.dayOfWeek,
+        daysSinceInstall: DEFAULTS.daysSinceInstall,
+        totalWakes: DEFAULTS.totalWakes
+      }));
+      setStale(true);
+    };
+    const handleWake = () => {
+      const nextScene = SCENE_OPTIONS[Math.floor(Math.random() * SCENE_OPTIONS.length)];
+      setFields((f2) => ({ ...f2, lastSceneShown: nextScene, totalWakes: f2.totalWakes + 1 }));
+      setStale(false);
+    };
+    return {
+      chapterId: fields.chapterId,
+      timeOfDay: fields.timeOfDay,
+      dayOfWeek: fields.dayOfWeek,
+      daysSinceInstall: fields.daysSinceInstall,
+      totalWakes: fields.totalWakes,
+      lastSceneShown: fields.lastSceneShown,
+      stale,
+      setChapterId: (v2) => updateField("chapterId", v2),
+      setTimeOfDay: (v2) => updateField("timeOfDay", v2),
+      setDayOfWeek: (v2) => updateField("dayOfWeek", v2),
+      setDaysSinceInstall: (v2) => updateField("daysSinceInstall", v2),
+      setTotalWakes: (v2) => updateField("totalWakes", v2),
+      handleReset,
+      handleWake
+    };
+  }
+
+  // src/SimulatorTopBar.tsx
+  var import_jsx_runtime47 = __toESM(require_jsx_runtime());
   function SimulatorTopBar({
     projectName,
     onBack,
@@ -79662,21 +79744,20 @@ ${e2}`);
     currentChapterId,
     onSelectChapter,
     onNewChapter,
-    onRemoveChapter
+    onRemoveChapter,
+    timeOfDay,
+    onTimeOfDayChange,
+    dayOfWeek,
+    onDayOfWeekChange,
+    daysSinceInstall,
+    onDaysSinceInstallChange,
+    lastSceneShown,
+    totalWakes,
+    onTotalWakesChange,
+    onReset
   }) {
-    const [time, setTime] = (0, import_react28.useState)(TIME_OPTIONS[3]);
-    const [day, setDay] = (0, import_react28.useState)(DAY_OPTIONS[1]);
-    const [sinceInstall, setSinceInstall] = (0, import_react28.useState)(8);
-    const [wakes, setWakes] = (0, import_react28.useState)(34);
-    const [lastShown] = (0, import_react28.useState)("\u2014");
     const currentChapter = chapters.find((c2) => c2.id === currentChapterId) ?? null;
     const currentIndex = currentChapter ? chapters.indexOf(currentChapter) : -1;
-    const handleReset = () => {
-      setTime(TIME_OPTIONS[3]);
-      setDay(DAY_OPTIONS[1]);
-      setSinceInstall(8);
-      setWakes(34);
-    };
     return /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-topbar", children: [
       /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__back", onClick: onBack, children: "\u2190" }),
       /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__divider" }),
@@ -79728,48 +79809,48 @@ ${e2}`);
         /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)(DropdownMenu2, { children: [
           /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-topbar-field", children: [
             /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__label", children: "TIME" }),
-            /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__value", children: time.split(" \xB7 ")[0] }),
+            /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__value", children: timeOfDay.split(" \xB7 ")[0] }),
             /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__caret", children: "\u25BE" })
           ] }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(DropdownMenuContent2, { align: "start", children: TIME_OPTIONS.map((opt) => /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)(DropdownMenuItem2, { onSelect: () => setTime(opt), children: [
-            opt === time ? "\u2713 " : "",
+          /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(DropdownMenuContent2, { align: "start", children: TIME_OPTIONS.map((opt) => /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)(DropdownMenuItem2, { onSelect: () => onTimeOfDayChange(opt), children: [
+            opt === timeOfDay ? "\u2713 " : "",
             opt
           ] }, opt)) })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)(DropdownMenu2, { children: [
           /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-topbar-field", children: [
             /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__label", children: "DAY" }),
-            /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__value", children: day }),
+            /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__value", children: dayOfWeek }),
             /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__caret", children: "\u25BE" })
           ] }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(DropdownMenuContent2, { align: "start", children: DAY_OPTIONS.map((opt) => /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)(DropdownMenuItem2, { onSelect: () => setDay(opt), children: [
-            opt === day ? "\u2713 " : "",
+          /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(DropdownMenuContent2, { align: "start", children: DAY_OPTIONS.map((opt) => /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)(DropdownMenuItem2, { onSelect: () => onDayOfWeekChange(opt), children: [
+            opt === dayOfWeek ? "\u2713 " : "",
             opt
           ] }, opt)) })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-topbar-field", children: [
           /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__label", children: "SINCE INSTALL" }),
-          /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__value", children: sinceInstall }),
+          /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__value", children: daysSinceInstall }),
           /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__unit", children: "d" }),
           /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("span", { className: "simulator-topbar-field__steppers", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__btn", onClick: () => setSinceInstall((v2) => Math.max(0, v2 - 1)), children: "\u2212" }),
-            /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__btn", onClick: () => setSinceInstall((v2) => v2 + 1), children: "+" })
+            /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__btn", onClick: () => onDaysSinceInstallChange((v2) => Math.max(0, v2 - 1)), children: "\u2212" }),
+            /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__btn", onClick: () => onDaysSinceInstallChange((v2) => v2 + 1), children: "+" })
           ] })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-topbar-field simulator-topbar-field--last-shown", children: [
           /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__label", children: "LAST SHOWN" }),
-          /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__value", children: lastShown })
+          /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__value", children: lastSceneShown })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-topbar-field", children: [
           /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__label", children: "WAKES" }),
-          /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__value", children: wakes }),
+          /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__value", children: totalWakes }),
           /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("span", { className: "simulator-topbar-field__steppers", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__btn", onClick: () => setWakes((v2) => Math.max(0, v2 - 1)), children: "\u2212" }),
-            /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__btn", onClick: () => setWakes((v2) => v2 + 1), children: "+" })
+            /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__btn", onClick: () => onTotalWakesChange((v2) => Math.max(0, v2 - 1)), children: "\u2212" }),
+            /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar-field__btn", onClick: () => onTotalWakesChange((v2) => v2 + 1), children: "+" })
           ] })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__reset", onClick: handleReset, children: "\u21BA Reset" })
+      /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__reset", onClick: onReset, children: "\u21BA Reset" })
     ] });
   }
 
@@ -80904,7 +80985,6 @@ ${e2}`);
     const [renamingRuleGroup, setRenamingRuleGroup] = (0, import_react33.useState)(null);
     const [renameRuleGroupError, setRenameRuleGroupError] = (0, import_react33.useState)(null);
     const [removingRuleGroup, setRemovingRuleGroup] = (0, import_react33.useState)(null);
-    const [currentChapterId, setCurrentChapterId] = (0, import_react33.useState)(null);
     (0, import_react33.useEffect)(() => {
       Promise.all([rulesApi.list(projectId), ruleGroupsApi.list(projectId), flagsApi.list(projectId), flagGroupsApi.list(projectId), flagsApi.checkUsageCounts(projectId)]).then(([r2, rg, f2, g2, u2]) => {
         setRules(r2);
@@ -80932,10 +81012,7 @@ ${e2}`);
       () => flags.filter((f2) => f2.isChapter).sort((a2, b2) => (a2.chapterOrder ?? 0) - (b2.chapterOrder ?? 0)),
       [flags]
     );
-    (0, import_react33.useEffect)(() => {
-      if (currentChapterId !== null && chapters.some((c2) => c2.id === currentChapterId)) return;
-      setCurrentChapterId(chapters.length > 0 ? chapters[0].id : null);
-    }, [chapters, currentChapterId]);
+    const sim = useSimulatedState(projectId, chapters);
     const handleNewChapter = () => {
       const existingIds = new Set(flags.map((f2) => f2.id));
       const nextOrder = chapters.length > 0 ? Math.max(...chapters.map((c2) => c2.chapterOrder ?? 0)) + 1 : 0;
@@ -81204,10 +81281,20 @@ ${e2}`);
           projectName,
           onBack,
           chapters,
-          currentChapterId,
-          onSelectChapter: setCurrentChapterId,
+          currentChapterId: sim.chapterId,
+          onSelectChapter: sim.setChapterId,
           onNewChapter: handleNewChapter,
-          onRemoveChapter: handleRemoveFlagRequest
+          onRemoveChapter: handleRemoveFlagRequest,
+          timeOfDay: sim.timeOfDay,
+          onTimeOfDayChange: sim.setTimeOfDay,
+          dayOfWeek: sim.dayOfWeek,
+          onDayOfWeekChange: sim.setDayOfWeek,
+          daysSinceInstall: sim.daysSinceInstall,
+          onDaysSinceInstallChange: sim.setDaysSinceInstall,
+          lastSceneShown: sim.lastSceneShown,
+          totalWakes: sim.totalWakes,
+          onTotalWakesChange: sim.setTotalWakes,
+          onReset: sim.handleReset
         }
       ),
       /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)(PageBody, { children: [
@@ -81268,7 +81355,7 @@ ${e2}`);
                     /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-phone__sprite simulator-phone__sprite--tree", children: "tree" }),
                     /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-phone__sprite simulator-phone__sprite--fox", children: "fox" }),
                     /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-phone__sprite simulator-phone__sprite--aurora", children: "aurora band" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-phone__scene-name", children: "Aurora Forest" })
+                    /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-phone__scene-name", children: sim.lastSceneShown })
                   ] }),
                   /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-edit-scene-link", children: "\u270E Edit scene \u25B8" })
                 ] }),
@@ -81310,11 +81397,11 @@ ${e2}`);
                   ] })
                 ] })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-stale-banner", children: [
+              sim.stale && /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-stale-banner", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { children: "\u27F3" }),
                 /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { children: "Stale \u2014 re-picked only on wake" })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-wake-button", children: "\u25D0 Wake screen \u2014 pick a scene now" })
+              /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "simulator-wake-button", onClick: sim.handleWake, children: "\u25D0 Wake screen \u2014 pick a scene now" })
             ] })
           ] })
         ] }) })
