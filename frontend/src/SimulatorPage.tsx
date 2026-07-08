@@ -1,10 +1,11 @@
 import { useState, useEffect, useMemo } from 'react';
 import './SimulatorPage.scss';
-import { PageLayout, PageHeader, PageBody } from './components/PageLayout';
-import { Button } from './components/Button';
+import { PageLayout, PageBody } from './components/PageLayout';
 import { ApiError, rulesApi, ruleGroupsApi, flagsApi, flagGroupsApi, type RuleDefinition, type RuleGroup, type FlagDefinition, type FlagGroup } from './api';
+import { SimulatorTopBar } from './SimulatorTopBar';
 import { SimulatorRulesPanel, COMBO_CONDITION_TYPES } from './SimulatorRulesPanel';
 import { SimulatorFlagsPanel } from './SimulatorFlagsPanel';
+import { generateUniqueId as generateUniqueFlagId } from './SimulatorFlagModals';
 import {
   generateUniqueId,
   FlagEditModal,
@@ -58,6 +59,7 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
   const [renamingRuleGroup, setRenamingRuleGroup] = useState<RuleGroup | null>(null);
   const [renameRuleGroupError, setRenameRuleGroupError] = useState<string | null>(null);
   const [removingRuleGroup, setRemovingRuleGroup] = useState<RuleGroup | null>(null);
+  const [currentChapterId, setCurrentChapterId] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([rulesApi.list(projectId), ruleGroupsApi.list(projectId), flagsApi.list(projectId), flagGroupsApi.list(projectId), flagsApi.checkUsageCounts(projectId)])
@@ -78,6 +80,33 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
   };
 
   const flagsById = useMemo(() => new Map(flags.map(f => [f.id, f])), [flags]);
+
+  const chapters = useMemo(
+    () => flags.filter(f => f.isChapter).sort((a, b) => (a.chapterOrder ?? 0) - (b.chapterOrder ?? 0)),
+    [flags],
+  );
+
+  useEffect(() => {
+    if (currentChapterId !== null && chapters.some(c => c.id === currentChapterId)) return;
+    setCurrentChapterId(chapters.length > 0 ? chapters[0].id : null);
+  }, [chapters, currentChapterId]);
+
+  const handleNewChapter = () => {
+    const existingIds = new Set(flags.map(f => f.id));
+    const nextOrder = chapters.length > 0 ? Math.max(...chapters.map(c => c.chapterOrder ?? 0)) + 1 : 0;
+    const newChapter: FlagDefinition = {
+      id: generateUniqueFlagId(existingIds),
+      name: `Chapter ${nextOrder + 1}`,
+      defaultActive: false,
+      isChapter: true,
+      chapterOrder: nextOrder,
+    };
+    const next = [...flags, newChapter];
+    setFlags(next);
+    flagsApi.save(projectId, next)
+      .then(() => { refreshFlagGroups(); refreshFlagUsageCounts(); })
+      .catch(err => setError(String(err)));
+  };
 
   const computeRuleUsage = (rule: RuleDefinition, allRules: RuleDefinition[]): RuleUsageRef[] => {
     const setFlagIds = [...new Set((rule.actions ?? []).map(a => a.flagId).filter((id): id is string => !!id))];
@@ -355,65 +384,20 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
 
   return (
     <PageLayout>
-      <PageHeader title={`${projectName} — Simulator`} left={<Button onClick={onBack}>←</Button>} />
+      <SimulatorTopBar
+        projectName={projectName}
+        onBack={onBack}
+        chapters={chapters}
+        currentChapterId={currentChapterId}
+        onSelectChapter={setCurrentChapterId}
+        onNewChapter={handleNewChapter}
+        onRemoveChapter={handleRemoveFlagRequest}
+      />
       <PageBody>
         {loading && <p style={{ padding: 'var(--size-16)' }}>Loading…</p>}
         {error && <p style={{ padding: 'var(--size-16)', color: 'var(--color-danger)' }}>{error}</p>}
         {!loading && (
           <div className="simulator-root">
-            {/* ===== Simulated State: HUD + spine + engagement + ambient ===== */}
-            <div className="simulator-state">
-              <div className="simulator-hud">
-                <span className="simulator-hud__title"><span className="simulator-hud__dot" />Simulated state</span>
-                <span className="simulator-hud__divider" />
-                <span className="simulator-hud__stat">Chapter <b>2 · The Deep Wood</b></span>
-                <span className="simulator-hud__divider" />
-                <span className="simulator-hud__stat">Ambient <b>Night · Tue</b></span>
-                <span className="simulator-hud__divider" />
-                <span className="simulator-hud__stat">Active days <b>8</b> · Wakes <b>34</b></span>
-                <div className="simulator-hud__tabs">
-                  <span className="simulator-hud__tab simulator-hud__tab--active">Simulator</span>
-                  <span className="simulator-hud__tab" onClick={onBack}>Scene editor <span>▸</span></span>
-                </div>
-              </div>
-
-              <div className="simulator-spine">
-                <span className="simulator-spine__label">Spine <span>· 2/14</span></span>
-                <div className="simulator-spine__track">
-                  <div className="simulator-spine__node simulator-spine__node--done">1</div>
-                  <div className="simulator-spine__node simulator-spine__node--current">
-                    <span className="simulator-spine__node-num">2</span>
-                    <span className="simulator-spine__node-name">The Deep Wood</span>
-                    <span className="simulator-spine__node-here">★ here</span>
-                  </div>
-                  {[3, 4, 5, 6, 7, 8].map(n => (
-                    <div key={n} className="simulator-spine__node simulator-spine__node--locked">{n}</div>
-                  ))}
-                  <div className="simulator-spine__node simulator-spine__node--overflow">+6</div>
-                </div>
-                <span className="simulator-spine__add">+ Chapter</span>
-              </div>
-
-              <div className="simulator-engagement-ambient">
-                <div className="simulator-column simulator-column--divided">
-                  <div className="simulator-column__title">Engagement <span>fuels progression · idle never advances</span></div>
-                  <div className="simulator-column__fields">
-                    <Stepper label="Active days" value={8} />
-                    <Stepper label="Total wakes" value={34} />
-                    <Stepper label="Forest views" value={5} />
-                  </div>
-                </div>
-                <div className="simulator-column">
-                  <div className="simulator-column__title">Ambient <span>mood · re-checked every wake</span></div>
-                  <div className="simulator-column__fields">
-                    <DropdownField label="Time of day" value="21:30 · Night" />
-                    <DropdownField label="Weekday" value="Tue" />
-                    <DropdownField label="Persona" value="Power user" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
             {/* ===== Rule Pipeline: rules -> flags -> preview ===== */}
             <div className="simulator-pipeline">
               <div className="simulator-pipeline__header">
@@ -616,28 +600,6 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
         />
       )}
     </PageLayout>
-  );
-}
-
-function Stepper({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="simulator-field">
-      <span className="simulator-field-label">{label}</span>
-      <div className="simulator-stepper">
-        <span className="simulator-stepper__btn">−</span>
-        <span className="simulator-stepper__value">{value}</span>
-        <span className="simulator-stepper__btn">+</span>
-      </div>
-    </div>
-  );
-}
-
-function DropdownField({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="simulator-field">
-      <span className="simulator-field-label">{label}</span>
-      <span className="simulator-dropdown-field">{value} ▾</span>
-    </div>
   );
 }
 
