@@ -18,9 +18,16 @@ export async function registerFlagRoutes(server: FastifyInstance): Promise<void>
   });
 
   server.put<{ Params: { id: string }; Body: FlagDefinition[] }>('/api/projects/:id/flags', async (req, reply) => {
-    const ok = await saveFlags(req.params.id, req.body);
-    if (!ok) return reply.status(HttpStatus.NOT_FOUND).send({ error: 'Project not found' });
-    return reply.status(HttpStatus.NO_CONTENT).send();
+    try {
+      const ok = await saveFlags(req.params.id, req.body);
+      if (!ok) return reply.status(HttpStatus.NOT_FOUND).send({ error: 'Project not found' });
+      return reply.status(HttpStatus.NO_CONTENT).send();
+    } catch (err: unknown) {
+      if (err instanceof Error && (err as NodeJS.ErrnoException).code === 'CHAPTER_ORDER_TAKEN') {
+        return reply.status(HttpStatus.CONFLICT).send({ error: err.message });
+      }
+      throw err;
+    }
   });
 
   server.get<{ Params: { id: string } }>('/api/projects/:id/flags/usage', async (req) => {

@@ -15,13 +15,24 @@ function isUniqueViolation(err: unknown): boolean {
   return err instanceof Error && (err as NodeJS.ErrnoException & { code?: string }).code === '23505';
 }
 
+function isConstraintViolation(err: unknown, constraint: string): boolean {
+  return isUniqueViolation(err) && (err as Error & { constraint?: string }).constraint === constraint;
+}
+
 export async function getFlags(projectId: string): Promise<FlagDefinition[]> {
   const flags = await selectFlagsForProject(projectId);
   return flags.map(f => f.toFlagDefinition());
 }
 
 export async function saveFlags(projectId: string, flags: FlagDefinition[]): Promise<boolean> {
-  return replaceFlagsForProject(projectId, flags);
+  try {
+    return await replaceFlagsForProject(projectId, flags);
+  } catch (err) {
+    if (isConstraintViolation(err, 'flags_chapter_order_unique_idx')) {
+      throw Object.assign(new Error('Two chapters can\'t share the same order'), { code: 'CHAPTER_ORDER_TAKEN' });
+    }
+    throw err;
+  }
 }
 
 export async function getFlagUsage(projectId: string, flagId: string): Promise<{ scenes: string[]; rules: string[] }> {

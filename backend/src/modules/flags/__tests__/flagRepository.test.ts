@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { after, afterEach, before, describe, it } from 'node:test';
 import { pool } from '../../../db';
-import { replaceFlagsForProject } from '../flagRepository';
+import { replaceFlagsForProject, selectFlagsForProject } from '../flagRepository';
 import { replaceRulesForProject } from '../../rules/ruleRepository';
 
 describe('replaceFlagsForProject', () => {
@@ -68,5 +68,37 @@ describe('replaceFlagsForProject', () => {
 
     const flags = await pool.query<{ id: string }>('SELECT id FROM flags WHERE project_id = $1', [projectId]);
     assert.deepEqual(flags.rows.map(r => r.id), ['keep_me']);
+  });
+
+  it('round-trips chapter flags through save and select', async () => {
+    await replaceFlagsForProject(projectId, [
+      { id: 'chapter_1', name: 'The Beginning', isChapter: true, chapterOrder: 0 },
+      { id: 'chapter_2', name: 'The Deep Wood', isChapter: true, chapterOrder: 1 },
+      { id: 'not_a_chapter', name: 'Just A Flag' },
+    ]);
+
+    const flags = await selectFlagsForProject(projectId);
+    const byId = new Map(flags.map(f => [f.id, f.toFlagDefinition()]));
+
+    assert.deepEqual(byId.get('chapter_1'), { id: 'chapter_1', name: 'The Beginning', defaultActive: false, isChapter: true, chapterOrder: 0 });
+    assert.deepEqual(byId.get('chapter_2'), { id: 'chapter_2', name: 'The Deep Wood', defaultActive: false, isChapter: true, chapterOrder: 1 });
+    assert.deepEqual(byId.get('not_a_chapter'), { id: 'not_a_chapter', name: 'Just A Flag', defaultActive: false });
+  });
+
+  it('rejects two chapters sharing the same order', async () => {
+    await assert.rejects(
+      () => replaceFlagsForProject(projectId, [
+        { id: 'chapter_a', name: 'Chapter A', isChapter: true, chapterOrder: 0 },
+        { id: 'chapter_b', name: 'Chapter B', isChapter: true, chapterOrder: 0 },
+      ]),
+      /duplicate key value violates unique constraint "flags_chapter_order_unique_idx"/,
+    );
+  });
+
+  it('rejects a chapter flag saved without an order', async () => {
+    await assert.rejects(
+      () => replaceFlagsForProject(projectId, [{ id: 'chapter_a', name: 'Chapter A', isChapter: true }]),
+      /flags_chapter_order_presence_check/,
+    );
   });
 });

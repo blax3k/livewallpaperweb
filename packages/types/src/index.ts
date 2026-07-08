@@ -14,6 +14,19 @@ export interface FlagDefinition {
   defaultActive?: boolean;
   /** Name of the FlagGroup this flag belongs to (see FlagGroup). Ungrouped if omitted. */
   group?: string;
+  /**
+   * Marks this flag as a chapter milestone. Chapter flags are advanced/read using the same
+   * activate_flag/deactivate_flag actions and flag_active/flag_inactive conditions as any
+   * other flag; `isChapter` only affects how the editor presents them (e.g. the chapter
+   * spine). Requires `chapterOrder` when true.
+   */
+  isChapter?: boolean;
+  /**
+   * Sort position within the chapter spine, unique per project among chapter flags. This is
+   * a sort key, not a displayed chapter number — don't renumber it when a chapter is deleted.
+   * Required when `isChapter` is true, omitted otherwise.
+   */
+  chapterOrder?: number;
 }
 
 /** A named grouping bucket for flags, scoped to a project. */

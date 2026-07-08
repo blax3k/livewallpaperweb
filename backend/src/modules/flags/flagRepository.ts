@@ -5,8 +5,15 @@ import { FlagGroupObject, FlagObject } from './flagObject';
 const PROJECT_EXISTS_SQL = `SELECT 1 FROM projects WHERE id = $1 AND status <> 'DELETED'`;
 
 export async function selectFlagsForProject(projectId: string): Promise<FlagObject[]> {
-  const result = await pool.query<{ id: string; name: string; default_active: boolean; group_name: string | null }>(
-    `SELECT f.id, f.name, f.default_active, fg.name AS group_name
+  const result = await pool.query<{
+    id: string;
+    name: string;
+    default_active: boolean;
+    group_name: string | null;
+    is_chapter: boolean;
+    chapter_order: number | null;
+  }>(
+    `SELECT f.id, f.name, f.default_active, fg.name AS group_name, f.is_chapter, f.chapter_order
      FROM flags f
      LEFT JOIN flag_groups fg ON fg.id = f.group_id
      WHERE f.project_id = $1
@@ -58,11 +65,12 @@ export async function replaceFlagsForProject(projectId: string, flags: FlagDefin
       const groupName = flag.group?.trim();
       const groupId = groupName ? (groupIdByName.get(groupName) ?? null) : null;
       await client.query(
-        `INSERT INTO flags (project_id, id, name, group_id, default_active)
-         VALUES ($1, $2, $3, $4, $5)
+        `INSERT INTO flags (project_id, id, name, group_id, default_active, is_chapter, chapter_order)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)
          ON CONFLICT (project_id, id) DO UPDATE
-           SET name = EXCLUDED.name, group_id = EXCLUDED.group_id, default_active = EXCLUDED.default_active`,
-        [projectId, flag.id, flag.name, groupId, flag.defaultActive ?? false],
+           SET name = EXCLUDED.name, group_id = EXCLUDED.group_id, default_active = EXCLUDED.default_active,
+               is_chapter = EXCLUDED.is_chapter, chapter_order = EXCLUDED.chapter_order`,
+        [projectId, flag.id, flag.name, groupId, flag.defaultActive ?? false, flag.isChapter ?? false, flag.chapterOrder ?? null],
       );
     }
 
