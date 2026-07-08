@@ -1,6 +1,6 @@
-import type { SceneSummary, SceneDetail, ProjectSummary, ImageRecord, FlagDefinition, FlagGroup, RuleDefinition } from '@livewallpaper/types';
+import type { SceneSummary, SceneDetail, ProjectSummary, ImageRecord, FlagDefinition, FlagGroup, RuleDefinition, RuleGroup } from '@livewallpaper/types';
 
-export type { SceneSummary, SceneDetail, ProjectSummary, ImageRecord, FlagDefinition, FlagGroup, RuleDefinition };
+export type { SceneSummary, SceneDetail, ProjectSummary, ImageRecord, FlagDefinition, FlagGroup, RuleDefinition, RuleGroup };
 
 export class ApiError extends Error {
   constructor(public readonly status: number, message: string, public readonly data?: unknown) {
@@ -196,6 +196,32 @@ export const rulesApi = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(rules),
     });
+  },
+};
+
+export const ruleGroupsApi = {
+  list(projectId: string): Promise<RuleGroup[]> {
+    return request<RuleGroup[]>(`/api/projects/${projectId}/rule-groups`);
+  },
+
+  create(projectId: string, name: string): Promise<RuleGroup> {
+    return request<RuleGroup>(`/api/projects/${projectId}/rule-groups`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name }),
+    });
+  },
+
+  rename(projectId: string, groupId: string, name: string): Promise<RuleGroup> {
+    return request<RuleGroup>(`/api/projects/${projectId}/rule-groups/${groupId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name }),
+    });
+  },
+
+  delete(projectId: string, groupId: string): Promise<void> {
+    return request<void>(`/api/projects/${projectId}/rule-groups/${groupId}`, { method: 'DELETE' });
   },
 };
 

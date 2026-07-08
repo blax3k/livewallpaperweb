@@ -1,71 +1,152 @@
-import { CollapsibleGroup } from './components/CollapsibleGroup';
-import type { RuleDefinition, FlagDefinition } from './api';
-import type { RuleCondition } from '@livewallpaper/types';
+import { useMemo, useState } from 'react';
+import type { RuleDefinition, RuleGroup, FlagDefinition } from './api';
 
-const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const COMBO_CONDITION_TYPES = new Set(['flag_active', 'flag_inactive', 'time_since_flag_change']);
 
-function pad(n: number | undefined): string {
-  return String(n ?? 0).padStart(2, '0');
+function isCombo(rule: RuleDefinition): boolean {
+  return (rule.conditions ?? []).some(group => group.checks.some(c => COMBO_CONDITION_TYPES.has(c.type)));
 }
 
-function flagLabel(flagId: string | undefined, flagsById: Map<string, FlagDefinition>): string {
-  if (!flagId) return '(no flag)';
-  return flagsById.get(flagId)?.name || flagId;
+function setsLabel(rule: RuleDefinition, flagsById: Map<string, FlagDefinition>): string | null {
+  const flagIds = [...new Set((rule.actions ?? []).map(a => a.flagId).filter((id): id is string => !!id))];
+  if (flagIds.length === 0) return null;
+  return flagIds.map(id => flagsById.get(id)?.name || id).join(', ');
 }
 
-function summarizeCondition(c: RuleCondition, flagsById: Map<string, FlagDefinition>): string {
-  switch (c.type) {
-    case 'flag_active': return `${flagLabel(c.flagId, flagsById)} active`;
-    case 'flag_inactive': return `${flagLabel(c.flagId, flagsById)} inactive`;
-    case 'time_of_day': return `time ${pad(c.startHour)}:00–${pad(c.endHour)}:00`;
-    case 'day_of_week': return `day ${(c.daysOfWeek ?? []).map(d => DAY_LABELS[d]).join(',') || '—'}`;
-    case 'scene_count': return `scene views ${c.operator ?? '>='} ${c.intValue ?? 0}`;
-    case 'install_duration_hours': return `install age ${c.operator ?? '>='} ${c.intValue ?? 0}h`;
-    case 'time_since_flag_change': return `${flagLabel(c.flagId, flagsById)} ${c.flagChangeType ?? 'activated'} ${c.operator ?? '>='} ${c.intValue ?? 0}h ago`;
-    default: return c.type;
-  }
+function RuleRow({ rule, flagsById, onClick }: { rule: RuleDefinition; flagsById: Map<string, FlagDefinition>; onClick: () => void }) {
+  const sets = setsLabel(rule, flagsById);
+  return (
+    <div className="simulator-rules-row" onClick={onClick}>
+      {rule.oneShot && <span className="simulator-rules-row__lock" title="Fires only once, ever">🔒</span>}
+      {isCombo(rule) && <span className="simulator-rules-row__combo" title="Reads other flags">⛓</span>}
+      <span className="simulator-rules-row__name">{rule.name || rule.id}</span>
+      <span className="simulator-rules-row__sets">
+        {sets ? `→ ${sets}` : <span className="simulator-rules-row__unused">Unused</span>}
+      </span>
+    </div>
+  );
 }
 
-function summarizeConditions(rule: RuleDefinition, flagsById: Map<string, FlagDefinition>): string {
-  const groups = (rule.conditions ?? []).filter(g => g.checks.length > 0);
-  if (groups.length === 0) return 'always';
-  return groups
-    .map(group => group.checks.map(c => summarizeCondition(c, flagsById)).join(' + '))
-    .join(' or ');
+interface RuleGroupSectionProps {
+  title: string;
+  count: number;
+  ungrouped?: boolean;
+  onAdd?: () => void;
+  children: React.ReactNode;
+}
+
+function RuleGroupSection({ title, count, ungrouped, onAdd, children }: RuleGroupSectionProps) {
+  const [open, setOpen] = useState(true);
+  return (
+    <div className="simulator-rules-group">
+      <div
+        className={`simulator-rules-group__header ${ungrouped ? 'simulator-rules-group__header--ungrouped' : ''}`}
+        onClick={() => setOpen(o => !o)}
+      >
+        <span className="simulator-rules-group__caret">{open ? '▾' : '▸'}</span>
+        <span className="simulator-rules-group__name">{title}</span>
+        <span className="simulator-rules-group__count">{count}</span>
+        {ungrouped && <span className="simulator-rules-group__hint">— rules with no group · can&apos;t be renamed or removed</span>}
+        {onAdd && (
+          <button
+            className="simulator-rules-group__add"
+            onClick={e => { e.stopPropagation(); onAdd(); }}
+          >
+            +
+          </button>
+        )}
+      </div>
+      {open && <div className="simulator-rules-group__rows">{children}</div>}
+    </div>
+  );
 }
 
 interface SimulatorRulesPanelProps {
   rules: RuleDefinition[];
+  groups: RuleGroup[];
   flagsById: Map<string, FlagDefinition>;
-  onSelectRule: (index: number) => void;
   onNewRule: () => void;
+  onSelectRule: (index: number) => void;
 }
 
-export function SimulatorRulesPanel({ rules, flagsById, onSelectRule, onNewRule }: SimulatorRulesPanelProps) {
+export function SimulatorRulesPanel({ rules, groups, flagsById, onNewRule, onSelectRule }: SimulatorRulesPanelProps) {
+  const [search, setSearch] = useState('');
+
+  const filteredRules = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return rules;
+    return rules.filter(r => (r.name || r.id).toLowerCase().includes(q));
+  }, [rules, search]);
+
+  const { byGroup, ungrouped } = useMemo(() => {
+    const byGroup = new Map<string, { rule: RuleDefinition; index: number }[]>();
+    for (const group of groups) byGroup.set(group.name, []);
+    const ungrouped: { rule: RuleDefinition; index: number }[] = [];
+    filteredRules.forEach(rule => {
+      const index = rules.indexOf(rule);
+      const groupName = rule.group?.trim();
+      if (groupName && byGroup.has(groupName)) {
+        byGroup.get(groupName)!.push({ rule, index });
+      } else {
+        ungrouped.push({ rule, index });
+      }
+    });
+    return { byGroup, ungrouped };
+  }, [filteredRules, rules, groups]);
+
+  const isEmpty = rules.length === 0 && groups.length === 0;
+
   return (
     <div className="simulator-panel simulator-panel--rules">
-      <div className="simulator-panel__header">
-        <span>Rules · {rules.length}</span>
-        <span className="simulator-panel__search">⌕</span>
+      <div className="simulator-rules-header">
+        <span className="simulator-rules-header__title">
+          <span className="simulator-rules-header__dot" />
+          Rules
+        </span>
+        <span className="simulator-rules-header__count">{rules.length} rules · {groups.length + 1} groups</span>
+        <div className="simulator-rules-header__actions">
+          <input
+            className="simulator-rules-header__search"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search rules"
+          />
+          <button className="simulator-rules-header__new-btn" onClick={onNewRule}>+ New rule</button>
+        </div>
       </div>
-      <CollapsibleGroup title="RULES" count={rules.length}>
-        {rules.length === 0 && <p className="simulator-empty">No rules defined.</p>}
-        {rules.map((rule, i) => (
-          <div
-            className="simulator-rule-row"
-            key={rule.id}
-            title={rule.name || undefined}
-            onClick={() => onSelectRule(i)}
-          >
-            {rule.oneShot
-              ? <span className="simulator-rule-row__lock">🔒</span>
-              : <span className="simulator-rule-row__dot" />}
-            <span className="simulator-rule-row__condition">{summarizeConditions(rule, flagsById)}</span>
-            <span className="simulator-rule-row__name">{rule.name || undefined}</span>
-          </div>
-        ))}
-      </CollapsibleGroup>
-      <span className="simulator-new-rule" onClick={onNewRule}>+ New rule</span>
+
+      {!isEmpty && (
+        <div className="simulator-rules-columns">
+          <span>Rule</span>
+          <span className="simulator-rules-columns__sets">Sets</span>
+        </div>
+      )}
+
+      {isEmpty ? (
+        <p className="simulator-empty">No rules defined.</p>
+      ) : (
+        <div className="simulator-rules-list">
+          {groups.map(group => (
+            <RuleGroupSection key={group.id} title={group.name} count={(byGroup.get(group.name) ?? []).length}>
+              {(byGroup.get(group.name) ?? []).map(({ rule, index }) => (
+                <RuleRow key={rule.id} rule={rule} flagsById={flagsById} onClick={() => onSelectRule(index)} />
+              ))}
+            </RuleGroupSection>
+          ))}
+          <RuleGroupSection title="Ungrouped" count={ungrouped.length} ungrouped onAdd={onNewRule}>
+            {ungrouped.map(({ rule, index }) => (
+              <RuleRow key={rule.id} rule={rule} flagsById={flagsById} onClick={() => onSelectRule(index)} />
+            ))}
+          </RuleGroupSection>
+        </div>
+      )}
+
+      <div className="simulator-rules-legend">
+        <span className="simulator-rules-legend__combo">⛓</span>
+        combo of flags
+        <span className="simulator-rules-legend__lock">🔒</span>
+        fires once
+      </div>
     </div>
   );
 }

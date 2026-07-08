@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import './SimulatorPage.scss';
 import { PageLayout, PageHeader, PageBody } from './components/PageLayout';
 import { Button } from './components/Button';
-import { ApiError, rulesApi, flagsApi, flagGroupsApi, type RuleDefinition, type FlagDefinition, type FlagGroup } from './api';
+import { ApiError, rulesApi, ruleGroupsApi, flagsApi, flagGroupsApi, type RuleDefinition, type RuleGroup, type FlagDefinition, type FlagGroup } from './api';
 import { RuleEditModal, emptyRule } from './RulesPage';
 import { SimulatorRulesPanel } from './SimulatorRulesPanel';
 import { SimulatorFlagsPanel } from './SimulatorFlagsPanel';
@@ -24,6 +24,7 @@ interface SimulatorPageProps {
 
 export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageProps) {
   const [rules, setRules] = useState<RuleDefinition[]>([]);
+  const [ruleGroups, setRuleGroups] = useState<RuleGroup[]>([]);
   const [flags, setFlags] = useState<FlagDefinition[]>([]);
   const [flagGroups, setFlagGroups] = useState<FlagGroup[]>([]);
   const [flagUsageCounts, setFlagUsageCounts] = useState<Record<string, { rules: number; scenes: number }>>({});
@@ -43,8 +44,8 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
   const [removingGroup, setRemovingGroup] = useState<FlagGroup | null>(null);
 
   useEffect(() => {
-    Promise.all([rulesApi.list(projectId), flagsApi.list(projectId), flagGroupsApi.list(projectId), flagsApi.checkUsageCounts(projectId)])
-      .then(([r, f, g, u]) => { setRules(r); setFlags(f); setFlagGroups(g); setFlagUsageCounts(u); setLoading(false); })
+    Promise.all([rulesApi.list(projectId), ruleGroupsApi.list(projectId), flagsApi.list(projectId), flagGroupsApi.list(projectId), flagsApi.checkUsageCounts(projectId)])
+      .then(([r, rg, f, g, u]) => { setRules(r); setRuleGroups(rg); setFlags(f); setFlagGroups(g); setFlagUsageCounts(u); setLoading(false); })
       .catch(err => { setError(String(err)); setLoading(false); });
   }, [projectId]);
 
@@ -288,7 +289,7 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
               </div>
               <div className="simulator-pipeline__row">
                 {/* RULES */}
-                <SimulatorRulesPanel rules={rules} flagsById={flagsById} onSelectRule={setEditingRuleIndex} onNewRule={handleNewRule} />
+                <SimulatorRulesPanel rules={rules} groups={ruleGroups} flagsById={flagsById} onSelectRule={setEditingRuleIndex} onNewRule={handleNewRule} />
 
                 <Arrow />
 
