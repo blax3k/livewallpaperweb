@@ -532,6 +532,28 @@
     cursor: pointer;
   }
 
+  &__menu-btn {
+    margin-left: auto;
+    flex-shrink: 0;
+    width: var(--size-18);
+    height: var(--size-18);
+    background: var(--color-input);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--size-6);
+    color: var(--color-fg-subtle);
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  &__menu-caption {
+    font: 600 9px var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-fg-faintest);
+    padding: var(--size-4) var(--size-8) var(--size-5);
+  }
+
   &__rows {
     display: flex;
     flex-direction: column;
@@ -596,6 +618,19 @@
     border-radius: var(--size-5);
     padding: var(--size-2) var(--size-7);
   }
+
+  &__menu-btn {
+    flex-shrink: 0;
+    width: var(--size-18);
+    height: var(--size-18);
+    background: var(--color-input);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--size-6);
+    color: var(--color-fg-subtle);
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+  }
 }
 
 .simulator-rules-legend {
@@ -609,6 +644,10 @@
 
   &__combo, &__lock {
     font-size: 10px;
+  }
+
+  &__hint {
+    margin-left: auto;
   }
 }
 

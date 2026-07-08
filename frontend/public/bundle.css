@@ -3180,6 +3180,26 @@ body {
   font: 600 12px var(--font-sans);
   cursor: pointer;
 }
+.simulator-rules-group__menu-btn {
+  margin-left: auto;
+  flex-shrink: 0;
+  width: var(--size-18);
+  height: var(--size-18);
+  background: var(--color-input);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--size-6);
+  color: var(--color-fg-subtle);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+.simulator-rules-group__menu-caption {
+  font: 600 9px var(--font-sans);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-fg-faintest);
+  padding: var(--size-4) var(--size-8) var(--size-5);
+}
 .simulator-rules-group__rows {
   display: flex;
   flex-direction: column;
@@ -3240,6 +3260,18 @@ body {
   border-radius: var(--size-5);
   padding: var(--size-2) var(--size-7);
 }
+.simulator-rules-row__menu-btn {
+  flex-shrink: 0;
+  width: var(--size-18);
+  height: var(--size-18);
+  background: var(--color-input);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--size-6);
+  color: var(--color-fg-subtle);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
 .simulator-rules-legend {
   display: flex;
   align-items: center;
@@ -3252,6 +3284,9 @@ body {
 .simulator-rules-legend__combo,
 .simulator-rules-legend__lock {
   font-size: 10px;
+}
+.simulator-rules-legend__hint {
+  margin-left: auto;
 }
 .simulator-flags-header {
   display: flex;

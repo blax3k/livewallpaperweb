@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { RuleDefinition, RuleGroup, FlagDefinition } from './api';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from './components/ui/dropdown-menu';
 
 const COMBO_CONDITION_TYPES = new Set(['flag_active', 'flag_inactive', 'time_since_flag_change']);
 
@@ -13,6 +14,22 @@ function setsLabel(rule: RuleDefinition, flagsById: Map<string, FlagDefinition>)
   return flagIds.map(id => flagsById.get(id)?.name || id).join(', ');
 }
 
+function RuleRowMenu() {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="simulator-rules-row__menu-btn" onClick={e => e.stopPropagation()}>⋯</button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" onClick={e => e.stopPropagation()}>
+        <DropdownMenuItem>✎ Rename…</DropdownMenuItem>
+        <DropdownMenuItem>⇄ Move to group ▸</DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem danger>✕ Remove…</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 function RuleRow({ rule, flagsById, onClick }: { rule: RuleDefinition; flagsById: Map<string, FlagDefinition>; onClick: () => void }) {
   const sets = setsLabel(rule, flagsById);
   return (
@@ -23,7 +40,25 @@ function RuleRow({ rule, flagsById, onClick }: { rule: RuleDefinition; flagsById
       <span className="simulator-rules-row__sets">
         {sets ? `→ ${sets}` : <span className="simulator-rules-row__unused">Unused</span>}
       </span>
+      <RuleRowMenu />
     </div>
+  );
+}
+
+function GroupHeaderMenu({ groupName }: { groupName: string }) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="simulator-rules-group__menu-btn" onClick={e => e.stopPropagation()}>⋯</button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" onClick={e => e.stopPropagation()}>
+        <div className="simulator-rules-group__menu-caption">Group &quot;{groupName}&quot;</div>
+        <DropdownMenuItem>+ Add rule to group</DropdownMenuItem>
+        <DropdownMenuItem>✎ Rename group…</DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem danger>✕ Remove group…</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -55,6 +90,7 @@ function RuleGroupSection({ title, count, ungrouped, onAdd, children }: RuleGrou
             +
           </button>
         )}
+        {!ungrouped && <GroupHeaderMenu groupName={title} />}
       </div>
       {open && <div className="simulator-rules-group__rows">{children}</div>}
     </div>
@@ -146,6 +182,7 @@ export function SimulatorRulesPanel({ rules, groups, flagsById, onNewRule, onSel
         combo of flags
         <span className="simulator-rules-legend__lock">🔒</span>
         fires once
+        <span className="simulator-rules-legend__hint">⋯ opens rename · move · remove</span>
       </div>
     </div>
   );

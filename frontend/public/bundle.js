@@ -79997,13 +79997,41 @@ ${e2}`);
     if (flagIds.length === 0) return null;
     return flagIds.map((id) => flagsById.get(id)?.name || id).join(", ");
   }
+  function RuleRowMenu() {
+    return /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(DropdownMenu2, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("button", { className: "simulator-rules-row__menu-btn", onClick: (e2) => e2.stopPropagation(), children: "\u22EF" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(DropdownMenuContent2, { align: "end", onClick: (e2) => e2.stopPropagation(), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuItem2, { children: "\u270E Rename\u2026" }),
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuItem2, { children: "\u21C4 Move to group \u25B8" }),
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuSeparator2, {}),
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuItem2, { danger: true, children: "\u2715 Remove\u2026" })
+      ] })
+    ] });
+  }
   function RuleRow({ rule, flagsById, onClick }) {
     const sets = setsLabel(rule, flagsById);
     return /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-rules-row", onClick, children: [
       rule.oneShot && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-row__lock", title: "Fires only once, ever", children: "\u{1F512}" }),
       isCombo(rule) && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-row__combo", title: "Reads other flags", children: "\u26D3" }),
       /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-row__name", children: rule.name || rule.id }),
-      /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-row__sets", children: sets ? `\u2192 ${sets}` : /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-row__unused", children: "Unused" }) })
+      /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-row__sets", children: sets ? `\u2192 ${sets}` : /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-row__unused", children: "Unused" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(RuleRowMenu, {})
+    ] });
+  }
+  function GroupHeaderMenu({ groupName }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(DropdownMenu2, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("button", { className: "simulator-rules-group__menu-btn", onClick: (e2) => e2.stopPropagation(), children: "\u22EF" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(DropdownMenuContent2, { align: "end", onClick: (e2) => e2.stopPropagation(), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-rules-group__menu-caption", children: [
+          'Group "',
+          groupName,
+          '"'
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuItem2, { children: "+ Add rule to group" }),
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuItem2, { children: "\u270E Rename group\u2026" }),
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuSeparator2, {}),
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuItem2, { danger: true, children: "\u2715 Remove group\u2026" })
+      ] })
     ] });
   }
   function RuleGroupSection({ title, count: count4, ungrouped, onAdd, children }) {
@@ -80029,7 +80057,8 @@ ${e2}`);
                 },
                 children: "+"
               }
-            )
+            ),
+            !ungrouped && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(GroupHeaderMenu, { groupName: title })
           ]
         }
       ),
@@ -80096,7 +80125,8 @@ ${e2}`);
         /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-legend__combo", children: "\u26D3" }),
         "combo of flags",
         /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-legend__lock", children: "\u{1F512}" }),
-        "fires once"
+        "fires once",
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-legend__hint", children: "\u22EF opens rename \xB7 move \xB7 remove" })
       ] })
     ] });
   }
@@ -80157,7 +80187,7 @@ ${e2}`);
       /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(FlagRowMenu, { flag, groups, onRename, onMove, onNewGroup, onRemove })
     ] });
   }
-  function GroupHeaderMenu({ onAddFlag, onRename, onRemove }) {
+  function GroupHeaderMenu2({ onAddFlag, onRename, onRemove }) {
     return /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(DropdownMenu2, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("button", { className: "simulator-flags-group__menu-btn", onClick: (e2) => e2.stopPropagation(), children: "\u22EF" }) }),
       /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(DropdownMenuContent2, { align: "end", onClick: (e2) => e2.stopPropagation(), children: [
@@ -80192,7 +80222,7 @@ ${e2}`);
                 children: "+"
               }
             ),
-            !ungrouped && onRenameGroup && onRemoveGroup && /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(GroupHeaderMenu, { onAddFlag: () => onAdd?.(), onRename: onRenameGroup, onRemove: onRemoveGroup })
+            !ungrouped && onRenameGroup && onRemoveGroup && /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(GroupHeaderMenu2, { onAddFlag: () => onAdd?.(), onRename: onRenameGroup, onRemove: onRemoveGroup })
           ]
         }
       ),
