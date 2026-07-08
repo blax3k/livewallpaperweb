@@ -80101,11 +80101,19 @@ ${e2}`);
     onRemoveGroup
   }) {
     const [search, setSearch] = (0, import_react29.useState)("");
+    const query = search.trim().toLowerCase();
+    const matchingGroupNames = (0, import_react29.useMemo)(() => {
+      if (!query) return null;
+      return new Set(groups.filter((g2) => g2.name.toLowerCase().includes(query)).map((g2) => g2.name));
+    }, [groups, query]);
     const filteredRules = (0, import_react29.useMemo)(() => {
-      const q = search.trim().toLowerCase();
-      if (!q) return rules;
-      return rules.filter((r2) => (r2.name || r2.id).toLowerCase().includes(q));
-    }, [rules, search]);
+      if (!query) return rules;
+      return rules.filter((r2) => {
+        if ((r2.name || r2.id).toLowerCase().includes(query)) return true;
+        const groupName = r2.group?.trim();
+        return !!groupName && matchingGroupNames.has(groupName);
+      });
+    }, [rules, query, matchingGroupNames]);
     const { byGroup, ungrouped } = (0, import_react29.useMemo)(() => {
       const byGroup2 = /* @__PURE__ */ new Map();
       for (const group of groups) byGroup2.set(group.name, []);
@@ -80122,6 +80130,12 @@ ${e2}`);
       return { byGroup: byGroup2, ungrouped: ungrouped2 };
     }, [filteredRules, rules, groups]);
     const isEmpty = rules.length === 0 && groups.length === 0;
+    const visibleGroups = (0, import_react29.useMemo)(() => {
+      if (!query) return groups;
+      return groups.filter((g2) => matchingGroupNames.has(g2.name) || (byGroup.get(g2.name)?.length ?? 0) > 0);
+    }, [groups, query, matchingGroupNames, byGroup]);
+    const showUngrouped = !query || ungrouped.length > 0;
+    const noSearchResults = !!query && visibleGroups.length === 0 && !showUngrouped;
     return /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-panel simulator-panel--rules", children: [
       /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-rules-header", children: [
         /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("span", { className: "simulator-rules-header__title", children: [
@@ -80135,15 +80149,26 @@ ${e2}`);
           " groups"
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-rules-header__actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
-            "input",
-            {
-              className: "simulator-rules-header__search",
-              value: search,
-              onChange: (e2) => setSearch(e2.target.value),
-              placeholder: "Search rules"
-            }
-          ),
+          /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-rules-header__search-wrap", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+              "input",
+              {
+                className: "simulator-rules-header__search",
+                value: search,
+                onChange: (e2) => setSearch(e2.target.value),
+                placeholder: "Search rules"
+              }
+            ),
+            search !== "" && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+              "button",
+              {
+                className: "simulator-rules-header__search-clear",
+                onClick: () => setSearch(""),
+                "aria-label": "Clear search",
+                children: "\xD7"
+              }
+            )
+          ] }),
           /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("button", { className: "simulator-rules-header__new-group-btn", onClick: onNewGroup, children: "+ New group" }),
           /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("button", { className: "simulator-rules-header__new-btn", onClick: () => onNewRule(), children: "+ New rule" })
         ] })
@@ -80152,8 +80177,12 @@ ${e2}`);
         /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { children: "Rule" }),
         /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-columns__sets", children: "Sets" })
       ] }),
-      isEmpty ? /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("p", { className: "simulator-empty", children: "No rules defined." }) : /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-rules-list", children: [
-        groups.map((group) => /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+      isEmpty ? /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("p", { className: "simulator-empty", children: "No rules defined." }) : noSearchResults ? /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("p", { className: "simulator-empty", children: [
+        'No rules match "',
+        search.trim(),
+        '".'
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-rules-list", children: [
+        visibleGroups.map((group) => /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
           RuleGroupSection,
           {
             title: group.name,
@@ -80178,7 +80207,7 @@ ${e2}`);
           },
           group.id
         )),
-        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(RuleGroupSection, { title: "Ungrouped", count: ungrouped.length, ungrouped: true, onAdd: () => onNewRule(), children: ungrouped.map(({ rule, index: index2 }) => /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+        showUngrouped && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(RuleGroupSection, { title: "Ungrouped", count: ungrouped.length, ungrouped: true, onAdd: () => onNewRule(), children: ungrouped.map(({ rule, index: index2 }) => /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
           RuleRow,
           {
             rule,

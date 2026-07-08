@@ -163,12 +163,21 @@ export function SimulatorRulesPanel({
   rules, groups, flagsById, onNewRule, onSelectRule, onRenameRule, onMoveRule, onNewGroupForRule, onRemoveRule, onNewGroup, onRenameGroup, onRemoveGroup,
 }: SimulatorRulesPanelProps) {
   const [search, setSearch] = useState('');
+  const query = search.trim().toLowerCase();
+
+  const matchingGroupNames = useMemo(() => {
+    if (!query) return null;
+    return new Set(groups.filter(g => g.name.toLowerCase().includes(query)).map(g => g.name));
+  }, [groups, query]);
 
   const filteredRules = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return rules;
-    return rules.filter(r => (r.name || r.id).toLowerCase().includes(q));
-  }, [rules, search]);
+    if (!query) return rules;
+    return rules.filter(r => {
+      if ((r.name || r.id).toLowerCase().includes(query)) return true;
+      const groupName = r.group?.trim();
+      return !!groupName && matchingGroupNames!.has(groupName);
+    });
+  }, [rules, query, matchingGroupNames]);
 
   const { byGroup, ungrouped } = useMemo(() => {
     const byGroup = new Map<string, { rule: RuleDefinition; index: number }[]>();
@@ -187,6 +196,12 @@ export function SimulatorRulesPanel({
   }, [filteredRules, rules, groups]);
 
   const isEmpty = rules.length === 0 && groups.length === 0;
+  const visibleGroups = useMemo(() => {
+    if (!query) return groups;
+    return groups.filter(g => matchingGroupNames!.has(g.name) || (byGroup.get(g.name)?.length ?? 0) > 0);
+  }, [groups, query, matchingGroupNames, byGroup]);
+  const showUngrouped = !query || ungrouped.length > 0;
+  const noSearchResults = !!query && visibleGroups.length === 0 && !showUngrouped;
 
   return (
     <div className="simulator-panel simulator-panel--rules">
@@ -197,12 +212,23 @@ export function SimulatorRulesPanel({
         </span>
         <span className="simulator-rules-header__count">{rules.length} rules · {groups.length + 1} groups</span>
         <div className="simulator-rules-header__actions">
-          <input
-            className="simulator-rules-header__search"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            placeholder="Search rules"
-          />
+          <div className="simulator-rules-header__search-wrap">
+            <input
+              className="simulator-rules-header__search"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search rules"
+            />
+            {search !== '' && (
+              <button
+                className="simulator-rules-header__search-clear"
+                onClick={() => setSearch('')}
+                aria-label="Clear search"
+              >
+                ×
+              </button>
+            )}
+          </div>
           <button className="simulator-rules-header__new-group-btn" onClick={onNewGroup}>+ New group</button>
           <button className="simulator-rules-header__new-btn" onClick={() => onNewRule()}>+ New rule</button>
         </div>
@@ -217,9 +243,11 @@ export function SimulatorRulesPanel({
 
       {isEmpty ? (
         <p className="simulator-empty">No rules defined.</p>
+      ) : noSearchResults ? (
+        <p className="simulator-empty">No rules match &quot;{search.trim()}&quot;.</p>
       ) : (
         <div className="simulator-rules-list">
-          {groups.map(group => (
+          {visibleGroups.map(group => (
             <RuleGroupSection
               key={group.id}
               title={group.name}
@@ -243,21 +271,23 @@ export function SimulatorRulesPanel({
               ))}
             </RuleGroupSection>
           ))}
-          <RuleGroupSection title="Ungrouped" count={ungrouped.length} ungrouped onAdd={() => onNewRule()}>
-            {ungrouped.map(({ rule, index }) => (
-              <RuleRow
-                key={rule.id}
-                rule={rule}
-                flagsById={flagsById}
-                groups={groups}
-                onClick={() => onSelectRule(index)}
-                onRename={() => onRenameRule(rule)}
-                onMove={groupName => onMoveRule(rule, groupName)}
-                onNewGroup={() => onNewGroupForRule(rule)}
-                onRemove={() => onRemoveRule(rule)}
-              />
-            ))}
-          </RuleGroupSection>
+          {showUngrouped && (
+            <RuleGroupSection title="Ungrouped" count={ungrouped.length} ungrouped onAdd={() => onNewRule()}>
+              {ungrouped.map(({ rule, index }) => (
+                <RuleRow
+                  key={rule.id}
+                  rule={rule}
+                  flagsById={flagsById}
+                  groups={groups}
+                  onClick={() => onSelectRule(index)}
+                  onRename={() => onRenameRule(rule)}
+                  onMove={groupName => onMoveRule(rule, groupName)}
+                  onNewGroup={() => onNewGroupForRule(rule)}
+                  onRemove={() => onRemoveRule(rule)}
+                />
+              ))}
+            </RuleGroupSection>
+          )}
         </div>
       )}
 
