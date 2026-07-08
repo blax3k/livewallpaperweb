@@ -10,7 +10,8 @@
     "db:migrate": "tsx src/db/migrate.ts up",
     "db:migrate:down": "tsx src/db/migrate.ts down",
     "db:migrate:fake": "tsx src/db/migrate.ts up --fake",
-    "db:seed": "tsx src/db/seed.ts"
+    "db:seed": "tsx src/db/seed.ts",
+    "test": "tsx --env-file=.env --test 'src/**/__tests__/**/*.test.ts'"
   },
   "dependencies": {
     "@fastify/cookie": "^11.0.2",

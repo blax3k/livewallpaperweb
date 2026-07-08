@@ -44,14 +44,24 @@ export async function replaceFlagsForProject(projectId: string, flags: FlagDefin
     );
     const groupIdByName = new Map(groupRows.rows.map(r => [r.name, r.id]));
 
-    await client.query('DELETE FROM flags WHERE project_id = $1', [projectId]);
+    // Only delete flags that were actually removed. Deleting-and-reinserting every flag
+    // (even unchanged ones) would briefly drop each flag row, and the flag FK's ON DELETE
+    // SET NULL on rule_conditions/rule_actions nulls flag_id permanently — nothing re-links
+    // it once the flag reappears with the same id, silently orphaning existing rules.
+    const incomingIds = flags.map(f => f.id);
+    await client.query(
+      'DELETE FROM flags WHERE project_id = $1 AND NOT (id = ANY($2::text[]))',
+      [projectId, incomingIds],
+    );
 
     for (const flag of flags) {
       const groupName = flag.group?.trim();
       const groupId = groupName ? (groupIdByName.get(groupName) ?? null) : null;
       await client.query(
         `INSERT INTO flags (project_id, id, name, group_id, default_active)
-         VALUES ($1, $2, $3, $4, $5)`,
+         VALUES ($1, $2, $3, $4, $5)
+         ON CONFLICT (project_id, id) DO UPDATE
+           SET name = EXCLUDED.name, group_id = EXCLUDED.group_id, default_active = EXCLUDED.default_active`,
         [projectId, flag.id, flag.name, groupId, flag.defaultActive ?? false],
       );
     }
