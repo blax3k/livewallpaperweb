@@ -1,11 +1,6 @@
 import type { FastifyInstance } from 'fastify';
-import type { RuleDefinition } from '@livewallpaper/types';
 import { HttpStatus } from '../../utils/httpStatus';
 import { archiveProject, createProject, getProject, listProjects, unarchiveProject } from './projectService';
-import {
-  selectProjectRules,
-  updateProjectRules,
-} from './projectRepository';
 
 export async function registerProjectRoutes(server: FastifyInstance): Promise<void> {
   server.get<{ Querystring: { activeOnly?: string } }>('/api/projects', async (req) => {
@@ -41,19 +36,5 @@ export async function registerProjectRoutes(server: FastifyInstance): Promise<vo
     }
 
     return project;
-  });
-
-  // ── Rules ──────────────────────────────────────────────────────────────────
-
-  server.get<{ Params: { id: string } }>('/api/projects/:id/rules', async (req, reply) => {
-    const rules = await selectProjectRules(req.params.id);
-    if (rules === null) return reply.status(HttpStatus.NOT_FOUND).send({ error: 'Project not found' });
-    return rules;
-  });
-
-  server.put<{ Params: { id: string }; Body: RuleDefinition[] }>('/api/projects/:id/rules', async (req, reply) => {
-    const ok = await updateProjectRules(req.params.id, req.body);
-    if (!ok) return reply.status(HttpStatus.NOT_FOUND).send({ error: 'Project not found' });
-    return reply.status(HttpStatus.NO_CONTENT).send();
   });
 }

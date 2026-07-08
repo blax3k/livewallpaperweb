@@ -1,4 +1,3 @@
-import type { RuleDefinition } from '@livewallpaper/types';
 import { pool } from '../../db';
 import { type ObjectStatus } from '../common/objectModel';
 import { ProjectObject } from './projectObject';
@@ -83,18 +82,3 @@ export async function incrementProjectVersion(projectId: string) {
   await pool.query('UPDATE projects SET version = version + 1 WHERE id = $1', [projectId]);
 }
 
-export async function selectProjectRules(projectId: string): Promise<RuleDefinition[]> {
-  const result = await pool.query<{ rules: RuleDefinition[] }>(
-    'SELECT rules FROM projects WHERE id = $1 AND status <> $2',
-    [projectId, 'DELETED'],
-  );
-  return result.rows[0]?.rules ?? [];
-}
-
-export async function updateProjectRules(projectId: string, rules: RuleDefinition[]): Promise<boolean> {
-  const result = await pool.query(
-    'UPDATE projects SET rules = $2, updated_at = NOW() WHERE id = $1 AND status <> $3',
-    [projectId, JSON.stringify(rules), 'DELETED'],
-  );
-  return (result.rowCount ?? 0) > 0;
-}

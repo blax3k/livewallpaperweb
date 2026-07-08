@@ -111,6 +111,12 @@ export interface RuleConditionGroup {
   checks: RuleCondition[];
 }
 
+/** A named grouping bucket for rules, scoped to a project. */
+export interface RuleGroup {
+  id: string;
+  name: string;
+}
+
 /**
  * An action executed when a rule's conditions are satisfied.
  *
@@ -140,12 +146,15 @@ export interface RuleDefinition {
   id: string;
   /** Human-readable label for editor tooling. */
   name: string;
+  /** Name of the RuleGroup this rule belongs to (see RuleGroup). Ungrouped if omitted. */
+  group?: string;
   /**
-   * Conditions that must pass for this rule to fire.
-   * If omitted, the rule always fires (useful for unconditional flag resets).
+   * Condition groups the rule fires under. Each entry's `checks` are AND'd together;
+   * entries in the array are OR'd against each other (the rule fires if any one group
+   * fully matches). Omit or leave empty to always fire (useful for unconditional flag resets).
    */
-  conditions?: RuleConditionGroup;
-  /** Actions executed when conditions pass. */
+  conditions?: RuleConditionGroup[];
+  /** Actions executed when conditions pass, run in order. */
   actions: RuleAction[];
   /**
    * If true, fires at most once. Use for milestone events.

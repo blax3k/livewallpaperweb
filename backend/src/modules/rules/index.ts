@@ -1,0 +1,1 @@
+export { registerRuleRoutes } from './ruleRoutes';

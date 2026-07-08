@@ -10,6 +10,7 @@ import { registerAuthRoutes } from './modules/auth';
 import { registerFlagRoutes } from './modules/flags';
 import { registerImageRoutes } from './modules/images';
 import { registerProjectRoutes } from './modules/projects';
+import { registerRuleRoutes } from './modules/rules';
 import { registerSceneRoutes } from './modules/scenes';
 import { registerThumbnailRoutes } from './modules/thumbnails/thumbnailRoutes';
 
@@ -82,6 +83,7 @@ export async function buildServer(deps: BuildServerDeps) {
 
     await registerProjectRoutes(protected_);
     await registerFlagRoutes(protected_);
+    await registerRuleRoutes(protected_);
     await registerImageRoutes(protected_, { storage: deps.imageStorage, thumbnailStorage: deps.imageThumbnailStorage });
     await registerSceneRoutes(protected_, { thumbnailStorage: deps.thumbnailStorage });
     await registerThumbnailRoutes(protected_, { thumbnailStorage: deps.thumbnailStorage });

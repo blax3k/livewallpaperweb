@@ -19,10 +19,28 @@ export function emptyRule(): RuleDefinition {
   return {
     id: '',
     name: '',
-    conditions: { operator: 'AND', checks: [] },
+    conditions: [],
     actions: [],
     oneShot: false,
   };
+}
+
+// This editor only ever shows a single flat AND/OR group (the full OR-of-AND-groups
+// builder is a separate redesign). Round-trips losslessly for anything this UI can
+// produce: a single AND group, or several single-check groups standing in for one OR group.
+function conditionsToFlatGroup(conditions: RuleConditionGroup[] | undefined): RuleConditionGroup {
+  const groups = (conditions ?? []).filter(g => g.checks.length > 0);
+  if (groups.length === 0) return { operator: 'AND', checks: [] };
+  if (groups.length === 1) return groups[0];
+  return { operator: 'OR', checks: groups.flatMap(g => g.checks) };
+}
+
+function flatGroupToConditions(group: RuleConditionGroup): RuleConditionGroup[] {
+  if (group.checks.length === 0) return [];
+  if (group.operator === 'OR' && group.checks.length > 1) {
+    return group.checks.map(c => ({ operator: 'AND' as const, checks: [c] }));
+  }
+  return [{ operator: 'AND', checks: group.checks }];
 }
 
 function emptyCondition(): RuleCondition {
@@ -189,9 +207,9 @@ export function RuleEditModal({ rule: initial, flags, onSave, onCancel }: RuleEd
   const setField = <K extends keyof RuleDefinition>(key: K, value: RuleDefinition[K]) =>
     setRule(r => ({ ...r, [key]: value }));
 
-  const conditions: RuleConditionGroup = rule.conditions ?? { operator: 'AND', checks: [] };
+  const conditions: RuleConditionGroup = conditionsToFlatGroup(rule.conditions);
 
-  const setConditions = (g: RuleConditionGroup) => setField('conditions', g);
+  const setConditions = (g: RuleConditionGroup) => setField('conditions', flatGroupToConditions(g));
 
   const addCondition = () =>
     setConditions({ ...conditions, checks: [...conditions.checks, emptyCondition()] });
@@ -398,7 +416,7 @@ export function RulesPage({ projectId, projectName, onBack }: RulesPageProps) {
                     <tr key={i} className="rules-table__row">
                       <td>{rule.name || <span style={{ color: 'var(--color-fg-faint)' }}>(unnamed)</span>}</td>
                       <td><code>{rule.id || '—'}</code></td>
-                      <td>{rule.conditions?.checks?.length ?? 0} check(s)</td>
+                      <td>{(rule.conditions ?? []).reduce((n, g) => n + g.checks.length, 0)} check(s)</td>
                       <td>{rule.actions?.length ?? 0} action(s)</td>
                       <td>{rule.oneShot ? 'Yes' : 'No'}</td>
                       <td className="rules-table__actions">

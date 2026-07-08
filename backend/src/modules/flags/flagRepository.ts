@@ -1,4 +1,4 @@
-import type { FlagDefinition, RuleDefinition } from '@livewallpaper/types';
+import type { FlagDefinition } from '@livewallpaper/types';
 import { pool } from '../../db';
 import { FlagGroupObject, FlagObject } from './flagObject';
 
@@ -124,40 +124,61 @@ async function selectSceneNamesUsingFlag(projectId: string, flagId: string): Pro
   return result.rows.map(r => r.name);
 }
 
-async function selectProjectRulesRaw(projectId: string): Promise<RuleDefinition[]> {
-  const result = await pool.query<{ rules: RuleDefinition[] }>(
-    'SELECT rules FROM projects WHERE id = $1 AND status <> $2',
-    [projectId, 'DELETED'],
+async function selectRuleNamesUsingFlag(projectId: string, flagId: string): Promise<string[]> {
+  const result = await pool.query<{ name: string }>(
+    `SELECT DISTINCT r.name
+     FROM rules r
+     WHERE r.project_id = $1
+       AND (
+         EXISTS (
+           SELECT 1 FROM rule_condition_groups rcg
+           JOIN rule_conditions rc ON rc.group_id = rcg.id
+           WHERE rcg.project_id = r.project_id AND rcg.rule_id = r.id AND rc.flag_id = $2
+         )
+         OR EXISTS (
+           SELECT 1 FROM rule_actions ra
+           WHERE ra.project_id = r.project_id AND ra.rule_id = r.id AND ra.flag_id = $2
+         )
+       )
+     ORDER BY r.name`,
+    [projectId, flagId],
   );
-  return result.rows[0]?.rules ?? [];
-}
-
-function rulesReferencingFlag(rules: RuleDefinition[], flagId: string): RuleDefinition[] {
-  return rules.filter(rule =>
-    rule.conditions?.checks.some(c => c.flagId === flagId) ||
-    rule.actions.some(a => a.flagId === flagId),
-  );
+  return result.rows.map(r => r.name);
 }
 
 export async function selectFlagUsage(projectId: string, flagId: string): Promise<{ scenes: string[]; rules: string[] }> {
-  const [scenes, allRules] = await Promise.all([
+  const [scenes, rules] = await Promise.all([
     selectSceneNamesUsingFlag(projectId, flagId),
-    selectProjectRulesRaw(projectId),
+    selectRuleNamesUsingFlag(projectId, flagId),
   ]);
-  const rules = rulesReferencingFlag(allRules, flagId).map(rule => rule.name);
   return { scenes, rules };
 }
 
 export async function selectFlagUsageCounts(projectId: string): Promise<Record<string, { rules: number; scenes: number }>> {
-  const [flagRows, allRules] = await Promise.all([
+  const [flagRows, ruleUsageRows] = await Promise.all([
     pool.query<{ id: string }>('SELECT id FROM flags WHERE project_id = $1', [projectId]),
-    selectProjectRulesRaw(projectId),
+    pool.query<{ flag_id: string; cnt: string }>(
+      `SELECT flag_id, COUNT(DISTINCT rule_id) AS cnt FROM (
+         SELECT rc.flag_id, rcg.rule_id
+         FROM rule_condition_groups rcg
+         JOIN rule_conditions rc ON rc.group_id = rcg.id
+         WHERE rcg.project_id = $1 AND rc.flag_id IS NOT NULL
+         UNION ALL
+         SELECT ra.flag_id, ra.rule_id
+         FROM rule_actions ra
+         WHERE ra.project_id = $1 AND ra.flag_id IS NOT NULL
+       ) usages
+       GROUP BY flag_id`,
+      [projectId],
+    ),
   ]);
+
+  const ruleCountByFlag = new Map(ruleUsageRows.rows.map(r => [r.flag_id, Number(r.cnt)]));
 
   const counts: Record<string, { rules: number; scenes: number }> = {};
   await Promise.all(flagRows.rows.map(async ({ id: flagId }) => {
     const scenes = await selectSceneNamesUsingFlag(projectId, flagId);
-    counts[flagId] = { rules: rulesReferencingFlag(allRules, flagId).length, scenes: scenes.length };
+    counts[flagId] = { rules: ruleCountByFlag.get(flagId) ?? 0, scenes: scenes.length };
   }));
 
   return counts;

@@ -27,10 +27,11 @@ function summarizeCondition(c: RuleCondition, flagsById: Map<string, FlagDefinit
 }
 
 function summarizeConditions(rule: RuleDefinition, flagsById: Map<string, FlagDefinition>): string {
-  const group = rule.conditions;
-  if (!group || group.checks.length === 0) return 'always';
-  const joiner = group.operator === 'OR' ? ' or ' : ' + ';
-  return group.checks.map(c => summarizeCondition(c, flagsById)).join(joiner);
+  const groups = (rule.conditions ?? []).filter(g => g.checks.length > 0);
+  if (groups.length === 0) return 'always';
+  return groups
+    .map(group => group.checks.map(c => summarizeCondition(c, flagsById)).join(' + '))
+    .join(' or ');
 }
 
 interface SimulatorRulesPanelProps {

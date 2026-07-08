@@ -79636,10 +79636,23 @@ ${e2}`);
     return {
       id: "",
       name: "",
-      conditions: { operator: "AND", checks: [] },
+      conditions: [],
       actions: [],
       oneShot: false
     };
+  }
+  function conditionsToFlatGroup(conditions) {
+    const groups = (conditions ?? []).filter((g2) => g2.checks.length > 0);
+    if (groups.length === 0) return { operator: "AND", checks: [] };
+    if (groups.length === 1) return groups[0];
+    return { operator: "OR", checks: groups.flatMap((g2) => g2.checks) };
+  }
+  function flatGroupToConditions(group) {
+    if (group.checks.length === 0) return [];
+    if (group.operator === "OR" && group.checks.length > 1) {
+      return group.checks.map((c2) => ({ operator: "AND", checks: [c2] }));
+    }
+    return [{ operator: "AND", checks: group.checks }];
   }
   function emptyCondition() {
     return { type: "flag_active", flagId: "" };
@@ -79749,8 +79762,8 @@ ${e2}`);
   function RuleEditModal({ rule: initial, flags, onSave, onCancel }) {
     const [rule, setRule] = (0, import_react28.useState)(() => JSON.parse(JSON.stringify(initial)));
     const setField = (key, value) => setRule((r2) => ({ ...r2, [key]: value }));
-    const conditions = rule.conditions ?? { operator: "AND", checks: [] };
-    const setConditions = (g2) => setField("conditions", g2);
+    const conditions = conditionsToFlatGroup(rule.conditions);
+    const setConditions = (g2) => setField("conditions", flatGroupToConditions(g2));
     const addCondition = () => setConditions({ ...conditions, checks: [...conditions.checks, emptyCondition()] });
     const updateCondition = (i2, c2) => setConditions({ ...conditions, checks: conditions.checks.map((ch, idx) => idx === i2 ? c2 : ch) });
     const deleteCondition = (i2) => setConditions({ ...conditions, checks: conditions.checks.filter((_, idx) => idx !== i2) });
@@ -79919,7 +79932,7 @@ ${e2}`);
               /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("td", { children: rule.name || /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { style: { color: "var(--color-fg-faint)" }, children: "(unnamed)" }) }),
               /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("code", { children: rule.id || "\u2014" }) }),
               /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("td", { children: [
-                rule.conditions?.checks?.length ?? 0,
+                (rule.conditions ?? []).reduce((n2, g2) => n2 + g2.checks.length, 0),
                 " check(s)"
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("td", { children: [
@@ -79999,10 +80012,9 @@ ${e2}`);
     }
   }
   function summarizeConditions(rule, flagsById) {
-    const group = rule.conditions;
-    if (!group || group.checks.length === 0) return "always";
-    const joiner = group.operator === "OR" ? " or " : " + ";
-    return group.checks.map((c2) => summarizeCondition(c2, flagsById)).join(joiner);
+    const groups = (rule.conditions ?? []).filter((g2) => g2.checks.length > 0);
+    if (groups.length === 0) return "always";
+    return groups.map((group) => group.checks.map((c2) => summarizeCondition(c2, flagsById)).join(" + ")).join(" or ");
   }
   function SimulatorRulesPanel({ rules, flagsById, onSelectRule, onNewRule }) {
     return /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "simulator-panel simulator-panel--rules", children: [
