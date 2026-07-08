@@ -19,7 +19,6 @@ interface SceneRecord {
 interface SceneListPageProps {
   onSelect: (scene: SceneRecord) => void;
   onBack?: () => void;
-  onRules?: () => void;
   onSimulator?: () => void;
   projectname: string;
   projectId?: string;
@@ -27,7 +26,7 @@ interface SceneListPageProps {
   thumbBuster?: number;
 }
 
-export function SceneListPage({ onSelect, onBack, onRules, onSimulator, projectId, projectname, projectSize, thumbBuster = 0 }: SceneListPageProps) {
+export function SceneListPage({ onSelect, onBack, onSimulator, projectId, projectname, projectSize, thumbBuster = 0 }: SceneListPageProps) {
   const [scenes, setScenes] = useState<SceneRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [showNewSceneDialog, setShowNewSceneDialog] = useState(false);
@@ -131,7 +130,6 @@ export function SceneListPage({ onSelect, onBack, onRules, onSimulator, projectI
         }
         left={onBack && <Button onClick={onBack}>←</Button>}
       >
-        {onRules && <Button onClick={onRules}>Rules</Button>}
         {onSimulator && <Button onClick={onSimulator}>Simulator</Button>}
         <Button onClick={() => setShowNewSceneDialog(true)}>+ Scene</Button>
       </PageHeader>

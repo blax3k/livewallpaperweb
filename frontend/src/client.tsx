@@ -5,7 +5,6 @@ import { createRoot } from 'react-dom/client';
 import { ScenePage } from './ScenePage';
 import { SceneListPage } from './SceneListPage';
 import { ProjectListPage } from './ProjectListPage';
-import { RulesPage } from './RulesPage';
 import { SimulatorPage } from './SimulatorPage';
 import { LoginPage } from './LoginPage';
 import { authApi, setUnauthorizedHandler } from './api';
@@ -25,7 +24,6 @@ type Page =
   | { type: 'projects' }
   | { type: 'scenes'; project: ProjectRecord }
   | { type: 'scene'; sceneId: string; project: ProjectRecord }
-  | { type: 'rules'; project: ProjectRecord }
   | { type: 'simulator'; project: ProjectRecord };
 
 function pageFromPath(): Page {
@@ -34,10 +32,6 @@ function pageFromPath(): Page {
     const projectId = decodeURIComponent(sceneMatch[1]);
     const sceneId = decodeURIComponent(sceneMatch[2]);
     return { type: 'scene', sceneId, project: { id: projectId, name: '' } };
-  }
-  const rulesMatch = window.location.pathname.match(/^\/project\/([^/]+)\/rules$/);
-  if (rulesMatch) {
-    return { type: 'rules', project: { id: decodeURIComponent(rulesMatch[1]), name: '' } };
   }
   const simulatorMatch = window.location.pathname.match(/^\/project\/([^/]+)\/simulator$/);
   if (simulatorMatch) {
@@ -120,11 +114,6 @@ function App() {
     setPage({ type: 'scenes', project });
   }, []);
 
-  const navigateToRules = useCallback((project: ProjectRecord) => {
-    window.history.pushState(null, '', `/project/${encodeURIComponent(project.id)}/rules`);
-    setPage({ type: 'rules', project });
-  }, []);
-
   const navigateToSimulator = useCallback((project: ProjectRecord) => {
     window.history.pushState(null, '', `/project/${encodeURIComponent(project.id)}/simulator`);
     setPage({ type: 'simulator', project });
@@ -152,16 +141,6 @@ function App() {
     );
   }
 
-  if (page.type === 'rules') {
-    return (
-      <RulesPage
-        projectId={page.project.id}
-        projectName={page.project.name}
-        onBack={() => navigateBackToScenes(page.project)}
-      />
-    );
-  }
-
   if (page.type === 'simulator') {
     return (
       <SimulatorPage
@@ -177,7 +156,6 @@ function App() {
       <SceneListPage
         onSelect={(scene) => navigateToScene(scene, page.project)}
         onBack={navigateBackToProjects}
-        onRules={() => navigateToRules(page.project)}
         onSimulator={() => navigateToSimulator(page.project)}
         projectname={page.project.name}
         projectId={page.project.id}

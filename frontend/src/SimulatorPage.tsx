@@ -3,7 +3,6 @@ import './SimulatorPage.scss';
 import { PageLayout, PageHeader, PageBody } from './components/PageLayout';
 import { Button } from './components/Button';
 import { ApiError, rulesApi, ruleGroupsApi, flagsApi, flagGroupsApi, type RuleDefinition, type RuleGroup, type FlagDefinition, type FlagGroup } from './api';
-import { RuleEditModal, emptyRule } from './RulesPage';
 import { SimulatorRulesPanel, COMBO_CONDITION_TYPES } from './SimulatorRulesPanel';
 import { SimulatorFlagsPanel } from './SimulatorFlagsPanel';
 import {
@@ -16,6 +15,8 @@ import {
   RemoveGroupModal,
 } from './SimulatorFlagModals';
 import {
+  RuleEditModal,
+  emptyRule,
   RenameRuleModal,
   NewGroupModal as NewRuleGroupModal,
   RenameGroupModal as RenameRuleGroupModal,
