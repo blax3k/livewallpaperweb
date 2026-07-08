@@ -160,12 +160,21 @@ export function SimulatorFlagsPanel({
   flags, groups, usageCounts, onNewFlag, onSelectFlag, onRenameFlag, onMoveFlag, onNewGroupForFlag, onRemoveFlag, onNewGroup, onRenameGroup, onRemoveGroup,
 }: SimulatorFlagsPanelProps) {
   const [search, setSearch] = useState('');
+  const query = search.trim().toLowerCase();
+
+  const matchingGroupNames = useMemo(() => {
+    if (!query) return null;
+    return new Set(groups.filter(g => g.name.toLowerCase().includes(query)).map(g => g.name));
+  }, [groups, query]);
 
   const filteredFlags = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return flags;
-    return flags.filter(f => (f.name || f.id).toLowerCase().includes(q));
-  }, [flags, search]);
+    if (!query) return flags;
+    return flags.filter(f => {
+      if ((f.name || f.id).toLowerCase().includes(query)) return true;
+      const groupName = f.group?.trim();
+      return !!groupName && matchingGroupNames!.has(groupName);
+    });
+  }, [flags, query, matchingGroupNames]);
 
   const { byGroup, ungrouped } = useMemo(() => {
     const byGroup = new Map<string, FlagDefinition[]>();
@@ -183,6 +192,12 @@ export function SimulatorFlagsPanel({
   }, [filteredFlags, groups]);
 
   const isEmpty = flags.length === 0 && groups.length === 0;
+  const visibleGroups = useMemo(() => {
+    if (!query) return groups;
+    return groups.filter(g => matchingGroupNames!.has(g.name) || (byGroup.get(g.name)?.length ?? 0) > 0);
+  }, [groups, query, matchingGroupNames, byGroup]);
+  const showUngrouped = !query || ungrouped.length > 0;
+  const noSearchResults = !!query && visibleGroups.length === 0 && !showUngrouped;
 
   return (
     <div className="simulator-panel simulator-panel--flags">
@@ -193,12 +208,23 @@ export function SimulatorFlagsPanel({
         </span>
         <span className="simulator-flags-header__count">{flags.length} flags · {groups.length + 1} groups</span>
         <div className="simulator-flags-header__actions">
-          <input
-            className="simulator-flags-header__search"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            placeholder="Search flags"
-          />
+          <div className="simulator-flags-header__search-wrap">
+            <input
+              className="simulator-flags-header__search"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search flags"
+            />
+            {search !== '' && (
+              <button
+                className="simulator-flags-header__search-clear"
+                onClick={() => setSearch('')}
+                aria-label="Clear search"
+              >
+                ×
+              </button>
+            )}
+          </div>
           <button className="simulator-flags-header__new-group-btn" onClick={onNewGroup}>+ New group</button>
           <button className="simulator-flags-header__new-btn" onClick={() => onNewFlag()}>+ New flag</button>
         </div>
@@ -213,9 +239,11 @@ export function SimulatorFlagsPanel({
 
       {isEmpty ? (
         <p className="simulator-empty">No flags defined.</p>
+      ) : noSearchResults ? (
+        <p className="simulator-empty">No flags match &quot;{search.trim()}&quot;.</p>
       ) : (
         <div className="simulator-flags-list">
-          {groups.map(group => (
+          {visibleGroups.map(group => (
             <FlagGroupSection
               key={group.id}
               title={group.name}
@@ -239,21 +267,23 @@ export function SimulatorFlagsPanel({
               ))}
             </FlagGroupSection>
           ))}
-          <FlagGroupSection title="Ungrouped" count={ungrouped.length} ungrouped onAdd={() => onNewFlag()}>
-            {ungrouped.map(flag => (
-              <FlagRow
-                key={flag.id}
-                flag={flag}
-                usage={usageCounts[flag.id]}
-                groups={groups}
-                onClick={() => onSelectFlag(flag)}
-                onRename={() => onRenameFlag(flag)}
-                onMove={groupName => onMoveFlag(flag, groupName)}
-                onNewGroup={() => onNewGroupForFlag(flag)}
-                onRemove={() => onRemoveFlag(flag)}
-              />
-            ))}
-          </FlagGroupSection>
+          {showUngrouped && (
+            <FlagGroupSection title="Ungrouped" count={ungrouped.length} ungrouped onAdd={() => onNewFlag()}>
+              {ungrouped.map(flag => (
+                <FlagRow
+                  key={flag.id}
+                  flag={flag}
+                  usage={usageCounts[flag.id]}
+                  groups={groups}
+                  onClick={() => onSelectFlag(flag)}
+                  onRename={() => onRenameFlag(flag)}
+                  onMove={groupName => onMoveFlag(flag, groupName)}
+                  onNewGroup={() => onNewGroupForFlag(flag)}
+                  onRemove={() => onRemoveFlag(flag)}
+                />
+              ))}
+            </FlagGroupSection>
+          )}
         </div>
       )}
 

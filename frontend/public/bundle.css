@@ -3219,18 +3219,43 @@ body {
   gap: var(--size-6);
   width: 100%;
 }
-.simulator-flags-header__search {
+.simulator-flags-header__search-wrap {
+  position: relative;
   flex: 1;
+  display: flex;
+  align-items: center;
+}
+.simulator-flags-header__search {
+  width: 100%;
   height: var(--size-26);
   background: var(--color-panel-inset);
   border: 1px solid var(--color-border);
   border-radius: var(--size-8);
-  padding: 0 var(--size-8);
+  padding: 0 var(--size-24) 0 var(--size-8);
   font-size: var(--text-11);
   color: var(--color-fg-muted);
 }
 .simulator-flags-header__search::placeholder {
   color: var(--color-fg-faintest);
+}
+.simulator-flags-header__search-clear {
+  position: absolute;
+  right: var(--size-6);
+  width: var(--size-22);
+  height: var(--size-22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-fg-faint);
+  font-size: var(--text-18);
+  line-height: 1;
+  cursor: pointer;
+}
+.simulator-flags-header__search-clear:hover {
+  background: var(--color-input);
+  color: var(--color-fg-muted);
 }
 .simulator-flags-header__new-group-btn {
   flex-shrink: 0;

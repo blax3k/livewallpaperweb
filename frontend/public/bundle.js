@@ -80442,11 +80442,19 @@ ${e2}`);
     onRemoveGroup
   }) {
     const [search, setSearch] = (0, import_react31.useState)("");
+    const query = search.trim().toLowerCase();
+    const matchingGroupNames = (0, import_react31.useMemo)(() => {
+      if (!query) return null;
+      return new Set(groups.filter((g2) => g2.name.toLowerCase().includes(query)).map((g2) => g2.name));
+    }, [groups, query]);
     const filteredFlags = (0, import_react31.useMemo)(() => {
-      const q = search.trim().toLowerCase();
-      if (!q) return flags;
-      return flags.filter((f2) => (f2.name || f2.id).toLowerCase().includes(q));
-    }, [flags, search]);
+      if (!query) return flags;
+      return flags.filter((f2) => {
+        if ((f2.name || f2.id).toLowerCase().includes(query)) return true;
+        const groupName = f2.group?.trim();
+        return !!groupName && matchingGroupNames.has(groupName);
+      });
+    }, [flags, query, matchingGroupNames]);
     const { byGroup, ungrouped } = (0, import_react31.useMemo)(() => {
       const byGroup2 = /* @__PURE__ */ new Map();
       for (const group of groups) byGroup2.set(group.name, []);
@@ -80462,6 +80470,12 @@ ${e2}`);
       return { byGroup: byGroup2, ungrouped: ungrouped2 };
     }, [filteredFlags, groups]);
     const isEmpty = flags.length === 0 && groups.length === 0;
+    const visibleGroups = (0, import_react31.useMemo)(() => {
+      if (!query) return groups;
+      return groups.filter((g2) => matchingGroupNames.has(g2.name) || (byGroup.get(g2.name)?.length ?? 0) > 0);
+    }, [groups, query, matchingGroupNames, byGroup]);
+    const showUngrouped = !query || ungrouped.length > 0;
+    const noSearchResults = !!query && visibleGroups.length === 0 && !showUngrouped;
     return /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-panel simulator-panel--flags", children: [
       /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-flags-header", children: [
         /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("span", { className: "simulator-flags-header__title", children: [
@@ -80475,15 +80489,26 @@ ${e2}`);
           " groups"
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-flags-header__actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
-            "input",
-            {
-              className: "simulator-flags-header__search",
-              value: search,
-              onChange: (e2) => setSearch(e2.target.value),
-              placeholder: "Search flags"
-            }
-          ),
+          /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-flags-header__search-wrap", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
+              "input",
+              {
+                className: "simulator-flags-header__search",
+                value: search,
+                onChange: (e2) => setSearch(e2.target.value),
+                placeholder: "Search flags"
+              }
+            ),
+            search !== "" && /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
+              "button",
+              {
+                className: "simulator-flags-header__search-clear",
+                onClick: () => setSearch(""),
+                "aria-label": "Clear search",
+                children: "\xD7"
+              }
+            )
+          ] }),
           /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("button", { className: "simulator-flags-header__new-group-btn", onClick: onNewGroup, children: "+ New group" }),
           /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("button", { className: "simulator-flags-header__new-btn", onClick: () => onNewFlag(), children: "+ New flag" })
         ] })
@@ -80492,8 +80517,12 @@ ${e2}`);
         /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { children: "Flag" }),
         /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "simulator-flags-columns__used", children: "Used by" })
       ] }),
-      isEmpty ? /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("p", { className: "simulator-empty", children: "No flags defined." }) : /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-flags-list", children: [
-        groups.map((group) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
+      isEmpty ? /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("p", { className: "simulator-empty", children: "No flags defined." }) : noSearchResults ? /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("p", { className: "simulator-empty", children: [
+        'No flags match "',
+        search.trim(),
+        '".'
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "simulator-flags-list", children: [
+        visibleGroups.map((group) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
           FlagGroupSection,
           {
             title: group.name,
@@ -80518,7 +80547,7 @@ ${e2}`);
           },
           group.id
         )),
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(FlagGroupSection, { title: "Ungrouped", count: ungrouped.length, ungrouped: true, onAdd: () => onNewFlag(), children: ungrouped.map((flag) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
+        showUngrouped && /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(FlagGroupSection, { title: "Ungrouped", count: ungrouped.length, ungrouped: true, onAdd: () => onNewFlag(), children: ungrouped.map((flag) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
           FlagRow2,
           {
             flag,
