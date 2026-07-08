@@ -27,7 +27,7 @@ export function FlagEditModal({ flag: initial, isNew, groups, onSave, onCancel }
 
 
   return (
-    <div className="modal-overlay" onClick={onCancel}>
+    <div className="modal-overlay">
       <div className="modal-box" onClick={e => e.stopPropagation()}>
         <h2 className="modal-title">{isNew ? 'New Flag' : 'Edit Flag'}</h2>
         <div className="form-row">
@@ -64,7 +64,7 @@ interface RenameFlagModalProps {
 export function RenameFlagModal({ flag, onSave, onCancel }: RenameFlagModalProps) {
   const [name, setName] = useState(flag.name);
   return (
-    <div className="modal-overlay" onClick={onCancel}>
+    <div className="modal-overlay">
       <div className="modal-box" onClick={e => e.stopPropagation()}>
         <h2 className="modal-title">Rename Flag</h2>
         <div className="form-row">
@@ -94,7 +94,7 @@ interface NewGroupModalProps {
 export function NewGroupModal({ onCreate, onCancel, error }: NewGroupModalProps) {
   const [name, setName] = useState('');
   return (
-    <div className="modal-overlay" onClick={onCancel}>
+    <div className="modal-overlay">
       <div className="modal-box" onClick={e => e.stopPropagation()}>
         <h2 className="modal-title">New Group</h2>
         <div className="form-row">
@@ -128,7 +128,7 @@ interface RenameGroupModalProps {
 export function RenameGroupModal({ group, onSave, onCancel, error }: RenameGroupModalProps) {
   const [name, setName] = useState(group.name);
   return (
-    <div className="modal-overlay" onClick={onCancel}>
+    <div className="modal-overlay">
       <div className="modal-box" onClick={e => e.stopPropagation()}>
         <h2 className="modal-title">Rename Group</h2>
         <div className="form-row">
@@ -160,7 +160,7 @@ interface RemoveFlagGuardedModalProps {
 
 export function RemoveFlagGuardedModal({ flag, usage, onCancel, onConfirm }: RemoveFlagGuardedModalProps) {
   return (
-    <div className="modal-overlay" onClick={onCancel}>
+    <div className="modal-overlay">
       <div className="modal-box" onClick={e => e.stopPropagation()}>
         <h2 className="modal-title" style={{ color: 'var(--color-danger)' }}>⚠ Remove &quot;{flag.name || flag.id}&quot;?</h2>
         <p style={{ fontSize: 'var(--text-12)', lineHeight: 1.55, color: 'var(--color-fg-subtle)' }}>
@@ -197,7 +197,7 @@ interface RemoveGroupModalProps {
 
 export function RemoveGroupModal({ group, affectedFlags, onCancel, onConfirm }: RemoveGroupModalProps) {
   return (
-    <div className="modal-overlay" onClick={onCancel}>
+    <div className="modal-overlay">
       <div className="modal-box" onClick={e => e.stopPropagation()}>
         <h2 className="modal-title" style={{ color: 'var(--color-danger)' }}>⚠ Remove group &quot;{group.name}&quot;?</h2>
         <p style={{ fontSize: 'var(--text-12)', lineHeight: 1.55, color: 'var(--color-fg-subtle)' }}>

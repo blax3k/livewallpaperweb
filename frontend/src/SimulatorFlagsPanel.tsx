@@ -108,7 +108,6 @@ function GroupHeaderMenu({ onAddFlag, onRename, onRemove }: { onAddFlag: () => v
         <button className="simulator-flags-group__menu-btn" onClick={e => e.stopPropagation()}>⋯</button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" onClick={e => e.stopPropagation()}>
-        <DropdownMenuItem onSelect={onAddFlag}>+ Add flag to group</DropdownMenuItem>
         <DropdownMenuItem onSelect={onRename}>✎ Rename group…</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem danger onSelect={onRemove}>✕ Remove group…</DropdownMenuItem>

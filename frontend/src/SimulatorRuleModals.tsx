@@ -247,7 +247,7 @@ export function RuleEditModal({ rule: initial, flags, groups, onSave, onCancel }
     setField('actions', rule.actions.filter((_, idx) => idx !== i));
 
   return (
-    <div className="modal-overlay" onClick={onCancel}>
+    <div className="modal-overlay">
       <div className="rule-edit-modal" onClick={e => e.stopPropagation()}>
         <div className="rule-edit-modal__header">
           <span className="rule-edit-modal__title">{initial.id ? 'Edit rule' : 'New rule'}</span>
@@ -361,7 +361,7 @@ interface RenameRuleModalProps {
 export function RenameRuleModal({ rule, comboCount, onSave, onCancel }: RenameRuleModalProps) {
   const [name, setName] = useState(rule.name);
   return (
-    <div className="modal-overlay" onClick={onCancel}>
+    <div className="modal-overlay">
       <div className="modal-box" onClick={e => e.stopPropagation()}>
         <h2 className="modal-title">Rename Rule</h2>
         <div className="form-row">
@@ -396,7 +396,7 @@ interface NewGroupModalProps {
 export function NewGroupModal({ onCreate, onCancel, error }: NewGroupModalProps) {
   const [name, setName] = useState('');
   return (
-    <div className="modal-overlay" onClick={onCancel}>
+    <div className="modal-overlay">
       <div className="modal-box" onClick={e => e.stopPropagation()}>
         <h2 className="modal-title">New Group</h2>
         <div className="form-row">
@@ -430,7 +430,7 @@ interface RenameGroupModalProps {
 export function RenameGroupModal({ group, onSave, onCancel, error }: RenameGroupModalProps) {
   const [name, setName] = useState(group.name);
   return (
-    <div className="modal-overlay" onClick={onCancel}>
+    <div className="modal-overlay">
       <div className="modal-box" onClick={e => e.stopPropagation()}>
         <h2 className="modal-title">Rename Group</h2>
         <div className="form-row">
@@ -468,7 +468,7 @@ interface RemoveRuleGuardedModalProps {
 export function RemoveRuleGuardedModal({ rule, usage, onCancel, onConfirm }: RemoveRuleGuardedModalProps) {
   const flagNames = usage.filter(u => u.type === 'FLAG').map(u => u.name);
   return (
-    <div className="modal-overlay" onClick={onCancel}>
+    <div className="modal-overlay">
       <div className="modal-box" onClick={e => e.stopPropagation()}>
         <h2 className="modal-title" style={{ color: 'var(--color-danger)' }}>⚠ Remove &quot;{rule.name || rule.id}&quot;?</h2>
         <p style={{ fontSize: 'var(--text-12)', lineHeight: 1.55, color: 'var(--color-fg-subtle)' }}>
@@ -500,7 +500,7 @@ interface RemoveGroupModalProps {
 
 export function RemoveGroupModal({ group, affectedRules, onCancel, onConfirm }: RemoveGroupModalProps) {
   return (
-    <div className="modal-overlay" onClick={onCancel}>
+    <div className="modal-overlay">
       <div className="modal-box" onClick={e => e.stopPropagation()}>
         <h2 className="modal-title" style={{ color: 'var(--color-danger)' }}>⚠ Remove group &quot;{group.name}&quot;?</h2>
         <p style={{ fontSize: 'var(--text-12)', lineHeight: 1.55, color: 'var(--color-fg-subtle)' }}>

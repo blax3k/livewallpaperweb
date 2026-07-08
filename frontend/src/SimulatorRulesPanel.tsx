@@ -96,7 +96,6 @@ function GroupHeaderMenu({ onAddRule, onRename, onRemove }: { onAddRule: () => v
         <button className="simulator-rules-group__menu-btn" onClick={e => e.stopPropagation()}>⋯</button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" onClick={e => e.stopPropagation()}>
-        <DropdownMenuItem onSelect={onAddRule}>+ Add rule to group</DropdownMenuItem>
         <DropdownMenuItem onSelect={onRename}>✎ Rename group…</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem danger onSelect={onRemove}>✕ Remove group…</DropdownMenuItem>
@@ -126,7 +125,7 @@ function RuleGroupSection({ title, count, ungrouped, onAdd, onRenameGroup, onRem
         <span className="simulator-rules-group__caret">{open ? '▾' : '▸'}</span>
         <span className="simulator-rules-group__name">{title}</span>
         <span className="simulator-rules-group__count">{count}</span>
-        {ungrouped && <span className="simulator-rules-group__hint">— rules with no group · can&apos;t be renamed or removed</span>}
+        {ungrouped && <span className="simulator-rules-group__hint">rules with no group</span>}
         {onAdd && (
           <button
             className="simulator-rules-group__add"

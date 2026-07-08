@@ -3353,7 +3353,6 @@ body {
   cursor: pointer;
 }
 .simulator-rules-group__menu-btn {
-  margin-left: auto;
   flex-shrink: 0;
   width: var(--size-18);
   height: var(--size-18);
@@ -3626,7 +3625,6 @@ body {
   cursor: pointer;
 }
 .simulator-flags-group__menu-btn {
-  margin-left: auto;
   flex-shrink: 0;
   width: var(--size-18);
   height: var(--size-18);

@@ -109,7 +109,7 @@ export function SceneFlagsModal({ sceneName, flags, declarations, onSave, onClos
   }, [required, excluded, scored, onSave]);
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay">
       <div className="modal-box sfm-modal" onClick={e => e.stopPropagation()}>
         <h2 className="modal-title">Scene Flags — {sceneName}</h2>
         <p className="section-hint">

@@ -79260,7 +79260,7 @@ ${e2}`);
       if (scored.length > 0) result.scored = scored;
       onSave(result);
     }, [required, excluded, scored, onSave]);
-    return /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { className: "modal-overlay", onClick: onClose, children: /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "modal-box sfm-modal", onClick: (e2) => e2.stopPropagation(), children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "modal-box sfm-modal", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("h2", { className: "modal-title", children: [
         "Scene Flags \u2014 ",
         sceneName
@@ -79713,7 +79713,6 @@ ${e2}`);
     return /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)(DropdownMenu2, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("button", { className: "simulator-rules-group__menu-btn", onClick: (e2) => e2.stopPropagation(), children: "\u22EF" }) }),
       /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)(DropdownMenuContent2, { align: "end", onClick: (e2) => e2.stopPropagation(), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(DropdownMenuItem2, { onSelect: onAddRule, children: "+ Add rule to group" }),
         /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(DropdownMenuItem2, { onSelect: onRename, children: "\u270E Rename group\u2026" }),
         /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(DropdownMenuSeparator2, {}),
         /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(DropdownMenuItem2, { danger: true, onSelect: onRemove, children: "\u2715 Remove group\u2026" })
@@ -79732,7 +79731,7 @@ ${e2}`);
             /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-rules-group__caret", children: open ? "\u25BE" : "\u25B8" }),
             /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-rules-group__name", children: title }),
             /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-rules-group__count", children: count4 }),
-            ungrouped && /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-rules-group__hint", children: "\u2014 rules with no group \xB7 can't be renamed or removed" }),
+            ungrouped && /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-rules-group__hint", children: "rules with no group" }),
             onAdd && /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(
               "button",
               {
@@ -79957,7 +79956,6 @@ ${e2}`);
     return /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(DropdownMenu2, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("button", { className: "simulator-flags-group__menu-btn", onClick: (e2) => e2.stopPropagation(), children: "\u22EF" }) }),
       /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(DropdownMenuContent2, { align: "end", onClick: (e2) => e2.stopPropagation(), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuItem2, { onSelect: onAddFlag, children: "+ Add flag to group" }),
         /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuItem2, { onSelect: onRename, children: "\u270E Rename group\u2026" }),
         /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuSeparator2, {}),
         /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuItem2, { danger: true, onSelect: onRemove, children: "\u2715 Remove group\u2026" })
@@ -80155,7 +80153,7 @@ ${e2}`);
     const handleGroupSelect = (value) => {
       setFlag({ ...flag, group: value || void 0 });
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("div", { className: "modal-overlay", onClick: onCancel, children: /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("h2", { className: "modal-title", children: isNew ? "New Flag" : "Edit Flag" }),
       /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "form-row", children: [
         /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("label", { children: "Name" }),
@@ -80184,7 +80182,7 @@ ${e2}`);
   }
   function RenameFlagModal({ flag, onSave, onCancel }) {
     const [name, setName] = (0, import_react30.useState)(flag.name);
-    return /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("div", { className: "modal-overlay", onClick: onCancel, children: /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("h2", { className: "modal-title", children: "Rename Flag" }),
       /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "form-row", children: [
         /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("label", { children: "Name" }),
@@ -80206,7 +80204,7 @@ ${e2}`);
   }
   function NewGroupModal({ onCreate, onCancel, error }) {
     const [name, setName] = (0, import_react30.useState)("");
-    return /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("div", { className: "modal-overlay", onClick: onCancel, children: /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("h2", { className: "modal-title", children: "New Group" }),
       /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "form-row", children: [
         /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("label", { children: "Name" }),
@@ -80233,7 +80231,7 @@ ${e2}`);
   }
   function RenameGroupModal({ group, onSave, onCancel, error }) {
     const [name, setName] = (0, import_react30.useState)(group.name);
-    return /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("div", { className: "modal-overlay", onClick: onCancel, children: /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("h2", { className: "modal-title", children: "Rename Group" }),
       /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "form-row", children: [
         /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("label", { children: "Name" }),
@@ -80258,7 +80256,7 @@ ${e2}`);
     ] }) });
   }
   function RemoveFlagGuardedModal({ flag, usage, onCancel, onConfirm }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("div", { className: "modal-overlay", onClick: onCancel, children: /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("h2", { className: "modal-title", style: { color: "var(--color-danger)" }, children: [
         '\u26A0 Remove "',
         flag.name || flag.id,
@@ -80284,7 +80282,7 @@ ${e2}`);
     ] }) });
   }
   function RemoveGroupModal({ group, affectedFlags, onCancel, onConfirm }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("div", { className: "modal-overlay", onClick: onCancel, children: /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("h2", { className: "modal-title", style: { color: "var(--color-danger)" }, children: [
         '\u26A0 Remove group "',
         group.name,
@@ -80495,7 +80493,7 @@ ${e2}`);
     const addAction = () => setField("actions", [...rule.actions, emptyAction()]);
     const updateAction = (i2, a2) => setField("actions", rule.actions.map((act, idx) => idx === i2 ? a2 : act));
     const deleteAction = (i2) => setField("actions", rule.actions.filter((_, idx) => idx !== i2));
-    return /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "modal-overlay", onClick: onCancel, children: /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "rule-edit-modal", onClick: (e2) => e2.stopPropagation(), children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "rule-edit-modal", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "rule-edit-modal__header", children: [
         /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "rule-edit-modal__title", children: initial.id ? "Edit rule" : "New rule" }),
         /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("button", { type: "button", className: "rule-edit-modal__close", onClick: onCancel, "aria-label": "Close", children: "\u2715" })
@@ -80601,7 +80599,7 @@ ${e2}`);
   }
   function RenameRuleModal({ rule, comboCount, onSave, onCancel }) {
     const [name, setName] = (0, import_react31.useState)(rule.name);
-    return /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "modal-overlay", onClick: onCancel, children: /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("h2", { className: "modal-title", children: "Rename Rule" }),
       /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "form-row", children: [
         /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("label", { children: "Name" }),
@@ -80632,7 +80630,7 @@ ${e2}`);
   }
   function NewGroupModal2({ onCreate, onCancel, error }) {
     const [name, setName] = (0, import_react31.useState)("");
-    return /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "modal-overlay", onClick: onCancel, children: /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("h2", { className: "modal-title", children: "New Group" }),
       /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "form-row", children: [
         /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("label", { children: "Name" }),
@@ -80659,7 +80657,7 @@ ${e2}`);
   }
   function RenameGroupModal2({ group, onSave, onCancel, error }) {
     const [name, setName] = (0, import_react31.useState)(group.name);
-    return /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "modal-overlay", onClick: onCancel, children: /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("h2", { className: "modal-title", children: "Rename Group" }),
       /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "form-row", children: [
         /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("label", { children: "Name" }),
@@ -80685,7 +80683,7 @@ ${e2}`);
   }
   function RemoveRuleGuardedModal({ rule, usage, onCancel, onConfirm }) {
     const flagNames = usage.filter((u2) => u2.type === "FLAG").map((u2) => u2.name);
-    return /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "modal-overlay", onClick: onCancel, children: /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("h2", { className: "modal-title", style: { color: "var(--color-danger)" }, children: [
         '\u26A0 Remove "',
         rule.name || rule.id,
@@ -80713,7 +80711,7 @@ ${e2}`);
     ] }) });
   }
   function RemoveGroupModal2({ group, affectedRules, onCancel, onConfirm }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "modal-overlay", onClick: onCancel, children: /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("h2", { className: "modal-title", style: { color: "var(--color-danger)" }, children: [
         '\u26A0 Remove group "',
         group.name,
