@@ -4,7 +4,7 @@ import { PageLayout, PageHeader, PageBody } from './components/PageLayout';
 import { Button } from './components/Button';
 import { ApiError, rulesApi, ruleGroupsApi, flagsApi, flagGroupsApi, type RuleDefinition, type RuleGroup, type FlagDefinition, type FlagGroup } from './api';
 import { RuleEditModal, emptyRule } from './RulesPage';
-import { SimulatorRulesPanel } from './SimulatorRulesPanel';
+import { SimulatorRulesPanel, COMBO_CONDITION_TYPES } from './SimulatorRulesPanel';
 import { SimulatorFlagsPanel } from './SimulatorFlagsPanel';
 import {
   generateUniqueId,
@@ -15,6 +15,14 @@ import {
   RemoveFlagGuardedModal,
   RemoveGroupModal,
 } from './SimulatorFlagModals';
+import {
+  RenameRuleModal,
+  NewGroupModal as NewRuleGroupModal,
+  RenameGroupModal as RenameRuleGroupModal,
+  RemoveRuleGuardedModal,
+  RemoveGroupModal as RemoveRuleGroupModal,
+  type RuleUsageRef,
+} from './SimulatorRuleModals';
 
 interface SimulatorPageProps {
   projectId: string;
@@ -42,6 +50,13 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
   const [renamingGroup, setRenamingGroup] = useState<FlagGroup | null>(null);
   const [renameGroupError, setRenameGroupError] = useState<string | null>(null);
   const [removingGroup, setRemovingGroup] = useState<FlagGroup | null>(null);
+  const [renamingRule, setRenamingRule] = useState<RuleDefinition | null>(null);
+  const [removeRuleTarget, setRemoveRuleTarget] = useState<{ rule: RuleDefinition; usage: RuleUsageRef[] } | null>(null);
+  const [newRuleGroupContext, setNewRuleGroupContext] = useState<{ forRule?: RuleDefinition } | null>(null);
+  const [newRuleGroupError, setNewRuleGroupError] = useState<string | null>(null);
+  const [renamingRuleGroup, setRenamingRuleGroup] = useState<RuleGroup | null>(null);
+  const [renameRuleGroupError, setRenameRuleGroupError] = useState<string | null>(null);
+  const [removingRuleGroup, setRemovingRuleGroup] = useState<RuleGroup | null>(null);
 
   useEffect(() => {
     Promise.all([rulesApi.list(projectId), ruleGroupsApi.list(projectId), flagsApi.list(projectId), flagGroupsApi.list(projectId), flagsApi.checkUsageCounts(projectId)])
@@ -57,7 +72,21 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
     flagsApi.checkUsageCounts(projectId).then(setFlagUsageCounts).catch(err => setError(String(err)));
   };
 
+  const refreshRuleGroups = () => {
+    ruleGroupsApi.list(projectId).then(setRuleGroups).catch(err => setError(String(err)));
+  };
+
   const flagsById = useMemo(() => new Map(flags.map(f => [f.id, f])), [flags]);
+
+  const computeRuleUsage = (rule: RuleDefinition, allRules: RuleDefinition[]): RuleUsageRef[] => {
+    const setFlagIds = [...new Set((rule.actions ?? []).map(a => a.flagId).filter((id): id is string => !!id))];
+    const flagRefs: RuleUsageRef[] = setFlagIds.map(id => ({ type: 'FLAG', name: flagsById.get(id)?.name || id }));
+    const comboRefs: RuleUsageRef[] = allRules
+      .filter(r => r.id !== rule.id)
+      .filter(r => (r.conditions ?? []).some(g => g.checks.some(c => COMBO_CONDITION_TYPES.has(c.type) && c.flagId && setFlagIds.includes(c.flagId))))
+      .map(r => ({ type: 'COMBO', name: r.name || r.id }));
+    return [...flagRefs, ...comboRefs];
+  };
 
   const handleSaveRule = (updated: RuleDefinition) => {
     if (editingRuleIndex === null) return;
@@ -68,8 +97,8 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
     rulesApi.save(projectId, next).catch(err => setError(String(err)));
   };
 
-  const handleNewRule = () => {
-    setRules(prev => [...prev, emptyRule()]);
+  const handleNewRule = (presetGroup?: string) => {
+    setRules(prev => [...prev, { ...emptyRule(), ...(presetGroup ? { group: presetGroup } : {}) }]);
     setIsNewRule(true);
     setEditingRuleIndex(rules.length);
   };
@@ -80,6 +109,103 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
     }
     setEditingRuleIndex(null);
     setIsNewRule(false);
+  };
+
+  const handleSaveRenameRule = (name: string) => {
+    if (!renamingRule) return;
+    const next = rules.map(r => r.id === renamingRule.id ? { ...r, name } : r);
+    setRules(next);
+    setRenamingRule(null);
+    rulesApi.save(projectId, next).catch(err => setError(String(err)));
+  };
+
+  const handleMoveRule = (rule: RuleDefinition, groupName: string | undefined) => {
+    const next = rules.map(r => r.id === rule.id ? { ...r, group: groupName } : r);
+    setRules(next);
+    rulesApi.save(projectId, next)
+      .then(() => refreshRuleGroups())
+      .catch(err => setError(String(err)));
+  };
+
+  const handleOpenNewRuleGroup = (forRule?: RuleDefinition) => {
+    setNewRuleGroupError(null);
+    setNewRuleGroupContext({ forRule });
+  };
+
+  const handleCreateRuleGroup = async (name: string) => {
+    setNewRuleGroupError(null);
+    try {
+      const group = await ruleGroupsApi.create(projectId, name);
+      setRuleGroups(prev => [...prev, group].sort((a, b) => a.name.localeCompare(b.name)));
+      const forRule = newRuleGroupContext?.forRule;
+      if (forRule) {
+        const next = rules.map(r => r.id === forRule.id ? { ...r, group: group.name } : r);
+        setRules(next);
+        await rulesApi.save(projectId, next);
+      }
+      setNewRuleGroupContext(null);
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 409) {
+        setNewRuleGroupError(err.message);
+      } else {
+        setError(String(err));
+        setNewRuleGroupContext(null);
+      }
+    }
+  };
+
+  const handleSaveRenameRuleGroup = async (name: string) => {
+    if (!renamingRuleGroup) return;
+    setRenameRuleGroupError(null);
+    try {
+      const updated = await ruleGroupsApi.rename(projectId, renamingRuleGroup.id, name);
+      setRuleGroups(prev => prev.map(g => g.id === updated.id ? updated : g).sort((a, b) => a.name.localeCompare(b.name)));
+      setRules(prev => prev.map(r => r.group === renamingRuleGroup.name ? { ...r, group: updated.name } : r));
+      setRenamingRuleGroup(null);
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 409) {
+        setRenameRuleGroupError(err.message);
+      } else {
+        setError(String(err));
+        setRenamingRuleGroup(null);
+      }
+    }
+  };
+
+  const handleConfirmRemoveRuleGroup = async () => {
+    if (!removingRuleGroup) return;
+    try {
+      await ruleGroupsApi.delete(projectId, removingRuleGroup.id);
+      setRuleGroups(prev => prev.filter(g => g.id !== removingRuleGroup.id));
+      setRules(prev => prev.map(r => r.group === removingRuleGroup.name ? { ...r, group: undefined } : r));
+      setRemovingRuleGroup(null);
+    } catch (err) {
+      setError(String(err));
+      setRemovingRuleGroup(null);
+    }
+  };
+
+  const performRemoveRule = (rule: RuleDefinition) => {
+    const next = rules.filter(r => r.id !== rule.id);
+    setRules(next);
+    rulesApi.save(projectId, next)
+      .then(() => refreshRuleGroups())
+      .catch(err => setError(String(err)));
+  };
+
+  const handleRemoveRuleRequest = (rule: RuleDefinition) => {
+    const usage = computeRuleUsage(rule, rules);
+    if (usage.length === 0) {
+      performRemoveRule(rule);
+    } else {
+      setRemoveRuleTarget({ rule, usage });
+    }
+  };
+
+  const handleConfirmRemoveRule = () => {
+    if (!removeRuleTarget) return;
+    performRemoveRule(removeRuleTarget.rule);
+    setRemoveRuleTarget(null);
   };
 
   const handleNewFlag = (presetGroup?: string) => {
@@ -289,7 +415,20 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
               </div>
               <div className="simulator-pipeline__row">
                 {/* RULES */}
-                <SimulatorRulesPanel rules={rules} groups={ruleGroups} flagsById={flagsById} onSelectRule={setEditingRuleIndex} onNewRule={handleNewRule} />
+                <SimulatorRulesPanel
+                  rules={rules}
+                  groups={ruleGroups}
+                  flagsById={flagsById}
+                  onSelectRule={setEditingRuleIndex}
+                  onNewRule={handleNewRule}
+                  onRenameRule={setRenamingRule}
+                  onMoveRule={handleMoveRule}
+                  onNewGroupForRule={handleOpenNewRuleGroup}
+                  onRemoveRule={handleRemoveRuleRequest}
+                  onNewGroup={() => handleOpenNewRuleGroup()}
+                  onRenameGroup={setRenamingRuleGroup}
+                  onRemoveGroup={setRemovingRuleGroup}
+                />
 
                 <Arrow />
 
@@ -380,6 +519,45 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
           flags={flags}
           onSave={handleSaveRule}
           onCancel={handleCancelEditRule}
+        />
+      )}
+      {renamingRule && (
+        <RenameRuleModal
+          rule={renamingRule}
+          comboCount={computeRuleUsage(renamingRule, rules).filter(u => u.type === 'COMBO').length}
+          onSave={handleSaveRenameRule}
+          onCancel={() => setRenamingRule(null)}
+        />
+      )}
+      {newRuleGroupContext && (
+        <NewRuleGroupModal
+          error={newRuleGroupError}
+          onCreate={handleCreateRuleGroup}
+          onCancel={() => { setNewRuleGroupContext(null); setNewRuleGroupError(null); }}
+        />
+      )}
+      {renamingRuleGroup && (
+        <RenameRuleGroupModal
+          group={renamingRuleGroup}
+          error={renameRuleGroupError}
+          onSave={handleSaveRenameRuleGroup}
+          onCancel={() => { setRenamingRuleGroup(null); setRenameRuleGroupError(null); }}
+        />
+      )}
+      {removeRuleTarget && (
+        <RemoveRuleGuardedModal
+          rule={removeRuleTarget.rule}
+          usage={removeRuleTarget.usage}
+          onCancel={() => setRemoveRuleTarget(null)}
+          onConfirm={handleConfirmRemoveRule}
+        />
+      )}
+      {removingRuleGroup && (
+        <RemoveRuleGroupModal
+          group={removingRuleGroup}
+          affectedRules={rules.filter(r => r.group === removingRuleGroup.name)}
+          onCancel={() => setRemovingRuleGroup(null)}
+          onConfirm={handleConfirmRemoveRuleGroup}
         />
       )}
       {editingFlagId !== null && (

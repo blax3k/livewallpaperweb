@@ -1,8 +1,17 @@
 import { useMemo, useState } from 'react';
 import type { RuleDefinition, RuleGroup, FlagDefinition } from './api';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from './components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+} from './components/ui/dropdown-menu';
 
-const COMBO_CONDITION_TYPES = new Set(['flag_active', 'flag_inactive', 'time_since_flag_change']);
+export const COMBO_CONDITION_TYPES = new Set(['flag_active', 'flag_inactive', 'time_since_flag_change']);
 
 function isCombo(rule: RuleDefinition): boolean {
   return (rule.conditions ?? []).some(group => group.checks.some(c => COMBO_CONDITION_TYPES.has(c.type)));
@@ -14,23 +23,58 @@ function setsLabel(rule: RuleDefinition, flagsById: Map<string, FlagDefinition>)
   return flagIds.map(id => flagsById.get(id)?.name || id).join(', ');
 }
 
-function RuleRowMenu() {
+interface RuleRowMenuProps {
+  rule: RuleDefinition;
+  groups: RuleGroup[];
+  onRename: () => void;
+  onMove: (groupName: string | undefined) => void;
+  onNewGroup: () => void;
+  onRemove: () => void;
+}
+
+function RuleRowMenu({ rule, groups, onRename, onMove, onNewGroup, onRemove }: RuleRowMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="simulator-rules-row__menu-btn" onClick={e => e.stopPropagation()}>⋯</button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" onClick={e => e.stopPropagation()}>
-        <DropdownMenuItem>✎ Rename…</DropdownMenuItem>
-        <DropdownMenuItem>⇄ Move to group ▸</DropdownMenuItem>
+        <DropdownMenuItem onSelect={onRename}>✎ Rename…</DropdownMenuItem>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>⇄ Move to group</DropdownMenuSubTrigger>
+          <DropdownMenuSubContent onClick={e => e.stopPropagation()}>
+            {groups.map(g => (
+              <DropdownMenuItem key={g.id} onSelect={() => onMove(g.name)}>
+                {rule.group === g.name ? '✓ ' : ''}{g.name}{rule.group === g.name ? ' (current)' : ''}
+              </DropdownMenuItem>
+            ))}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={() => onMove(undefined)}>
+              {!rule.group ? '✓ ' : ''}Ungrouped{!rule.group ? ' (current)' : ''}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={onNewGroup}>+ New group…</DropdownMenuItem>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
         <DropdownMenuSeparator />
-        <DropdownMenuItem danger>✕ Remove…</DropdownMenuItem>
+        <DropdownMenuItem danger onSelect={onRemove}>✕ Remove…</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
 
-function RuleRow({ rule, flagsById, onClick }: { rule: RuleDefinition; flagsById: Map<string, FlagDefinition>; onClick: () => void }) {
+function RuleRow({
+  rule, flagsById, groups, onClick, onRename, onMove, onNewGroup, onRemove,
+}: {
+  rule: RuleDefinition;
+  flagsById: Map<string, FlagDefinition>;
+  groups: RuleGroup[];
+  onClick: () => void;
+  onRename: () => void;
+  onMove: (groupName: string | undefined) => void;
+  onNewGroup: () => void;
+  onRemove: () => void;
+}) {
   const sets = setsLabel(rule, flagsById);
   return (
     <div className="simulator-rules-row" onClick={onClick}>
@@ -40,23 +84,22 @@ function RuleRow({ rule, flagsById, onClick }: { rule: RuleDefinition; flagsById
       <span className="simulator-rules-row__sets">
         {sets ? `→ ${sets}` : <span className="simulator-rules-row__unused">Unused</span>}
       </span>
-      <RuleRowMenu />
+      <RuleRowMenu rule={rule} groups={groups} onRename={onRename} onMove={onMove} onNewGroup={onNewGroup} onRemove={onRemove} />
     </div>
   );
 }
 
-function GroupHeaderMenu({ groupName }: { groupName: string }) {
+function GroupHeaderMenu({ onAddRule, onRename, onRemove }: { onAddRule: () => void; onRename: () => void; onRemove: () => void }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="simulator-rules-group__menu-btn" onClick={e => e.stopPropagation()}>⋯</button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" onClick={e => e.stopPropagation()}>
-        <div className="simulator-rules-group__menu-caption">Group &quot;{groupName}&quot;</div>
-        <DropdownMenuItem>+ Add rule to group</DropdownMenuItem>
-        <DropdownMenuItem>✎ Rename group…</DropdownMenuItem>
+        <DropdownMenuItem onSelect={onAddRule}>+ Add rule to group</DropdownMenuItem>
+        <DropdownMenuItem onSelect={onRename}>✎ Rename group…</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem danger>✕ Remove group…</DropdownMenuItem>
+        <DropdownMenuItem danger onSelect={onRemove}>✕ Remove group…</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -67,10 +110,12 @@ interface RuleGroupSectionProps {
   count: number;
   ungrouped?: boolean;
   onAdd?: () => void;
+  onRenameGroup?: () => void;
+  onRemoveGroup?: () => void;
   children: React.ReactNode;
 }
 
-function RuleGroupSection({ title, count, ungrouped, onAdd, children }: RuleGroupSectionProps) {
+function RuleGroupSection({ title, count, ungrouped, onAdd, onRenameGroup, onRemoveGroup, children }: RuleGroupSectionProps) {
   const [open, setOpen] = useState(true);
   return (
     <div className="simulator-rules-group">
@@ -90,7 +135,9 @@ function RuleGroupSection({ title, count, ungrouped, onAdd, children }: RuleGrou
             +
           </button>
         )}
-        {!ungrouped && <GroupHeaderMenu groupName={title} />}
+        {!ungrouped && onRenameGroup && onRemoveGroup && (
+          <GroupHeaderMenu onAddRule={() => onAdd?.()} onRename={onRenameGroup} onRemove={onRemoveGroup} />
+        )}
       </div>
       {open && <div className="simulator-rules-group__rows">{children}</div>}
     </div>
@@ -101,11 +148,20 @@ interface SimulatorRulesPanelProps {
   rules: RuleDefinition[];
   groups: RuleGroup[];
   flagsById: Map<string, FlagDefinition>;
-  onNewRule: () => void;
+  onNewRule: (presetGroup?: string) => void;
   onSelectRule: (index: number) => void;
+  onRenameRule: (rule: RuleDefinition) => void;
+  onMoveRule: (rule: RuleDefinition, groupName: string | undefined) => void;
+  onNewGroupForRule: (rule: RuleDefinition) => void;
+  onRemoveRule: (rule: RuleDefinition) => void;
+  onNewGroup: () => void;
+  onRenameGroup: (group: RuleGroup) => void;
+  onRemoveGroup: (group: RuleGroup) => void;
 }
 
-export function SimulatorRulesPanel({ rules, groups, flagsById, onNewRule, onSelectRule }: SimulatorRulesPanelProps) {
+export function SimulatorRulesPanel({
+  rules, groups, flagsById, onNewRule, onSelectRule, onRenameRule, onMoveRule, onNewGroupForRule, onRemoveRule, onNewGroup, onRenameGroup, onRemoveGroup,
+}: SimulatorRulesPanelProps) {
   const [search, setSearch] = useState('');
 
   const filteredRules = useMemo(() => {
@@ -147,7 +203,8 @@ export function SimulatorRulesPanel({ rules, groups, flagsById, onNewRule, onSel
             onChange={e => setSearch(e.target.value)}
             placeholder="Search rules"
           />
-          <button className="simulator-rules-header__new-btn" onClick={onNewRule}>+ New rule</button>
+          <button className="simulator-rules-header__new-group-btn" onClick={onNewGroup}>+ New group</button>
+          <button className="simulator-rules-header__new-btn" onClick={() => onNewRule()}>+ New rule</button>
         </div>
       </div>
 
@@ -163,15 +220,42 @@ export function SimulatorRulesPanel({ rules, groups, flagsById, onNewRule, onSel
       ) : (
         <div className="simulator-rules-list">
           {groups.map(group => (
-            <RuleGroupSection key={group.id} title={group.name} count={(byGroup.get(group.name) ?? []).length}>
+            <RuleGroupSection
+              key={group.id}
+              title={group.name}
+              count={(byGroup.get(group.name) ?? []).length}
+              onAdd={() => onNewRule(group.name)}
+              onRenameGroup={() => onRenameGroup(group)}
+              onRemoveGroup={() => onRemoveGroup(group)}
+            >
               {(byGroup.get(group.name) ?? []).map(({ rule, index }) => (
-                <RuleRow key={rule.id} rule={rule} flagsById={flagsById} onClick={() => onSelectRule(index)} />
+                <RuleRow
+                  key={rule.id}
+                  rule={rule}
+                  flagsById={flagsById}
+                  groups={groups}
+                  onClick={() => onSelectRule(index)}
+                  onRename={() => onRenameRule(rule)}
+                  onMove={groupName => onMoveRule(rule, groupName)}
+                  onNewGroup={() => onNewGroupForRule(rule)}
+                  onRemove={() => onRemoveRule(rule)}
+                />
               ))}
             </RuleGroupSection>
           ))}
-          <RuleGroupSection title="Ungrouped" count={ungrouped.length} ungrouped onAdd={onNewRule}>
+          <RuleGroupSection title="Ungrouped" count={ungrouped.length} ungrouped onAdd={() => onNewRule()}>
             {ungrouped.map(({ rule, index }) => (
-              <RuleRow key={rule.id} rule={rule} flagsById={flagsById} onClick={() => onSelectRule(index)} />
+              <RuleRow
+                key={rule.id}
+                rule={rule}
+                flagsById={flagsById}
+                groups={groups}
+                onClick={() => onSelectRule(index)}
+                onRename={() => onRenameRule(rule)}
+                onMove={groupName => onMoveRule(rule, groupName)}
+                onNewGroup={() => onNewGroupForRule(rule)}
+                onRemove={() => onRemoveRule(rule)}
+              />
             ))}
           </RuleGroupSection>
         </div>
