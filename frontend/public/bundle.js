@@ -876,18 +876,18 @@
           lazyType._debugInfo = [{ awaited: ioInfo }];
           return lazyType;
         };
-        exports.memo = function(type, compare) {
+        exports.memo = function(type, compare2) {
           null == type && console.error(
             "memo: The first argument must be a component. Instead received: %s",
             null === type ? "null" : typeof type
           );
-          compare = {
+          compare2 = {
             $$typeof: REACT_MEMO_TYPE,
             type,
-            compare: void 0 === compare ? null : compare
+            compare: void 0 === compare2 ? null : compare2
           };
           var ownName;
-          Object.defineProperty(compare, "displayName", {
+          Object.defineProperty(compare2, "displayName", {
             enumerable: false,
             configurable: true,
             get: function() {
@@ -898,7 +898,7 @@
               type.name || type.displayName || (Object.defineProperty(type, "name", { value: name }), type.displayName = name);
             }
           });
-          return compare;
+          return compare2;
         };
         exports.startTransition = function(scope) {
           var prevTransition = ReactSharedInternals.T, currentTransition = {};
@@ -1083,7 +1083,7 @@
           heap.push(node);
           a: for (; 0 < index2; ) {
             var parentIndex = index2 - 1 >>> 1, parent = heap[parentIndex];
-            if (0 < compare(parent, node))
+            if (0 < compare2(parent, node))
               heap[parentIndex] = node, heap[index2] = parent, index2 = parentIndex;
             else break a;
           }
@@ -1098,16 +1098,16 @@
             heap[0] = last;
             a: for (var index2 = 0, length = heap.length, halfLength = length >>> 1; index2 < halfLength; ) {
               var leftIndex = 2 * (index2 + 1) - 1, left = heap[leftIndex], rightIndex = leftIndex + 1, right = heap[rightIndex];
-              if (0 > compare(left, last))
-                rightIndex < length && 0 > compare(right, left) ? (heap[index2] = right, heap[rightIndex] = last, index2 = rightIndex) : (heap[index2] = left, heap[leftIndex] = last, index2 = leftIndex);
-              else if (rightIndex < length && 0 > compare(right, last))
+              if (0 > compare2(left, last))
+                rightIndex < length && 0 > compare2(right, left) ? (heap[index2] = right, heap[rightIndex] = last, index2 = rightIndex) : (heap[index2] = left, heap[leftIndex] = last, index2 = leftIndex);
+              else if (rightIndex < length && 0 > compare2(right, last))
                 heap[index2] = right, heap[rightIndex] = last, index2 = rightIndex;
               else break a;
             }
           }
           return first;
         }
-        function compare(a2, b2) {
+        function compare2(a2, b2) {
           var diff = a2.sortIndex - b2.sortIndex;
           return 0 !== diff ? diff : a2.id - b2.id;
         }
@@ -79652,16 +79652,128 @@ ${e2}`);
 
   // src/useSimulatedState.ts
   var import_react28 = __toESM(require_react());
+
+  // src/ruleEngine.ts
+  function compare(operator, a2, b2) {
+    switch (operator) {
+      case ">=":
+        return a2 >= b2;
+      case "<=":
+        return a2 <= b2;
+      case "==":
+        return a2 === b2;
+      case ">":
+        return a2 > b2;
+      case "<":
+        return a2 < b2;
+      default:
+        return false;
+    }
+  }
+  function evaluateCondition(check, ctx) {
+    switch (check.type) {
+      case "flag_active":
+        return check.flagId != null && ctx.activeFlags.has(check.flagId);
+      case "flag_inactive":
+        return check.flagId != null && !ctx.activeFlags.has(check.flagId);
+      case "time_of_day": {
+        const { startHour, endHour } = check;
+        if (startHour == null || endHour == null) return false;
+        return startHour <= endHour ? ctx.currentHour >= startHour && ctx.currentHour <= endHour : ctx.currentHour >= startHour || ctx.currentHour <= endHour;
+      }
+      case "day_of_week":
+        return check.daysOfWeek?.includes(ctx.dayOfWeekNum) ?? false;
+      case "scene_count": {
+        if (!check.sceneId || !check.operator || check.intValue == null) return false;
+        return compare(check.operator, ctx.sceneCounts[check.sceneId] ?? 0, check.intValue);
+      }
+      case "install_duration_hours": {
+        if (!check.operator || check.intValue == null) return false;
+        return compare(check.operator, ctx.installHours, check.intValue);
+      }
+      case "time_since_flag_change": {
+        if (!check.flagId || !check.operator || check.intValue == null || !check.flagChangeType) return false;
+        const record = ctx.flagChanges[check.flagId];
+        const changedAtHour = check.flagChangeType === "activated" ? record?.activatedAtHour : record?.deactivatedAtHour;
+        if (changedAtHour == null) return false;
+        return compare(check.operator, ctx.installHours - changedAtHour, check.intValue);
+      }
+      default:
+        return false;
+    }
+  }
+  function evaluateConditionGroup(group, ctx) {
+    return group.operator === "AND" ? group.checks.every((c2) => evaluateCondition(c2, ctx)) : group.checks.some((c2) => evaluateCondition(c2, ctx));
+  }
+  function evaluateConditions(groups, ctx) {
+    if (!groups || groups.length === 0) return true;
+    return groups.some((g2) => evaluateConditionGroup(g2, ctx));
+  }
+  function runRules({
+    rules,
+    clock,
+    activeFlags,
+    flagChanges,
+    firedOneShotRuleIds,
+    sceneCounts = {}
+  }) {
+    const nextActiveFlags = new Set(activeFlags);
+    const nextFlagChanges = { ...flagChanges };
+    const nextFired = new Set(firedOneShotRuleIds);
+    const ctx = { ...clock, activeFlags: nextActiveFlags, flagChanges: nextFlagChanges, sceneCounts };
+    for (const rule of rules) {
+      if (rule.oneShot && nextFired.has(rule.id)) continue;
+      if (!evaluateConditions(rule.conditions, ctx)) continue;
+      for (const action of rule.actions) {
+        if (!action.flagId) continue;
+        if (action.type === "activate_flag" && !nextActiveFlags.has(action.flagId)) {
+          nextActiveFlags.add(action.flagId);
+          nextFlagChanges[action.flagId] = { ...nextFlagChanges[action.flagId], activatedAtHour: clock.installHours };
+        } else if (action.type === "deactivate_flag" && nextActiveFlags.has(action.flagId)) {
+          nextActiveFlags.delete(action.flagId);
+          nextFlagChanges[action.flagId] = { ...nextFlagChanges[action.flagId], deactivatedAtHour: clock.installHours };
+        }
+      }
+      if (rule.oneShot) nextFired.add(rule.id);
+    }
+    return { activeFlags: nextActiveFlags, flagChanges: nextFlagChanges, firedOneShotRuleIds: nextFired };
+  }
+  function resolveWorldState(input) {
+    const chapterIds = new Set(input.flags.filter((f2) => f2.isChapter).map((f2) => f2.id));
+    const reconciled = new Set(input.activeFlags);
+    for (const id of chapterIds) reconciled.delete(id);
+    if (input.chapterId != null) reconciled.add(input.chapterId);
+    return runRules({ ...input, activeFlags: reconciled });
+  }
+
+  // src/useSimulatedState.ts
   var TIME_OPTIONS = ["06:00 \xB7 Morning", "12:00 \xB7 Midday", "17:00 \xB7 Evening", "21:30 \xB7 Night"];
   var DAY_OPTIONS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   var SCENE_OPTIONS = ["Aurora Forest", "Night City", "Day Forest"];
+  var DAY_OF_WEEK_NUMS = [1, 2, 3, 4, 5, 6, 0];
+  function hourFromTimeOption(opt) {
+    return parseInt(opt.split(":")[0], 10);
+  }
+  function worldClockFor(fields) {
+    const currentHour = hourFromTimeOption(fields.timeOfDay);
+    const dayIndex = DAY_OPTIONS.indexOf(fields.dayOfWeek);
+    return {
+      currentHour,
+      dayOfWeekNum: dayIndex === -1 ? 0 : DAY_OF_WEEK_NUMS[dayIndex],
+      installHours: fields.daysSinceInstall * 24 + currentHour
+    };
+  }
   var DEFAULTS = {
     chapterId: null,
     timeOfDay: TIME_OPTIONS[3],
     dayOfWeek: DAY_OPTIONS[1],
     daysSinceInstall: 8,
     totalWakes: 34,
-    lastSceneShown: SCENE_OPTIONS[0]
+    lastSceneShown: SCENE_OPTIONS[0],
+    activeFlagIds: [],
+    flagChanges: {},
+    firedOneShotRuleIds: [],
+    seeded: false
   };
   function storageKey(projectId) {
     return `simulator-state:${projectId}`;
@@ -79675,10 +79787,30 @@ ${e2}`);
       return DEFAULTS;
     }
   }
-  function useSimulatedState(projectId, chapters) {
+  function runEngine(fields, flags, rules) {
+    const result = resolveWorldState({
+      rules,
+      flags,
+      chapterId: fields.chapterId,
+      clock: worldClockFor(fields),
+      activeFlags: new Set(fields.activeFlagIds),
+      flagChanges: fields.flagChanges,
+      firedOneShotRuleIds: new Set(fields.firedOneShotRuleIds)
+    });
+    return {
+      activeFlagIds: [...result.activeFlags],
+      flagChanges: result.flagChanges,
+      firedOneShotRuleIds: [...result.firedOneShotRuleIds]
+    };
+  }
+  function useSimulatedState(projectId, flags, rules) {
     const [fields, setFields] = (0, import_react28.useState)(() => loadPersisted(projectId));
     const [stale, setStale] = (0, import_react28.useState)(false);
     const loadedProjectId = (0, import_react28.useRef)(projectId);
+    const chapters = (0, import_react28.useMemo)(
+      () => flags.filter((f2) => f2.isChapter).sort((a2, b2) => (a2.chapterOrder ?? 0) - (b2.chapterOrder ?? 0)),
+      [flags]
+    );
     (0, import_react28.useEffect)(() => {
       if (loadedProjectId.current === projectId) return;
       loadedProjectId.current = projectId;
@@ -79695,6 +79827,15 @@ ${e2}`);
         setFields((f2) => ({ ...f2, chapterId: fallback }));
       }
     }, [chapters, fields.chapterId]);
+    (0, import_react28.useEffect)(() => {
+      if (flags.length === 0 || fields.seeded) return;
+      const baseline = flags.filter((f2) => f2.defaultActive).map((f2) => f2.id);
+      setFields((f2) => f2.seeded ? f2 : { ...f2, activeFlagIds: baseline, seeded: true });
+    }, [flags, fields.seeded]);
+    (0, import_react28.useEffect)(() => {
+      if (!fields.seeded) return;
+      setFields((f2) => ({ ...f2, ...runEngine(f2, flags, rules) }));
+    }, [flags, rules, fields.seeded, fields.chapterId, fields.timeOfDay, fields.dayOfWeek, fields.daysSinceInstall]);
     function updateField(key, valueOrFn) {
       setFields((f2) => ({
         ...f2,
@@ -79714,7 +79855,12 @@ ${e2}`);
     };
     const handleWake = () => {
       const nextScene = SCENE_OPTIONS[Math.floor(Math.random() * SCENE_OPTIONS.length)];
-      setFields((f2) => ({ ...f2, lastSceneShown: nextScene, totalWakes: f2.totalWakes + 1 }));
+      setFields((f2) => ({
+        ...f2,
+        ...runEngine(f2, flags, rules),
+        lastSceneShown: nextScene,
+        totalWakes: f2.totalWakes + 1
+      }));
       setStale(false);
     };
     return {
@@ -79724,6 +79870,7 @@ ${e2}`);
       daysSinceInstall: fields.daysSinceInstall,
       totalWakes: fields.totalWakes,
       lastSceneShown: fields.lastSceneShown,
+      activeFlagIds: fields.activeFlagIds,
       stale,
       setChapterId: (v2) => updateField("chapterId", v2),
       setTimeOfDay: (v2) => updateField("timeOfDay", v2),
@@ -80142,6 +80289,7 @@ ${e2}`);
     flag,
     usage,
     groups,
+    active,
     onClick,
     onRename,
     onMove,
@@ -80150,7 +80298,7 @@ ${e2}`);
   }) {
     const label = usageLabel(usage);
     return /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "simulator-flags-row", onClick, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: `simulator-flags-row__dot ${flag.defaultActive ? "simulator-flags-row__dot--on" : ""}` }),
+      /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: `simulator-flags-row__dot ${active ? "simulator-flags-row__dot--on" : ""}` }),
       /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-flags-row__name", children: flag.name || flag.id }),
       /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-flags-row__used", children: label ?? /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-flags-row__unused", children: "Unused" }) }),
       /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(FlagRowMenu, { flag, groups, onRename, onMove, onNewGroup, onRemove })
@@ -80201,6 +80349,7 @@ ${e2}`);
     flags,
     groups,
     usageCounts,
+    activeFlagIds,
     onNewFlag,
     onSelectFlag,
     onRenameFlag,
@@ -80306,6 +80455,7 @@ ${e2}`);
                 flag,
                 usage: usageCounts[flag.id],
                 groups,
+                active: activeFlagIds.has(flag.id),
                 onClick: () => onSelectFlag(flag),
                 onRename: () => onRenameFlag(flag),
                 onMove: (groupName) => onMoveFlag(flag, groupName),
@@ -80323,6 +80473,7 @@ ${e2}`);
             flag,
             usage: usageCounts[flag.id],
             groups,
+            active: activeFlagIds.has(flag.id),
             onClick: () => onSelectFlag(flag),
             onRename: () => onRenameFlag(flag),
             onMove: (groupName) => onMoveFlag(flag, groupName),
@@ -81012,7 +81163,8 @@ ${e2}`);
       () => flags.filter((f2) => f2.isChapter).sort((a2, b2) => (a2.chapterOrder ?? 0) - (b2.chapterOrder ?? 0)),
       [flags]
     );
-    const sim = useSimulatedState(projectId, chapters);
+    const sim = useSimulatedState(projectId, flags, rules);
+    const activeFlagIds = (0, import_react33.useMemo)(() => new Set(sim.activeFlagIds), [sim.activeFlagIds]);
     const handleNewChapter = () => {
       const existingIds = new Set(flags.map((f2) => f2.id));
       const nextOrder = chapters.length > 0 ? Math.max(...chapters.map((c2) => c2.chapterOrder ?? 0)) + 1 : 0;
@@ -81330,6 +81482,7 @@ ${e2}`);
                 flags,
                 groups: flagGroups,
                 usageCounts: flagUsageCounts,
+                activeFlagIds,
                 onNewFlag: handleNewFlag,
                 onSelectFlag: handleSelectFlag,
                 onRenameFlag: setRenamingFlag,

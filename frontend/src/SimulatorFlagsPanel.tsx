@@ -17,6 +17,7 @@ interface SimulatorFlagsPanelProps {
   flags: FlagDefinition[];
   groups: FlagGroup[];
   usageCounts: UsageCounts;
+  activeFlagIds: Set<string>;
   onNewFlag: (presetGroup?: string) => void;
   onSelectFlag: (flag: FlagDefinition) => void;
   onRenameFlag: (flag: FlagDefinition) => void;
@@ -77,11 +78,12 @@ function FlagRowMenu({ flag, groups, onRename, onMove, onNewGroup, onRemove }: F
 }
 
 function FlagRow({
-  flag, usage, groups, onClick, onRename, onMove, onNewGroup, onRemove,
+  flag, usage, groups, active, onClick, onRename, onMove, onNewGroup, onRemove,
 }: {
   flag: FlagDefinition;
   usage: { rules: number; scenes: number } | undefined;
   groups: FlagGroup[];
+  active: boolean;
   onClick: () => void;
   onRename: () => void;
   onMove: (groupName: string | undefined) => void;
@@ -91,7 +93,7 @@ function FlagRow({
   const label = usageLabel(usage);
   return (
     <div className="simulator-flags-row" onClick={onClick}>
-      <span className={`simulator-flags-row__dot ${flag.defaultActive ? 'simulator-flags-row__dot--on' : ''}`} />
+      <span className={`simulator-flags-row__dot ${active ? 'simulator-flags-row__dot--on' : ''}`} />
       <span className="simulator-flags-row__name">{flag.name || flag.id}</span>
       <span className="simulator-flags-row__used">
         {label ?? <span className="simulator-flags-row__unused">Unused</span>}
@@ -156,7 +158,7 @@ function FlagGroupSection({ title, count, ungrouped, onAdd, onRenameGroup, onRem
 }
 
 export function SimulatorFlagsPanel({
-  flags, groups, usageCounts, onNewFlag, onSelectFlag, onRenameFlag, onMoveFlag, onNewGroupForFlag, onRemoveFlag, onNewGroup, onRenameGroup, onRemoveGroup,
+  flags, groups, usageCounts, activeFlagIds, onNewFlag, onSelectFlag, onRenameFlag, onMoveFlag, onNewGroupForFlag, onRemoveFlag, onNewGroup, onRenameGroup, onRemoveGroup,
 }: SimulatorFlagsPanelProps) {
   const [search, setSearch] = useState('');
   const query = search.trim().toLowerCase();
@@ -257,6 +259,7 @@ export function SimulatorFlagsPanel({
                   flag={flag}
                   usage={usageCounts[flag.id]}
                   groups={groups}
+                  active={activeFlagIds.has(flag.id)}
                   onClick={() => onSelectFlag(flag)}
                   onRename={() => onRenameFlag(flag)}
                   onMove={groupName => onMoveFlag(flag, groupName)}
@@ -274,6 +277,7 @@ export function SimulatorFlagsPanel({
                   flag={flag}
                   usage={usageCounts[flag.id]}
                   groups={groups}
+                  active={activeFlagIds.has(flag.id)}
                   onClick={() => onSelectFlag(flag)}
                   onRename={() => onRenameFlag(flag)}
                   onMove={groupName => onMoveFlag(flag, groupName)}

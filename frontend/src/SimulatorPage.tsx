@@ -86,7 +86,8 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
     [flags],
   );
 
-  const sim = useSimulatedState(projectId, chapters);
+  const sim = useSimulatedState(projectId, flags, rules);
+  const activeFlagIds = useMemo(() => new Set(sim.activeFlagIds), [sim.activeFlagIds]);
 
   const handleNewChapter = () => {
     const existingIds = new Set(flags.map(f => f.id));
@@ -435,6 +436,7 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
                   flags={flags}
                   groups={flagGroups}
                   usageCounts={flagUsageCounts}
+                  activeFlagIds={activeFlagIds}
                   onNewFlag={handleNewFlag}
                   onSelectFlag={handleSelectFlag}
                   onRenameFlag={setRenamingFlag}
