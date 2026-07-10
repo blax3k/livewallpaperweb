@@ -76152,6 +76152,13 @@ ${e2}`);
       return this.computeDimensions().halfWidth;
     }
     /**
+     * Half-height of the guide rectangle (world units), before any orientation swap. Used by
+     * SceneRenderer's letterbox to know how tall the viewable window is.
+     */
+    getHalfHeight() {
+      return this.computeDimensions().halfHeight;
+    }
+    /**
      * Set the x-offset for parallax scrolling
      */
     setXOffset(xOffset) {
@@ -76902,6 +76909,10 @@ ${e2}`);
       this.currentYFocus = 0.5;
       this.selectionHighlight = null;
       this.selectedHighlightIndex = null;
+      // Black letterbox/pillarbox bars masking the render down to the viewable window's aspect
+      // ratio (opt-in; used by the simulator preview, not the editor).
+      this.letterboxGraphics = null;
+      this.letterboxEnabled = false;
       this.ZOOM_SCALE = 1.6;
       this.userZoom = 1;
       this.baseStageX = 0;
@@ -77025,6 +77036,7 @@ ${e2}`);
       this.userZoom = 1;
       this.fitSceneToView();
       this.setXFocus(sceneData.xFocus);
+      this.drawLetterbox();
     }
     fitSceneToView() {
       if (!this.app) return;
@@ -77311,10 +77323,49 @@ ${e2}`);
     setGuideAspectRatio(aspectRatio) {
       this.guideAspectRatio = aspectRatio;
       this.phoneGuide?.setAspectRatio(aspectRatio);
+      this.drawLetterbox();
       this.applyAllPositions();
     }
     getGuideAspectRatio() {
       return this.guideAspectRatio;
+    }
+    /**
+     * Enable/disable the black letterbox bars that crop the render to the viewable window's
+     * aspect ratio (the phone guide rectangle). When on, everything outside that window is
+     * painted black — pillarboxed for portrait/square aspects, letterboxed for landscape — so
+     * the visible area matches what a real device of the current orientation + aspect would show.
+     */
+    setLetterboxEnabled(enabled) {
+      this.letterboxEnabled = enabled;
+      this.drawLetterbox();
+    }
+    /**
+     * (Re)draw the letterbox bars around the viewable window. Drawn in world coordinates so they
+     * track the guide rectangle; kept as the topmost stage child so no sprite paints over them.
+     */
+    drawLetterbox() {
+      if (!this.app) return;
+      if (!this.letterboxEnabled || !this.phoneGuide) {
+        if (this.letterboxGraphics) this.letterboxGraphics.visible = false;
+        return;
+      }
+      if (!this.letterboxGraphics) {
+        this.letterboxGraphics = new Graphics();
+      }
+      const g2 = this.letterboxGraphics;
+      g2.visible = true;
+      g2.clear();
+      const halfWidth = this.phoneGuide.getHalfWidth();
+      const halfHeight = this.phoneGuide.getHalfHeight();
+      const rectHalfWidth = this.orientation === "landscape" ? halfHeight : halfWidth;
+      const rectHalfHeight = this.orientation === "landscape" ? halfWidth : halfHeight;
+      const far = this.DEFAULT_WORLD_SIZE * 10;
+      const rect = (x2, y2, w2, h2) => g2.rect(x2, y2, w2, h2).fill({ color: 0, alpha: 1 });
+      rect(-far, -far, far - rectHalfWidth, 2 * far);
+      rect(rectHalfWidth, -far, far - rectHalfWidth, 2 * far);
+      rect(-rectHalfWidth, -far, 2 * rectHalfWidth, far - rectHalfHeight);
+      rect(-rectHalfWidth, rectHalfHeight, 2 * rectHalfWidth, far - rectHalfHeight);
+      this.app.stage.addChild(g2);
     }
     /**
      * Set which orientation the editor is previewing, rotating the phone guide to match.
@@ -77324,6 +77375,7 @@ ${e2}`);
     setOrientation(orientation) {
       this.orientation = orientation;
       this.phoneGuide?.setOrientation(orientation);
+      this.drawLetterbox();
       this.applyAllPositions();
     }
     getSpriteEntries() {
@@ -77514,6 +77566,7 @@ ${e2}`);
           if (g2) this.app.stage.addChild(g2);
         }
         if (this.selectionHighlight) this.app.stage.addChild(this.selectionHighlight);
+        if (this.letterboxGraphics && this.letterboxEnabled) this.app.stage.addChild(this.letterboxGraphics);
       }
       if (selectedSprite) {
         this.selectedHighlightIndex = this.sprites.indexOf(selectedSprite);
@@ -78089,6 +78142,10 @@ ${e2}`);
         if (this.phoneGuide) {
           this.phoneGuide.destroy();
           this.phoneGuide = null;
+        }
+        if (this.letterboxGraphics) {
+          this.letterboxGraphics.destroy();
+          this.letterboxGraphics = null;
         }
       } catch (error) {
         console.error("Error destroying renderer:", error);
@@ -80772,7 +80829,12 @@ ${e2}`);
   // src/useSimulatorPreview.ts
   var import_react32 = __toESM(require_react());
   var EMPTY_SCENE = { sprites: [], xFocus: 0.5, yFocus: 0.5 };
-  function useSimulatorPreview(scene, world) {
+  var ASPECT_CONFIG = {
+    "9:16": { orientation: "portrait", guide: "16:9" },
+    "1:1": { orientation: "portrait", guide: "1:1" },
+    "16:9": { orientation: "landscape", guide: "16:9" }
+  };
+  function useSimulatorPreview(scene, world, aspect) {
     const containerRef = (0, import_react32.useRef)(null);
     const rendererRef = (0, import_react32.useRef)(null);
     const worldRef = (0, import_react32.useRef)(world);
@@ -80780,12 +80842,20 @@ ${e2}`);
     (0, import_react32.useEffect)(() => {
       if (!containerRef.current) return;
       const renderer = new SceneRenderer(containerRef.current);
+      renderer.setLetterboxEnabled(true);
       rendererRef.current = renderer;
       return () => {
         renderer.destroy();
         rendererRef.current = null;
       };
     }, []);
+    (0, import_react32.useEffect)(() => {
+      const renderer = rendererRef.current;
+      if (!renderer) return;
+      const { orientation, guide } = ASPECT_CONFIG[aspect];
+      renderer.setOrientation(orientation);
+      renderer.setGuideAspectRatio(guide);
+    }, [aspect, scene]);
     (0, import_react32.useEffect)(() => {
       const renderer = rendererRef.current;
       if (!renderer) return;
@@ -80869,7 +80939,7 @@ ${e2}`);
   }) {
     const [aspect, setAspect] = (0, import_react33.useState)("9:16");
     const qualifyCount = scenes.filter((s2) => s2.status !== "out").length;
-    const renderContainerRef = useSimulatorPreview(renderedScene, world);
+    const renderContainerRef = useSimulatorPreview(renderedScene, world, aspect);
     const handleEditScene = () => {
       if (renderedScene) onEditScene(renderedScene.id);
     };

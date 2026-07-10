@@ -40,6 +40,10 @@ export class SceneRenderer {
   private currentYFocus: number = 0.5;
   private selectionHighlight: PIXI.Graphics | null = null;
   private selectedHighlightIndex: number | null = null;
+  // Black letterbox/pillarbox bars masking the render down to the viewable window's aspect
+  // ratio (opt-in; used by the simulator preview, not the editor).
+  private letterboxGraphics: PIXI.Graphics | null = null;
+  private letterboxEnabled: boolean = false;
   private readonly ZOOM_SCALE = 1.6;
   private userZoom: number = 1.0;
   private baseStageX: number = 0;
@@ -184,6 +188,7 @@ export class SceneRenderer {
     this.userZoom = 1.0;
     this.fitSceneToView();
     this.setXFocus(sceneData.xFocus);
+    this.drawLetterbox();
   }
 
   /**
@@ -548,11 +553,60 @@ export class SceneRenderer {
   setGuideAspectRatio(aspectRatio: PhoneGuideAspectRatio): void {
     this.guideAspectRatio = aspectRatio;
     this.phoneGuide?.setAspectRatio(aspectRatio);
+    this.drawLetterbox();
     this.applyAllPositions();
   }
 
   getGuideAspectRatio(): PhoneGuideAspectRatio {
     return this.guideAspectRatio;
+  }
+
+  /**
+   * Enable/disable the black letterbox bars that crop the render to the viewable window's
+   * aspect ratio (the phone guide rectangle). When on, everything outside that window is
+   * painted black — pillarboxed for portrait/square aspects, letterboxed for landscape — so
+   * the visible area matches what a real device of the current orientation + aspect would show.
+   */
+  setLetterboxEnabled(enabled: boolean): void {
+    this.letterboxEnabled = enabled;
+    this.drawLetterbox();
+  }
+
+  /**
+   * (Re)draw the letterbox bars around the viewable window. Drawn in world coordinates so they
+   * track the guide rectangle; kept as the topmost stage child so no sprite paints over them.
+   */
+  private drawLetterbox(): void {
+    if (!this.app) return;
+
+    if (!this.letterboxEnabled || !this.phoneGuide) {
+      if (this.letterboxGraphics) this.letterboxGraphics.visible = false;
+      return;
+    }
+
+    if (!this.letterboxGraphics) {
+      this.letterboxGraphics = new PIXI.Graphics();
+    }
+    const g = this.letterboxGraphics;
+    g.visible = true;
+    g.clear();
+
+    // Match PhoneGuide's orientation swap so the bars frame the exact guide rectangle.
+    const halfWidth = this.phoneGuide.getHalfWidth();
+    const halfHeight = this.phoneGuide.getHalfHeight();
+    const rectHalfWidth = this.orientation === 'landscape' ? halfHeight : halfWidth;
+    const rectHalfHeight = this.orientation === 'landscape' ? halfWidth : halfHeight;
+
+    // Extend well past the canvas edges so no scene content leaks around the bars.
+    const far = this.DEFAULT_WORLD_SIZE * 10;
+    const rect = (x: number, y: number, w: number, h: number) =>
+      g.rect(x, y, w, h).fill({ color: 0x000000, alpha: 1 });
+    rect(-far, -far, far - rectHalfWidth, 2 * far); // left pillar
+    rect(rectHalfWidth, -far, far - rectHalfWidth, 2 * far); // right pillar
+    rect(-rectHalfWidth, -far, 2 * rectHalfWidth, far - rectHalfHeight); // top bar
+    rect(-rectHalfWidth, rectHalfHeight, 2 * rectHalfWidth, far - rectHalfHeight); // bottom bar
+
+    this.app.stage.addChild(g); // keep on top
   }
 
   /**
@@ -563,6 +617,7 @@ export class SceneRenderer {
   setOrientation(orientation: 'portrait' | 'landscape'): void {
     this.orientation = orientation;
     this.phoneGuide?.setOrientation(orientation);
+    this.drawLetterbox();
     this.applyAllPositions();
   }
 
@@ -792,6 +847,8 @@ export class SceneRenderer {
         if (g) this.app.stage.addChild(g);
       }
       if (this.selectionHighlight) this.app.stage.addChild(this.selectionHighlight);
+      // Letterbox bars stay above every sprite and the guide.
+      if (this.letterboxGraphics && this.letterboxEnabled) this.app.stage.addChild(this.letterboxGraphics);
     }
 
     if (selectedSprite) {
@@ -1451,6 +1508,11 @@ export class SceneRenderer {
       if (this.phoneGuide) {
         this.phoneGuide.destroy();
         this.phoneGuide = null;
+      }
+
+      if (this.letterboxGraphics) {
+        this.letterboxGraphics.destroy();
+        this.letterboxGraphics = null;
       }
     } catch (error) {
       console.error('Error destroying renderer:', error);

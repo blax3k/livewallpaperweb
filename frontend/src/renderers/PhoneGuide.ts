@@ -131,6 +131,14 @@ export class PhoneGuide {
   }
 
   /**
+   * Half-height of the guide rectangle (world units), before any orientation swap. Used by
+   * SceneRenderer's letterbox to know how tall the viewable window is.
+   */
+  getHalfHeight(): number {
+    return this.computeDimensions().halfHeight;
+  }
+
+  /**
    * Set the x-offset for parallax scrolling
    */
   setXOffset(xOffset: number): void {

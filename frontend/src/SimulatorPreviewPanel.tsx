@@ -92,7 +92,7 @@ export function SimulatorPreviewPanel({
 }: SimulatorPreviewPanelProps) {
   const [aspect, setAspect] = useState<AspectRatio>('9:16');
   const qualifyCount = scenes.filter(s => s.status !== 'out').length;
-  const renderContainerRef = useSimulatorPreview(renderedScene, world);
+  const renderContainerRef = useSimulatorPreview(renderedScene, world, aspect);
 
   const handleEditScene = () => { if (renderedScene) onEditScene(renderedScene.id); };
 
