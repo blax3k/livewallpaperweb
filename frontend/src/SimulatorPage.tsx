@@ -562,7 +562,6 @@ export function SimulatorPage({ projectId, projectName, onBack, onEditScene }: S
               <SimulatorPreviewPanel
                 scenes={ranking}
                 renderedScene={renderedScene}
-                renderedSceneName={renderedSummary?.label ?? '—'}
                 world={sim.world}
                 orderBy={orderBy}
                 onOrderByChange={setOrderBy}

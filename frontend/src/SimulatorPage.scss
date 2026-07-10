@@ -1673,7 +1673,6 @@
 }
 
 .simulator-aspect-chip {
-  margin-left: auto;
   display: flex;
   align-items: center;
   gap: var(--size-6);
@@ -1700,15 +1699,19 @@
   }
 }
 
-.simulator-preview-body {
+// Top section: square render surface beside its controls (~a third of panel height).
+.simulator-preview-top {
+  flex: 3 1 0;
+  min-height: 0;
   display: flex;
   gap: var(--size-16);
-  align-items: flex-start;
+  align-items: stretch;
 }
 
 // Fixed square render surface — never resizes; only the inner letterbox does.
 .simulator-preview-square {
-  flex: 0 0 33%; // ~a third of the preview panel's width
+  flex: 0 0 auto;
+  height: 100%; // fills the top section; width follows via aspect-ratio
   aspect-ratio: 1 / 1; // stays square while scaling with the panel
   background: #0a0a0c; // square frame well — design one-off, no token
   border: 1px solid var(--color-input);
@@ -1718,86 +1721,71 @@
   justify-content: center;
   position: relative;
   overflow: hidden;
-
-  &__badge {
-    position: absolute;
-    top: var(--size-9);
-    left: var(--size-9);
-    z-index: 2;
-    font: 600 9px var(--font-sans);
-    color: var(--color-accent-fg);
-    background: var(--color-accent-bg);
-    border: 1px solid var(--color-accent-border);
-    border-radius: var(--size-5);
-    padding: var(--size-2) var(--size-6);
-  }
-
-  // Stale banner + Wake button, overlaid over the wallpaper at the frame bottom.
-  &__footer {
-    position: absolute;
-    left: var(--size-8);
-    right: var(--size-8);
-    bottom: var(--size-8);
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    gap: var(--size-7);
-  }
 }
 
-.simulator-letterbox {
-  position: relative;
+// Live PixiJS render of the on-screen scene, filling the square edge to edge. The renderer
+// draws a square canvas sized to the shorter side and centered here.
+.simulator-render-surface {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-  background: var(--color-panel-inset);
-  border: 1px solid var(--color-input);
-  border-radius: var(--size-8);
 
-  // Live PixiJS render of the on-screen scene, filling the letterbox. The renderer draws a
-  // square canvas sized to the shorter side and centered here.
-  .simulator-render-surface {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-
-    canvas {
-      display: block;
-    }
-  }
-
-  &__scene-name {
-    position: absolute;
-    bottom: var(--size-18);
-    left: 0;
-    right: 0;
-    text-align: center;
-    font: 500 var(--text-10) var(--font-sans);
-    color: var(--color-fg-default);
+  canvas {
+    display: block;
   }
 }
 
-.simulator-preview-right {
+// Controls column, right of the phone preview.
+.simulator-preview-controls {
   flex: 1;
   min-width: 0;
-  align-self: stretch;
   display: flex;
   flex-direction: column;
-  gap: var(--size-7);
+  align-items: flex-start;
+  gap: var(--size-10);
+
+  .simulator-wake-button {
+    width: auto;
+    align-self: flex-start;
+    padding: var(--size-8) var(--size-16);
+  }
+
+  .simulator-edit-scene-link {
+    margin-left: 0;
+  }
 }
 
-.simulator-preview-toolbar {
+// Bottom section: scenes header over the scrollable grid.
+.simulator-preview-scenes {
+  flex: 4 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-8);
+}
+
+.simulator-preview-scenes__header {
   display: flex;
   align-items: center;
   gap: var(--size-8);
-  flex-wrap: wrap;
+  flex-shrink: 0;
+}
 
-  &__count {
-    flex-shrink: 0;
-    font: 400 var(--text-10) var(--font-sans);
-    color: var(--color-fg-subtle);
-  }
+.simulator-preview-scenes__title {
+  font: 600 var(--text-10) var(--font-sans);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-fg-faint);
+}
+
+.simulator-preview-scenes__count {
+  margin-left: auto;
+  flex-shrink: 0;
+  font: 400 var(--text-10) var(--font-sans);
+  color: var(--color-fg-subtle);
 }
 
 .simulator-order-toggle {
@@ -1839,9 +1827,13 @@
 // Dense grid of compact qualifying-scene cards. minmax(0,1fr) (not 1fr) so the
 // non-shrinking badge row can't force the tracks wider than the panel.
 .simulator-scene-grid {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   display: grid;
   // Fit as many ~16:9 cards per row as feasible; tracks flex to fill the row.
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-auto-rows: min-content;
   gap: var(--size-5);
 }
 

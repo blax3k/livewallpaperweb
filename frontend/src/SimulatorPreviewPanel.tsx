@@ -19,15 +19,6 @@ const ASPECT_OPTIONS: { value: AspectRatio; label: string }[] = [
   { value: '16:9', label: 'Landscape 16:9' },
 ];
 
-// Content letterboxed inside the square render surface, sized relative to the
-// square so it scales with the panel. The largest dimension fills ~92% of the
-// square; the other follows the chosen aspect ratio (short side = 92% × 9/16).
-const LETTERBOX_DIMS: Record<AspectRatio, { width: string; height: string }> = {
-  '9:16': { width: '51.75%', height: '92%' },
-  '1:1': { width: '92%', height: '92%' },
-  '16:9': { width: '92%', height: '51.75%' },
-};
-
 interface SceneCardProps {
   scene: RankedScene;
   onSelect: (scene: RankedScene) => void;
@@ -75,8 +66,6 @@ interface SimulatorPreviewPanelProps {
   scenes: RankedScene[];
   /** Scene pinned to the render surface (captured at the last wake), or null if none qualifies. */
   renderedScene: SceneDetail | null;
-  /** Display label of the on-screen scene. */
-  renderedSceneName: string;
   /** World snapshot used to resolve sprite condition sets on the rendered scene. */
   world: WorldState;
   orderBy: 'least_shown' | 'points';
@@ -92,7 +81,6 @@ interface SimulatorPreviewPanelProps {
 export function SimulatorPreviewPanel({
   scenes,
   renderedScene,
-  renderedSceneName,
   world,
   orderBy,
   onOrderByChange,
@@ -104,7 +92,6 @@ export function SimulatorPreviewPanel({
 }: SimulatorPreviewPanelProps) {
   const [aspect, setAspect] = useState<AspectRatio>('9:16');
   const qualifyCount = scenes.filter(s => s.status !== 'out').length;
-  const dims = LETTERBOX_DIMS[aspect];
   const renderContainerRef = useSimulatorPreview(renderedScene, world);
 
   const handleSelectScene = (scene: RankedScene) => onEditScene(scene.id);
@@ -115,82 +102,82 @@ export function SimulatorPreviewPanel({
       <div className="simulator-panel__header simulator-panel__header--preview">
         <span>Preview</span>
         <span className="simulator-panel__hint">composited · real sprites</span>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <div className="simulator-aspect-chip">
-              <span className="simulator-aspect-chip__label">ASPECT</span>
-              <span className="simulator-aspect-chip__value">{aspect}</span>
-              <ChevronDown className="simulator-aspect-chip__caret" size={11} strokeWidth={2} />
-            </div>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {ASPECT_OPTIONS.map(opt => (
-              <DropdownMenuItem key={opt.value} onSelect={() => setAspect(opt.value)}>
-                {opt.value === aspect ? '✓ ' : ''}{opt.label}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
 
-      <div className="simulator-preview-body">
-        {/* Fixed square render surface — content letterboxes to the chosen aspect. */}
+      {/* Top section: square render surface beside its controls. */}
+      <div className="simulator-preview-top">
+        {/* Square render surface — the renderer fills it edge to edge. */}
         <div className="simulator-preview-square">
-          <span className="simulator-preview-square__badge">ON SCREEN</span>
-          <div
-            className="simulator-letterbox"
-            style={{ width: dims.width, height: dims.height }}
-          >
-            <div className="simulator-render-surface" ref={renderContainerRef} />
-            <span className="simulator-letterbox__scene-name">{renderedSceneName}</span>
-          </div>
-          {/* On-wallpaper controls, overlaid at the bottom of the square frame. */}
-          <div className="simulator-preview-square__footer">
-            {stale && (
-              <div className="simulator-stale-banner">
-                <RefreshCw size={12} strokeWidth={2} />
-                <span>Stale — re-picked only on wake</span>
+          <div className="simulator-render-surface" ref={renderContainerRef} />
+        </div>
+
+        {/* On-screen render controls, stacked to the right of the phone preview. */}
+        <div className="simulator-preview-controls">
+          <button className="simulator-wake-button" onClick={onWake}>
+            <MoonStar size={14} strokeWidth={2} /> Wake screen
+          </button>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <div className="simulator-aspect-chip">
+                <span className="simulator-aspect-chip__label">ASPECT</span>
+                <span className="simulator-aspect-chip__value">{aspect}</span>
+                <ChevronDown className="simulator-aspect-chip__caret" size={11} strokeWidth={2} />
               </div>
-            )}
-            <button className="simulator-wake-button" onClick={onWake}>
-              <MoonStar size={14} strokeWidth={2} /> Wake screen
-            </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              {ASPECT_OPTIONS.map(opt => (
+                <DropdownMenuItem key={opt.value} onSelect={() => setAspect(opt.value)}>
+                  {opt.value === aspect ? '✓ ' : ''}{opt.label}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {stale && (
+            <div className="simulator-stale-banner">
+              <RefreshCw size={12} strokeWidth={2} />
+              <span>Stale — re-picked only on wake</span>
+            </div>
+          )}
+
+          <span className="simulator-edit-scene-link" onClick={handleEditScene}>
+            <Pencil size={11} strokeWidth={2} /> Edit scene ▸
+          </span>
+        </div>
+      </div>
+
+      {/* Bottom section: full-width, scrollable grid of qualifying scenes. */}
+      <div className="simulator-preview-scenes">
+        <div className="simulator-preview-scenes__header">
+          <span className="simulator-preview-scenes__title">Scenes</span>
+          <span className="simulator-preview-scenes__count">{qualifyCount} qualify</span>
+          <div className="simulator-order-toggle">
+            <span
+              className={`simulator-order-toggle__option ${orderBy === 'least_shown' ? 'simulator-order-toggle__option--active' : ''}`}
+              onClick={() => onOrderByChange('least_shown')}
+            >
+              Least shown
+            </span>
+            <span
+              className={`simulator-order-toggle__option ${orderBy === 'points' ? 'simulator-order-toggle__option--active' : ''}`}
+              onClick={() => onOrderByChange('points')}
+            >
+              Points
+            </span>
           </div>
         </div>
 
-        <div className="simulator-preview-right">
-          <div className="simulator-preview-toolbar">
-            <span className="simulator-preview-toolbar__count">{qualifyCount} qualify</span>
-            <div className="simulator-order-toggle">
-              <span
-                className={`simulator-order-toggle__option ${orderBy === 'least_shown' ? 'simulator-order-toggle__option--active' : ''}`}
-                onClick={() => onOrderByChange('least_shown')}
-              >
-                Least shown
-              </span>
-              <span
-                className={`simulator-order-toggle__option ${orderBy === 'points' ? 'simulator-order-toggle__option--active' : ''}`}
-                onClick={() => onOrderByChange('points')}
-              >
-                Points
-              </span>
-            </div>
-            <span className="simulator-edit-scene-link" onClick={handleEditScene}>
-              <Pencil size={11} strokeWidth={2} /> Edit scene ▸
-            </span>
-          </div>
-
-          <div className="simulator-scene-grid">
-            {scenes.map(scene => (
-              <SceneCard
-                key={scene.id}
-                scene={scene}
-                onSelect={handleSelectScene}
-                onEditFlags={onEditFlags}
-                onDelete={onDeleteScene}
-              />
-            ))}
-          </div>
+        <div className="simulator-scene-grid">
+          {scenes.map(scene => (
+            <SceneCard
+              key={scene.id}
+              scene={scene}
+              onSelect={handleSelectScene}
+              onEditFlags={onEditFlags}
+              onDelete={onDeleteScene}
+            />
+          ))}
         </div>
       </div>
     </div>

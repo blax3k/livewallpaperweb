@@ -80731,11 +80731,6 @@ ${e2}`);
     { value: "1:1", label: "Square 1:1" },
     { value: "16:9", label: "Landscape 16:9" }
   ];
-  var LETTERBOX_DIMS = {
-    "9:16": { width: "51.75%", height: "92%" },
-    "1:1": { width: "92%", height: "92%" },
-    "16:9": { width: "92%", height: "51.75%" }
-  };
   function SceneCard2({ scene, onSelect, onEditFlags, onDelete }) {
     const badgeLabel = scene.status === "wins" ? "WINS" : scene.status === "out" ? "OUT" : `#${scene.rank}`;
     return /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)(
@@ -80784,7 +80779,6 @@ ${e2}`);
   function SimulatorPreviewPanel({
     scenes,
     renderedScene,
-    renderedSceneName,
     world,
     orderBy,
     onOrderByChange,
@@ -80796,7 +80790,6 @@ ${e2}`);
   }) {
     const [aspect, setAspect] = (0, import_react32.useState)("9:16");
     const qualifyCount = scenes.filter((s2) => s2.status !== "out").length;
-    const dims = LETTERBOX_DIMS[aspect];
     const renderContainerRef = useSimulatorPreview(renderedScene, world);
     const handleSelectScene = (scene) => onEditScene(scene.id);
     const handleEditScene = () => {
@@ -80805,84 +80798,72 @@ ${e2}`);
     return /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-panel simulator-panel--preview", children: [
       /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-panel__header simulator-panel__header--preview", children: [
         /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { children: "Preview" }),
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { className: "simulator-panel__hint", children: "composited \xB7 real sprites" }),
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)(DropdownMenu2, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-aspect-chip", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { className: "simulator-aspect-chip__label", children: "ASPECT" }),
-            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { className: "simulator-aspect-chip__value", children: aspect }),
-            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(ChevronDown, { className: "simulator-aspect-chip__caret", size: 11, strokeWidth: 2 })
-          ] }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(DropdownMenuContent2, { align: "end", children: ASPECT_OPTIONS.map((opt) => /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)(DropdownMenuItem2, { onSelect: () => setAspect(opt.value), children: [
-            opt.value === aspect ? "\u2713 " : "",
-            opt.label
-          ] }, opt.value)) })
+        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { className: "simulator-panel__hint", children: "composited \xB7 real sprites" })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-preview-top", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("div", { className: "simulator-preview-square", children: /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("div", { className: "simulator-render-surface", ref: renderContainerRef }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-preview-controls", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("button", { className: "simulator-wake-button", onClick: onWake, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(MoonStar, { size: 14, strokeWidth: 2 }),
+            " Wake screen"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)(DropdownMenu2, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-aspect-chip", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { className: "simulator-aspect-chip__label", children: "ASPECT" }),
+              /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { className: "simulator-aspect-chip__value", children: aspect }),
+              /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(ChevronDown, { className: "simulator-aspect-chip__caret", size: 11, strokeWidth: 2 })
+            ] }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(DropdownMenuContent2, { align: "start", children: ASPECT_OPTIONS.map((opt) => /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)(DropdownMenuItem2, { onSelect: () => setAspect(opt.value), children: [
+              opt.value === aspect ? "\u2713 " : "",
+              opt.label
+            ] }, opt.value)) })
+          ] }),
+          stale && /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-stale-banner", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(RefreshCw, { size: 12, strokeWidth: 2 }),
+            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { children: "Stale \u2014 re-picked only on wake" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("span", { className: "simulator-edit-scene-link", onClick: handleEditScene, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(Pencil, { size: 11, strokeWidth: 2 }),
+            " Edit scene \u25B8"
+          ] })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-preview-body", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-preview-square", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { className: "simulator-preview-square__badge", children: "ON SCREEN" }),
-          /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)(
-            "div",
-            {
-              className: "simulator-letterbox",
-              style: { width: dims.width, height: dims.height },
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("div", { className: "simulator-render-surface", ref: renderContainerRef }),
-                /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { className: "simulator-letterbox__scene-name", children: renderedSceneName })
-              ]
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-preview-square__footer", children: [
-            stale && /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-stale-banner", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(RefreshCw, { size: 12, strokeWidth: 2 }),
-              /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { children: "Stale \u2014 re-picked only on wake" })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("button", { className: "simulator-wake-button", onClick: onWake, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(MoonStar, { size: 14, strokeWidth: 2 }),
-              " Wake screen"
-            ] })
+      /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-preview-scenes", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-preview-scenes__header", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { className: "simulator-preview-scenes__title", children: "Scenes" }),
+          /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("span", { className: "simulator-preview-scenes__count", children: [
+            qualifyCount,
+            " qualify"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-order-toggle", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
+              "span",
+              {
+                className: `simulator-order-toggle__option ${orderBy === "least_shown" ? "simulator-order-toggle__option--active" : ""}`,
+                onClick: () => onOrderByChange("least_shown"),
+                children: "Least shown"
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
+              "span",
+              {
+                className: `simulator-order-toggle__option ${orderBy === "points" ? "simulator-order-toggle__option--active" : ""}`,
+                onClick: () => onOrderByChange("points"),
+                children: "Points"
+              }
+            )
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-preview-right", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-preview-toolbar", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("span", { className: "simulator-preview-toolbar__count", children: [
-              qualifyCount,
-              " qualify"
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-order-toggle", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
-                "span",
-                {
-                  className: `simulator-order-toggle__option ${orderBy === "least_shown" ? "simulator-order-toggle__option--active" : ""}`,
-                  onClick: () => onOrderByChange("least_shown"),
-                  children: "Least shown"
-                }
-              ),
-              /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
-                "span",
-                {
-                  className: `simulator-order-toggle__option ${orderBy === "points" ? "simulator-order-toggle__option--active" : ""}`,
-                  onClick: () => onOrderByChange("points"),
-                  children: "Points"
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("span", { className: "simulator-edit-scene-link", onClick: handleEditScene, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(Pencil, { size: 11, strokeWidth: 2 }),
-              " Edit scene \u25B8"
-            ] })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("div", { className: "simulator-scene-grid", children: scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
-            SceneCard2,
-            {
-              scene,
-              onSelect: handleSelectScene,
-              onEditFlags,
-              onDelete: onDeleteScene
-            },
-            scene.id
-          )) })
-        ] })
+        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("div", { className: "simulator-scene-grid", children: scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
+          SceneCard2,
+          {
+            scene,
+            onSelect: handleSelectScene,
+            onEditFlags,
+            onDelete: onDeleteScene
+          },
+          scene.id
+        )) })
       ] })
     ] });
   }
@@ -81980,7 +81961,6 @@ ${e2}`);
             {
               scenes: ranking,
               renderedScene,
-              renderedSceneName: renderedSummary?.label ?? "\u2014",
               world: sim.world,
               orderBy,
               onOrderByChange: setOrderBy,
