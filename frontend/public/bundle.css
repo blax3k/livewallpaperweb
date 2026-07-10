@@ -2252,7 +2252,7 @@ body {
 .page-body {
   flex: 1;
   overflow-y: auto;
-  padding: var(--size-28) var(--size-32);
+  padding: var(--size-12) var(--size-12);
 }
 
 /* src/controls/modals/NewSceneDialog.scss */
@@ -3017,6 +3017,7 @@ body {
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
+  margin-left: auto;
   gap: var(--size-4);
   background: none;
   border: none;
@@ -3054,7 +3055,7 @@ body {
 }
 .simulator-spine__new {
   flex-shrink: 0;
-  margin-left: auto;
+  margin-left: var(--size-2);
   height: var(--size-26);
   padding: 0 var(--size-10);
   background: var(--color-input);

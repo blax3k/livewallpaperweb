@@ -724,6 +724,7 @@
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
+    margin-left: auto;
     gap: var(--size-4);
     background: none;
     border: none;
@@ -765,7 +766,7 @@
 
   &__new {
     flex-shrink: 0;
-    margin-left: auto;
+    margin-left: var(--size-2);
     height: var(--size-26);
     padding: 0 var(--size-10);
     background: var(--color-input);
