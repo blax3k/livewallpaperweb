@@ -81,6 +81,32 @@ export function evaluateConditions(groups: RuleConditionGroup[] | undefined, ctx
   return groups.some(g => evaluateConditionGroup(g, ctx));
 }
 
+/**
+ * A snapshot of everything a condition needs to be evaluated: the world clock plus the
+ * mutable-ish flag/scene state. Used by consumers (e.g. the simulator preview) that need to
+ * evaluate conditions outside a full rule pass.
+ */
+export interface WorldState {
+  clock: WorldClock;
+  activeFlags: ReadonlySet<string>;
+  sceneCounts: Record<string, number>;
+  flagChanges: FlagChangeHistory;
+}
+
+/**
+ * Whether a single sprite condition-block group matches the given world. An omitted group
+ * always matches (unconditional / default override block), consistent with runtime behavior.
+ */
+export function matchesConditionGroup(group: RuleConditionGroup | undefined, world: WorldState): boolean {
+  const ctx: EngineContext = {
+    ...world.clock,
+    activeFlags: new Set(world.activeFlags),
+    sceneCounts: world.sceneCounts,
+    flagChanges: world.flagChanges,
+  };
+  return evaluateConditions(group ? [group] : undefined, ctx);
+}
+
 export interface RunRulesInput {
   rules: RuleDefinition[];
   clock: WorldClock;

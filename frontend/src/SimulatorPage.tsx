@@ -1,11 +1,15 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import './SimulatorPage.scss';
 import { PageLayout, PageBody } from './components/PageLayout';
-import { ApiError, rulesApi, ruleGroupsApi, flagsApi, flagGroupsApi, type RuleDefinition, type RuleGroup, type FlagDefinition, type FlagGroup } from './api';
+import { ApiError, rulesApi, ruleGroupsApi, flagsApi, flagGroupsApi, scenesApi, type RuleDefinition, type RuleGroup, type FlagDefinition, type FlagGroup, type SceneSummary, type SceneDetail } from './api';
+import type { SceneFlagDeclarations } from '@livewallpaper/types';
+import { rankScenes, winnerOf, type QualifyContext } from './simulatorScenes';
+import { SceneFlagsModal } from './controls/modals/SceneFlagsModal';
 import { SimulatorTopBar } from './SimulatorTopBar';
 import { useSimulatedState } from './useSimulatedState';
 import { SimulatorRulesPanel, COMBO_CONDITION_TYPES } from './SimulatorRulesPanel';
 import { SimulatorFlagsPanel } from './SimulatorFlagsPanel';
+import { SimulatorPreviewPanel } from './SimulatorPreviewPanel';
 import { generateUniqueId as generateUniqueFlagId } from './SimulatorFlagModals';
 import {
   generateUniqueId,
@@ -31,14 +35,22 @@ interface SimulatorPageProps {
   projectId: string;
   projectName: string;
   onBack: () => void;
+  onEditScene: (sceneId: string) => void;
 }
 
-export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageProps) {
+export function SimulatorPage({ projectId, projectName, onBack, onEditScene }: SimulatorPageProps) {
   const [rules, setRules] = useState<RuleDefinition[]>([]);
   const [ruleGroups, setRuleGroups] = useState<RuleGroup[]>([]);
   const [flags, setFlags] = useState<FlagDefinition[]>([]);
   const [flagGroups, setFlagGroups] = useState<FlagGroup[]>([]);
   const [flagUsageCounts, setFlagUsageCounts] = useState<Record<string, { rules: number; scenes: number }>>({});
+  // Lightweight scene metadata for ranking the cards (fetched up front, cheap — no sprites).
+  const [sceneSummaries, setSceneSummaries] = useState<SceneSummary[]>([]);
+  // Full scene detail (incl. sprites), fetched lazily and cached by id — only the scenes we
+  // actually render or edit. Keeps large sprite payloads off the initial load.
+  const [sceneDetails, setSceneDetails] = useState<Record<string, SceneDetail>>({});
+  const detailPromises = useRef<Map<string, Promise<SceneDetail | null>>>(new Map());
+  const [flagsSceneTarget, setFlagsSceneTarget] = useState<SceneDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [orderBy, setOrderBy] = useState<'least_shown' | 'points'>('least_shown');
@@ -62,10 +74,34 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
   const [removingRuleGroup, setRemovingRuleGroup] = useState<RuleGroup | null>(null);
 
   useEffect(() => {
-    Promise.all([rulesApi.list(projectId), ruleGroupsApi.list(projectId), flagsApi.list(projectId), flagGroupsApi.list(projectId), flagsApi.checkUsageCounts(projectId)])
-      .then(([r, rg, f, g, u]) => { setRules(r); setRuleGroups(rg); setFlags(f); setFlagGroups(g); setFlagUsageCounts(u); setLoading(false); })
+    // Load the rule/flag definitions plus lightweight scene metadata (declarations only) so the
+    // browser can rank scenes offline. Full scene detail — including the heavy sprite payload — is
+    // fetched lazily per scene, only when a scene needs to render or have its flags edited.
+    Promise.all([
+      rulesApi.list(projectId),
+      ruleGroupsApi.list(projectId),
+      flagsApi.list(projectId),
+      flagGroupsApi.list(projectId),
+      flagsApi.checkUsageCounts(projectId),
+      scenesApi.list(projectId),
+    ])
+      .then(([r, rg, f, g, u, scenes]) => { setRules(r); setRuleGroups(rg); setFlags(f); setFlagGroups(g); setFlagUsageCounts(u); setSceneSummaries(scenes); setLoading(false); })
       .catch(err => { setError(String(err)); setLoading(false); });
   }, [projectId]);
+
+  // Fetch (and cache) a scene's full detail on demand. Returns the cached copy immediately if we
+  // already have it, dedupes concurrent requests, and surfaces errors without throwing.
+  const ensureSceneDetail = (id: string): Promise<SceneDetail | null> => {
+    if (sceneDetails[id]) return Promise.resolve(sceneDetails[id]);
+    const pending = detailPromises.current.get(id);
+    if (pending) return pending;
+    const p = scenesApi.get(id)
+      .then(detail => { setSceneDetails(prev => ({ ...prev, [id]: detail })); return detail; })
+      .catch(err => { setError(String(err)); return null; })
+      .finally(() => { detailPromises.current.delete(id); }) as Promise<SceneDetail | null>;
+    detailPromises.current.set(id, p);
+    return p;
+  };
 
   const refreshFlagGroups = () => {
     flagGroupsApi.list(projectId).then(setFlagGroups).catch(err => setError(String(err)));
@@ -88,6 +124,67 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
 
   const sim = useSimulatedState(projectId, flags, rules);
   const activeFlagIds = useMemo(() => new Set(sim.activeFlagIds), [sim.activeFlagIds]);
+
+  // Cards re-rank live off the current world; the winner drives Wake.
+  const ranking = useMemo(() => {
+    const ctx: QualifyContext = {
+      activeFlags: activeFlagIds,
+      flagName: id => flagsById.get(id)?.name || id,
+    };
+    return rankScenes(sceneSummaries, orderBy, ctx, sim.sceneCounts);
+  }, [sceneSummaries, orderBy, activeFlagIds, sim.sceneCounts, flagsById]);
+  const liveWinner = useMemo(() => winnerOf(ranking), [ranking]);
+
+  // Pin an initial on-screen scene once scenes/flags have settled, so the render only moves on
+  // Wake thereafter (matches the "re-picked only on wake" banner). No-op once anything is pinned.
+  // Also warms the detail cache for that one scene so the preview has something to render.
+  useEffect(() => {
+    if (sim.renderedSceneId || !liveWinner) return;
+    sim.pinRenderedScene(liveWinner.id);
+    ensureSceneDetail(liveWinner.id);
+  }, [sim.renderedSceneId, liveWinner]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Summary of the pinned scene — gives us its label immediately, even while its detail loads.
+  const renderedSummary = useMemo(
+    () => sceneSummaries.find(s => s.id === sim.renderedSceneId) ?? null,
+    [sceneSummaries, sim.renderedSceneId],
+  );
+  // Full detail of the pinned scene for the render surface, or null until its lazy fetch resolves.
+  const renderedScene = useMemo(
+    () => (sim.renderedSceneId ? sceneDetails[sim.renderedSceneId] ?? null : null),
+    [sim.renderedSceneId, sceneDetails],
+  );
+
+  // Wake re-picks the on-screen scene; fetch the winner's detail first (no-op if already cached,
+  // i.e. the scene isn't changing) so the render has its sprites ready.
+  const handleWake = async () => {
+    if (liveWinner) await ensureSceneDetail(liveWinner.id);
+    sim.wake(liveWinner ? { id: liveWinner.id, name: liveWinner.name } : null);
+  };
+
+  const handleEditFlags = async (scene: { id: string }) => {
+    // Editing flags needs the full scene so the save preserves its sprites.
+    const detail = await ensureSceneDetail(scene.id);
+    if (detail) setFlagsSceneTarget(detail);
+  };
+
+  const handleSaveSceneFlags = (declarations: SceneFlagDeclarations) => {
+    if (!flagsSceneTarget) return;
+    const target = flagsSceneTarget;
+    const nextData = { ...target.data, flags: declarations };
+    setSceneDetails(prev => ({ ...prev, [target.id]: { ...target, data: nextData } }));
+    // Keep the summary's declarations in sync so the cards re-rank immediately.
+    setSceneSummaries(prev => prev.map(s => s.id === target.id ? { ...s, flags: declarations } : s));
+    setFlagsSceneTarget(null);
+    scenesApi.update(target.id, target.label, nextData).catch(err => setError(String(err)));
+  };
+
+  const handleDeleteScene = (scene: { id: string; name: string }) => {
+    if (!window.confirm(`Delete scene "${scene.name}"? This cannot be undone.`)) return;
+    setSceneSummaries(prev => prev.filter(s => s.id !== scene.id));
+    setSceneDetails(prev => { const { [scene.id]: _removed, ...rest } = prev; return rest; });
+    scenesApi.delete(scene.id).catch(err => setError(String(err)));
+  };
 
   const handleNewChapter = () => {
     const existingIds = new Set(flags.map(f => f.id));
@@ -396,7 +493,7 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
         onDayOfWeekChange={sim.setDayOfWeek}
         daysSinceInstall={sim.daysSinceInstall}
         onDaysSinceInstallChange={sim.setDaysSinceInstall}
-        lastSceneShown={sim.lastSceneShown}
+        lastSceneShown={renderedSummary?.label ?? sim.lastSceneShown}
         totalWakes={sim.totalWakes}
         onTotalWakesChange={sim.setTotalWakes}
         onReset={sim.handleReset}
@@ -451,65 +548,19 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
                 <Arrow />
 
                 {/* PREVIEW */}
-                <div className="simulator-panel simulator-panel--preview">
-                  <div className="simulator-panel__header">
-                    <span>Preview</span>
-                    <span className="simulator-panel__hint">composited · real sprites</span>
-                  </div>
-                  <div className="simulator-preview-body">
-                    <div className="simulator-phone-wrap">
-                      <div className="simulator-phone">
-                        <div className="simulator-phone__bezel" />
-                        <span className="simulator-phone__badge">ON SCREEN</span>
-                        <div className="simulator-phone__sprite simulator-phone__sprite--tree">tree</div>
-                        <div className="simulator-phone__sprite simulator-phone__sprite--fox">fox</div>
-                        <div className="simulator-phone__sprite simulator-phone__sprite--aurora">aurora band</div>
-                        <span className="simulator-phone__scene-name">{sim.lastSceneShown}</span>
-                      </div>
-                      <div className="simulator-edit-scene-link">✎ Edit scene ▸</div>
-                    </div>
-                    <div className="simulator-selection-list">
-                      <span className="simulator-qualify-caption">3 qualify at this wake</span>
-                      <div className="simulator-order-toggle">
-                        <span>Order by</span>
-                        <span
-                          className={`simulator-order-toggle__option ${orderBy === 'least_shown' ? 'simulator-order-toggle__option--active' : ''}`}
-                          onClick={() => setOrderBy('least_shown')}
-                        >
-                          Least shown
-                        </span>
-                        <span
-                          className={`simulator-order-toggle__option ${orderBy === 'points' ? 'simulator-order-toggle__option--active' : ''}`}
-                          onClick={() => setOrderBy('points')}
-                        >
-                          Points
-                        </span>
-                      </div>
-                      <div className="simulator-scene-row simulator-scene-row--wins">
-                        <span className="simulator-scene-row__badge">WINS</span>
-                        <span className="simulator-scene-row__name">Aurora Forest</span>
-                        <span className="simulator-scene-row__value">3×</span>
-                      </div>
-                      <div className="simulator-scene-row">
-                        <span className="simulator-scene-row__badge">#2</span>
-                        <span className="simulator-scene-row__name">Night City</span>
-                        <span className="simulator-scene-row__value">12×</span>
-                      </div>
-                      <div className="simulator-scene-row simulator-scene-row--out">
-                        <span className="simulator-scene-row__badge">OUT</span>
-                        <span className="simulator-scene-row__name">Day Forest</span>
-                        <span className="simulator-scene-row__reason">needs day</span>
-                      </div>
-                    </div>
-                  </div>
-                  {sim.stale && (
-                    <div className="simulator-stale-banner">
-                      <span>⟳</span>
-                      <span>Stale — re-picked only on wake</span>
-                    </div>
-                  )}
-                  <div className="simulator-wake-button" onClick={sim.handleWake}>◐ Wake screen — pick a scene now</div>
-                </div>
+                <SimulatorPreviewPanel
+                  scenes={ranking}
+                  renderedScene={renderedScene}
+                  renderedSceneName={renderedSummary?.label ?? '—'}
+                  world={sim.world}
+                  orderBy={orderBy}
+                  onOrderByChange={setOrderBy}
+                  stale={sim.stale}
+                  onWake={handleWake}
+                  onEditScene={onEditScene}
+                  onEditFlags={handleEditFlags}
+                  onDeleteScene={handleDeleteScene}
+                />
               </div>
             </div>
           </div>
@@ -608,6 +659,15 @@ export function SimulatorPage({ projectId, projectName, onBack }: SimulatorPageP
           affectedFlags={flags.filter(f => f.group === removingGroup.name)}
           onCancel={() => setRemovingGroup(null)}
           onConfirm={handleConfirmRemoveGroup}
+        />
+      )}
+      {flagsSceneTarget && (
+        <SceneFlagsModal
+          sceneName={flagsSceneTarget.label}
+          flags={flags}
+          declarations={flagsSceneTarget.data.flags ?? {}}
+          onSave={handleSaveSceneFlags}
+          onClose={() => setFlagsSceneTarget(null)}
         />
       )}
     </PageLayout>

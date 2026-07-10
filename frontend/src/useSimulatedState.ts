@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { RuleDefinition } from '@livewallpaper/types';
 import type { FlagDefinition } from './api';
-import { resolveWorldState, type FlagChangeHistory, type WorldClock } from './ruleEngine';
+import { resolveWorldState, type FlagChangeHistory, type WorldClock, type WorldState } from './ruleEngine';
 
 export const TIME_OPTIONS = ['06:00 · Morning', '12:00 · Midday', '17:00 · Evening', '21:30 · Night'];
 export const DAY_OPTIONS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -34,6 +34,10 @@ interface PersistedFields {
   activeFlagIds: string[];
   flagChanges: FlagChangeHistory;
   firedOneShotRuleIds: string[];
+  /** Per-scene times-shown counts, incremented on each wake. Drives "Least shown" and scene_count. */
+  sceneCounts: Record<string, number>;
+  /** Scene pinned to the render surface — captured at the last wake ("re-picked only on wake"). */
+  renderedSceneId: string | null;
   /** Whether defaultActive flags have been seeded into activeFlagIds for this project yet. */
   seeded: boolean;
 }
@@ -48,6 +52,8 @@ const DEFAULTS: PersistedFields = {
   activeFlagIds: [],
   flagChanges: {},
   firedOneShotRuleIds: [],
+  sceneCounts: {},
+  renderedSceneId: null,
   seeded: false,
 };
 
@@ -81,6 +87,7 @@ function runEngine(
     activeFlags: new Set(fields.activeFlagIds),
     flagChanges: fields.flagChanges,
     firedOneShotRuleIds: new Set(fields.firedOneShotRuleIds),
+    sceneCounts: fields.sceneCounts,
   });
   return {
     activeFlagIds: [...result.activeFlags],
@@ -146,6 +153,12 @@ export function useSimulatedState(projectId: string, flags: FlagDefinition[], ru
     setStale(true);
   }
 
+  // Seed the pinned render scene once (e.g. the current winner on first load), without counting
+  // it as a wake. No-op once a scene is already pinned, so it never overrides a wake.
+  const pinRenderedScene = (id: string) => {
+    setFields(f => (f.renderedSceneId ? f : { ...f, renderedSceneId: id }));
+  };
+
   const handleReset = () => {
     setFields(f => ({
       ...f,
@@ -157,18 +170,37 @@ export function useSimulatedState(projectId: string, flags: FlagDefinition[], ru
     setStale(true);
   };
 
-  const handleWake = () => {
-    const nextScene = SCENE_OPTIONS[Math.floor(Math.random() * SCENE_OPTIONS.length)];
+  // A snapshot of the live world, for evaluating scene qualification and sprite conditions
+  // outside the rule engine.
+  const world: WorldState = useMemo(() => ({
+    clock: worldClockFor(fields),
+    activeFlags: new Set(fields.activeFlagIds),
+    sceneCounts: fields.sceneCounts,
+    flagChanges: fields.flagChanges,
+  }), [fields]);
+
+  // Wake re-picks the on-screen scene: the caller passes the current winner (computed from the
+  // live ranking). Its show-count is bumped and it's pinned as the rendered scene.
+  const wake = (winner: { id: string; name: string } | null) => {
     setFields(f => ({
       ...f,
       ...runEngine(f, flags, rules),
-      lastSceneShown: nextScene,
+      ...(winner
+        ? {
+            sceneCounts: { ...f.sceneCounts, [winner.id]: (f.sceneCounts[winner.id] ?? 0) + 1 },
+            lastSceneShown: winner.name,
+            renderedSceneId: winner.id,
+          }
+        : { lastSceneShown: '—', renderedSceneId: null }),
       totalWakes: f.totalWakes + 1,
     }));
     setStale(false);
   };
 
   return {
+    world,
+    sceneCounts: fields.sceneCounts,
+    renderedSceneId: fields.renderedSceneId,
     chapterId: fields.chapterId,
     timeOfDay: fields.timeOfDay,
     dayOfWeek: fields.dayOfWeek,
@@ -183,6 +215,7 @@ export function useSimulatedState(projectId: string, flags: FlagDefinition[], ru
     setDaysSinceInstall: (v: NumberUpdater) => updateField('daysSinceInstall', v),
     setTotalWakes: (v: NumberUpdater) => updateField('totalWakes', v),
     handleReset,
-    handleWake,
+    wake,
+    pinRenderedScene,
   };
 }

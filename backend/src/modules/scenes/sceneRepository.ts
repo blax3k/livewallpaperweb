@@ -31,10 +31,21 @@ type SpriteBaseRow = {
   conditions: import('@livewallpaper/types').SpriteConditionBlock[] | null;
 };
 
+type SceneSummaryRow = {
+  id: string;
+  name: string;
+  label: string;
+  status: ObjectStatus;
+  updated_at: string;
+  flag_declarations: import('@livewallpaper/types').SceneFlagDeclarations | null;
+};
+
 export async function selectSceneSummaries(projectId?: string) {
+  // Flag declarations live in a dedicated scene column — fetching them here is cheap and lets
+  // callers rank scenes without pulling each scene's sprites.
   if (projectId) {
-    const result = await pool.query<{ id: string; name: string; label: string; status: ObjectStatus; updated_at: string }>(
-      `SELECT id, name, label, status, updated_at
+    const result = await pool.query<SceneSummaryRow>(
+      `SELECT id, name, label, status, updated_at, flag_declarations
        FROM scenes
        WHERE project_id = $1 AND status <> 'DELETED'
        ORDER BY label ASC`,
@@ -43,8 +54,8 @@ export async function selectSceneSummaries(projectId?: string) {
     return result.rows.map(SceneObject.fromSummaryRow);
   }
 
-  const result = await pool.query<{ id: string; name: string; label: string; status: ObjectStatus; updated_at: string }>(
-    `SELECT id, name, label, status, updated_at
+  const result = await pool.query<SceneSummaryRow>(
+    `SELECT id, name, label, status, updated_at, flag_declarations
      FROM scenes
      WHERE status <> 'DELETED'
      ORDER BY label ASC`,

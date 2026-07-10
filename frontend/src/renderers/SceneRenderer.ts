@@ -948,6 +948,26 @@ export class SceneRenderer {
   }
 
   /**
+   * Select, for every sprite, the condition set that a runtime world would show: the FIRST
+   * condition block whose group is accepted by `matches` (mirroring the runtime "first match
+   * wins" rule), or the sprite's Default (base) state if none match. Sprites with no condition
+   * sets are left untouched. Used by the simulator preview to reflect active flags/time without
+   * the manual per-sprite selection the editor uses.
+   */
+  applyConditionSelection(matches: (conditions: RuleConditionGroup | undefined) => boolean): void {
+    this.sprites.forEach((_, i) => {
+      const blocks = this.getOriginalSpriteData(i)?.conditions ?? [];
+      if (blocks.length === 0) return;
+      const matchIndex = blocks.findIndex(b => matches(b.conditions));
+      if (matchIndex >= 0) {
+        this.selectCondition(i, matchIndex);
+      } else {
+        this.selectDefaultCondition(i);
+      }
+    });
+  }
+
+  /**
    * Select which condition set is currently shown for a sprite. Unlike the old "preview" model,
    * this is permanent (per sprite) rather than something that gets exited — a sprite with one or
    * more condition sets always has exactly one selected, regardless of which sprite is focused

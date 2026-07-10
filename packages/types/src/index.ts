@@ -284,6 +284,11 @@ export interface SceneSummary {
   status: ObjectStatus;
   updated_at?: string;
   thumbnail_url: string;
+  /**
+   * Lightweight scene-selection metadata (no sprites), so consumers like the simulator can rank
+   * scenes without fetching each scene's full detail. Mirrors `flags` on `Scene`.
+   */
+  flags?: SceneFlagDeclarations;
 }
 
 export interface SceneDetail {

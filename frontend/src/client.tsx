@@ -147,6 +147,7 @@ function App() {
         projectId={page.project.id}
         projectName={page.project.name}
         onBack={() => navigateBackToScenes(page.project)}
+        onEditScene={(sceneId) => navigateToScene({ id: sceneId, name: '' }, page.project)}
       />
     );
   }
