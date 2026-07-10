@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown, Pencil, RefreshCw, MoonStar, Flag, Trash2 } from 'lucide-react';
+import { ChevronDown, Pencil, RefreshCw, MoonStar, Trash2 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -21,17 +21,17 @@ const ASPECT_OPTIONS: { value: AspectRatio; label: string }[] = [
 
 interface SceneCardProps {
   scene: RankedScene;
-  onSelect: (scene: RankedScene) => void;
   onEditFlags: (scene: RankedScene) => void;
+  onEditScene: (scene: RankedScene) => void;
   onDelete: (scene: RankedScene) => void;
 }
 
-function SceneCard({ scene, onSelect, onEditFlags, onDelete }: SceneCardProps) {
+function SceneCard({ scene, onEditFlags, onEditScene, onDelete }: SceneCardProps) {
   const badgeLabel = scene.status === 'wins' ? 'WINS' : scene.status === 'out' ? 'OUT' : `#${scene.rank}`;
   return (
     <div
       className={`simulator-scard simulator-scard--${scene.status}`}
-      onClick={() => onSelect(scene)}
+      onClick={() => onEditFlags(scene)}
     >
       <div className="simulator-scard__top">
         <span className="simulator-scard__badge">{badgeLabel}</span>
@@ -44,10 +44,10 @@ function SceneCard({ scene, onSelect, onEditFlags, onDelete }: SceneCardProps) {
       <div className="simulator-scard__actions">
         <button
           className="simulator-scard__action"
-          title="Edit flags"
-          onClick={e => { e.stopPropagation(); onEditFlags(scene); }}
+          title="Edit scene"
+          onClick={e => { e.stopPropagation(); onEditScene(scene); }}
         >
-          <Flag size={14} strokeWidth={2} />
+          <Pencil size={14} strokeWidth={2} />
         </button>
         <button
           className="simulator-scard__action simulator-scard__action--danger"
@@ -94,7 +94,6 @@ export function SimulatorPreviewPanel({
   const qualifyCount = scenes.filter(s => s.status !== 'out').length;
   const renderContainerRef = useSimulatorPreview(renderedScene, world);
 
-  const handleSelectScene = (scene: RankedScene) => onEditScene(scene.id);
   const handleEditScene = () => { if (renderedScene) onEditScene(renderedScene.id); };
 
   return (
@@ -173,8 +172,8 @@ export function SimulatorPreviewPanel({
             <SceneCard
               key={scene.id}
               scene={scene}
-              onSelect={handleSelectScene}
               onEditFlags={onEditFlags}
+              onEditScene={s => onEditScene(s.id)}
               onDelete={onDeleteScene}
             />
           ))}

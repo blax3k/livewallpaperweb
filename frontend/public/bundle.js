@@ -64354,58 +64354,46 @@ ${parts.join("\n")}
   ];
   var Eye = createLucideIcon("eye", __iconNode8);
 
-  // ../node_modules/lucide-react/dist/esm/icons/flag.mjs
-  var __iconNode9 = [
-    [
-      "path",
-      {
-        d: "M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528",
-        key: "1jaruq"
-      }
-    ]
-  ];
-  var Flag = createLucideIcon("flag", __iconNode9);
-
   // ../node_modules/lucide-react/dist/esm/icons/image.mjs
-  var __iconNode10 = [
+  var __iconNode9 = [
     ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2", key: "1m3agn" }],
     ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }],
     ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }]
   ];
-  var Image2 = createLucideIcon("image", __iconNode10);
+  var Image2 = createLucideIcon("image", __iconNode9);
 
   // ../node_modules/lucide-react/dist/esm/icons/layout-grid.mjs
-  var __iconNode11 = [
+  var __iconNode10 = [
     ["rect", { width: "7", height: "7", x: "3", y: "3", rx: "1", key: "1g98yp" }],
     ["rect", { width: "7", height: "7", x: "14", y: "3", rx: "1", key: "6d4xhi" }],
     ["rect", { width: "7", height: "7", x: "14", y: "14", rx: "1", key: "nxv5o0" }],
     ["rect", { width: "7", height: "7", x: "3", y: "14", rx: "1", key: "1bb6yr" }]
   ];
-  var LayoutGrid = createLucideIcon("layout-grid", __iconNode11);
+  var LayoutGrid = createLucideIcon("layout-grid", __iconNode10);
 
   // ../node_modules/lucide-react/dist/esm/icons/link-2.mjs
-  var __iconNode12 = [
+  var __iconNode11 = [
     ["path", { d: "M9 17H7A5 5 0 0 1 7 7h2", key: "8i5ue5" }],
     ["path", { d: "M15 7h2a5 5 0 1 1 0 10h-2", key: "1b9ql8" }],
     ["line", { x1: "8", x2: "16", y1: "12", y2: "12", key: "1jonct" }]
   ];
-  var Link2 = createLucideIcon("link-2", __iconNode12);
+  var Link2 = createLucideIcon("link-2", __iconNode11);
 
   // ../node_modules/lucide-react/dist/esm/icons/maximize.mjs
-  var __iconNode13 = [
+  var __iconNode12 = [
     ["path", { d: "M8 3H5a2 2 0 0 0-2 2v3", key: "1dcmit" }],
     ["path", { d: "M21 8V5a2 2 0 0 0-2-2h-3", key: "1e4gt3" }],
     ["path", { d: "M3 16v3a2 2 0 0 0 2 2h3", key: "wsl5sc" }],
     ["path", { d: "M16 21h3a2 2 0 0 0 2-2v-3", key: "18trek" }]
   ];
-  var Maximize = createLucideIcon("maximize", __iconNode13);
+  var Maximize = createLucideIcon("maximize", __iconNode12);
 
   // ../node_modules/lucide-react/dist/esm/icons/minus.mjs
-  var __iconNode14 = [["path", { d: "M5 12h14", key: "1ays0h" }]];
-  var Minus = createLucideIcon("minus", __iconNode14);
+  var __iconNode13 = [["path", { d: "M5 12h14", key: "1ays0h" }]];
+  var Minus = createLucideIcon("minus", __iconNode13);
 
   // ../node_modules/lucide-react/dist/esm/icons/moon-star.mjs
-  var __iconNode15 = [
+  var __iconNode14 = [
     ["path", { d: "M18 5h4", key: "1lhgn2" }],
     ["path", { d: "M20 3v4", key: "1olli1" }],
     [
@@ -64416,10 +64404,10 @@ ${parts.join("\n")}
       }
     ]
   ];
-  var MoonStar = createLucideIcon("moon-star", __iconNode15);
+  var MoonStar = createLucideIcon("moon-star", __iconNode14);
 
   // ../node_modules/lucide-react/dist/esm/icons/mouse-pointer-2.mjs
-  var __iconNode16 = [
+  var __iconNode15 = [
     [
       "path",
       {
@@ -64428,10 +64416,10 @@ ${parts.join("\n")}
       }
     ]
   ];
-  var MousePointer2 = createLucideIcon("mouse-pointer-2", __iconNode16);
+  var MousePointer2 = createLucideIcon("mouse-pointer-2", __iconNode15);
 
   // ../node_modules/lucide-react/dist/esm/icons/pencil.mjs
-  var __iconNode17 = [
+  var __iconNode16 = [
     [
       "path",
       {
@@ -64441,17 +64429,17 @@ ${parts.join("\n")}
     ],
     ["path", { d: "m15 5 4 4", key: "1mk7zo" }]
   ];
-  var Pencil = createLucideIcon("pencil", __iconNode17);
+  var Pencil = createLucideIcon("pencil", __iconNode16);
 
   // ../node_modules/lucide-react/dist/esm/icons/plus.mjs
-  var __iconNode18 = [
+  var __iconNode17 = [
     ["path", { d: "M5 12h14", key: "1ays0h" }],
     ["path", { d: "M12 5v14", key: "s699le" }]
   ];
-  var Plus = createLucideIcon("plus", __iconNode18);
+  var Plus = createLucideIcon("plus", __iconNode17);
 
   // ../node_modules/lucide-react/dist/esm/icons/radar.mjs
-  var __iconNode19 = [
+  var __iconNode18 = [
     ["path", { d: "M19.07 4.93A10 10 0 0 0 6.99 3.34", key: "z3du51" }],
     ["path", { d: "M4 6h.01", key: "oypzma" }],
     ["path", { d: "M2.29 9.62A10 10 0 1 0 21.31 8.35", key: "qzzz0" }],
@@ -64461,26 +64449,26 @@ ${parts.join("\n")}
     ["circle", { cx: "12", cy: "12", r: "2", key: "1c9p78" }],
     ["path", { d: "m13.41 10.59 5.66-5.66", key: "mhq4k0" }]
   ];
-  var Radar = createLucideIcon("radar", __iconNode19);
+  var Radar = createLucideIcon("radar", __iconNode18);
 
   // ../node_modules/lucide-react/dist/esm/icons/refresh-cw.mjs
-  var __iconNode20 = [
+  var __iconNode19 = [
     ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
     ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
     ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
     ["path", { d: "M8 16H3v5", key: "1cv678" }]
   ];
-  var RefreshCw = createLucideIcon("refresh-cw", __iconNode20);
+  var RefreshCw = createLucideIcon("refresh-cw", __iconNode19);
 
   // ../node_modules/lucide-react/dist/esm/icons/rotate-ccw.mjs
-  var __iconNode21 = [
+  var __iconNode20 = [
     ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
     ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
   ];
-  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode21);
+  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode20);
 
   // ../node_modules/lucide-react/dist/esm/icons/save.mjs
-  var __iconNode22 = [
+  var __iconNode21 = [
     [
       "path",
       {
@@ -64491,44 +64479,44 @@ ${parts.join("\n")}
     ["path", { d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", key: "1ydtos" }],
     ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
   ];
-  var Save = createLucideIcon("save", __iconNode22);
+  var Save = createLucideIcon("save", __iconNode21);
 
   // ../node_modules/lucide-react/dist/esm/icons/search.mjs
-  var __iconNode23 = [
+  var __iconNode22 = [
     ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
     ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
   ];
-  var Search = createLucideIcon("search", __iconNode23);
+  var Search = createLucideIcon("search", __iconNode22);
 
   // ../node_modules/lucide-react/dist/esm/icons/smartphone.mjs
-  var __iconNode24 = [
+  var __iconNode23 = [
     ["rect", { width: "14", height: "20", x: "5", y: "2", rx: "2", ry: "2", key: "1yt0o3" }],
     ["path", { d: "M12 18h.01", key: "mhygvu" }]
   ];
-  var Smartphone = createLucideIcon("smartphone", __iconNode24);
+  var Smartphone = createLucideIcon("smartphone", __iconNode23);
 
   // ../node_modules/lucide-react/dist/esm/icons/trash-2.mjs
-  var __iconNode25 = [
+  var __iconNode24 = [
     ["path", { d: "M10 11v6", key: "nco0om" }],
     ["path", { d: "M14 11v6", key: "outv1u" }],
     ["path", { d: "M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6", key: "miytrc" }],
     ["path", { d: "M3 6h18", key: "d0wm0j" }],
     ["path", { d: "M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2", key: "e791ji" }]
   ];
-  var Trash2 = createLucideIcon("trash-2", __iconNode25);
+  var Trash2 = createLucideIcon("trash-2", __iconNode24);
 
   // ../node_modules/lucide-react/dist/esm/icons/unlink-2.mjs
-  var __iconNode26 = [
+  var __iconNode25 = [
     ["path", { d: "M15 7h2a5 5 0 0 1 0 10h-2m-6 0H7A5 5 0 0 1 7 7h2", key: "1re2ne" }]
   ];
-  var Unlink2 = createLucideIcon("unlink-2", __iconNode26);
+  var Unlink2 = createLucideIcon("unlink-2", __iconNode25);
 
   // ../node_modules/lucide-react/dist/esm/icons/x.mjs
-  var __iconNode27 = [
+  var __iconNode26 = [
     ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
     ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
   ];
-  var X = createLucideIcon("x", __iconNode27);
+  var X = createLucideIcon("x", __iconNode26);
 
   // src/controls/modals/CreateSpriteModal.tsx
   var import_react5 = __toESM(require_react());
@@ -80731,13 +80719,13 @@ ${e2}`);
     { value: "1:1", label: "Square 1:1" },
     { value: "16:9", label: "Landscape 16:9" }
   ];
-  function SceneCard2({ scene, onSelect, onEditFlags, onDelete }) {
+  function SceneCard2({ scene, onEditFlags, onEditScene, onDelete }) {
     const badgeLabel = scene.status === "wins" ? "WINS" : scene.status === "out" ? "OUT" : `#${scene.rank}`;
     return /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)(
       "div",
       {
         className: `simulator-scard simulator-scard--${scene.status}`,
-        onClick: () => onSelect(scene),
+        onClick: () => onEditFlags(scene),
         children: [
           /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("div", { className: "simulator-scard__top", children: /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { className: "simulator-scard__badge", children: badgeLabel }) }),
           /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { className: "simulator-scard__name", children: scene.name }),
@@ -80751,12 +80739,12 @@ ${e2}`);
               "button",
               {
                 className: "simulator-scard__action",
-                title: "Edit flags",
+                title: "Edit scene",
                 onClick: (e2) => {
                   e2.stopPropagation();
-                  onEditFlags(scene);
+                  onEditScene(scene);
                 },
-                children: /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(Flag, { size: 14, strokeWidth: 2 })
+                children: /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(Pencil, { size: 14, strokeWidth: 2 })
               }
             ),
             /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
@@ -80791,7 +80779,6 @@ ${e2}`);
     const [aspect, setAspect] = (0, import_react32.useState)("9:16");
     const qualifyCount = scenes.filter((s2) => s2.status !== "out").length;
     const renderContainerRef = useSimulatorPreview(renderedScene, world);
-    const handleSelectScene = (scene) => onEditScene(scene.id);
     const handleEditScene = () => {
       if (renderedScene) onEditScene(renderedScene.id);
     };
@@ -80858,8 +80845,8 @@ ${e2}`);
           SceneCard2,
           {
             scene,
-            onSelect: handleSelectScene,
             onEditFlags,
+            onEditScene: (s2) => onEditScene(s2.id),
             onDelete: onDeleteScene
           },
           scene.id
@@ -82398,7 +82385,6 @@ lucide-react/dist/esm/icons/circle-check-big.mjs:
 lucide-react/dist/esm/icons/ellipsis.mjs:
 lucide-react/dist/esm/icons/eye-off.mjs:
 lucide-react/dist/esm/icons/eye.mjs:
-lucide-react/dist/esm/icons/flag.mjs:
 lucide-react/dist/esm/icons/image.mjs:
 lucide-react/dist/esm/icons/layout-grid.mjs:
 lucide-react/dist/esm/icons/link-2.mjs:
