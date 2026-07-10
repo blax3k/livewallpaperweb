@@ -17,6 +17,7 @@ interface SimulatorControlsPanelProps {
   chapters: FlagDefinition[];
   currentChapterId: string | null;
   onSelectChapter: (id: string) => void;
+  onEditChapter: (chapter: FlagDefinition) => void;
   onNewChapter: () => void;
   onRemoveChapter: (chapter: FlagDefinition) => void;
   timeOfDay: string;
@@ -34,6 +35,7 @@ export function SimulatorControlsPanel({
   chapters,
   currentChapterId,
   onSelectChapter,
+  onEditChapter,
   onNewChapter,
   onRemoveChapter,
   timeOfDay,
@@ -66,7 +68,7 @@ export function SimulatorControlsPanel({
               <button
                 key={chapter.id}
                 className={`simulator-chip ${isCurrent ? 'simulator-chip--current' : ''}`}
-                onClick={() => onSelectChapter(chapter.id)}
+                onClick={() => onEditChapter(chapter)}
               >
                 <span className="simulator-chip__num">{i + 1}</span>
                 {isCurrent && (

@@ -123,6 +123,9 @@ export function SimulatorPage({ projectId, projectName, onBack, onEditScene }: S
     [flags],
   );
 
+  // The Flags panel lists ordinary flags only — chapters are managed from the Spine.
+  const nonChapterFlags = useMemo(() => flags.filter(f => !f.isChapter), [flags]);
+
   const sim = useSimulatedState(projectId, flags, rules);
   const activeFlagIds = useMemo(() => new Set(sim.activeFlagIds), [sim.activeFlagIds]);
 
@@ -506,6 +509,7 @@ export function SimulatorPage({ projectId, projectName, onBack, onEditScene }: S
                   chapters={chapters}
                   currentChapterId={sim.chapterId}
                   onSelectChapter={sim.setChapterId}
+                  onEditChapter={handleSelectFlag}
                   onNewChapter={handleNewChapter}
                   onRemoveChapter={handleRemoveFlagRequest}
                   timeOfDay={sim.timeOfDay}
@@ -541,7 +545,7 @@ export function SimulatorPage({ projectId, projectName, onBack, onEditScene }: S
 
                   {/* FLAGS */}
                   <SimulatorFlagsPanel
-                    flags={flags}
+                    flags={nonChapterFlags}
                     groups={flagGroups}
                     usageCounts={flagUsageCounts}
                     activeFlagIds={activeFlagIds}

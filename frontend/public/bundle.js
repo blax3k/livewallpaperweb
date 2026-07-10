@@ -80048,6 +80048,7 @@ ${e2}`);
     chapters,
     currentChapterId,
     onSelectChapter,
+    onEditChapter,
     onNewChapter,
     onRemoveChapter,
     timeOfDay,
@@ -80079,7 +80080,7 @@ ${e2}`);
               "button",
               {
                 className: `simulator-chip ${isCurrent ? "simulator-chip--current" : ""}`,
-                onClick: () => onSelectChapter(chapter.id),
+                onClick: () => onEditChapter(chapter),
                 children: [
                   /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-chip__num", children: i2 + 1 }),
                   isCurrent && /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(import_jsx_runtime48.Fragment, { children: [
@@ -80871,7 +80872,7 @@ ${e2}`);
       setFlag({ ...flag, group: value || void 0 });
     };
     return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("h2", { className: "modal-title", children: isNew ? "New Flag" : "Edit Flag" }),
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("h2", { className: "modal-title", children: isNew ? "New Flag" : flag.isChapter ? "Edit Chapter" : "Edit Flag" }),
       /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "form-row", children: [
         /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("label", { children: "Name" }),
         /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
@@ -80879,12 +80880,12 @@ ${e2}`);
           {
             value: flag.name,
             onChange: (e2) => setFlag({ ...flag, name: e2.target.value }),
-            placeholder: "Flag display name",
+            placeholder: flag.isChapter ? "Chapter name" : "Flag display name",
             autoFocus: true
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "form-row", children: [
+      !flag.isChapter && /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "form-row", children: [
         /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("label", { children: "Group" }),
         /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("select", { value: flag.group ?? "", onChange: (e2) => handleGroupSelect(e2.target.value), children: [
           /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("option", { value: "", children: "(ungrouped)" }),
@@ -81553,6 +81554,7 @@ ${e2}`);
       () => flags.filter((f2) => f2.isChapter).sort((a2, b2) => (a2.chapterOrder ?? 0) - (b2.chapterOrder ?? 0)),
       [flags]
     );
+    const nonChapterFlags = (0, import_react35.useMemo)(() => flags.filter((f2) => !f2.isChapter), [flags]);
     const sim = useSimulatedState(projectId, flags, rules);
     const activeFlagIds = (0, import_react35.useMemo)(() => new Set(sim.activeFlagIds), [sim.activeFlagIds]);
     const currentChapter = (0, import_react35.useMemo)(() => chapters.find((c2) => c2.id === sim.chapterId) ?? null, [chapters, sim.chapterId]);
@@ -81891,6 +81893,7 @@ ${e2}`);
                 chapters,
                 currentChapterId: sim.chapterId,
                 onSelectChapter: sim.setChapterId,
+                onEditChapter: handleSelectFlag,
                 onNewChapter: handleNewChapter,
                 onRemoveChapter: handleRemoveFlagRequest,
                 timeOfDay: sim.timeOfDay,
@@ -81926,7 +81929,7 @@ ${e2}`);
               /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
                 SimulatorFlagsPanel,
                 {
-                  flags,
+                  flags: nonChapterFlags,
                   groups: flagGroups,
                   usageCounts: flagUsageCounts,
                   activeFlagIds,

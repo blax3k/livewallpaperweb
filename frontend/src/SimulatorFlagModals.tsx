@@ -29,23 +29,26 @@ export function FlagEditModal({ flag: initial, isNew, groups, onSave, onCancel }
   return (
     <div className="modal-overlay">
       <div className="modal-box" onClick={e => e.stopPropagation()}>
-        <h2 className="modal-title">{isNew ? 'New Flag' : 'Edit Flag'}</h2>
+        <h2 className="modal-title">{isNew ? 'New Flag' : flag.isChapter ? 'Edit Chapter' : 'Edit Flag'}</h2>
         <div className="form-row">
           <label>Name</label>
           <input
             value={flag.name}
             onChange={e => setFlag({ ...flag, name: e.target.value })}
-            placeholder="Flag display name"
+            placeholder={flag.isChapter ? 'Chapter name' : 'Flag display name'}
             autoFocus
           />
         </div>
-        <div className="form-row">
-          <label>Group</label>
+        {/* Chapters are managed from the Spine, not the Flags groups — only their name is editable here. */}
+        {!flag.isChapter && (
+          <div className="form-row">
+            <label>Group</label>
             <select value={flag.group ?? ''} onChange={e => handleGroupSelect(e.target.value)}>
               <option value="">(ungrouped)</option>
               {groups.map(g => <option key={g.id} value={g.name}>{g.name}</option>)}
             </select>
-        </div>
+          </div>
+        )}
         <div className="modal-footer">
           <Button onClick={onCancel}>Cancel</Button>
           <Button variant="primary" disabled={!flag.name.trim()} onClick={() => onSave(flag)}>Save Flag</Button>
