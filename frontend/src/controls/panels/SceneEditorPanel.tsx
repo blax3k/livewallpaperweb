@@ -22,8 +22,6 @@ interface SceneEditorPanelProps {
   orientation: 'portrait' | 'landscape';
   xFocus: number;
   yFocus: number;
-  startTime: number;
-  endTime: number;
   spriteEntries: SpriteEntry[];
   projectId: string;
   selectedSprite: SelectedSprite | null;
@@ -33,8 +31,6 @@ interface SceneEditorPanelProps {
   onYFocusChange: (value: number) => void;
   onYFocusChangeStart?: (value: number) => void;
   onYFocusCommit?: (value: number) => void;
-  onStartTimeChange: (value: number) => void;
-  onEndTimeChange: (value: number) => void;
   onSpriteToggle: (index: number) => void;
   onSpriteSelect: (index: number) => void;
   onAddSprite: (textureResource: string) => void;

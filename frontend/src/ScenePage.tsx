@@ -48,8 +48,6 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     currentSceneId,
     xFocus,
     yFocus,
-    startTime,
-    endTime,
     spriteEntries,
     selectedSprite,
     setSelectedSprite,
@@ -63,8 +61,6 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     saveScene,
     handleXFocusChange,
     handleYFocusChange,
-    handleStartTimeChange,
-    handleEndTimeChange,
     handleGuideAspectRatioChange,
     handleSpriteToggle,
     handleSpriteSelect,
@@ -458,8 +454,6 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
           orientation={orientation}
           xFocus={xFocus}
           yFocus={yFocus}
-          startTime={startTime}
-          endTime={endTime}
           projectId={projectId}
           spriteEntries={spriteEntries}
           selectedSprite={selectedSprite}
@@ -469,8 +463,6 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
           onYFocusChange={handleYFocusChange}
           onYFocusChangeStart={handleYFocusChangeStart}
           onYFocusCommit={handleYFocusCommit}
-          onStartTimeChange={handleStartTimeChange}
-          onEndTimeChange={handleEndTimeChange}
           onSpriteToggle={handleSpriteToggle}
           onSpriteSelect={handleSpriteSelect}
           onAddSprite={handleAddSprite}

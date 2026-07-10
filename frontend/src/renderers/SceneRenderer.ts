@@ -38,8 +38,6 @@ export class SceneRenderer {
   private orientation: 'portrait' | 'landscape' = 'portrait';
   private currentXFocus: number = 0.5;
   private currentYFocus: number = 0.5;
-  private currentStartTime: number = 0;
-  private currentEndTime: number = 1439;
   private selectionHighlight: PIXI.Graphics | null = null;
   private selectedHighlightIndex: number | null = null;
   private readonly ZOOM_SCALE = 1.6;
@@ -170,8 +168,6 @@ export class SceneRenderer {
     // Store original scene data for later serialization
     this.originalSceneData = sceneData;
     this.currentYFocus = sceneData.yFocus ?? 0.5;
-    this.currentStartTime = sceneData.startTime ?? 0;
-    this.currentEndTime = sceneData.endTime ?? 1439;
 
     // Any sprite with condition sets always has one selected — never an ambiguous "none
     // active" state, regardless of which sprite (if any) ends up focused for editing.
@@ -359,14 +355,6 @@ export class SceneRenderer {
   setYFocus(value: number): void {
     this.currentYFocus = value;
     this.applyAllPositions();
-  }
-
-  setStartTime(value: number): void {
-    this.currentStartTime = value;
-  }
-
-  setEndTime(value: number): void {
-    this.currentEndTime = value;
   }
 
   // Historical design max for xFocus/yFocus pan (world units), calibrated against a typical
@@ -822,8 +810,6 @@ export class SceneRenderer {
       ...this.originalSceneData,
       xFocus: this.currentXFocus,
       yFocus: this.currentYFocus,
-      startTime: this.currentStartTime,
-      endTime: this.currentEndTime,
       sprites: this.sprites.map((sprite) => {
         const metadata = this.spriteMetadata.get(sprite);
         const original = originalByName.get(metadata?.name ?? '') ?? this.originalSceneData!.sprites[0];

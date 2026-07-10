@@ -259,15 +259,6 @@ export interface Scene {
    * This is the primary mechanism for controlling when this scene is shown.
    */
   flags?: SceneFlagDeclarations;
-  /**
-   * @deprecated Use time-of-day flags via `flags.required` instead.
-   * Retained for backward compatibility with scenes predating the flag system.
-   */
-  startTime?: number;
-  /**
-   * @deprecated See startTime.
-   */
-  endTime?: number;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

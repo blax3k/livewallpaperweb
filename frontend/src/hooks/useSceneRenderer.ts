@@ -21,8 +21,6 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
   const [currentSceneId, setCurrentSceneId] = useState<string | null>(null);
   const [xFocus, setXFocus] = useState(0.5);
   const [yFocus, setYFocus] = useState(0.5);
-  const [startTime, setStartTime] = useState(0);
-  const [endTime, setEndTime] = useState(1439);
   const [spriteEntries, setSpriteEntries] = useState<SpriteEntry[]>([]);
   const [selectedSprite, setSelectedSprite] = useState<SelectedSprite | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -115,8 +113,6 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
 
       setXFocus(sceneData.xFocus ?? 0.5);
       setYFocus(sceneData.yFocus ?? 0.5);
-      setStartTime(sceneData.startTime ?? 0);
-      setEndTime(sceneData.endTime ?? 1439);
       setShowSceneControls(true);
       refreshSpriteList(renderer);
 
@@ -171,18 +167,6 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
   const handleYFocusChange = useCallback((value: number) => {
     setYFocus(value);
     rendererRef.current?.setYFocus(value);
-    markDirty();
-  }, [markDirty]);
-
-  const handleStartTimeChange = useCallback((value: number) => {
-    setStartTime(value);
-    rendererRef.current?.setStartTime(value);
-    markDirty();
-  }, [markDirty]);
-
-  const handleEndTimeChange = useCallback((value: number) => {
-    setEndTime(value);
-    rendererRef.current?.setEndTime(value);
     markDirty();
   }, [markDirty]);
 
@@ -430,8 +414,6 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     currentSceneId,
     xFocus,
     yFocus,
-    startTime,
-    endTime,
     spriteEntries,
     selectedSprite,
     setSelectedSprite,
@@ -445,8 +427,6 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     saveScene,
     handleXFocusChange,
     handleYFocusChange,
-    handleStartTimeChange,
-    handleEndTimeChange,
     handleGuideAspectRatioChange,
     handleSpriteToggle,
     handleSpriteSelect,
