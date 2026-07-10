@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { Scene, Sprite } from '../interfaces/Scene';
 import { PhoneGuide, PhoneGuideAspectRatio } from './PhoneGuide';
+import { createWipeFilter } from './WipeFilter';
 import type { SpriteEntry } from '../controls/panels/SpriteListPanel';
 import type { SpriteConditionBlock, SpriteModification, RuleConditionGroup } from '@livewallpaper/types';
 
@@ -52,6 +53,22 @@ export class SceneRenderer {
   private gyroOffsetY: number = 0;
   private isGyroScaled: boolean = false;
   private originalSceneData: Scene | null = null;
+
+  // Scene-transition (diagonal wipe) state. During a wipe the outgoing scene's PIXI sprites are
+  // kept alive on top of the freshly-loaded scene and animated to transparent; loadScene must not
+  // destroy them, so it skips any sprite in preservedDuringLoad.
+  private preservedDuringLoad: Set<PIXI.Sprite> | null = null;
+  private transitionOldSprites: PIXI.Sprite[] = [];
+  private transitionTick: ((ticker: PIXI.Ticker) => void) | null = null;
+  // Matches Android SceneTransitionManager.FADE_DURATION_MS (kept in sync with the xFocus scroll).
+  private static readonly TRANSITION_DURATION_MS = 800;
+  // Ref-counted render suspension. While >0 the Pixi ticker is stopped, so no partially-built or
+  // mis-positioned frame is ever presented; preserveDrawingBuffer keeps the last good frame on
+  // screen until we resume. Used to make scene (re)builds atomic — see loadScene/transitionToScene.
+  private renderSuspendDepth = 0;
+  // Set once destroy() runs, so an in-flight transition's async tail (its finally/tick) can bail
+  // instead of touching the torn-down Pixi app.
+  private destroyed = false;
 
   // Keyed by PIXI sprite object — stores the sprite's true base values for as long as it has
   // at least one condition set selected (see selectedConditionBlockBySprite below).
@@ -126,8 +143,26 @@ export class SceneRenderer {
       throw new Error('PixiJS application failed to initialize');
     }
 
-    // Clear previous scene
-    this.sprites.forEach(sprite => sprite.destroy());
+    // Freeze presentation for the whole rebuild so no intermediate frame is shown — sprites are
+    // first placed at their raw (un-flipped, un-focused) positions and only settled once
+    // applyAllPositions runs below, which would otherwise flash on screen.
+    this.suspendRendering();
+    try {
+      await this.buildScene(sceneData);
+    } finally {
+      this.resumeRendering();
+    }
+  }
+
+  /** Build the scene into the (already app-ready) stage. Callers wrap this in suspend/resume. */
+  private async buildScene(sceneData: Scene): Promise<void> {
+    if (!this.app) return;
+    // Clear previous scene. Sprites preserved for an in-flight transition (the outgoing scene
+    // being wiped out) are detached from the stage below via removeChildren() but must stay
+    // alive — transitionToScene owns their lifetime and destroys them when the wipe finishes.
+    this.sprites.forEach(sprite => {
+      if (!this.preservedDuringLoad?.has(sprite)) sprite.destroy();
+    });
     this.sprites = [];
     this.spriteMetadata.clear();
     this.conditionPreviewState.clear();
@@ -189,6 +224,120 @@ export class SceneRenderer {
     this.fitSceneToView();
     this.setXFocus(sceneData.xFocus);
     this.drawLetterbox();
+  }
+
+  /**
+   * Load a new scene with the same diagonal-wipe transition the Android wallpaper performs: the
+   * outgoing scene's sprites wipe out (top-left → bottom-right) while the incoming scene's sprites
+   * wipe in along the same front. See WipeFilter for the shader that matches the device.
+   *
+   * Falls back to an instant loadScene when there is no outgoing scene to wipe from, when the app
+   * isn't ready, or when the viewer prefers reduced motion. `resolveConditions`, if given, selects
+   * each incoming sprite's condition set (against the wake-time world) before the wipe begins, so
+   * the new scene wipes in already showing its correct sprite variants.
+   */
+  async transitionToScene(
+    sceneData: Scene,
+    resolveConditions?: (conditions: RuleConditionGroup | undefined) => boolean,
+  ): Promise<void> {
+    // Freeze presentation across the whole swap so the screen never shows the half-built incoming
+    // scene: the last old-scene frame stays on-screen until we resume, and the first frame we then
+    // present is the wipe at progress 0 — outgoing sprites fully opaque on top, i.e. pixel-identical
+    // to what was already showing. Nothing changes on screen until the wipe actually starts.
+    this.suspendRendering();
+    try {
+      // Snap any in-flight wipe to its end before starting the next one.
+      this.finishTransition();
+
+      const reduceMotion =
+        typeof window !== 'undefined' &&
+        window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+      const oldSprites = this.sprites;
+      const canWipe = !!this.app && oldSprites.length > 0 && !reduceMotion;
+
+      if (!canWipe) {
+        await this.loadScene(sceneData);
+        if (resolveConditions) this.applyConditionSelection(resolveConditions);
+        return;
+      }
+
+      // Build the incoming scene without destroying the outgoing sprites — loadScene detaches them
+      // from the stage (removeChildren) but leaves them alive because they're preserved here.
+      this.preservedDuringLoad = new Set(oldSprites);
+      try {
+        await this.loadScene(sceneData);
+      } finally {
+        this.preservedDuringLoad = null;
+      }
+      if (resolveConditions) this.applyConditionSelection(resolveConditions);
+
+      const stage = this.app!.stage;
+      const wipeIn = createWipeFilter(-1);
+      const wipeOut = createWipeFilter(1);
+
+      // Incoming sprites are already on the stage (added by loadScene); give them the wipe-in filter.
+      for (const sprite of this.sprites) sprite.filters = [wipeIn.filter];
+      // Re-add the outgoing sprites on top with the wipe-out filter; their frozen world positions
+      // (at the old scene's focus) are exactly what should linger while they erase.
+      for (const sprite of oldSprites) {
+        sprite.filters = [wipeOut.filter];
+        stage.addChild(sprite);
+      }
+      // Keep the letterbox bars above the re-added outgoing sprites.
+      this.drawLetterbox();
+      this.transitionOldSprites = oldSprites;
+
+      const start = performance.now();
+      const tick = () => {
+        const progress = Math.min(1, (performance.now() - start) / SceneRenderer.TRANSITION_DURATION_MS);
+        wipeIn.setProgress(progress);
+        wipeOut.setProgress(progress);
+        if (progress >= 1) this.finishTransition();
+      };
+      this.transitionTick = tick;
+      this.app!.ticker.add(tick);
+    } finally {
+      // Reveal: the ticker restarts, runs the wipe tick (progress ~0), then presents the first frame.
+      this.resumeRendering();
+    }
+  }
+
+  /**
+   * End any in-flight wipe immediately: stop the ticker, drop the filters from the incoming
+   * sprites, and destroy the outgoing sprites. Safe to call when no transition is running.
+   */
+  private finishTransition(): void {
+    if (this.transitionTick) {
+      this.app?.ticker.remove(this.transitionTick);
+      this.transitionTick = null;
+    }
+    for (const sprite of this.transitionOldSprites) {
+      sprite.filters = [];
+      if (!sprite.destroyed) sprite.destroy();
+    }
+    this.transitionOldSprites = [];
+    // Clear the wipe-in filter so the settled scene renders normally.
+    for (const sprite of this.sprites) {
+      if (sprite.filters?.length) sprite.filters = [];
+    }
+  }
+
+  /**
+   * Stop presenting new frames until the matching resumeRendering(). Ref-counted so nested
+   * suspensions (transitionToScene wrapping loadScene) coalesce into a single freeze. The canvas
+   * keeps showing the last rendered frame (preserveDrawingBuffer), so callers can rebuild and
+   * reposition the scene off-screen and only reveal the finished result.
+   */
+  private suspendRendering(): void {
+    if (!this.app || this.destroyed) return;
+    if (this.renderSuspendDepth === 0) this.app.stop();
+    this.renderSuspendDepth++;
+  }
+
+  private resumeRendering(): void {
+    if (!this.app || this.destroyed || this.renderSuspendDepth === 0) return;
+    this.renderSuspendDepth--;
+    if (this.renderSuspendDepth === 0) this.app.start();
   }
 
   /**
@@ -1497,7 +1646,9 @@ export class SceneRenderer {
    */
   destroy(): void {
     try {
+      this.destroyed = true;
       window.removeEventListener('resize', this.resizeHandler);
+      this.finishTransition();
 
       if (this.app) {
         this.app.stage.removeChildren();

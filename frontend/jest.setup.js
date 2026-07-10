@@ -36,6 +36,13 @@ jest.mock('pixi.js', () => {
       renderer: {
         resize: jest.fn(),
       },
+      // Render suspension (SceneRenderer.suspendRendering/resumeRendering) toggles the ticker.
+      start: jest.fn(),
+      stop: jest.fn(),
+      ticker: {
+        add: jest.fn(),
+        remove: jest.fn(),
+      },
       destroy: jest.fn(),
     })),
     Assets: {

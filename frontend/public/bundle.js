@@ -5987,15 +5987,15 @@
             current2._debugInfo = currentDebugInfo;
             return current2;
           }
-          function updateFragment(returnFiber, current2, fragment3, lanes, key) {
+          function updateFragment(returnFiber, current2, fragment4, lanes, key) {
             if (null === current2 || 7 !== current2.tag)
               return current2 = createFiberFromFragment(
-                fragment3,
+                fragment4,
                 returnFiber.mode,
                 lanes,
                 key
               ), current2.return = returnFiber, current2._debugOwner = returnFiber, current2._debugTask = returnFiber._debugTask, current2._debugInfo = currentDebugInfo, current2;
-            current2 = useFiber(current2, fragment3);
+            current2 = useFiber(current2, fragment4);
             current2.return = returnFiber;
             current2._debugInfo = currentDebugInfo;
             return current2;
@@ -38052,15 +38052,15 @@ ${src}`;
             addProgramDefines: isES300,
             insertVersion: isES300
           };
-          let fragment3 = options.fragment;
-          let vertex3 = options.vertex;
+          let fragment4 = options.fragment;
+          let vertex4 = options.vertex;
           Object.keys(processes).forEach((processKey) => {
             const processOptions = preprocessorOptions[processKey];
-            fragment3 = processes[processKey](fragment3, processOptions, true);
-            vertex3 = processes[processKey](vertex3, processOptions, false);
+            fragment4 = processes[processKey](fragment4, processOptions, true);
+            vertex4 = processes[processKey](vertex4, processOptions, false);
           });
-          this.fragment = fragment3;
-          this.vertex = vertex3;
+          this.fragment = fragment4;
+          this.vertex = vertex4;
           this.transformFeedbackVaryings = options.transformFeedbackVaryings;
           this._key = createIdFromString(`${this.vertex}:${this.fragment}`, "gl-program");
         }
@@ -38417,16 +38417,16 @@ ${src}`;
         constructor(options) {
           this._layoutKey = 0;
           this._attributeLocationsKey = 0;
-          const { fragment: fragment3, vertex: vertex3, layout, gpuLayout, name } = options;
+          const { fragment: fragment4, vertex: vertex4, layout, gpuLayout, name } = options;
           this.name = name;
-          this.fragment = fragment3;
-          this.vertex = vertex3;
-          if (fragment3.source === vertex3.source) {
-            const structsAndGroups = extractStructAndGroups(fragment3.source);
+          this.fragment = fragment4;
+          this.vertex = vertex4;
+          if (fragment4.source === vertex4.source) {
+            const structsAndGroups = extractStructAndGroups(fragment4.source);
             this.structsAndGroups = structsAndGroups;
           } else {
-            const vertexStructsAndGroups = extractStructAndGroups(vertex3.source);
-            const fragmentStructsAndGroups = extractStructAndGroups(fragment3.source);
+            const vertexStructsAndGroups = extractStructAndGroups(vertex4.source);
+            const fragmentStructsAndGroups = extractStructAndGroups(fragment4.source);
             this.structsAndGroups = removeStructAndGroupDuplicates(vertexStructsAndGroups, fragmentStructsAndGroups);
           }
           this.layout = layout ?? generateLayoutHash(this.structsAndGroups);
@@ -38437,8 +38437,8 @@ ${src}`;
         }
         // TODO maker this pure
         _generateProgramKey() {
-          const { vertex: vertex3, fragment: fragment3 } = this;
-          const bigKey = vertex3.source + fragment3.source + vertex3.entryPoint + fragment3.entryPoint;
+          const { vertex: vertex4, fragment: fragment4 } = this;
+          const bigKey = vertex4.source + fragment4.source + vertex4.entryPoint + fragment4.entryPoint;
           this._layoutKey = createIdFromString(bigKey, "program");
         }
         get attributeData() {
@@ -38755,18 +38755,18 @@ ${src}`;
           this._destroyed = false;
           let {
             gpuProgram,
-            glProgram,
+            glProgram: glProgram2,
             groups,
             resources,
             compatibleRenderers,
             groupMap
           } = options;
           this.gpuProgram = gpuProgram;
-          this.glProgram = glProgram;
+          this.glProgram = glProgram2;
           if (compatibleRenderers === void 0) {
             compatibleRenderers = 0;
             if (gpuProgram) compatibleRenderers |= RendererType.WEBGPU;
-            if (glProgram) compatibleRenderers |= RendererType.WEBGL;
+            if (glProgram2) compatibleRenderers |= RendererType.WEBGL;
           }
           this.compatibleRenderers = compatibleRenderers;
           const nameHash = {};
@@ -38898,16 +38898,16 @@ ${src}`;
         static from(options) {
           const { gpu, gl, ...rest } = options;
           let gpuProgram;
-          let glProgram;
+          let glProgram2;
           if (gpu) {
             gpuProgram = GpuProgram.from(gpu);
           }
           if (gl) {
-            glProgram = GlProgram.from(gl);
+            glProgram2 = GlProgram.from(gl);
           }
           return new _Shader({
             gpuProgram,
-            glProgram,
+            glProgram: glProgram2,
             ...rest
           });
         }
@@ -39138,16 +39138,16 @@ ${src}`;
         static from(options) {
           const { gpu, gl, ...rest } = options;
           let gpuProgram;
-          let glProgram;
+          let glProgram2;
           if (gpu) {
             gpuProgram = GpuProgram.from(gpu);
           }
           if (gl) {
-            glProgram = GlProgram.from(gl);
+            glProgram2 = GlProgram.from(gl);
           }
           return new _Filter2({
             gpuProgram,
-            glProgram,
+            glProgram: glProgram2,
             ...rest
           });
         }
@@ -39205,14 +39205,14 @@ ${src}`;
             fragment: { source, entryPoint: "mainFragment" },
             name: "passthrough-filter"
           });
-          const glProgram = GlProgram.from({
+          const glProgram2 = GlProgram.from({
             vertex,
             fragment,
             name: "passthrough-filter"
           });
           super({
             gpuProgram,
-            glProgram
+            glProgram: glProgram2
           });
         }
       };
@@ -41235,9 +41235,9 @@ ${src}`;
   function compileInputs(fragments, template, sort = false) {
     const results = [];
     extractInputs(template, results);
-    fragments.forEach((fragment3) => {
-      if (fragment3.header) {
-        extractInputs(fragment3.header, results);
+    fragments.forEach((fragment4) => {
+      if (fragment4.header) {
+        extractInputs(fragment4.header, results);
       }
     });
     const mainInput = results;
@@ -41277,9 +41277,9 @@ ${finalString}
   function compileOutputs(fragments, template) {
     const results = [];
     extractOutputs(template, results);
-    fragments.forEach((fragment3) => {
-      if (fragment3.header) {
-        extractOutputs(fragment3.header, results);
+    fragments.forEach((fragment4) => {
+      if (fragment4.header) {
+        extractOutputs(fragment4.header, results);
       }
     });
     let index2 = 0;
@@ -41339,8 +41339,8 @@ ${parts.join("\n")}
   }) {
     const cacheId = generateCacheId(template, bits);
     if (cacheMap[cacheId]) return cacheMap[cacheId];
-    const { vertex: vertex3, fragment: fragment3 } = compileInputsAndOutputs(template, bits);
-    cacheMap[cacheId] = compileBits(vertex3, fragment3, bits);
+    const { vertex: vertex4, fragment: fragment4 } = compileInputsAndOutputs(template, bits);
+    cacheMap[cacheId] = compileBits(vertex4, fragment4, bits);
     return cacheMap[cacheId];
   }
   function compileHighShaderGl({
@@ -41371,16 +41371,16 @@ ${parts.join("\n")}
       return bitCacheMap.get(highFragment);
     }).sort((a2, b2) => a2 - b2).join("-") + template.vertex + template.fragment;
   }
-  function compileBits(vertex3, fragment3, bits) {
-    const vertexParts = compileHooks(vertex3);
-    const fragmentParts = compileHooks(fragment3);
+  function compileBits(vertex4, fragment4, bits) {
+    const vertexParts = compileHooks(vertex4);
+    const fragmentParts = compileHooks(fragment4);
     bits.forEach((shaderBit) => {
       addBits(shaderBit.vertex, vertexParts, shaderBit.name);
       addBits(shaderBit.fragment, fragmentParts, shaderBit.name);
     });
     return {
-      vertex: injectBits(vertex3, vertexParts),
-      fragment: injectBits(fragment3, fragmentParts)
+      vertex: injectBits(vertex4, vertexParts),
+      fragment: injectBits(fragment4, fragmentParts)
     };
   }
   var cacheMap, bitCacheMap, CACHE_UID;
@@ -43547,7 +43547,7 @@ ${parts.join("\n")}
       init_Shader();
       DefaultShader = class extends Shader {
         constructor(maxTextures) {
-          const glProgram = compileHighShaderGlProgram({
+          const glProgram2 = compileHighShaderGlProgram({
             name: "batch",
             bits: [
               colorBitGl,
@@ -43564,7 +43564,7 @@ ${parts.join("\n")}
             ]
           });
           super({
-            glProgram,
+            glProgram: glProgram2,
             gpuProgram,
             resources: {
               batchSamplers: getBatchSamplersUniformGroup(maxTextures)
@@ -43863,7 +43863,7 @@ ${parts.join("\n")}
               entryPoint: "mainFragment"
             }
           });
-          const glProgram = GlProgram.from({
+          const glProgram2 = GlProgram.from({
             vertex: vertex2,
             fragment: fragment2,
             name: "mask-filter"
@@ -43871,7 +43871,7 @@ ${parts.join("\n")}
           super({
             ...rest,
             gpuProgram,
-            glProgram,
+            glProgram: glProgram2,
             clipToViewport: false,
             resources: {
               filterUniforms,
@@ -49412,7 +49412,7 @@ ${parts.join("\n")}
             uRound: { value: 0, type: "f32" }
           });
           const maxTextures = renderer.limits.maxBatchableTextures;
-          const glProgram = compileHighShaderGlProgram({
+          const glProgram2 = compileHighShaderGlProgram({
             name: "graphics",
             bits: [
               colorBitGl,
@@ -49422,7 +49422,7 @@ ${parts.join("\n")}
             ]
           });
           this.shader = new Shader({
-            glProgram,
+            glProgram: glProgram2,
             resources: {
               localUniforms: uniforms,
               batchSamplers: getBatchSamplersUniformGroup(maxTextures)
@@ -49482,7 +49482,7 @@ ${parts.join("\n")}
       init_warn();
       GlMeshAdaptor = class {
         init() {
-          const glProgram = compileHighShaderGlProgram({
+          const glProgram2 = compileHighShaderGlProgram({
             name: "mesh",
             bits: [
               localUniformBitGl,
@@ -49491,7 +49491,7 @@ ${parts.join("\n")}
             ]
           });
           this._shader = new Shader({
-            glProgram,
+            glProgram: glProgram2,
             resources: {
               uTexture: Texture.EMPTY.source,
               textureUniforms: {
@@ -51863,8 +51863,8 @@ ${parts.join("\n")}
         value: defaultValue(data.type, data.size)
       };
     }
-    const glProgram = new GlProgramData(webGLProgram, uniformData);
-    return glProgram;
+    const glProgram2 = new GlProgramData(webGLProgram, uniformData);
+    return glProgram2;
   }
   var init_generateProgram = __esm({
     "../node_modules/pixi.js/lib/rendering/renderers/gl/shader/program/generateProgram.mjs"() {
@@ -71995,20 +71995,20 @@ ${parts.join("\n")}
       const portalContext = usePortalContext3(CONTENT_NAME6, props.__scopeSelect);
       const { forceMount = portalContext.forceMount, ...contentProps } = props;
       const context2 = useSelectContext(CONTENT_NAME6, props.__scopeSelect);
-      const [fragment3, setFragment] = React41.useState();
+      const [fragment4, setFragment] = React41.useState();
       useLayoutEffect2(() => {
         setFragment(new DocumentFragment());
       }, []);
-      return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Presence, { present: forceMount || context2.open, children: ({ present }) => present ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(SelectContentImpl, { ...contentProps, ref: forwardedRef }) : /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(SelectContentFragment, { ...contentProps, fragment: fragment3 }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Presence, { present: forceMount || context2.open, children: ({ present }) => present ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(SelectContentImpl, { ...contentProps, ref: forwardedRef }) : /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(SelectContentFragment, { ...contentProps, fragment: fragment4 }) });
     }
   );
   SelectContent.displayName = CONTENT_NAME6;
   var SelectContentFragment = React41.forwardRef((props, forwardedRef) => {
-    const { __scopeSelect, children, fragment: fragment3 } = props;
-    if (!fragment3) return null;
+    const { __scopeSelect, children, fragment: fragment4 } = props;
+    if (!fragment4) return null;
     return ReactDOM4.createPortal(
       /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(SelectContentProvider, { scope: __scopeSelect, children: /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Collection3.Slot, { scope: __scopeSelect, children: /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { ref: forwardedRef, children }) }) }),
-      fragment3
+      fragment4
     );
   });
   SelectContentFragment.displayName = "SelectContentFragment";
@@ -76043,7 +76043,10 @@ ${e2}`);
   });
 
   // ../node_modules/pixi.js/lib/index.mjs
+  init_Filter();
   init_Rectangle();
+  init_GlProgram();
+  init_UniformGroup();
   init_Texture();
   init_textureFrom();
   init_Graphics();
@@ -76894,6 +76897,89 @@ ${e2}`);
   // src/hooks/useSceneRenderer.ts
   var import_react18 = __toESM(require_react());
 
+  // src/renderers/WipeFilter.ts
+  var FEATHER = 0.8;
+  var vertex3 = `
+in vec2 aPosition;
+out vec2 vTextureCoord;
+out vec2 vLocal;
+
+uniform vec4 uInputSize;
+uniform vec4 uOutputFrame;
+uniform vec4 uOutputTexture;
+
+vec4 filterVertexPosition( void ) {
+    vec2 position = aPosition * uOutputFrame.zw + uOutputFrame.xy;
+    position.x = position.x * (2.0 / uOutputTexture.x) - 1.0;
+    position.y = position.y * (2.0 * uOutputTexture.z / uOutputTexture.y) - uOutputTexture.z;
+    return vec4(position, 0.0, 1.0);
+}
+
+vec2 filterTextureCoord( void ) {
+    return aPosition * (uOutputFrame.zw * uInputSize.zw);
+}
+
+void main(void) {
+    gl_Position = filterVertexPosition();
+    vTextureCoord = filterTextureCoord();
+    vLocal = aPosition;
+}
+`;
+  var fragment3 = `
+in vec2 vTextureCoord;
+in vec2 vLocal;
+out vec4 finalColor;
+
+uniform sampler2D uTexture;
+
+// Supplied via the wipeUniforms UniformGroup; Pixi's GL backend binds group members as
+// individual uniforms (see the built-in AlphaFilter's uAlpha), so they are declared flat here.
+uniform float uProgress;
+uniform float uDirection;
+
+const float FEATHER = ${FEATHER.toFixed(1)};
+
+void main(void) {
+    vec4 c = texture(uTexture, vTextureCoord);
+    float diagonal = (vLocal.x + vLocal.y) * 0.5;
+    float wipePos = uProgress * (1.0 + FEATHER) - FEATHER * 0.5;
+    float fade = 1.0;
+    if (uDirection > 0.5) {
+        fade = smoothstep(wipePos - FEATHER * 0.5, wipePos + FEATHER * 0.5, diagonal);
+    } else if (uDirection < -0.5) {
+        fade = 1.0 - smoothstep(wipePos - FEATHER * 0.5, wipePos + FEATHER * 0.5, diagonal);
+    }
+    float atten = fade < 0.5 ? fade * 2.0 : 1.0;
+    finalColor = c * atten;
+}
+`;
+  var glProgram = null;
+  function createWipeFilter(direction) {
+    if (!glProgram) {
+      glProgram = GlProgram.from({ vertex: vertex3, fragment: fragment3, name: "scene-wipe" });
+    }
+    const uniforms = new UniformGroup({
+      uProgress: { value: 0, type: "f32" },
+      uDirection: { value: direction, type: "f32" }
+    });
+    const filter = new Filter({
+      glProgram,
+      resources: { wipeUniforms: uniforms },
+      // Keep the filter region tight to the sprite so vLocal spans exactly 0..1 across it.
+      padding: 0,
+      antialias: "off",
+      // Match the canvas' devicePixelRatio (SceneRenderer inits the app at that resolution) so a
+      // sprite looks identical the instant the wipe filter is applied — no softening at progress 0.
+      resolution: typeof window !== "undefined" && window.devicePixelRatio || 1
+    });
+    return {
+      filter,
+      setProgress(progress) {
+        uniforms.uniforms.uProgress = progress;
+      }
+    };
+  }
+
   // src/renderers/SceneRenderer.ts
   var SceneRenderer = class _SceneRenderer {
     constructor(container) {
@@ -76921,6 +77007,19 @@ ${e2}`);
       this.gyroOffsetY = 0;
       this.isGyroScaled = false;
       this.originalSceneData = null;
+      // Scene-transition (diagonal wipe) state. During a wipe the outgoing scene's PIXI sprites are
+      // kept alive on top of the freshly-loaded scene and animated to transparent; loadScene must not
+      // destroy them, so it skips any sprite in preservedDuringLoad.
+      this.preservedDuringLoad = null;
+      this.transitionOldSprites = [];
+      this.transitionTick = null;
+      // Ref-counted render suspension. While >0 the Pixi ticker is stopped, so no partially-built or
+      // mis-positioned frame is ever presented; preserveDrawingBuffer keeps the last good frame on
+      // screen until we resume. Used to make scene (re)builds atomic — see loadScene/transitionToScene.
+      this.renderSuspendDepth = 0;
+      // Set once destroy() runs, so an in-flight transition's async tail (its finally/tick) can bail
+      // instead of touching the torn-down Pixi app.
+      this.destroyed = false;
       // Keyed by PIXI sprite object — stores the sprite's true base values for as long as it has
       // at least one condition set selected (see selectedConditionBlockBySprite below).
       this.conditionPreviewState = /* @__PURE__ */ new Map();
@@ -76946,6 +77045,10 @@ ${e2}`);
       this.container = container;
       this.resizeHandler = () => this.onWindowResize();
       this.initializeApp();
+    }
+    static {
+      // Matches Android SceneTransitionManager.FADE_DURATION_MS (kept in sync with the xFocus scroll).
+      this.TRANSITION_DURATION_MS = 800;
     }
     /**
      * Initialize PixiJS application asynchronously
@@ -76989,7 +77092,19 @@ ${e2}`);
       if (!this.app) {
         throw new Error("PixiJS application failed to initialize");
       }
-      this.sprites.forEach((sprite) => sprite.destroy());
+      this.suspendRendering();
+      try {
+        await this.buildScene(sceneData);
+      } finally {
+        this.resumeRendering();
+      }
+    }
+    /** Build the scene into the (already app-ready) stage. Callers wrap this in suspend/resume. */
+    async buildScene(sceneData) {
+      if (!this.app) return;
+      this.sprites.forEach((sprite) => {
+        if (!this.preservedDuringLoad?.has(sprite)) sprite.destroy();
+      });
       this.sprites = [];
       this.spriteMetadata.clear();
       this.conditionPreviewState.clear();
@@ -77037,6 +77152,92 @@ ${e2}`);
       this.fitSceneToView();
       this.setXFocus(sceneData.xFocus);
       this.drawLetterbox();
+    }
+    /**
+     * Load a new scene with the same diagonal-wipe transition the Android wallpaper performs: the
+     * outgoing scene's sprites wipe out (top-left → bottom-right) while the incoming scene's sprites
+     * wipe in along the same front. See WipeFilter for the shader that matches the device.
+     *
+     * Falls back to an instant loadScene when there is no outgoing scene to wipe from, when the app
+     * isn't ready, or when the viewer prefers reduced motion. `resolveConditions`, if given, selects
+     * each incoming sprite's condition set (against the wake-time world) before the wipe begins, so
+     * the new scene wipes in already showing its correct sprite variants.
+     */
+    async transitionToScene(sceneData, resolveConditions) {
+      this.suspendRendering();
+      try {
+        this.finishTransition();
+        const reduceMotion = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+        const oldSprites = this.sprites;
+        const canWipe = !!this.app && oldSprites.length > 0 && !reduceMotion;
+        if (!canWipe) {
+          await this.loadScene(sceneData);
+          if (resolveConditions) this.applyConditionSelection(resolveConditions);
+          return;
+        }
+        this.preservedDuringLoad = new Set(oldSprites);
+        try {
+          await this.loadScene(sceneData);
+        } finally {
+          this.preservedDuringLoad = null;
+        }
+        if (resolveConditions) this.applyConditionSelection(resolveConditions);
+        const stage = this.app.stage;
+        const wipeIn = createWipeFilter(-1);
+        const wipeOut = createWipeFilter(1);
+        for (const sprite of this.sprites) sprite.filters = [wipeIn.filter];
+        for (const sprite of oldSprites) {
+          sprite.filters = [wipeOut.filter];
+          stage.addChild(sprite);
+        }
+        this.drawLetterbox();
+        this.transitionOldSprites = oldSprites;
+        const start = performance.now();
+        const tick = () => {
+          const progress = Math.min(1, (performance.now() - start) / _SceneRenderer.TRANSITION_DURATION_MS);
+          wipeIn.setProgress(progress);
+          wipeOut.setProgress(progress);
+          if (progress >= 1) this.finishTransition();
+        };
+        this.transitionTick = tick;
+        this.app.ticker.add(tick);
+      } finally {
+        this.resumeRendering();
+      }
+    }
+    /**
+     * End any in-flight wipe immediately: stop the ticker, drop the filters from the incoming
+     * sprites, and destroy the outgoing sprites. Safe to call when no transition is running.
+     */
+    finishTransition() {
+      if (this.transitionTick) {
+        this.app?.ticker.remove(this.transitionTick);
+        this.transitionTick = null;
+      }
+      for (const sprite of this.transitionOldSprites) {
+        sprite.filters = [];
+        if (!sprite.destroyed) sprite.destroy();
+      }
+      this.transitionOldSprites = [];
+      for (const sprite of this.sprites) {
+        if (sprite.filters?.length) sprite.filters = [];
+      }
+    }
+    /**
+     * Stop presenting new frames until the matching resumeRendering(). Ref-counted so nested
+     * suspensions (transitionToScene wrapping loadScene) coalesce into a single freeze. The canvas
+     * keeps showing the last rendered frame (preserveDrawingBuffer), so callers can rebuild and
+     * reposition the scene off-screen and only reveal the finished result.
+     */
+    suspendRendering() {
+      if (!this.app || this.destroyed) return;
+      if (this.renderSuspendDepth === 0) this.app.stop();
+      this.renderSuspendDepth++;
+    }
+    resumeRendering() {
+      if (!this.app || this.destroyed || this.renderSuspendDepth === 0) return;
+      this.renderSuspendDepth--;
+      if (this.renderSuspendDepth === 0) this.app.start();
     }
     fitSceneToView() {
       if (!this.app) return;
@@ -78133,7 +78334,9 @@ ${e2}`);
      */
     destroy() {
       try {
+        this.destroyed = true;
         window.removeEventListener("resize", this.resizeHandler);
+        this.finishTransition();
         if (this.app) {
           this.app.stage.removeChildren();
           this.sprites = [];
@@ -80859,16 +81062,12 @@ ${e2}`);
     (0, import_react32.useEffect)(() => {
       const renderer = rendererRef.current;
       if (!renderer) return;
-      let cancelled = false;
-      (async () => {
-        await renderer.loadScene(scene ? scene.data : EMPTY_SCENE);
-        if (cancelled || !scene) return;
-        const snapshot = worldRef.current;
-        renderer.applyConditionSelection((group) => matchesConditionGroup(group, snapshot));
-      })();
-      return () => {
-        cancelled = true;
-      };
+      if (!scene) {
+        renderer.loadScene(EMPTY_SCENE);
+        return;
+      }
+      const snapshot = worldRef.current;
+      renderer.transitionToScene(scene.data, (group) => matchesConditionGroup(group, snapshot));
     }, [scene]);
     return containerRef;
   }

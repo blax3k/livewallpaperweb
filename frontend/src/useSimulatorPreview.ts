@@ -53,20 +53,19 @@ export function useSimulatorPreview(scene: SceneDetail | null, world: WorldState
     renderer.setGuideAspectRatio(guide);
   }, [aspect, scene]);
 
-  // (Re)load whenever the pinned scene changes, reading the world snapshot at that instant.
+  // (Re)load whenever the pinned scene changes, reading the world snapshot at that instant. A
+  // scene change animates with the same diagonal wipe the Android wallpaper uses (the first load
+  // has nothing to wipe from, so it's instant). Condition sets resolve against the wake snapshot,
+  // so the new scene wipes in already showing the right sprite variants.
   useEffect(() => {
     const renderer = rendererRef.current;
     if (!renderer) return;
-    let cancelled = false;
-    (async () => {
-      await renderer.loadScene(scene ? scene.data : EMPTY_SCENE);
-      if (cancelled || !scene) return;
-      const snapshot = worldRef.current;
-      renderer.applyConditionSelection(group => matchesConditionGroup(group, snapshot));
-    })();
-    return () => {
-      cancelled = true;
-    };
+    if (!scene) {
+      renderer.loadScene(EMPTY_SCENE);
+      return;
+    }
+    const snapshot = worldRef.current;
+    renderer.transitionToScene(scene.data, group => matchesConditionGroup(group, snapshot));
   }, [scene]);
 
   return containerRef;
