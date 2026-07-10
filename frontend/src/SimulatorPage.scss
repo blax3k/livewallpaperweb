@@ -933,6 +933,67 @@
   }
 }
 
+.simulator-timefield {
+  display: inline-flex;
+  align-items: center;
+  height: var(--size-32);
+  width:auto;
+  background: var(--color-input);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--size-8);
+  overflow: hidden;
+
+  &__step {
+    width: var(--size-30);
+    height: 100%;
+    flex-shrink: 0;
+    background: transparent;
+    border: none;
+    color: var(--color-fg-subtle);
+    font: 600 var(--text-14) var(--font-sans);
+    cursor: pointer;
+
+    &:hover { background: var(--color-hover); color: var(--color-fg); }
+  }
+
+  &__input {
+    width: var(--size-60);
+    height: 100%;
+    padding: 0 var(--size-6);
+    text-align: center;
+    background: transparent;
+    border: none;
+    border-left: 1px solid var(--color-border-strong);
+    color: var(--color-fg-default);
+    font: 600 var(--text-13) var(--font-sans);
+    font-variant-numeric: tabular-nums;
+
+    &:focus { outline: none; background: var(--color-hover); }
+  }
+
+  &__list {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--size-36);
+    height: 100%;
+    flex-shrink: 0;
+    background: transparent;
+    border: none;
+    border-right: 1px solid var(--color-border-strong);
+    color: var(--color-fg-faint);
+    cursor: pointer;
+
+    &:hover { background: var(--color-hover); color: var(--color-fg); }
+  }
+}
+
+.simulator-time-menu {
+  max-height: 260px;
+  overflow-y: auto;
+  font-variant-numeric: tabular-nums;
+}
+
 // ── Stage: controls + pipeline on the left, preview at full height on the right ─
 
 .simulator-stage {

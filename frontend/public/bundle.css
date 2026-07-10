@@ -76,6 +76,7 @@
   --size-40: 40px;
   --size-44: 44px;
   --size-60: 60px;
+  --size-80: 80px;
   --duration-fast: 0.15s;
   --duration-fade: 150ms;
   --duration-scale: 140ms;
@@ -3213,6 +3214,68 @@ body {
   margin-left: auto;
   color: var(--color-fg-faint);
   flex-shrink: 0;
+}
+.simulator-timefield {
+  display: inline-flex;
+  align-items: center;
+  height: var(--size-32);
+  width: auto;
+  background: var(--color-input);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--size-8);
+  overflow: hidden;
+}
+.simulator-timefield__step {
+  width: var(--size-30);
+  height: 100%;
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  color: var(--color-fg-subtle);
+  font: 600 var(--text-14) var(--font-sans);
+  cursor: pointer;
+}
+.simulator-timefield__step:hover {
+  background: var(--color-hover);
+  color: var(--color-fg);
+}
+.simulator-timefield__input {
+  width: var(--size-60);
+  height: 100%;
+  padding: 0 var(--size-6);
+  text-align: center;
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--color-border-strong);
+  color: var(--color-fg-default);
+  font: 600 var(--text-13) var(--font-sans);
+  font-variant-numeric: tabular-nums;
+}
+.simulator-timefield__input:focus {
+  outline: none;
+  background: var(--color-hover);
+}
+.simulator-timefield__list {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-36);
+  height: 100%;
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--color-border-strong);
+  color: var(--color-fg-faint);
+  cursor: pointer;
+}
+.simulator-timefield__list:hover {
+  background: var(--color-hover);
+  color: var(--color-fg);
+}
+.simulator-time-menu {
+  max-height: 260px;
+  overflow-y: auto;
+  font-variant-numeric: tabular-nums;
 }
 .simulator-stage {
   flex: 1;

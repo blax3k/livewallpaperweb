@@ -1,6 +1,14 @@
+import { useEffect, useState } from 'react';
 import { RotateCcw, ChevronDown } from 'lucide-react';
 import type { FlagDefinition } from './api';
-import { TIME_OPTIONS, DAY_OPTIONS } from './useSimulatedState';
+import {
+  DAY_OPTIONS,
+  TIME_LIST,
+  TIME_STEP_MINUTES,
+  minutesToTime,
+  parseTimeInput,
+  timeToMinutes,
+} from './useSimulatedState';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -146,7 +154,7 @@ export function SimulatorControlsPanel({
             <span className="simulator-section__hint">mood · re-checked every wake</span>
           </div>
           <div className="simulator-section__fields">
-            <SelectField label="Time of day" value={timeOfDay} options={TIME_OPTIONS} onChange={onTimeOfDayChange} wide />
+            <TimeOfDayField value={timeOfDay} onChange={onTimeOfDayChange} />
             <SelectField label="Weekday" value={dayOfWeek} options={DAY_OPTIONS} onChange={onDayOfWeekChange} />
           </div>
         </div>
@@ -169,6 +177,75 @@ function StepperField({ label, value, onChange }: StepperFieldProps) {
         <button className="simulator-stepper__btn" onClick={() => onChange(v => Math.max(0, v - 1))}>−</button>
         <span className="simulator-stepper__value">{value}</span>
         <button className="simulator-stepper__btn" onClick={() => onChange(v => v + 1)}>+</button>
+      </div>
+    </div>
+  );
+}
+
+interface TimeOfDayFieldProps {
+  value: string;
+  onChange: (v: string) => void;
+}
+
+// Time-of-day control offering three ways to set the value: ± half-hour steppers,
+// a free-text field (type "9:30", "930", or "9"), and a dropdown list of every slot.
+function TimeOfDayField({ value, onChange }: TimeOfDayFieldProps) {
+  const [draft, setDraft] = useState(value);
+  // Keep the editable draft in sync when the value changes from steppers/list/reset.
+  useEffect(() => setDraft(value), [value]);
+
+  const step = (delta: number) => onChange(minutesToTime(timeToMinutes(value) + delta));
+
+  const commit = (raw: string) => {
+    const mins = parseTimeInput(raw);
+    if (mins === null) setDraft(value); // revert invalid input
+    else onChange(minutesToTime(mins));
+  };
+
+  return (
+    <div className="simulator-cfield">
+      <span className="simulator-cfield__label">Time of day</span>
+      <div className="simulator-timefield">
+        <button
+          className="simulator-timefield__step"
+          onClick={() => step(-TIME_STEP_MINUTES)}
+          aria-label="Earlier"
+        >
+          −
+        </button>
+        <input
+          className="simulator-timefield__input"
+          value={draft}
+          onChange={e => setDraft(e.target.value)}
+          onBlur={e => commit(e.target.value)}
+          onKeyDown={e => {
+            if (e.key === 'Enter') e.currentTarget.blur();
+            else if (e.key === 'Escape') setDraft(value);
+          }}
+          inputMode="numeric"
+          aria-label="Time of day"
+        />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="simulator-timefield__list" aria-label="Pick from list">
+              <ChevronDown size={12} strokeWidth={2} />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="simulator-time-menu">
+            {TIME_LIST.map(t => (
+              <DropdownMenuItem key={t} onSelect={() => onChange(t)}>
+                {t === value ? '✓ ' : ''}{t}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <button
+          className="simulator-timefield__step"
+          onClick={() => step(TIME_STEP_MINUTES)}
+          aria-label="Later"
+        >
+          +
+        </button>
       </div>
     </div>
   );

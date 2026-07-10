@@ -23,8 +23,6 @@ export function SimulatorTopBar({
   totalWakes,
   lastSceneShown,
 }: SimulatorTopBarProps) {
-  const timeShort = timeOfDay.split(' · ')[1] ?? timeOfDay;
-
   return (
     <div className="simulator-topbar">
       <span className="simulator-topbar__back" onClick={onBack}>←</span>
@@ -39,7 +37,7 @@ export function SimulatorTopBar({
       <div className="simulator-topbar__summary">
         <Segment label="Chapter" value={chapterName ? `${chapterNumber} · ${chapterName}` : '—'} />
         <span className="simulator-topbar__divider" />
-        <Segment label="Ambient" value={`${timeShort} · ${dayOfWeek}`} />
+        <Segment label="Ambient" value={`${timeOfDay} · ${dayOfWeek}`} />
         <span className="simulator-topbar__divider" />
         <Segment label="Active days" value={String(daysSinceInstall)} />
         <Segment label="Wakes" value={String(totalWakes)} />

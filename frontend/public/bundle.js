@@ -64176,7 +64176,7 @@ ${parts.join("\n")}
   });
 
   // src/client.tsx
-  var import_react37 = __toESM(require_react());
+  var import_react38 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/ScenePage.tsx
@@ -79682,7 +79682,7 @@ ${e2}`);
   }
 
   // src/SimulatorPage.tsx
-  var import_react35 = __toESM(require_react());
+  var import_react36 = __toESM(require_react());
 
   // src/simulatorScenes.ts
   function disqualifyReason(flags, ctx) {
@@ -79752,7 +79752,6 @@ ${e2}`);
     totalWakes,
     lastSceneShown
   }) {
-    const timeShort = timeOfDay.split(" \xB7 ")[1] ?? timeOfDay;
     return /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-topbar", children: [
       /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__back", onClick: onBack, children: "\u2190" }),
       /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__divider" }),
@@ -79765,7 +79764,7 @@ ${e2}`);
       /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-topbar__summary", children: [
         /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(Segment, { label: "Chapter", value: chapterName ? `${chapterNumber} \xB7 ${chapterName}` : "\u2014" }),
         /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__divider" }),
-        /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(Segment, { label: "Ambient", value: `${timeShort} \xB7 ${dayOfWeek}` }),
+        /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(Segment, { label: "Ambient", value: `${timeOfDay} \xB7 ${dayOfWeek}` }),
         /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__divider" }),
         /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(Segment, { label: "Active days", value: String(daysSinceInstall) }),
         /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(Segment, { label: "Wakes", value: String(totalWakes) }),
@@ -79780,6 +79779,9 @@ ${e2}`);
       /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__seg-value", children: value })
     ] });
   }
+
+  // src/SimulatorControlsPanel.tsx
+  var import_react29 = __toESM(require_react());
 
   // src/useSimulatedState.ts
   var import_react28 = __toESM(require_react());
@@ -79887,12 +79889,43 @@ ${e2}`);
   }
 
   // src/useSimulatedState.ts
-  var TIME_OPTIONS = ["06:00 \xB7 Morning", "12:00 \xB7 Midday", "17:00 \xB7 Evening", "21:30 \xB7 Night"];
   var DAY_OPTIONS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   var SCENE_OPTIONS = ["Aurora Forest", "Night City", "Day Forest"];
+  var TIME_STEP_MINUTES = 30;
+  var TIME_LIST = Array.from({ length: 12 }, (_, i2) => minutesToTime(i2 * 120));
+  function timeToMinutes(t2) {
+    const hm = t2.split("\xB7")[0].trim();
+    const [h2, m2] = hm.split(":");
+    const mins = (parseInt(h2, 10) || 0) * 60 + (parseInt(m2, 10) || 0);
+    return (mins % 1440 + 1440) % 1440;
+  }
+  function minutesToTime(mins) {
+    const m2 = (Math.round(mins) % 1440 + 1440) % 1440;
+    return `${String(Math.floor(m2 / 60)).padStart(2, "0")}:${String(m2 % 60).padStart(2, "0")}`;
+  }
+  function parseTimeInput(raw) {
+    const s2 = raw.trim();
+    let h2;
+    let m2;
+    const colon = s2.match(/^(\d{1,2}):(\d{1,2})$/);
+    if (colon) {
+      h2 = +colon[1];
+      m2 = +colon[2];
+    } else if (/^\d{1,2}$/.test(s2)) {
+      h2 = +s2;
+      m2 = 0;
+    } else if (/^\d{3,4}$/.test(s2)) {
+      h2 = Math.floor(+s2 / 100);
+      m2 = +s2 % 100;
+    } else {
+      return null;
+    }
+    if (h2 > 23 || m2 > 59) return null;
+    return h2 * 60 + m2;
+  }
   var DAY_OF_WEEK_NUMS = [1, 2, 3, 4, 5, 6, 0];
   function hourFromTimeOption(opt) {
-    return parseInt(opt.split(":")[0], 10);
+    return Math.floor(timeToMinutes(opt) / 60);
   }
   function worldClockFor(fields) {
     const currentHour = hourFromTimeOption(fields.timeOfDay);
@@ -79905,7 +79938,7 @@ ${e2}`);
   }
   var DEFAULTS = {
     chapterId: null,
-    timeOfDay: TIME_OPTIONS[3],
+    timeOfDay: "21:30",
     dayOfWeek: DAY_OPTIONS[1],
     daysSinceInstall: 8,
     totalWakes: 34,
@@ -79924,7 +79957,9 @@ ${e2}`);
     try {
       const raw = localStorage.getItem(storageKey(projectId));
       if (!raw) return DEFAULTS;
-      return { ...DEFAULTS, ...JSON.parse(raw) };
+      const merged = { ...DEFAULTS, ...JSON.parse(raw) };
+      merged.timeOfDay = minutesToTime(timeToMinutes(merged.timeOfDay));
+      return merged;
     } catch {
       return DEFAULTS;
     }
@@ -80151,7 +80186,7 @@ ${e2}`);
             /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-section__hint", children: "mood \xB7 re-checked every wake" })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-section__fields", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(SelectField, { label: "Time of day", value: timeOfDay, options: TIME_OPTIONS, onChange: onTimeOfDayChange, wide: true }),
+            /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(TimeOfDayField, { value: timeOfDay, onChange: onTimeOfDayChange }),
             /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(SelectField, { label: "Weekday", value: dayOfWeek, options: DAY_OPTIONS, onChange: onDayOfWeekChange })
           ] })
         ] })
@@ -80165,6 +80200,61 @@ ${e2}`);
         /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("button", { className: "simulator-stepper__btn", onClick: () => onChange((v2) => Math.max(0, v2 - 1)), children: "\u2212" }),
         /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-stepper__value", children: value }),
         /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("button", { className: "simulator-stepper__btn", onClick: () => onChange((v2) => v2 + 1), children: "+" })
+      ] })
+    ] });
+  }
+  function TimeOfDayField({ value, onChange }) {
+    const [draft, setDraft] = (0, import_react29.useState)(value);
+    (0, import_react29.useEffect)(() => setDraft(value), [value]);
+    const step = (delta) => onChange(minutesToTime(timeToMinutes(value) + delta));
+    const commit = (raw) => {
+      const mins = parseTimeInput(raw);
+      if (mins === null) setDraft(value);
+      else onChange(minutesToTime(mins));
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-cfield", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-cfield__label", children: "Time of day" }),
+      /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-timefield", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+          "button",
+          {
+            className: "simulator-timefield__step",
+            onClick: () => step(-TIME_STEP_MINUTES),
+            "aria-label": "Earlier",
+            children: "\u2212"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+          "input",
+          {
+            className: "simulator-timefield__input",
+            value: draft,
+            onChange: (e2) => setDraft(e2.target.value),
+            onBlur: (e2) => commit(e2.target.value),
+            onKeyDown: (e2) => {
+              if (e2.key === "Enter") e2.currentTarget.blur();
+              else if (e2.key === "Escape") setDraft(value);
+            },
+            inputMode: "numeric",
+            "aria-label": "Time of day"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(DropdownMenu2, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("button", { className: "simulator-timefield__list", "aria-label": "Pick from list", children: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(ChevronDown, { size: 12, strokeWidth: 2 }) }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuContent2, { align: "start", className: "simulator-time-menu", children: TIME_LIST.map((t2) => /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(DropdownMenuItem2, { onSelect: () => onChange(t2), children: [
+            t2 === value ? "\u2713 " : "",
+            t2
+          ] }, t2)) })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+          "button",
+          {
+            className: "simulator-timefield__step",
+            onClick: () => step(TIME_STEP_MINUTES),
+            "aria-label": "Later",
+            children: "+"
+          }
+        )
       ] })
     ] });
   }
@@ -80185,7 +80275,7 @@ ${e2}`);
   }
 
   // src/SimulatorRulesPanel.tsx
-  var import_react29 = __toESM(require_react());
+  var import_react30 = __toESM(require_react());
   var import_jsx_runtime49 = __toESM(require_jsx_runtime());
   var COMBO_CONDITION_TYPES = /* @__PURE__ */ new Set(["flag_active", "flag_inactive", "time_since_flag_change"]);
   function isCombo(rule) {
@@ -80254,7 +80344,7 @@ ${e2}`);
     ] });
   }
   function RuleGroupSection({ title, count: count4, ungrouped, onAdd, onRenameGroup, onRemoveGroup, children }) {
-    const [open, setOpen] = (0, import_react29.useState)(true);
+    const [open, setOpen] = (0, import_react30.useState)(true);
     return /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "simulator-rules-group", children: [
       /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(
         "div",
@@ -80298,13 +80388,13 @@ ${e2}`);
     onRenameGroup,
     onRemoveGroup
   }) {
-    const [search, setSearch] = (0, import_react29.useState)("");
+    const [search, setSearch] = (0, import_react30.useState)("");
     const query = search.trim().toLowerCase();
-    const matchingGroupNames = (0, import_react29.useMemo)(() => {
+    const matchingGroupNames = (0, import_react30.useMemo)(() => {
       if (!query) return null;
       return new Set(groups.filter((g2) => g2.name.toLowerCase().includes(query)).map((g2) => g2.name));
     }, [groups, query]);
-    const filteredRules = (0, import_react29.useMemo)(() => {
+    const filteredRules = (0, import_react30.useMemo)(() => {
       if (!query) return rules;
       return rules.filter((r2) => {
         if ((r2.name || r2.id).toLowerCase().includes(query)) return true;
@@ -80312,7 +80402,7 @@ ${e2}`);
         return !!groupName && matchingGroupNames.has(groupName);
       });
     }, [rules, query, matchingGroupNames]);
-    const { byGroup, ungrouped } = (0, import_react29.useMemo)(() => {
+    const { byGroup, ungrouped } = (0, import_react30.useMemo)(() => {
       const byGroup2 = /* @__PURE__ */ new Map();
       for (const group of groups) byGroup2.set(group.name, []);
       const ungrouped2 = [];
@@ -80328,7 +80418,7 @@ ${e2}`);
       return { byGroup: byGroup2, ungrouped: ungrouped2 };
     }, [filteredRules, rules, groups]);
     const isEmpty = rules.length === 0 && groups.length === 0;
-    const visibleGroups = (0, import_react29.useMemo)(() => {
+    const visibleGroups = (0, import_react30.useMemo)(() => {
       if (!query) return groups;
       return groups.filter((g2) => matchingGroupNames.has(g2.name) || (byGroup.get(g2.name)?.length ?? 0) > 0);
     }, [groups, query, matchingGroupNames, byGroup]);
@@ -80431,7 +80521,7 @@ ${e2}`);
   }
 
   // src/SimulatorFlagsPanel.tsx
-  var import_react30 = __toESM(require_react());
+  var import_react31 = __toESM(require_react());
   var import_jsx_runtime50 = __toESM(require_jsx_runtime());
   function usageLabel(usage) {
     if (!usage) return null;
@@ -80498,7 +80588,7 @@ ${e2}`);
     ] });
   }
   function FlagGroupSection({ title, count: count4, ungrouped, onAdd, onRenameGroup, onRemoveGroup, children }) {
-    const [open, setOpen] = (0, import_react30.useState)(true);
+    const [open, setOpen] = (0, import_react31.useState)(true);
     return /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-flags-group", children: [
       /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(
         "div",
@@ -80543,13 +80633,13 @@ ${e2}`);
     onRenameGroup,
     onRemoveGroup
   }) {
-    const [search, setSearch] = (0, import_react30.useState)("");
+    const [search, setSearch] = (0, import_react31.useState)("");
     const query = search.trim().toLowerCase();
-    const matchingGroupNames = (0, import_react30.useMemo)(() => {
+    const matchingGroupNames = (0, import_react31.useMemo)(() => {
       if (!query) return null;
       return new Set(groups.filter((g2) => g2.name.toLowerCase().includes(query)).map((g2) => g2.name));
     }, [groups, query]);
-    const filteredFlags = (0, import_react30.useMemo)(() => {
+    const filteredFlags = (0, import_react31.useMemo)(() => {
       if (!query) return flags;
       return flags.filter((f2) => {
         if ((f2.name || f2.id).toLowerCase().includes(query)) return true;
@@ -80557,7 +80647,7 @@ ${e2}`);
         return !!groupName && matchingGroupNames.has(groupName);
       });
     }, [flags, query, matchingGroupNames]);
-    const { byGroup, ungrouped } = (0, import_react30.useMemo)(() => {
+    const { byGroup, ungrouped } = (0, import_react31.useMemo)(() => {
       const byGroup2 = /* @__PURE__ */ new Map();
       for (const group of groups) byGroup2.set(group.name, []);
       const ungrouped2 = [];
@@ -80572,7 +80662,7 @@ ${e2}`);
       return { byGroup: byGroup2, ungrouped: ungrouped2 };
     }, [filteredFlags, groups]);
     const isEmpty = flags.length === 0 && groups.length === 0;
-    const visibleGroups = (0, import_react30.useMemo)(() => {
+    const visibleGroups = (0, import_react31.useMemo)(() => {
       if (!query) return groups;
       return groups.filter((g2) => matchingGroupNames.has(g2.name) || (byGroup.get(g2.name)?.length ?? 0) > 0);
     }, [groups, query, matchingGroupNames, byGroup]);
@@ -80677,17 +80767,17 @@ ${e2}`);
   }
 
   // src/SimulatorPreviewPanel.tsx
-  var import_react32 = __toESM(require_react());
+  var import_react33 = __toESM(require_react());
 
   // src/useSimulatorPreview.ts
-  var import_react31 = __toESM(require_react());
+  var import_react32 = __toESM(require_react());
   var EMPTY_SCENE = { sprites: [], xFocus: 0.5, yFocus: 0.5 };
   function useSimulatorPreview(scene, world) {
-    const containerRef = (0, import_react31.useRef)(null);
-    const rendererRef = (0, import_react31.useRef)(null);
-    const worldRef = (0, import_react31.useRef)(world);
+    const containerRef = (0, import_react32.useRef)(null);
+    const rendererRef = (0, import_react32.useRef)(null);
+    const worldRef = (0, import_react32.useRef)(world);
     worldRef.current = world;
-    (0, import_react31.useEffect)(() => {
+    (0, import_react32.useEffect)(() => {
       if (!containerRef.current) return;
       const renderer = new SceneRenderer(containerRef.current);
       rendererRef.current = renderer;
@@ -80696,7 +80786,7 @@ ${e2}`);
         rendererRef.current = null;
       };
     }, []);
-    (0, import_react31.useEffect)(() => {
+    (0, import_react32.useEffect)(() => {
       const renderer = rendererRef.current;
       if (!renderer) return;
       let cancelled = false;
@@ -80777,7 +80867,7 @@ ${e2}`);
     onEditFlags,
     onDeleteScene
   }) {
-    const [aspect, setAspect] = (0, import_react32.useState)("9:16");
+    const [aspect, setAspect] = (0, import_react33.useState)("9:16");
     const qualifyCount = scenes.filter((s2) => s2.status !== "out").length;
     const renderContainerRef = useSimulatorPreview(renderedScene, world);
     const handleEditScene = () => {
@@ -80857,7 +80947,7 @@ ${e2}`);
   }
 
   // src/SimulatorFlagModals.tsx
-  var import_react33 = __toESM(require_react());
+  var import_react34 = __toESM(require_react());
   var import_jsx_runtime52 = __toESM(require_jsx_runtime());
   function generateUniqueId(existingIds) {
     let id;
@@ -80867,7 +80957,7 @@ ${e2}`);
     return id;
   }
   function FlagEditModal({ flag: initial, isNew, groups, onSave, onCancel }) {
-    const [flag, setFlag] = (0, import_react33.useState)(() => ({ ...initial }));
+    const [flag, setFlag] = (0, import_react34.useState)(() => ({ ...initial }));
     const handleGroupSelect = (value) => {
       setFlag({ ...flag, group: value || void 0 });
     };
@@ -80899,7 +80989,7 @@ ${e2}`);
     ] }) });
   }
   function RenameFlagModal({ flag, onSave, onCancel }) {
-    const [name, setName] = (0, import_react33.useState)(flag.name);
+    const [name, setName] = (0, import_react34.useState)(flag.name);
     return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("h2", { className: "modal-title", children: "Rename Flag" }),
       /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "form-row", children: [
@@ -80921,7 +81011,7 @@ ${e2}`);
     ] }) });
   }
   function NewGroupModal({ onCreate, onCancel, error }) {
-    const [name, setName] = (0, import_react33.useState)("");
+    const [name, setName] = (0, import_react34.useState)("");
     return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("h2", { className: "modal-title", children: "New Group" }),
       /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "form-row", children: [
@@ -80948,7 +81038,7 @@ ${e2}`);
     ] }) });
   }
   function RenameGroupModal({ group, onSave, onCancel, error }) {
-    const [name, setName] = (0, import_react33.useState)(group.name);
+    const [name, setName] = (0, import_react34.useState)(group.name);
     return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("h2", { className: "modal-title", children: "Rename Group" }),
       /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "form-row", children: [
@@ -81043,7 +81133,7 @@ ${e2}`);
   }
 
   // src/SimulatorRuleModals.tsx
-  var import_react34 = __toESM(require_react());
+  var import_react35 = __toESM(require_react());
   var import_jsx_runtime53 = __toESM(require_jsx_runtime());
   function emptyRule() {
     return {
@@ -81193,7 +81283,7 @@ ${e2}`);
     ] });
   }
   function RuleEditModal({ rule: initial, flags, groups, onSave, onCancel }) {
-    const [rule, setRule] = (0, import_react34.useState)(() => ({
+    const [rule, setRule] = (0, import_react35.useState)(() => ({
       ...JSON.parse(JSON.stringify(initial)),
       conditions: normalizeConditionGroups(initial.conditions)
     }));
@@ -81262,14 +81352,14 @@ ${e2}`);
               "'d \u2014 the rule fires if any one group fully matches. Leave empty to always fire."
             ] })
           ] }),
-          conditions.map((group, groupIndex) => /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(import_react34.Fragment, { children: [
+          conditions.map((group, groupIndex) => /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(import_react35.Fragment, { children: [
             groupIndex > 0 && /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "rule-edit-modal__or-divider", children: [
               /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", {}),
               /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("em", { children: "OR" }),
               /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", {})
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "rule-edit-modal__group", children: [
-              group.checks.map((c2, checkIndex) => /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(import_react34.Fragment, { children: [
+              group.checks.map((c2, checkIndex) => /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(import_react35.Fragment, { children: [
                 checkIndex > 0 && /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "rule-edit-modal__and-divider", children: [
                   /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", {}),
                   /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("em", { children: "AND" }),
@@ -81316,7 +81406,7 @@ ${e2}`);
     ] }) });
   }
   function RenameRuleModal({ rule, comboCount, onSave, onCancel }) {
-    const [name, setName] = (0, import_react34.useState)(rule.name);
+    const [name, setName] = (0, import_react35.useState)(rule.name);
     return /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("h2", { className: "modal-title", children: "Rename Rule" }),
       /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "form-row", children: [
@@ -81347,7 +81437,7 @@ ${e2}`);
     ] }) });
   }
   function NewGroupModal2({ onCreate, onCancel, error }) {
-    const [name, setName] = (0, import_react34.useState)("");
+    const [name, setName] = (0, import_react35.useState)("");
     return /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("h2", { className: "modal-title", children: "New Group" }),
       /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "form-row", children: [
@@ -81374,7 +81464,7 @@ ${e2}`);
     ] }) });
   }
   function RenameGroupModal2({ group, onSave, onCancel, error }) {
-    const [name, setName] = (0, import_react34.useState)(group.name);
+    const [name, setName] = (0, import_react35.useState)(group.name);
     return /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("h2", { className: "modal-title", children: "Rename Group" }),
       /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "form-row", children: [
@@ -81473,37 +81563,37 @@ ${e2}`);
   // src/SimulatorPage.tsx
   var import_jsx_runtime54 = __toESM(require_jsx_runtime());
   function SimulatorPage({ projectId, projectName, onBack, onEditScene }) {
-    const [rules, setRules] = (0, import_react35.useState)([]);
-    const [ruleGroups, setRuleGroups] = (0, import_react35.useState)([]);
-    const [flags, setFlags] = (0, import_react35.useState)([]);
-    const [flagGroups, setFlagGroups] = (0, import_react35.useState)([]);
-    const [flagUsageCounts, setFlagUsageCounts] = (0, import_react35.useState)({});
-    const [sceneSummaries, setSceneSummaries] = (0, import_react35.useState)([]);
-    const [sceneDetails, setSceneDetails] = (0, import_react35.useState)({});
-    const detailPromises = (0, import_react35.useRef)(/* @__PURE__ */ new Map());
-    const [flagsSceneTarget, setFlagsSceneTarget] = (0, import_react35.useState)(null);
-    const [loading, setLoading] = (0, import_react35.useState)(true);
-    const [error, setError] = (0, import_react35.useState)(null);
-    const [orderBy, setOrderBy] = (0, import_react35.useState)("least_shown");
-    const [editingRuleIndex, setEditingRuleIndex] = (0, import_react35.useState)(null);
-    const [isNewRule, setIsNewRule] = (0, import_react35.useState)(false);
-    const [editingFlagId, setEditingFlagId] = (0, import_react35.useState)(null);
-    const [isNewFlag, setIsNewFlag] = (0, import_react35.useState)(false);
-    const [renamingFlag, setRenamingFlag] = (0, import_react35.useState)(null);
-    const [removeFlagTarget, setRemoveFlagTarget] = (0, import_react35.useState)(null);
-    const [newGroupContext, setNewGroupContext] = (0, import_react35.useState)(null);
-    const [newGroupError, setNewGroupError] = (0, import_react35.useState)(null);
-    const [renamingGroup, setRenamingGroup] = (0, import_react35.useState)(null);
-    const [renameGroupError, setRenameGroupError] = (0, import_react35.useState)(null);
-    const [removingGroup, setRemovingGroup] = (0, import_react35.useState)(null);
-    const [renamingRule, setRenamingRule] = (0, import_react35.useState)(null);
-    const [removeRuleTarget, setRemoveRuleTarget] = (0, import_react35.useState)(null);
-    const [newRuleGroupContext, setNewRuleGroupContext] = (0, import_react35.useState)(null);
-    const [newRuleGroupError, setNewRuleGroupError] = (0, import_react35.useState)(null);
-    const [renamingRuleGroup, setRenamingRuleGroup] = (0, import_react35.useState)(null);
-    const [renameRuleGroupError, setRenameRuleGroupError] = (0, import_react35.useState)(null);
-    const [removingRuleGroup, setRemovingRuleGroup] = (0, import_react35.useState)(null);
-    (0, import_react35.useEffect)(() => {
+    const [rules, setRules] = (0, import_react36.useState)([]);
+    const [ruleGroups, setRuleGroups] = (0, import_react36.useState)([]);
+    const [flags, setFlags] = (0, import_react36.useState)([]);
+    const [flagGroups, setFlagGroups] = (0, import_react36.useState)([]);
+    const [flagUsageCounts, setFlagUsageCounts] = (0, import_react36.useState)({});
+    const [sceneSummaries, setSceneSummaries] = (0, import_react36.useState)([]);
+    const [sceneDetails, setSceneDetails] = (0, import_react36.useState)({});
+    const detailPromises = (0, import_react36.useRef)(/* @__PURE__ */ new Map());
+    const [flagsSceneTarget, setFlagsSceneTarget] = (0, import_react36.useState)(null);
+    const [loading, setLoading] = (0, import_react36.useState)(true);
+    const [error, setError] = (0, import_react36.useState)(null);
+    const [orderBy, setOrderBy] = (0, import_react36.useState)("least_shown");
+    const [editingRuleIndex, setEditingRuleIndex] = (0, import_react36.useState)(null);
+    const [isNewRule, setIsNewRule] = (0, import_react36.useState)(false);
+    const [editingFlagId, setEditingFlagId] = (0, import_react36.useState)(null);
+    const [isNewFlag, setIsNewFlag] = (0, import_react36.useState)(false);
+    const [renamingFlag, setRenamingFlag] = (0, import_react36.useState)(null);
+    const [removeFlagTarget, setRemoveFlagTarget] = (0, import_react36.useState)(null);
+    const [newGroupContext, setNewGroupContext] = (0, import_react36.useState)(null);
+    const [newGroupError, setNewGroupError] = (0, import_react36.useState)(null);
+    const [renamingGroup, setRenamingGroup] = (0, import_react36.useState)(null);
+    const [renameGroupError, setRenameGroupError] = (0, import_react36.useState)(null);
+    const [removingGroup, setRemovingGroup] = (0, import_react36.useState)(null);
+    const [renamingRule, setRenamingRule] = (0, import_react36.useState)(null);
+    const [removeRuleTarget, setRemoveRuleTarget] = (0, import_react36.useState)(null);
+    const [newRuleGroupContext, setNewRuleGroupContext] = (0, import_react36.useState)(null);
+    const [newRuleGroupError, setNewRuleGroupError] = (0, import_react36.useState)(null);
+    const [renamingRuleGroup, setRenamingRuleGroup] = (0, import_react36.useState)(null);
+    const [renameRuleGroupError, setRenameRuleGroupError] = (0, import_react36.useState)(null);
+    const [removingRuleGroup, setRemovingRuleGroup] = (0, import_react36.useState)(null);
+    (0, import_react36.useEffect)(() => {
       Promise.all([
         rulesApi.list(projectId),
         ruleGroupsApi.list(projectId),
@@ -81549,34 +81639,34 @@ ${e2}`);
     const refreshRuleGroups = () => {
       ruleGroupsApi.list(projectId).then(setRuleGroups).catch((err) => setError(String(err)));
     };
-    const flagsById = (0, import_react35.useMemo)(() => new Map(flags.map((f2) => [f2.id, f2])), [flags]);
-    const chapters = (0, import_react35.useMemo)(
+    const flagsById = (0, import_react36.useMemo)(() => new Map(flags.map((f2) => [f2.id, f2])), [flags]);
+    const chapters = (0, import_react36.useMemo)(
       () => flags.filter((f2) => f2.isChapter).sort((a2, b2) => (a2.chapterOrder ?? 0) - (b2.chapterOrder ?? 0)),
       [flags]
     );
-    const nonChapterFlags = (0, import_react35.useMemo)(() => flags.filter((f2) => !f2.isChapter), [flags]);
+    const nonChapterFlags = (0, import_react36.useMemo)(() => flags.filter((f2) => !f2.isChapter), [flags]);
     const sim = useSimulatedState(projectId, flags, rules);
-    const activeFlagIds = (0, import_react35.useMemo)(() => new Set(sim.activeFlagIds), [sim.activeFlagIds]);
-    const currentChapter = (0, import_react35.useMemo)(() => chapters.find((c2) => c2.id === sim.chapterId) ?? null, [chapters, sim.chapterId]);
+    const activeFlagIds = (0, import_react36.useMemo)(() => new Set(sim.activeFlagIds), [sim.activeFlagIds]);
+    const currentChapter = (0, import_react36.useMemo)(() => chapters.find((c2) => c2.id === sim.chapterId) ?? null, [chapters, sim.chapterId]);
     const currentChapterIndex = currentChapter ? chapters.indexOf(currentChapter) : -1;
-    const ranking = (0, import_react35.useMemo)(() => {
+    const ranking = (0, import_react36.useMemo)(() => {
       const ctx = {
         activeFlags: activeFlagIds,
         flagName: (id) => flagsById.get(id)?.name || id
       };
       return rankScenes(sceneSummaries, orderBy, ctx, sim.sceneCounts);
     }, [sceneSummaries, orderBy, activeFlagIds, sim.sceneCounts, flagsById]);
-    const liveWinner = (0, import_react35.useMemo)(() => winnerOf(ranking), [ranking]);
-    (0, import_react35.useEffect)(() => {
+    const liveWinner = (0, import_react36.useMemo)(() => winnerOf(ranking), [ranking]);
+    (0, import_react36.useEffect)(() => {
       if (sim.renderedSceneId || !liveWinner) return;
       sim.pinRenderedScene(liveWinner.id);
       ensureSceneDetail(liveWinner.id);
     }, [sim.renderedSceneId, liveWinner]);
-    const renderedSummary = (0, import_react35.useMemo)(
+    const renderedSummary = (0, import_react36.useMemo)(
       () => sceneSummaries.find((s2) => s2.id === sim.renderedSceneId) ?? null,
       [sceneSummaries, sim.renderedSceneId]
     );
-    const renderedScene = (0, import_react35.useMemo)(
+    const renderedScene = (0, import_react36.useMemo)(
       () => sim.renderedSceneId ? sceneDetails[sim.renderedSceneId] ?? null : null,
       [sim.renderedSceneId, sceneDetails]
     );
@@ -82102,14 +82192,14 @@ ${e2}`);
   }
 
   // src/LoginPage.tsx
-  var import_react36 = __toESM(require_react());
+  var import_react37 = __toESM(require_react());
   var import_jsx_runtime55 = __toESM(require_jsx_runtime());
   function LoginPage({ onAuthenticated }) {
-    const [mode, setMode] = (0, import_react36.useState)("login");
-    const [email, setEmail] = (0, import_react36.useState)("");
-    const [password, setPassword] = (0, import_react36.useState)("");
-    const [error, setError] = (0, import_react36.useState)("");
-    const [loading, setLoading] = (0, import_react36.useState)(false);
+    const [mode, setMode] = (0, import_react37.useState)("login");
+    const [email, setEmail] = (0, import_react37.useState)("");
+    const [password, setPassword] = (0, import_react37.useState)("");
+    const [error, setError] = (0, import_react37.useState)("");
+    const [loading, setLoading] = (0, import_react37.useState)(false);
     const handleSubmit = async (e2) => {
       e2.preventDefault();
       setError("");
@@ -82196,28 +82286,28 @@ ${e2}`);
     return { type: "projects" };
   }
   function App() {
-    const [authState, setAuthState] = (0, import_react37.useState)({ status: "loading" });
-    const [page, setPage] = (0, import_react37.useState)(pageFromPath);
-    const [thumbBuster, setThumbBuster] = (0, import_react37.useState)(0);
-    const isDirtyRef = (0, import_react37.useRef)(false);
-    const pageRef = (0, import_react37.useRef)(page);
-    (0, import_react37.useEffect)(() => {
+    const [authState, setAuthState] = (0, import_react38.useState)({ status: "loading" });
+    const [page, setPage] = (0, import_react38.useState)(pageFromPath);
+    const [thumbBuster, setThumbBuster] = (0, import_react38.useState)(0);
+    const isDirtyRef = (0, import_react38.useRef)(false);
+    const pageRef = (0, import_react38.useRef)(page);
+    (0, import_react38.useEffect)(() => {
       pageRef.current = page;
     }, [page]);
-    (0, import_react37.useEffect)(() => {
+    (0, import_react38.useEffect)(() => {
       setUnauthorizedHandler(() => setAuthState({ status: "unauthenticated" }));
       authApi.me().then((user) => setAuthState({ status: "authenticated", user })).catch(() => {
       });
     }, []);
-    const handleLogout = (0, import_react37.useCallback)(async () => {
+    const handleLogout = (0, import_react38.useCallback)(async () => {
       await authApi.logout().catch(() => {
       });
       setAuthState({ status: "unauthenticated" });
     }, []);
-    const handleDirtyChange = (0, import_react37.useCallback)((dirty) => {
+    const handleDirtyChange = (0, import_react38.useCallback)((dirty) => {
       isDirtyRef.current = dirty;
     }, []);
-    (0, import_react37.useEffect)(() => {
+    (0, import_react38.useEffect)(() => {
       const onPopState = () => {
         const currentPage = pageRef.current;
         if (currentPage.type !== "scene" || !isDirtyRef.current) {
@@ -82234,27 +82324,27 @@ ${e2}`);
       window.addEventListener("popstate", onPopState);
       return () => window.removeEventListener("popstate", onPopState);
     }, []);
-    const navigateToProject = (0, import_react37.useCallback)((project) => {
+    const navigateToProject = (0, import_react38.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
       setPage({ type: "scenes", project });
     }, []);
-    const navigateToScene = (0, import_react37.useCallback)((scene, project) => {
+    const navigateToScene = (0, import_react38.useCallback)((scene, project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/scene/${encodeURIComponent(scene.id)}`);
       setPage({ type: "scene", sceneId: scene.id, project });
     }, []);
-    const navigateBackToProjects = (0, import_react37.useCallback)(() => {
+    const navigateBackToProjects = (0, import_react38.useCallback)(() => {
       window.history.pushState(null, "", "/");
       setPage({ type: "projects" });
     }, []);
-    const navigateBackToScenes = (0, import_react37.useCallback)((project) => {
+    const navigateBackToScenes = (0, import_react38.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
       setPage({ type: "scenes", project });
     }, []);
-    const navigateToSimulator = (0, import_react37.useCallback)((project) => {
+    const navigateToSimulator = (0, import_react38.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/simulator`);
       setPage({ type: "simulator", project });
     }, []);
-    const handleSaved = (0, import_react37.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
+    const handleSaved = (0, import_react38.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
     if (authState.status === "loading") {
       return null;
     }

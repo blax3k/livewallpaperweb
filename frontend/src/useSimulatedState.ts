@@ -3,15 +3,65 @@ import type { RuleDefinition } from '@livewallpaper/types';
 import type { FlagDefinition } from './api';
 import { resolveWorldState, type FlagChangeHistory, type WorldClock, type WorldState } from './ruleEngine';
 
-export const TIME_OPTIONS = ['06:00 · Morning', '12:00 · Midday', '17:00 · Evening', '21:30 · Night'];
 export const DAY_OPTIONS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 export const SCENE_OPTIONS = ['Aurora Forest', 'Night City', 'Day Forest'];
+
+// timeOfDay is stored as a 24-hour "HH:MM" string and adjusted in half-hour steps.
+export const TIME_STEP_MINUTES = 30;
+// One entry per hour (00:00 … 23:00), for the "pick from a list" dropdown.
+export const TIME_LIST: string[] = Array.from({ length: 12 }, (_, i) => minutesToTime(i * 120));
+
+/** Minutes since midnight for an "HH:MM" string, tolerant of the legacy "HH:MM · Label" format. */
+export function timeToMinutes(t: string): number {
+  const hm = t.split('·')[0].trim();
+  const [h, m] = hm.split(':');
+  const mins = (parseInt(h, 10) || 0) * 60 + (parseInt(m, 10) || 0);
+  return ((mins % 1440) + 1440) % 1440;
+}
+
+/** Formats minutes-since-midnight as a zero-padded 24-hour "HH:MM" string. */
+export function minutesToTime(mins: number): string {
+  const m = ((Math.round(mins) % 1440) + 1440) % 1440;
+  return `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+}
+
+/** Parses free-form time input ("9", "930", "9:30", "09:30") to minutes, or null if invalid. */
+export function parseTimeInput(raw: string): number | null {
+  const s = raw.trim();
+  let h: number;
+  let m: number;
+  const colon = s.match(/^(\d{1,2}):(\d{1,2})$/);
+  if (colon) {
+    h = +colon[1];
+    m = +colon[2];
+  } else if (/^\d{1,2}$/.test(s)) {
+    h = +s;
+    m = 0;
+  } else if (/^\d{3,4}$/.test(s)) {
+    h = Math.floor(+s / 100);
+    m = +s % 100;
+  } else {
+    return null;
+  }
+  if (h > 23 || m > 59) return null;
+  return h * 60 + m;
+}
+
+/** Coarse mood label for a time, for the read-only status strip. */
+export function timeOfDayLabel(t: string): string {
+  const h = Math.floor(timeToMinutes(t) / 60);
+  if (h < 5) return 'Night';
+  if (h < 12) return 'Morning';
+  if (h < 17) return 'Midday';
+  if (h < 21) return 'Evening';
+  return 'Night';
+}
 
 // DAY_OPTIONS is Mon-first; RuleCondition.daysOfWeek is Sun-first (0=Sun … 6=Sat).
 const DAY_OF_WEEK_NUMS = [1, 2, 3, 4, 5, 6, 0];
 
 function hourFromTimeOption(opt: string): number {
-  return parseInt(opt.split(':')[0], 10);
+  return Math.floor(timeToMinutes(opt) / 60);
 }
 
 function worldClockFor(fields: Pick<PersistedFields, 'timeOfDay' | 'dayOfWeek' | 'daysSinceInstall'>): WorldClock {
@@ -44,7 +94,7 @@ interface PersistedFields {
 
 const DEFAULTS: PersistedFields = {
   chapterId: null,
-  timeOfDay: TIME_OPTIONS[3],
+  timeOfDay: '21:30',
   dayOfWeek: DAY_OPTIONS[1],
   daysSinceInstall: 8,
   totalWakes: 34,
@@ -65,7 +115,10 @@ function loadPersisted(projectId: string): PersistedFields {
   try {
     const raw = localStorage.getItem(storageKey(projectId));
     if (!raw) return DEFAULTS;
-    return { ...DEFAULTS, ...JSON.parse(raw) };
+    const merged = { ...DEFAULTS, ...JSON.parse(raw) };
+    // Normalize legacy "HH:MM · Label" values to the plain "HH:MM" format.
+    merged.timeOfDay = minutesToTime(timeToMinutes(merged.timeOfDay));
+    return merged;
   } catch {
     return DEFAULTS;
   }
