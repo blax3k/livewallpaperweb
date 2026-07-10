@@ -6,6 +6,7 @@ import type { SceneFlagDeclarations } from '@livewallpaper/types';
 import { rankScenes, winnerOf, type QualifyContext } from './simulatorScenes';
 import { SceneFlagsModal } from './controls/modals/SceneFlagsModal';
 import { SimulatorTopBar } from './SimulatorTopBar';
+import { SimulatorControlsPanel } from './SimulatorControlsPanel';
 import { useSimulatedState } from './useSimulatedState';
 import { SimulatorRulesPanel, COMBO_CONDITION_TYPES } from './SimulatorRulesPanel';
 import { SimulatorFlagsPanel } from './SimulatorFlagsPanel';
@@ -124,6 +125,9 @@ export function SimulatorPage({ projectId, projectName, onBack, onEditScene }: S
 
   const sim = useSimulatedState(projectId, flags, rules);
   const activeFlagIds = useMemo(() => new Set(sim.activeFlagIds), [sim.activeFlagIds]);
+
+  const currentChapter = useMemo(() => chapters.find(c => c.id === sim.chapterId) ?? null, [chapters, sim.chapterId]);
+  const currentChapterIndex = currentChapter ? chapters.indexOf(currentChapter) : -1;
 
   // Cards re-rank live off the current world; the winner drives Wake.
   const ranking = useMemo(() => {
@@ -482,86 +486,92 @@ export function SimulatorPage({ projectId, projectName, onBack, onEditScene }: S
       <SimulatorTopBar
         projectName={projectName}
         onBack={onBack}
-        chapters={chapters}
-        currentChapterId={sim.chapterId}
-        onSelectChapter={sim.setChapterId}
-        onNewChapter={handleNewChapter}
-        onRemoveChapter={handleRemoveFlagRequest}
+        chapterNumber={currentChapterIndex + 1}
+        chapterName={currentChapter?.name || currentChapter?.id || ''}
         timeOfDay={sim.timeOfDay}
-        onTimeOfDayChange={sim.setTimeOfDay}
         dayOfWeek={sim.dayOfWeek}
-        onDayOfWeekChange={sim.setDayOfWeek}
         daysSinceInstall={sim.daysSinceInstall}
-        onDaysSinceInstallChange={sim.setDaysSinceInstall}
-        lastSceneShown={renderedSummary?.label ?? sim.lastSceneShown}
         totalWakes={sim.totalWakes}
-        onTotalWakesChange={sim.setTotalWakes}
-        onReset={sim.handleReset}
+        lastSceneShown={renderedSummary?.label ?? sim.lastSceneShown}
       />
       <PageBody>
         {loading && <p style={{ padding: 'var(--size-16)' }}>Loading…</p>}
         {error && <p style={{ padding: 'var(--size-16)', color: 'var(--color-danger)' }}>{error}</p>}
         {!loading && (
           <div className="simulator-root">
-            {/* ===== Rule Pipeline: rules -> flags -> preview ===== */}
-            <div className="simulator-pipeline">
-              <div className="simulator-pipeline__header">
-                <span className="simulator-pipeline__title">Rule pipeline</span>
-                <span className="simulator-pipeline__hint">rules set flags → flags pick the scene · resolved at each wake</span>
+            <div className="simulator-stage">
+              {/* Left column: the simulated-world controls stacked above the rule→flag pipeline. */}
+              <div className="simulator-stage__left">
+                <SimulatorControlsPanel
+                  chapters={chapters}
+                  currentChapterId={sim.chapterId}
+                  onSelectChapter={sim.setChapterId}
+                  onNewChapter={handleNewChapter}
+                  onRemoveChapter={handleRemoveFlagRequest}
+                  timeOfDay={sim.timeOfDay}
+                  onTimeOfDayChange={sim.setTimeOfDay}
+                  dayOfWeek={sim.dayOfWeek}
+                  onDayOfWeekChange={sim.setDayOfWeek}
+                  daysSinceInstall={sim.daysSinceInstall}
+                  onDaysSinceInstallChange={sim.setDaysSinceInstall}
+                  totalWakes={sim.totalWakes}
+                  onTotalWakesChange={sim.setTotalWakes}
+                  onReset={sim.handleReset}
+                />
+
+                {/* ===== Rule Pipeline: rules -> flags ===== */}
+                <div className="simulator-pipeline__row">
+                  {/* RULES */}
+                  <SimulatorRulesPanel
+                    rules={rules}
+                    groups={ruleGroups}
+                    flagsById={flagsById}
+                    onSelectRule={setEditingRuleIndex}
+                    onNewRule={handleNewRule}
+                    onRenameRule={setRenamingRule}
+                    onMoveRule={handleMoveRule}
+                    onNewGroupForRule={handleOpenNewRuleGroup}
+                    onRemoveRule={handleRemoveRuleRequest}
+                    onNewGroup={() => handleOpenNewRuleGroup()}
+                    onRenameGroup={setRenamingRuleGroup}
+                    onRemoveGroup={setRemovingRuleGroup}
+                  />
+
+                  <Arrow />
+
+                  {/* FLAGS */}
+                  <SimulatorFlagsPanel
+                    flags={flags}
+                    groups={flagGroups}
+                    usageCounts={flagUsageCounts}
+                    activeFlagIds={activeFlagIds}
+                    onNewFlag={handleNewFlag}
+                    onSelectFlag={handleSelectFlag}
+                    onRenameFlag={setRenamingFlag}
+                    onMoveFlag={handleMoveFlag}
+                    onNewGroupForFlag={handleOpenNewGroup}
+                    onRemoveFlag={handleRemoveFlagRequest}
+                    onNewGroup={() => handleOpenNewGroup()}
+                    onRenameGroup={setRenamingGroup}
+                    onRemoveGroup={setRemovingGroup}
+                  />
+                </div>
               </div>
-              <div className="simulator-pipeline__row">
-                {/* RULES */}
-                <SimulatorRulesPanel
-                  rules={rules}
-                  groups={ruleGroups}
-                  flagsById={flagsById}
-                  onSelectRule={setEditingRuleIndex}
-                  onNewRule={handleNewRule}
-                  onRenameRule={setRenamingRule}
-                  onMoveRule={handleMoveRule}
-                  onNewGroupForRule={handleOpenNewRuleGroup}
-                  onRemoveRule={handleRemoveRuleRequest}
-                  onNewGroup={() => handleOpenNewRuleGroup()}
-                  onRenameGroup={setRenamingRuleGroup}
-                  onRemoveGroup={setRemovingRuleGroup}
-                />
 
-                <Arrow />
-
-                {/* FLAGS */}
-                <SimulatorFlagsPanel
-                  flags={flags}
-                  groups={flagGroups}
-                  usageCounts={flagUsageCounts}
-                  activeFlagIds={activeFlagIds}
-                  onNewFlag={handleNewFlag}
-                  onSelectFlag={handleSelectFlag}
-                  onRenameFlag={setRenamingFlag}
-                  onMoveFlag={handleMoveFlag}
-                  onNewGroupForFlag={handleOpenNewGroup}
-                  onRemoveFlag={handleRemoveFlagRequest}
-                  onNewGroup={() => handleOpenNewGroup()}
-                  onRenameGroup={setRenamingGroup}
-                  onRemoveGroup={setRemovingGroup}
-                />
-
-                <Arrow />
-
-                {/* PREVIEW */}
-                <SimulatorPreviewPanel
-                  scenes={ranking}
-                  renderedScene={renderedScene}
-                  renderedSceneName={renderedSummary?.label ?? '—'}
-                  world={sim.world}
-                  orderBy={orderBy}
-                  onOrderByChange={setOrderBy}
-                  stale={sim.stale}
-                  onWake={handleWake}
-                  onEditScene={onEditScene}
-                  onEditFlags={handleEditFlags}
-                  onDeleteScene={handleDeleteScene}
-                />
-              </div>
+              {/* Right column: preview keeps full stage height beside the controls + pipeline. */}
+              <SimulatorPreviewPanel
+                scenes={ranking}
+                renderedScene={renderedScene}
+                renderedSceneName={renderedSummary?.label ?? '—'}
+                world={sim.world}
+                orderBy={orderBy}
+                onOrderByChange={setOrderBy}
+                stale={sim.stale}
+                onWake={handleWake}
+                onEditScene={onEditScene}
+                onEditFlags={handleEditFlags}
+                onDeleteScene={handleDeleteScene}
+              />
             </div>
           </div>
         )}
