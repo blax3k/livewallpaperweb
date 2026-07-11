@@ -2,7 +2,7 @@ import { describe, it, expect } from '@jest/globals';
 import type { FlagDefinition, RuleDefinition } from '@livewallpaper/types';
 import { evaluateCondition, evaluateConditions, resolveWorldState, runRules } from './ruleEngine';
 
-const clock = { currentHour: 12, dayOfWeekNum: 2, installHours: 10 * 24 + 12 };
+const clock = { currentHour: 12, currentMinuteOfDay: 12 * 60, dayOfWeekNum: 2, installHours: 10 * 24 + 12 };
 
 describe('evaluateCondition', () => {
   it('checks flag_active / flag_inactive against the active set', () => {
@@ -19,8 +19,19 @@ describe('evaluateCondition', () => {
     expect(evaluateCondition({ type: 'time_of_day', startHour: 13, endHour: 18 }, ctx)).toBe(false);
     // Overnight window 22-4 at hour 12 should not match.
     expect(evaluateCondition({ type: 'time_of_day', startHour: 22, endHour: 4 }, ctx)).toBe(false);
-    expect(evaluateCondition({ type: 'time_of_day', startHour: 6, endHour: 23 }, { ...ctx, currentHour: 23 })).toBe(true);
-    expect(evaluateCondition({ type: 'time_of_day', startHour: 22, endHour: 4 }, { ...ctx, currentHour: 1 })).toBe(true);
+    // End is exclusive: at exactly 18:00 a 6→18 window is over.
+    expect(evaluateCondition({ type: 'time_of_day', startHour: 6, endHour: 18 }, { ...ctx, currentMinuteOfDay: 18 * 60 })).toBe(false);
+    expect(evaluateCondition({ type: 'time_of_day', startHour: 6, endHour: 23 }, { ...ctx, currentMinuteOfDay: 22 * 60 + 59 })).toBe(true);
+    expect(evaluateCondition({ type: 'time_of_day', startHour: 22, endHour: 4 }, { ...ctx, currentMinuteOfDay: 1 * 60 })).toBe(true);
+  });
+
+  it('respects minutes in time_of_day windows', () => {
+    const ctx = { ...clock, activeFlags: new Set<string>(), sceneCounts: {}, flagChanges: {} };
+    const window = { type: 'time_of_day' as const, startHour: 9, startMinute: 30, endHour: 17, endMinute: 45 };
+    expect(evaluateCondition(window, { ...ctx, currentMinuteOfDay: 9 * 60 + 15 })).toBe(false); // 09:15 before start
+    expect(evaluateCondition(window, { ...ctx, currentMinuteOfDay: 9 * 60 + 30 })).toBe(true);  // 09:30 start inclusive
+    expect(evaluateCondition(window, { ...ctx, currentMinuteOfDay: 17 * 60 + 44 })).toBe(true);  // 17:44 inside
+    expect(evaluateCondition(window, { ...ctx, currentMinuteOfDay: 17 * 60 + 45 })).toBe(false); // 17:45 end exclusive
   });
 
   it('checks day_of_week membership', () => {

@@ -79963,7 +79963,7 @@ void main(void) {
       scene: s2,
       reason: disqualifyReason(s2.flags, ctx),
       score: sceneScore(s2.flags, ctx.activeFlags),
-      count: sceneCounts[s2.id] ?? 0
+      count: sceneCounts[s2.name] ?? 0
     }));
     const qualifying = evaluated.filter((e2) => e2.reason === null);
     const disqualified = evaluated.filter((e2) => e2.reason !== null);
@@ -79979,6 +79979,7 @@ void main(void) {
     });
     const ranked = qualifying.map((e2, i2) => ({
       id: e2.scene.id,
+      sceneName: e2.scene.name,
       name: e2.scene.label,
       status: i2 === 0 ? "wins" : "ranked",
       rank: i2 === 0 ? void 0 : i2 + 1,
@@ -79987,6 +79988,7 @@ void main(void) {
     }));
     const out2 = disqualified.sort((a2, b2) => a2.scene.label.localeCompare(b2.scene.label)).map((e2) => ({
       id: e2.scene.id,
+      sceneName: e2.scene.name,
       name: e2.scene.label,
       status: "out",
       count: e2.count,
@@ -80072,7 +80074,10 @@ void main(void) {
       case "time_of_day": {
         const { startHour, endHour } = check;
         if (startHour == null || endHour == null) return false;
-        return startHour <= endHour ? ctx.currentHour >= startHour && ctx.currentHour <= endHour : ctx.currentHour >= startHour || ctx.currentHour <= endHour;
+        const start = startHour * 60 + (check.startMinute ?? 0);
+        const end = endHour * 60 + (check.endMinute ?? 0);
+        const cur = ctx.currentMinuteOfDay;
+        return start <= end ? cur >= start && cur < end : cur >= start || cur < end;
       }
       case "day_of_week":
         return check.daysOfWeek?.includes(ctx.dayOfWeekNum) ?? false;
@@ -80184,14 +80189,13 @@ void main(void) {
     return h2 * 60 + m2;
   }
   var DAY_OF_WEEK_NUMS = [1, 2, 3, 4, 5, 6, 0];
-  function hourFromTimeOption(opt) {
-    return Math.floor(timeToMinutes(opt) / 60);
-  }
   function worldClockFor(fields) {
-    const currentHour = hourFromTimeOption(fields.timeOfDay);
+    const currentMinuteOfDay = timeToMinutes(fields.timeOfDay);
+    const currentHour = Math.floor(currentMinuteOfDay / 60);
     const dayIndex = DAY_OPTIONS.indexOf(fields.dayOfWeek);
     return {
       currentHour,
+      currentMinuteOfDay,
       dayOfWeekNum: dayIndex === -1 ? 0 : DAY_OF_WEEK_NUMS[dayIndex],
       installHours: fields.daysSinceInstall * 24 + currentHour
     };
@@ -80305,8 +80309,10 @@ void main(void) {
         ...f2,
         ...runEngine(f2, flags, rules),
         ...winner ? {
-          sceneCounts: { ...f2.sceneCounts, [winner.id]: (f2.sceneCounts[winner.id] ?? 0) + 1 },
-          lastSceneShown: winner.name,
+          // Keyed by scene slug (not DB id) so scene_count conditions match the on-device runtime,
+          // which tracks show-counts by filename. See ConditionEvaluator in the Android app.
+          sceneCounts: { ...f2.sceneCounts, [winner.sceneName]: (f2.sceneCounts[winner.sceneName] ?? 0) + 1 },
+          lastSceneShown: winner.label,
           renderedSceneId: winner.id
         } : { lastSceneShown: "\u2014", renderedSceneId: null },
         totalWakes: f2.totalWakes + 1
@@ -81450,7 +81456,7 @@ void main(void) {
     install_duration_hours: 160,
     time_since_flag_change: 160
   };
-  function ConditionEditor({ condition, flags, onChange, onDelete }) {
+  function ConditionEditor({ condition, flags, scenes, onChange, onDelete }) {
     const set = (patch) => onChange({ ...condition, ...patch });
     const typeChanged = (type) => {
       const base = { type };
@@ -81461,6 +81467,7 @@ void main(void) {
       }
       if (type === "day_of_week") base.daysOfWeek = [];
       if (type === "scene_count") {
+        base.sceneId = condition.sceneId ?? "";
         base.operator = ">=";
         base.intValue = 1;
       }
@@ -81494,9 +81501,21 @@ void main(void) {
         ] }),
         condition.type === "time_of_day" && /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(import_jsx_runtime53.Fragment, { children: [
           /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "rule-edit-modal__mini-label", children: "Start" }),
-          /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("input", { className: "rule-edit-modal__mini-input", type: "number", min: 0, max: 23, value: condition.startHour ?? 0, onChange: (e2) => set({ startHour: +e2.target.value }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+            TimeField,
+            {
+              minutes: (condition.startHour ?? 0) * 60 + (condition.startMinute ?? 0),
+              onChange: (m2) => set({ startHour: Math.floor(m2 / 60), startMinute: m2 % 60 })
+            }
+          ),
           /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "rule-edit-modal__mini-label", children: "End" }),
-          /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("input", { className: "rule-edit-modal__mini-input", type: "number", min: 0, max: 23, value: condition.endHour ?? 0, onChange: (e2) => set({ endHour: +e2.target.value }) })
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+            TimeField,
+            {
+              minutes: (condition.endHour ?? 0) * 60 + (condition.endMinute ?? 0),
+              onChange: (m2) => set({ endHour: Math.floor(m2 / 60), endMinute: m2 % 60 })
+            }
+          )
         ] }),
         condition.type === "day_of_week" && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "rule-edit-modal__days", children: DAY_LABELS.map((label, i2) => {
           const checked = (condition.daysOfWeek ?? []).includes(i2);
@@ -81515,6 +81534,10 @@ void main(void) {
             label
           ] }, i2);
         }) }),
+        condition.type === "scene_count" && /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("select", { className: "rule-edit-modal__value-select", value: condition.sceneId ?? "", onChange: (e2) => set({ sceneId: e2.target.value }), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("option", { value: "", children: "\u2014 select scene \u2014" }),
+          scenes.map((s2) => /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("option", { value: s2.name, children: s2.label || s2.name }, s2.id))
+        ] }),
         (condition.type === "scene_count" || condition.type === "install_duration_hours") && /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(import_jsx_runtime53.Fragment, { children: [
           /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("select", { className: "rule-edit-modal__op-select", value: condition.operator ?? ">=", onChange: (e2) => set({ operator: e2.target.value }), children: [">=", "<=", "==", ">", "<"].map((op) => /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("option", { value: op, children: op }, op)) }),
           /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("input", { className: "rule-edit-modal__num-input", type: "number", min: 0, value: condition.intValue ?? 0, onChange: (e2) => set({ intValue: +e2.target.value }) })
@@ -81537,6 +81560,36 @@ void main(void) {
       condition.type === "time_of_day" && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "rule-edit-modal__hint", children: "exclusive; 22\u20136 wraps overnight" })
     ] });
   }
+  var TIME_FIELD_STEP_MINUTES = 15;
+  function TimeField({ minutes, onChange }) {
+    const [draft, setDraft] = (0, import_react35.useState)(minutesToTime(minutes));
+    (0, import_react35.useEffect)(() => setDraft(minutesToTime(minutes)), [minutes]);
+    const step = (delta) => onChange(((minutes + delta) % 1440 + 1440) % 1440);
+    const commit = (raw) => {
+      const parsed = parseTimeInput(raw);
+      if (parsed === null) setDraft(minutesToTime(minutes));
+      else onChange(parsed);
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "rule-edit-modal__timefield", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("button", { type: "button", className: "rule-edit-modal__time-step", onClick: () => step(-TIME_FIELD_STEP_MINUTES), "aria-label": "Earlier", children: "\u2212" }),
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+        "input",
+        {
+          className: "rule-edit-modal__time-input",
+          value: draft,
+          onChange: (e2) => setDraft(e2.target.value),
+          onBlur: (e2) => commit(e2.target.value),
+          onKeyDown: (e2) => {
+            if (e2.key === "Enter") e2.currentTarget.blur();
+            else if (e2.key === "Escape") setDraft(minutesToTime(minutes));
+          },
+          inputMode: "numeric",
+          "aria-label": "Time of day"
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("button", { type: "button", className: "rule-edit-modal__time-step", onClick: () => step(TIME_FIELD_STEP_MINUTES), "aria-label": "Later", children: "+" })
+    ] });
+  }
   function ActionEditor({ index: index2, action, flags, onChange, onDelete }) {
     return /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "rule-edit-modal__action-row", children: [
       /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "rule-edit-modal__action-index", children: index2 + 1 }),
@@ -81551,7 +81604,7 @@ void main(void) {
       /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("button", { type: "button", className: "rule-edit-modal__remove", onClick: onDelete, title: "Remove action", children: "\u2715" })
     ] });
   }
-  function RuleEditModal({ rule: initial, flags, groups, onSave, onCancel }) {
+  function RuleEditModal({ rule: initial, flags, scenes, groups, onSave, onCancel }) {
     const [rule, setRule] = (0, import_react35.useState)(() => ({
       ...JSON.parse(JSON.stringify(initial)),
       conditions: normalizeConditionGroups(initial.conditions)
@@ -81639,6 +81692,7 @@ void main(void) {
                   {
                     condition: c2,
                     flags,
+                    scenes,
                     onChange: (updated) => updateConditionInGroup(groupIndex, checkIndex, updated),
                     onDelete: () => removeConditionInGroup(groupIndex, checkIndex)
                   }
@@ -81941,7 +81995,7 @@ void main(void) {
     );
     const handleWake = async () => {
       if (liveWinner) await ensureSceneDetail(liveWinner.id);
-      sim.wake(liveWinner ? { id: liveWinner.id, name: liveWinner.name } : null);
+      sim.wake(liveWinner ? { id: liveWinner.id, sceneName: liveWinner.sceneName, label: liveWinner.name } : null);
     };
     const handleEditFlags = async (scene) => {
       const detail = await ensureSceneDetail(scene.id);
@@ -82327,6 +82381,7 @@ void main(void) {
         {
           rule: rules[editingRuleIndex],
           flags,
+          scenes: sceneSummaries,
           groups: ruleGroups,
           onSave: handleSaveRule,
           onCancel: handleCancelEditRule

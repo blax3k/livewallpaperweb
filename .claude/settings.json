@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -vE \"ts-jest|Deprecation|punycode|trace-dep|globals|isolatedModules|transform:|See more|kulshekhar|^\\\\s*$\")",
+      "Bash(npx jest *)",
+      "Bash(grep -vE \"ts-jest|Deprecation|punycode|trace-dep|Define|globals|isolatedModules|<transform|<transform_regex|See more|kulshekhar|the \\\\\"ts-jest\\\\\"|^\\\\s*$|Please|module is deprecated|Use .node\")"
+    ]
+  }
+}

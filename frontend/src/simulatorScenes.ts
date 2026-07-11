@@ -8,6 +8,8 @@ export type SceneStatus = 'wins' | 'ranked' | 'out';
  */
 export interface RankableScene {
   id: string;
+  /** Stable slug (the scene's filename on-device); the key show-counts are tracked under. */
+  name: string;
   label: string;
   flags?: SceneFlagDeclarations;
 }
@@ -15,6 +17,8 @@ export interface RankableScene {
 /** A scene evaluated against the current simulated world, ready for the preview cards. */
 export interface RankedScene {
   id: string;
+  /** Stable slug (matches the on-device filename); how scene_count and show-counts key this scene. */
+  sceneName: string;
   /** Display label. */
   name: string;
   status: SceneStatus;
@@ -72,7 +76,7 @@ export function rankScenes(
     scene: s,
     reason: disqualifyReason(s.flags, ctx),
     score: sceneScore(s.flags, ctx.activeFlags),
-    count: sceneCounts[s.id] ?? 0,
+    count: sceneCounts[s.name] ?? 0,
   }));
 
   const qualifying = evaluated.filter(e => e.reason === null);
@@ -91,6 +95,7 @@ export function rankScenes(
 
   const ranked: RankedScene[] = qualifying.map((e, i) => ({
     id: e.scene.id,
+    sceneName: e.scene.name,
     name: e.scene.label,
     status: i === 0 ? 'wins' : 'ranked',
     rank: i === 0 ? undefined : i + 1,
@@ -102,6 +107,7 @@ export function rankScenes(
     .sort((a, b) => a.scene.label.localeCompare(b.scene.label))
     .map(e => ({
       id: e.scene.id,
+      sceneName: e.scene.name,
       name: e.scene.label,
       status: 'out' as const,
       count: e.count,

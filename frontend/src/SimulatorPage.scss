@@ -175,7 +175,8 @@
 // ── Rule edit modal (condition/action builder) ───────────────────────────────
 
 .rule-edit-modal {
-  width: 420px;
+  width: 700px;
+  max-width: calc(100vw - var(--size-32));
   background: var(--color-panel);
   border: 1px solid var(--color-border-strong);
   border-radius: var(--size-12);
@@ -214,7 +215,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--size-16);
-    max-height: 560px;
+    max-height: min(720px, 80vh);
     overflow-y: auto;
   }
 
@@ -432,6 +433,48 @@
   }
 
   &__num-input { width: 56px; }
+
+  // Time-of-day picker for time_of_day, echoing the simulator's Time-of-day field (± steppers
+  // around a wide centred "HH:MM" value) so minutes fit comfortably.
+  &__timefield {
+    display: inline-flex;
+    align-items: center;
+    height: var(--size-30);
+    flex-shrink: 0;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--size-7);
+    background: var(--color-panel);
+    overflow: hidden;
+  }
+
+  &__time-step {
+    width: 26px;
+    height: 100%;
+    flex-shrink: 0;
+    background: transparent;
+    border: none;
+    color: var(--color-fg-subtle);
+    font: 600 var(--text-13) var(--font-sans);
+    cursor: pointer;
+
+    &:hover { background: var(--color-hover); color: var(--color-fg); }
+  }
+
+  &__time-input {
+    width: 56px;
+    height: 100%;
+    padding: 0 var(--size-4);
+    text-align: center;
+    background: transparent;
+    border: none;
+    border-left: 1px solid var(--color-border-strong);
+    border-right: 1px solid var(--color-border-strong);
+    color: var(--color-fg-default);
+    font: 600 var(--text-12) var(--font-sans);
+    font-variant-numeric: tabular-nums;
+
+    &:focus { outline: none; background: var(--color-hover); }
+  }
 
   &__days {
     display: flex;

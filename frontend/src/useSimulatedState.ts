@@ -60,15 +60,13 @@ export function timeOfDayLabel(t: string): string {
 // DAY_OPTIONS is Mon-first; RuleCondition.daysOfWeek is Sun-first (0=Sun … 6=Sat).
 const DAY_OF_WEEK_NUMS = [1, 2, 3, 4, 5, 6, 0];
 
-function hourFromTimeOption(opt: string): number {
-  return Math.floor(timeToMinutes(opt) / 60);
-}
-
 function worldClockFor(fields: Pick<PersistedFields, 'timeOfDay' | 'dayOfWeek' | 'daysSinceInstall'>): WorldClock {
-  const currentHour = hourFromTimeOption(fields.timeOfDay);
+  const currentMinuteOfDay = timeToMinutes(fields.timeOfDay);
+  const currentHour = Math.floor(currentMinuteOfDay / 60);
   const dayIndex = DAY_OPTIONS.indexOf(fields.dayOfWeek);
   return {
     currentHour,
+    currentMinuteOfDay,
     dayOfWeekNum: dayIndex === -1 ? 0 : DAY_OF_WEEK_NUMS[dayIndex],
     installHours: fields.daysSinceInstall * 24 + currentHour,
   };
@@ -234,14 +232,16 @@ export function useSimulatedState(projectId: string, flags: FlagDefinition[], ru
 
   // Wake re-picks the on-screen scene: the caller passes the current winner (computed from the
   // live ranking). Its show-count is bumped and it's pinned as the rendered scene.
-  const wake = (winner: { id: string; name: string } | null) => {
+  const wake = (winner: { id: string; sceneName: string; label: string } | null) => {
     setFields(f => ({
       ...f,
       ...runEngine(f, flags, rules),
       ...(winner
         ? {
-            sceneCounts: { ...f.sceneCounts, [winner.id]: (f.sceneCounts[winner.id] ?? 0) + 1 },
-            lastSceneShown: winner.name,
+            // Keyed by scene slug (not DB id) so scene_count conditions match the on-device runtime,
+            // which tracks show-counts by filename. See ConditionEvaluator in the Android app.
+            sceneCounts: { ...f.sceneCounts, [winner.sceneName]: (f.sceneCounts[winner.sceneName] ?? 0) + 1 },
+            lastSceneShown: winner.label,
             renderedSceneId: winner.id,
           }
         : { lastSceneShown: '—', renderedSceneId: null }),

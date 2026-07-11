@@ -76,7 +76,8 @@ export interface SceneFlagDeclarations {
  * ───────────────────────── ───────────────────────────────────────────────────
  * "flag_active"             flagId
  * "flag_inactive"           flagId
- * "time_of_day"             startHour, endHour  (0–23; handles overnight wrap)
+ * "time_of_day"             startHour, endHour (+ optional startMinute, endMinute); window is
+ *                           [start, end) on the minute-of-day, and wraps overnight when start > end
  * "day_of_week"             daysOfWeek  (0=Sun … 6=Sat)
  * "scene_count"             sceneId, operator, intValue
  * "install_duration_hours"  operator, intValue
@@ -108,11 +109,17 @@ export interface RuleCondition {
   /** Numeric comparison value. Used by: scene_count, install_duration_hours, time_since_flag_change */
   intValue?: number;
 
-  /** Start of time window (0–23 inclusive). Used by: time_of_day */
+  /** Start hour of the time window (0–23). Used by: time_of_day */
   startHour?: number;
 
-  /** End of time window (0–23 inclusive; wrap-around supported). Used by: time_of_day */
+  /** End hour of the time window (0–23; end is exclusive, wrap-around supported). Used by: time_of_day */
   endHour?: number;
+
+  /** Start minute within startHour (0–59; defaults to 0 when omitted). Used by: time_of_day */
+  startMinute?: number;
+
+  /** End minute within endHour (0–59; defaults to 0 when omitted). Used by: time_of_day */
+  endMinute?: number;
 
   /** Days to match (0=Sunday … 6=Saturday). Used by: day_of_week */
   daysOfWeek?: number[];

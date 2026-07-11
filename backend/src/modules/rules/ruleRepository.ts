@@ -17,6 +17,8 @@ type ConditionRow = {
   int_value: number | null;
   start_hour: number | null;
   end_hour: number | null;
+  start_minute: number | null;
+  end_minute: number | null;
   days_of_week: number[] | null;
 };
 
@@ -31,6 +33,8 @@ function conditionRowToCondition(row: ConditionRow): RuleCondition {
   if (row.int_value !== null) check.intValue = row.int_value;
   if (row.start_hour !== null) check.startHour = row.start_hour;
   if (row.end_hour !== null) check.endHour = row.end_hour;
+  if (row.start_minute !== null) check.startMinute = row.start_minute;
+  if (row.end_minute !== null) check.endMinute = row.end_minute;
   if (row.days_of_week !== null) check.daysOfWeek = row.days_of_week;
   return check;
 }
@@ -47,7 +51,8 @@ export async function selectRulesForProject(projectId: string): Promise<RuleObje
     ),
     pool.query<ConditionRow>(
       `SELECT rcg.rule_id, rcg.position AS group_position, rc.type, rc.flag_id, rc.flag_change_type,
-              rc.scene_id, rc.operator, rc.int_value, rc.start_hour, rc.end_hour, rc.days_of_week
+              rc.scene_id, rc.operator, rc.int_value, rc.start_hour, rc.end_hour,
+              rc.start_minute, rc.end_minute, rc.days_of_week
        FROM rule_condition_groups rcg
        JOIN rule_conditions rc ON rc.group_id = rcg.id
        WHERE rcg.project_id = $1
@@ -145,12 +150,13 @@ export async function replaceRulesForProject(projectId: string, rules: RuleDefin
           const check = group.checks[ci];
           await client.query(
             `INSERT INTO rule_conditions
-               (group_id, position, type, project_id, flag_id, flag_change_type, scene_id, operator, int_value, start_hour, end_hour, days_of_week)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+               (group_id, position, type, project_id, flag_id, flag_change_type, scene_id, operator, int_value, start_hour, end_hour, start_minute, end_minute, days_of_week)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
             [
               groupId2, ci, check.type, projectId,
               check.flagId ?? null, check.flagChangeType ?? null, check.sceneId ?? null,
               check.operator ?? null, check.intValue ?? null, check.startHour ?? null, check.endHour ?? null,
+              check.startMinute ?? null, check.endMinute ?? null,
               check.daysOfWeek ?? null,
             ],
           );

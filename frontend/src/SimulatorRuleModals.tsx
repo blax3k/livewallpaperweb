@@ -1,6 +1,7 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Button } from './components/Button';
-import type { RuleDefinition, RuleGroup, FlagDefinition } from './api';
+import { minutesToTime, parseTimeInput } from './useSimulatedState';
+import type { RuleDefinition, RuleGroup, FlagDefinition, SceneSummary } from './api';
 import type { RuleConditionGroup, RuleCondition, RuleAction } from '@livewallpaper/types';
 
 export function emptyRule(): RuleDefinition {
@@ -65,11 +66,12 @@ const CONDITION_TYPE_MIN_WIDTH: Record<RuleCondition['type'], number> = {
 interface ConditionEditorProps {
   condition: RuleCondition;
   flags: FlagDefinition[];
+  scenes: SceneSummary[];
   onChange: (c: RuleCondition) => void;
   onDelete: () => void;
 }
 
-function ConditionEditor({ condition, flags, onChange, onDelete }: ConditionEditorProps) {
+function ConditionEditor({ condition, flags, scenes, onChange, onDelete }: ConditionEditorProps) {
   const set = (patch: Partial<RuleCondition>) => onChange({ ...condition, ...patch });
 
   const typeChanged = (type: RuleCondition['type']) => {
@@ -77,7 +79,7 @@ function ConditionEditor({ condition, flags, onChange, onDelete }: ConditionEdit
     if (type === 'flag_active' || type === 'flag_inactive') base.flagId = condition.flagId ?? '';
     if (type === 'time_of_day') { base.startHour = 6; base.endHour = 22; }
     if (type === 'day_of_week') base.daysOfWeek = [];
-    if (type === 'scene_count') { base.operator = '>='; base.intValue = 1; }
+    if (type === 'scene_count') { base.sceneId = condition.sceneId ?? ''; base.operator = '>='; base.intValue = 1; }
     if (type === 'install_duration_hours') { base.operator = '>='; base.intValue = 24; }
     if (type === 'time_since_flag_change') {
       base.flagId = condition.flagId ?? '';
@@ -110,9 +112,15 @@ function ConditionEditor({ condition, flags, onChange, onDelete }: ConditionEdit
         {condition.type === 'time_of_day' && (
           <>
             <span className="rule-edit-modal__mini-label">Start</span>
-            <input className="rule-edit-modal__mini-input" type="number" min={0} max={23} value={condition.startHour ?? 0} onChange={e => set({ startHour: +e.target.value })} />
+            <TimeField
+              minutes={(condition.startHour ?? 0) * 60 + (condition.startMinute ?? 0)}
+              onChange={m => set({ startHour: Math.floor(m / 60), startMinute: m % 60 })}
+            />
             <span className="rule-edit-modal__mini-label">End</span>
-            <input className="rule-edit-modal__mini-input" type="number" min={0} max={23} value={condition.endHour ?? 0} onChange={e => set({ endHour: +e.target.value })} />
+            <TimeField
+              minutes={(condition.endHour ?? 0) * 60 + (condition.endMinute ?? 0)}
+              onChange={m => set({ endHour: Math.floor(m / 60), endMinute: m % 60 })}
+            />
           </>
         )}
 
@@ -135,6 +143,13 @@ function ConditionEditor({ condition, flags, onChange, onDelete }: ConditionEdit
               );
             })}
           </div>
+        )}
+
+        {condition.type === 'scene_count' && (
+          <select className="rule-edit-modal__value-select" value={condition.sceneId ?? ''} onChange={e => set({ sceneId: e.target.value })}>
+            <option value="">— select scene —</option>
+            {scenes.map(s => <option key={s.id} value={s.name}>{s.label || s.name}</option>)}
+          </select>
         )}
 
         {(condition.type === 'scene_count' || condition.type === 'install_duration_hours') && (
@@ -173,6 +188,50 @@ function ConditionEditor({ condition, flags, onChange, onDelete }: ConditionEdit
   );
 }
 
+// Minutes the ± steppers nudge a TimeField by.
+const TIME_FIELD_STEP_MINUTES = 15;
+
+interface TimeFieldProps {
+  /** Minutes since midnight (0–1439). */
+  minutes: number;
+  onChange: (minutes: number) => void;
+}
+
+// A minute-precise time-of-day picker styled like the simulator's Time-of-day field: ± steppers
+// around a wide, centred "HH:MM" field. Steppers move in 15-minute nudges and wrap around midnight;
+// typed input accepts "9", "930", or "9:30" and reverts on invalid entry.
+function TimeField({ minutes, onChange }: TimeFieldProps) {
+  const [draft, setDraft] = useState(minutesToTime(minutes));
+  useEffect(() => setDraft(minutesToTime(minutes)), [minutes]);
+
+  const step = (delta: number) => onChange((((minutes + delta) % 1440) + 1440) % 1440);
+
+  const commit = (raw: string) => {
+    const parsed = parseTimeInput(raw);
+    if (parsed === null) setDraft(minutesToTime(minutes)); // revert invalid input
+    else onChange(parsed);
+  };
+
+  return (
+    <div className="rule-edit-modal__timefield">
+      <button type="button" className="rule-edit-modal__time-step" onClick={() => step(-TIME_FIELD_STEP_MINUTES)} aria-label="Earlier">−</button>
+      <input
+        className="rule-edit-modal__time-input"
+        value={draft}
+        onChange={e => setDraft(e.target.value)}
+        onBlur={e => commit(e.target.value)}
+        onKeyDown={e => {
+          if (e.key === 'Enter') e.currentTarget.blur();
+          else if (e.key === 'Escape') setDraft(minutesToTime(minutes));
+        }}
+        inputMode="numeric"
+        aria-label="Time of day"
+      />
+      <button type="button" className="rule-edit-modal__time-step" onClick={() => step(TIME_FIELD_STEP_MINUTES)} aria-label="Later">+</button>
+    </div>
+  );
+}
+
 interface ActionEditorProps {
   index: number;
   action: RuleAction;
@@ -201,12 +260,13 @@ function ActionEditor({ index, action, flags, onChange, onDelete }: ActionEditor
 interface RuleEditModalProps {
   rule: RuleDefinition;
   flags: FlagDefinition[];
+  scenes: SceneSummary[];
   groups: RuleGroup[];
   onSave: (rule: RuleDefinition) => void;
   onCancel: () => void;
 }
 
-export function RuleEditModal({ rule: initial, flags, groups, onSave, onCancel }: RuleEditModalProps) {
+export function RuleEditModal({ rule: initial, flags, scenes, groups, onSave, onCancel }: RuleEditModalProps) {
   const [rule, setRule] = useState<RuleDefinition>(() => ({
     ...JSON.parse(JSON.stringify(initial)),
     conditions: normalizeConditionGroups(initial.conditions),
@@ -306,6 +366,7 @@ export function RuleEditModal({ rule: initial, flags, groups, onSave, onCancel }
                       <ConditionEditor
                         condition={c}
                         flags={flags}
+                        scenes={scenes}
                         onChange={updated => updateConditionInGroup(groupIndex, checkIndex, updated)}
                         onDelete={() => removeConditionInGroup(groupIndex, checkIndex)}
                       />

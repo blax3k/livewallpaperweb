@@ -11,6 +11,8 @@ export type FlagChangeHistory = Record<string, FlagChangeRecord>;
 export interface WorldClock {
   /** 0-23, hour of day. */
   currentHour: number;
+  /** 0-1439, minutes since midnight — drives minute-precise time_of_day windows. */
+  currentMinuteOfDay: number;
   /** 0=Sun … 6=Sat, matching RuleCondition.daysOfWeek. */
   dayOfWeekNum: number;
   /** Total hours elapsed since install. */
@@ -43,9 +45,14 @@ export function evaluateCondition(check: RuleCondition, ctx: EngineContext): boo
     case 'time_of_day': {
       const { startHour, endHour } = check;
       if (startHour == null || endHour == null) return false;
-      return startHour <= endHour
-        ? ctx.currentHour >= startHour && ctx.currentHour <= endHour
-        : ctx.currentHour >= startHour || ctx.currentHour <= endHour;
+      // Half-open window [start, end) on the minute-of-day; end is exclusive and the range wraps
+      // overnight when start > end. Minutes default to 0, so hour-only rules keep their old meaning.
+      const start = startHour * 60 + (check.startMinute ?? 0);
+      const end = endHour * 60 + (check.endMinute ?? 0);
+      const cur = ctx.currentMinuteOfDay;
+      return start <= end
+        ? cur >= start && cur < end
+        : cur >= start || cur < end;
     }
     case 'day_of_week':
       return check.daysOfWeek?.includes(ctx.dayOfWeekNum) ?? false;
