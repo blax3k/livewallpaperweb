@@ -6,8 +6,7 @@ function scene(
   label: string,
   flags?: SceneFlagDeclarations,
 ): RankableScene {
-  // name (the slug show-counts key on) mirrors id here so the count-keyed cases stay simple.
-  return { id, name: id, label, ...(flags && { flags }) };
+  return { id, label, ...(flags && { flags }) };
 }
 
 const ctxWith = (over: Partial<QualifyContext> = {}): QualifyContext => ({

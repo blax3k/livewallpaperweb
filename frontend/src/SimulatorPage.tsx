@@ -166,7 +166,7 @@ export function SimulatorPage({ projectId, projectName, onBack, onEditScene }: S
   // i.e. the scene isn't changing) so the render has its sprites ready.
   const handleWake = async () => {
     if (liveWinner) await ensureSceneDetail(liveWinner.id);
-    sim.wake(liveWinner ? { id: liveWinner.id, sceneName: liveWinner.sceneName, label: liveWinner.name } : null);
+    sim.wake(liveWinner ? { id: liveWinner.id, name: liveWinner.name } : null);
   };
 
   const handleEditFlags = async (scene: { id: string }) => {

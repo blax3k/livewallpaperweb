@@ -232,16 +232,16 @@ export function useSimulatedState(projectId: string, flags: FlagDefinition[], ru
 
   // Wake re-picks the on-screen scene: the caller passes the current winner (computed from the
   // live ranking). Its show-count is bumped and it's pinned as the rendered scene.
-  const wake = (winner: { id: string; sceneName: string; label: string } | null) => {
+  const wake = (winner: { id: string; name: string } | null) => {
     setFields(f => ({
       ...f,
       ...runEngine(f, flags, rules),
       ...(winner
         ? {
-            // Keyed by scene slug (not DB id) so scene_count conditions match the on-device runtime,
-            // which tracks show-counts by filename. See ConditionEvaluator in the Android app.
-            sceneCounts: { ...f.sceneCounts, [winner.sceneName]: (f.sceneCounts[winner.sceneName] ?? 0) + 1 },
-            lastSceneShown: winner.label,
+            // Keyed by scene id — the stable identifier scene_count conditions store and the
+            // on-device runtime tracks show-counts by (the export names each scene file <id>.json).
+            sceneCounts: { ...f.sceneCounts, [winner.id]: (f.sceneCounts[winner.id] ?? 0) + 1 },
+            lastSceneShown: winner.name,
             renderedSceneId: winner.id,
           }
         : { lastSceneShown: '—', renderedSceneId: null }),

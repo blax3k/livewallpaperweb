@@ -148,7 +148,7 @@ function ConditionEditor({ condition, flags, scenes, onChange, onDelete }: Condi
         {condition.type === 'scene_count' && (
           <select className="rule-edit-modal__value-select" value={condition.sceneId ?? ''} onChange={e => set({ sceneId: e.target.value })}>
             <option value="">— select scene —</option>
-            {scenes.map(s => <option key={s.id} value={s.name}>{s.label || s.name}</option>)}
+            {scenes.map(s => <option key={s.id} value={s.id}>{s.label || s.name}</option>)}
           </select>
         )}
 

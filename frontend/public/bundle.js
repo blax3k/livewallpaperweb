@@ -79963,7 +79963,7 @@ void main(void) {
       scene: s2,
       reason: disqualifyReason(s2.flags, ctx),
       score: sceneScore(s2.flags, ctx.activeFlags),
-      count: sceneCounts[s2.name] ?? 0
+      count: sceneCounts[s2.id] ?? 0
     }));
     const qualifying = evaluated.filter((e2) => e2.reason === null);
     const disqualified = evaluated.filter((e2) => e2.reason !== null);
@@ -79979,7 +79979,6 @@ void main(void) {
     });
     const ranked = qualifying.map((e2, i2) => ({
       id: e2.scene.id,
-      sceneName: e2.scene.name,
       name: e2.scene.label,
       status: i2 === 0 ? "wins" : "ranked",
       rank: i2 === 0 ? void 0 : i2 + 1,
@@ -79988,7 +79987,6 @@ void main(void) {
     }));
     const out2 = disqualified.sort((a2, b2) => a2.scene.label.localeCompare(b2.scene.label)).map((e2) => ({
       id: e2.scene.id,
-      sceneName: e2.scene.name,
       name: e2.scene.label,
       status: "out",
       count: e2.count,
@@ -80309,10 +80307,10 @@ void main(void) {
         ...f2,
         ...runEngine(f2, flags, rules),
         ...winner ? {
-          // Keyed by scene slug (not DB id) so scene_count conditions match the on-device runtime,
-          // which tracks show-counts by filename. See ConditionEvaluator in the Android app.
-          sceneCounts: { ...f2.sceneCounts, [winner.sceneName]: (f2.sceneCounts[winner.sceneName] ?? 0) + 1 },
-          lastSceneShown: winner.label,
+          // Keyed by scene id — the stable identifier scene_count conditions store and the
+          // on-device runtime tracks show-counts by (the export names each scene file <id>.json).
+          sceneCounts: { ...f2.sceneCounts, [winner.id]: (f2.sceneCounts[winner.id] ?? 0) + 1 },
+          lastSceneShown: winner.name,
           renderedSceneId: winner.id
         } : { lastSceneShown: "\u2014", renderedSceneId: null },
         totalWakes: f2.totalWakes + 1
@@ -81536,7 +81534,7 @@ void main(void) {
         }) }),
         condition.type === "scene_count" && /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("select", { className: "rule-edit-modal__value-select", value: condition.sceneId ?? "", onChange: (e2) => set({ sceneId: e2.target.value }), children: [
           /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("option", { value: "", children: "\u2014 select scene \u2014" }),
-          scenes.map((s2) => /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("option", { value: s2.name, children: s2.label || s2.name }, s2.id))
+          scenes.map((s2) => /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("option", { value: s2.id, children: s2.label || s2.name }, s2.id))
         ] }),
         (condition.type === "scene_count" || condition.type === "install_duration_hours") && /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(import_jsx_runtime53.Fragment, { children: [
           /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("select", { className: "rule-edit-modal__op-select", value: condition.operator ?? ">=", onChange: (e2) => set({ operator: e2.target.value }), children: [">=", "<=", "==", ">", "<"].map((op) => /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("option", { value: op, children: op }, op)) }),
@@ -81995,7 +81993,7 @@ void main(void) {
     );
     const handleWake = async () => {
       if (liveWinner) await ensureSceneDetail(liveWinner.id);
-      sim.wake(liveWinner ? { id: liveWinner.id, sceneName: liveWinner.sceneName, label: liveWinner.name } : null);
+      sim.wake(liveWinner ? { id: liveWinner.id, name: liveWinner.name } : null);
     };
     const handleEditFlags = async (scene) => {
       const detail = await ensureSceneDetail(scene.id);
