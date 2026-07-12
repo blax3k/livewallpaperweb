@@ -1,88 +1,321 @@
-.sfm-modal {
-  width: 540px;
-}
+// Scene Flags modal (design option 11c) — a card-per-gate builder that mirrors the Edit-rule
+// modal's shell so the two dialogs feel identical, with a live eligibility/score Result strip.
 
-.sfm-section {
-  margin-bottom: 1rem;
-}
-
-.sfm-checklist {
+.scene-flags-modal {
+  width: 460px;
+  max-width: calc(100vw - var(--size-32));
+  background: var(--color-panel);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--size-12);
+  box-shadow: var(--shadow-modal);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
-  max-height: 160px;
-  overflow-y: auto;
-  background: #222;
-  border: 1px solid #333;
-  border-radius: 4px;
-  padding: 0.5rem;
-}
 
-.sfm-check-label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  font-size: 0.85rem;
-  color: #ddd;
+  &__header {
+    padding: 13px var(--size-16);
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    gap: var(--size-8);
+  }
 
-  &:hover { color: #fff; }
-}
+  &__accent {
+    width: 8px;
+    height: 8px;
+    flex-shrink: 0;
+    border-radius: var(--size-2);
+    background: var(--color-accent-bright);
+  }
 
-.sfm-flag-name {
-  flex: 1;
-}
+  &__title {
+    font-size: var(--text-13);
+    font-weight: 600;
+    color: var(--color-fg);
+  }
 
-.sfm-flag-id {
-  font-size: 0.75rem;
-  color: #8bc;
-  font-family: monospace;
-}
+  &__scene {
+    font-size: var(--text-12);
+    color: var(--color-fg-faintest);
+  }
 
-.sfm-empty {
-  font-size: 0.82rem;
-  color: #666;
-  padding: 0.25rem 0;
-}
+  &__close {
+    margin-left: auto;
+    display: flex;
+    background: none;
+    border: none;
+    color: var(--color-fg-faintest);
+    cursor: pointer;
+    padding: var(--size-2);
 
-.sfm-scored-row {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin-bottom: 0.4rem;
-  background: #252525;
-  border: 1px solid #333;
-  border-radius: 4px;
-  padding: 0.35rem 0.5rem;
+    &:hover { color: var(--color-fg); }
+  }
 
-  select {
+  &__body {
+    padding: var(--size-16);
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-12);
+    max-height: min(560px, 70vh);
+    overflow-y: auto;
+  }
+
+  // ── Gate card ───────────────────────────────────────────────────────────
+  &__gate {
+    display: flex;
+    background: var(--color-panel-inset);
+    border: 1px solid var(--color-border);
+    border-radius: var(--size-10);
+    overflow: hidden;
+  }
+
+  &__rail {
+    width: 4px;
+    flex-shrink: 0;
+  }
+
+  &__gate-content {
     flex: 1;
-    background: #1e1e1e;
-    border: 1px solid #555;
-    border-radius: 4px;
-    color: #eee;
-    padding: 0.25rem 0.4rem;
-    font-size: 0.82rem;
-
-    &:focus { outline: none; border-color: #888; }
+    padding: var(--size-10) 11px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-8);
+    min-width: 0;
   }
 
-  label {
-    font-size: 0.8rem;
-    color: #aaa;
-    white-space: nowrap;
+  &__gate-head {
+    display: flex;
+    align-items: center;
+    gap: var(--size-7);
   }
 
-  input[type='number'] {
-    width: 64px;
-    background: #1e1e1e;
-    border: 1px solid #555;
-    border-radius: 4px;
-    color: #eee;
-    padding: 0.25rem 0.4rem;
-    font-size: 0.82rem;
-    text-align: right;
+  &__gate-icon { flex-shrink: 0; }
 
-    &:focus { outline: none; border-color: #888; }
+  &__gate-label {
+    font-size: var(--text-12);
+    font-weight: 600;
+    color: var(--color-fg-default);
+  }
+
+  &__gate-helper {
+    font-size: var(--text-11);
+    color: var(--color-fg-faintest);
+  }
+
+  // Per-gate accents: rail, header icon, and dashed add-button.
+  &__gate--require {
+    .scene-flags-modal__rail { background: var(--color-gate-require-rail); }
+    .scene-flags-modal__gate-icon { color: var(--color-gate-require-fg); }
+    .scene-flags-modal__add {
+      color: var(--color-gate-require-fg);
+      border-color: var(--color-gate-require-border);
+    }
+  }
+
+  &__gate--score {
+    .scene-flags-modal__rail { background: var(--color-accent); }
+    .scene-flags-modal__gate-icon { color: var(--color-accent-fg); }
+    .scene-flags-modal__add {
+      color: var(--color-accent-fg);
+      border-color: var(--color-accent-panel-border);
+    }
+  }
+
+  &__gate--exclude {
+    .scene-flags-modal__rail { background: var(--color-gate-exclude-rail); }
+    .scene-flags-modal__gate-icon { color: var(--color-gate-exclude-fg); }
+    .scene-flags-modal__add {
+      color: var(--color-gate-exclude-fg);
+      border-color: var(--color-gate-exclude-border);
+    }
+  }
+
+  // ── Flag row ────────────────────────────────────────────────────────────
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: var(--size-8);
+  }
+
+  &__flag-select {
+    flex: 1;
+    min-width: 0;
+    height: var(--size-30);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--size-7);
+    background: var(--color-panel);
+    padding: 0 var(--size-10);
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: var(--text-12);
+    color: var(--color-fg-muted);
+
+    &:focus { outline: none; border-color: var(--color-fg-subtle); }
+  }
+
+  &__stepper {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    height: var(--size-30);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--size-7);
+    background: var(--color-panel);
+    overflow: hidden;
+  }
+
+  &__step {
+    width: 24px;
+    height: 100%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--color-fg-subtle);
+    cursor: pointer;
+
+    &:hover { background: var(--color-hover); color: var(--color-fg); }
+  }
+
+  &__weight {
+    width: 32px;
+    text-align: center;
+    border-left: 1px solid var(--color-border-strong);
+    border-right: 1px solid var(--color-border-strong);
+    line-height: var(--size-30);
+    font-family: ui-monospace, Menlo, monospace;
+    font-weight: 600;
+    font-size: var(--text-12);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-fg-default);
+  }
+
+  &__remove {
+    flex-shrink: 0;
+    display: flex;
+    background: none;
+    border: none;
+    color: var(--color-fg-faint);
+    cursor: pointer;
+    padding: var(--size-2);
+
+    &:hover { color: var(--color-danger); }
+  }
+
+  &__add {
+    text-align: center;
+    font-size: var(--text-11);
+    font-weight: 600;
+    background: none;
+    border: 1px dashed var(--color-border-strong);
+    border-radius: var(--size-7);
+    padding: var(--size-6);
+    cursor: pointer;
+
+    &:hover { filter: brightness(1.25); }
+
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+  }
+
+  // ── Live Result strip ───────────────────────────────────────────────────
+  &__result {
+    background: var(--color-gate-result-bg);
+    border: 1px solid var(--color-gate-result-border);
+    border-radius: var(--size-10);
+    padding: 11px var(--size-12);
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-8);
+  }
+
+  &__result-head {
+    display: flex;
+    align-items: center;
+    gap: var(--size-8);
+  }
+
+  &__result-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--color-fg-subtle);
+  }
+
+  &__result-note {
+    margin-left: auto;
+    font-size: var(--text-10);
+    color: var(--color-fg-faintest);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__result-body {
+    display: flex;
+    align-items: center;
+    gap: var(--size-10);
+  }
+
+  &__badge {
+    flex-shrink: 0;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    border: 1px solid;
+    border-radius: var(--size-5);
+    padding: 3px var(--size-7);
+
+    &--eligible {
+      color: var(--color-gate-require-badge-fg);
+      background: var(--color-gate-require-badge-bg);
+      border-color: var(--color-gate-require-border);
+    }
+
+    &--hidden {
+      color: var(--color-gate-exclude-fg);
+      background: var(--color-gate-exclude-badge-bg);
+      border-color: var(--color-gate-exclude-border);
+    }
+  }
+
+  &__summary {
+    display: flex;
+    align-items: center;
+    gap: var(--size-4);
+    min-width: 0;
+    font-size: var(--text-11);
+    color: var(--color-fg-subtle);
+  }
+
+  &__mark {
+    display: inline-flex;
+    align-items: center;
+
+    &--ok { color: var(--color-gate-require-fg); }
+    &--fail { color: var(--color-gate-exclude-fg); }
+  }
+
+  &__score {
+    margin-left: auto;
+    flex-shrink: 0;
+    font-size: var(--text-11);
+    color: var(--color-fg-subtle);
+
+    b {
+      color: var(--color-fg-default);
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: var(--text-13);
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  // ── Footer ──────────────────────────────────────────────────────────────
+  &__footer {
+    padding: var(--size-12) var(--size-16);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--size-8);
   }
 }

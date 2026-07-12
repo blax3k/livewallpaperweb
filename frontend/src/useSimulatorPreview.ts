@@ -42,6 +42,11 @@ export function useSimulatorPreview(scene: SceneDetail | null, world: WorldState
     };
   }, []);
 
+  // Keyed on the pinned scene's *id*, not the SceneDetail object: editing a scene's flags replaces
+  // its cached detail object without changing which scene is pinned, and that must not re-run the
+  // effects below (see the reload effect). A wake pins a different id; that's the real change.
+  const sceneId = scene?.id ?? null;
+
   // Crop the render to the selected aspect ratio. Orientation drives which focus axis pans, so
   // this also governs how xFocus is applied (see ASPECT_CONFIG). Re-applied on scene reload too,
   // since loadScene resets orientation-dependent positioning.
@@ -51,12 +56,18 @@ export function useSimulatorPreview(scene: SceneDetail | null, world: WorldState
     const { orientation, guide } = ASPECT_CONFIG[aspect];
     renderer.setOrientation(orientation);
     renderer.setGuideAspectRatio(guide);
-  }, [aspect, scene]);
+  }, [aspect, sceneId]);
 
-  // (Re)load whenever the pinned scene changes, reading the world snapshot at that instant. A
-  // scene change animates with the same diagonal wipe the Android wallpaper uses (the first load
-  // has nothing to wipe from, so it's instant). Condition sets resolve against the wake snapshot,
-  // so the new scene wipes in already showing the right sprite variants.
+  // (Re)load only when the pinned scene actually changes, reading the world snapshot at that
+  // instant. A scene change animates with the same diagonal wipe the Android wallpaper uses (the
+  // first load has nothing to wipe from, so it's instant). Condition sets resolve against the wake
+  // snapshot, so the new scene wipes in already showing the right sprite variants.
+  //
+  // This is deliberately keyed on `sceneId`, not the whole `scene` object: flag declarations live
+  // in `scene.data.flags` and don't affect the rendered pixels, so saving the Scene Flags modal —
+  // which swaps in a fresh detail object for the same pinned scene — must not replay the wipe. Only
+  // a wake (which pins a different id) should. See the report about the flags modal "activating"
+  // the renderer.
   useEffect(() => {
     const renderer = rendererRef.current;
     if (!renderer) return;
@@ -66,7 +77,8 @@ export function useSimulatorPreview(scene: SceneDetail | null, world: WorldState
     }
     const snapshot = worldRef.current;
     renderer.transitionToScene(scene.data, group => matchesConditionGroup(group, snapshot));
-  }, [scene]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- keyed on scene identity, not the mutable detail object
+  }, [sceneId]);
 
   return containerRef;
 }

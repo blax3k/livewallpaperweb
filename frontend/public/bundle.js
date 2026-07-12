@@ -1337,7 +1337,7 @@
           return dispatcher;
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var React57 = require_react(), Internals = {
+        var React56 = require_react(), Internals = {
           d: {
             f: noop3,
             r: function() {
@@ -1355,7 +1355,7 @@
           },
           p: 0,
           findDOMNode: null
-        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React57.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React56.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
         "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
           "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
         );
@@ -2890,7 +2890,7 @@
           "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
         }
         function validateOptionProps(element, props) {
-          null == props.value && ("object" === typeof props.children && null !== props.children ? React57.Children.forEach(props.children, function(child) {
+          null == props.value && ("object" === typeof props.children && null !== props.children ? React56.Children.forEach(props.children, function(child) {
             null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
               "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
             ));
@@ -18522,14 +18522,14 @@
           ));
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var Scheduler = require_scheduler(), React57 = require_react(), ReactDOM5 = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE2 = /* @__PURE__ */ Symbol.for("react.lazy");
+        var Scheduler = require_scheduler(), React56 = require_react(), ReactDOM5 = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE2 = /* @__PURE__ */ Symbol.for("react.lazy");
         /* @__PURE__ */ Symbol.for("react.scope");
         var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity");
         /* @__PURE__ */ Symbol.for("react.legacy_hidden");
         /* @__PURE__ */ Symbol.for("react.tracing_marker");
         var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel");
         /* @__PURE__ */ Symbol.for("react.view_transition");
-        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React57.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM5.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React56.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM5.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
           pending: false,
           data: null,
           method: null,
@@ -21317,7 +21317,7 @@
           }
         };
         (function() {
-          var isomorphicReactPackageVersion = React57.version;
+          var isomorphicReactPackageVersion = React56.version;
           if ("19.2.5" !== isomorphicReactPackageVersion)
             throw Error(
               'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.5\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21671,18 +21671,18 @@
         function isValidElement2(object) {
           return "object" === typeof object && null !== object && object.$$typeof === REACT_ELEMENT_TYPE;
         }
-        var React57 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE2 = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React57.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
+        var React56 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE2 = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React56.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
           return null;
         };
-        React57 = {
+        React56 = {
           react_stack_bottom_frame: function(callStackForError) {
             return callStackForError();
           }
         };
         var specialPropKeyWarningShown;
         var didWarnAboutElementRef = {};
-        var unknownOwnerDebugStack = React57.react_stack_bottom_frame.bind(
-          React57,
+        var unknownOwnerDebugStack = React56.react_stack_bottom_frame.bind(
+          React56,
           UnknownOwner
         )();
         var unknownOwnerDebugTask = createTask(getTaskName(UnknownOwner));
@@ -64289,39 +64289,46 @@ ${parts.join("\n")}
     return Component;
   };
 
+  // ../node_modules/lucide-react/dist/esm/icons/ban.mjs
+  var __iconNode = [
+    ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+    ["path", { d: "M4.929 4.929 19.07 19.071", key: "196cmz" }]
+  ];
+  var Ban = createLucideIcon("ban", __iconNode);
+
   // ../node_modules/lucide-react/dist/esm/icons/check.mjs
-  var __iconNode = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
-  var Check = createLucideIcon("check", __iconNode);
+  var __iconNode2 = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
+  var Check = createLucideIcon("check", __iconNode2);
 
   // ../node_modules/lucide-react/dist/esm/icons/chevron-down.mjs
-  var __iconNode2 = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
-  var ChevronDown = createLucideIcon("chevron-down", __iconNode2);
+  var __iconNode3 = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
+  var ChevronDown = createLucideIcon("chevron-down", __iconNode3);
 
   // ../node_modules/lucide-react/dist/esm/icons/chevron-left.mjs
-  var __iconNode3 = [["path", { d: "m15 18-6-6 6-6", key: "1wnfg3" }]];
-  var ChevronLeft = createLucideIcon("chevron-left", __iconNode3);
+  var __iconNode4 = [["path", { d: "m15 18-6-6 6-6", key: "1wnfg3" }]];
+  var ChevronLeft = createLucideIcon("chevron-left", __iconNode4);
 
   // ../node_modules/lucide-react/dist/esm/icons/chevron-right.mjs
-  var __iconNode4 = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
-  var ChevronRight = createLucideIcon("chevron-right", __iconNode4);
+  var __iconNode5 = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
+  var ChevronRight = createLucideIcon("chevron-right", __iconNode5);
 
   // ../node_modules/lucide-react/dist/esm/icons/circle-check-big.mjs
-  var __iconNode5 = [
+  var __iconNode6 = [
     ["path", { d: "M21.801 10A10 10 0 1 1 17 3.335", key: "yps3ct" }],
     ["path", { d: "m9 11 3 3L22 4", key: "1pflzl" }]
   ];
-  var CircleCheckBig = createLucideIcon("circle-check-big", __iconNode5);
+  var CircleCheckBig = createLucideIcon("circle-check-big", __iconNode6);
 
   // ../node_modules/lucide-react/dist/esm/icons/ellipsis.mjs
-  var __iconNode6 = [
+  var __iconNode7 = [
     ["circle", { cx: "12", cy: "12", r: "1", key: "41hilf" }],
     ["circle", { cx: "19", cy: "12", r: "1", key: "1wjl8i" }],
     ["circle", { cx: "5", cy: "12", r: "1", key: "1pcz8c" }]
   ];
-  var Ellipsis = createLucideIcon("ellipsis", __iconNode6);
+  var Ellipsis = createLucideIcon("ellipsis", __iconNode7);
 
   // ../node_modules/lucide-react/dist/esm/icons/eye-off.mjs
-  var __iconNode7 = [
+  var __iconNode8 = [
     [
       "path",
       {
@@ -64339,10 +64346,10 @@ ${parts.join("\n")}
     ],
     ["path", { d: "m2 2 20 20", key: "1ooewy" }]
   ];
-  var EyeOff = createLucideIcon("eye-off", __iconNode7);
+  var EyeOff = createLucideIcon("eye-off", __iconNode8);
 
   // ../node_modules/lucide-react/dist/esm/icons/eye.mjs
-  var __iconNode8 = [
+  var __iconNode9 = [
     [
       "path",
       {
@@ -64352,48 +64359,48 @@ ${parts.join("\n")}
     ],
     ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
   ];
-  var Eye = createLucideIcon("eye", __iconNode8);
+  var Eye = createLucideIcon("eye", __iconNode9);
 
   // ../node_modules/lucide-react/dist/esm/icons/image.mjs
-  var __iconNode9 = [
+  var __iconNode10 = [
     ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2", key: "1m3agn" }],
     ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }],
     ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }]
   ];
-  var Image2 = createLucideIcon("image", __iconNode9);
+  var Image2 = createLucideIcon("image", __iconNode10);
 
   // ../node_modules/lucide-react/dist/esm/icons/layout-grid.mjs
-  var __iconNode10 = [
+  var __iconNode11 = [
     ["rect", { width: "7", height: "7", x: "3", y: "3", rx: "1", key: "1g98yp" }],
     ["rect", { width: "7", height: "7", x: "14", y: "3", rx: "1", key: "6d4xhi" }],
     ["rect", { width: "7", height: "7", x: "14", y: "14", rx: "1", key: "nxv5o0" }],
     ["rect", { width: "7", height: "7", x: "3", y: "14", rx: "1", key: "1bb6yr" }]
   ];
-  var LayoutGrid = createLucideIcon("layout-grid", __iconNode10);
+  var LayoutGrid = createLucideIcon("layout-grid", __iconNode11);
 
   // ../node_modules/lucide-react/dist/esm/icons/link-2.mjs
-  var __iconNode11 = [
+  var __iconNode12 = [
     ["path", { d: "M9 17H7A5 5 0 0 1 7 7h2", key: "8i5ue5" }],
     ["path", { d: "M15 7h2a5 5 0 1 1 0 10h-2", key: "1b9ql8" }],
     ["line", { x1: "8", x2: "16", y1: "12", y2: "12", key: "1jonct" }]
   ];
-  var Link2 = createLucideIcon("link-2", __iconNode11);
+  var Link2 = createLucideIcon("link-2", __iconNode12);
 
   // ../node_modules/lucide-react/dist/esm/icons/maximize.mjs
-  var __iconNode12 = [
+  var __iconNode13 = [
     ["path", { d: "M8 3H5a2 2 0 0 0-2 2v3", key: "1dcmit" }],
     ["path", { d: "M21 8V5a2 2 0 0 0-2-2h-3", key: "1e4gt3" }],
     ["path", { d: "M3 16v3a2 2 0 0 0 2 2h3", key: "wsl5sc" }],
     ["path", { d: "M16 21h3a2 2 0 0 0 2-2v-3", key: "18trek" }]
   ];
-  var Maximize = createLucideIcon("maximize", __iconNode12);
+  var Maximize = createLucideIcon("maximize", __iconNode13);
 
   // ../node_modules/lucide-react/dist/esm/icons/minus.mjs
-  var __iconNode13 = [["path", { d: "M5 12h14", key: "1ays0h" }]];
-  var Minus = createLucideIcon("minus", __iconNode13);
+  var __iconNode14 = [["path", { d: "M5 12h14", key: "1ays0h" }]];
+  var Minus = createLucideIcon("minus", __iconNode14);
 
   // ../node_modules/lucide-react/dist/esm/icons/moon-star.mjs
-  var __iconNode14 = [
+  var __iconNode15 = [
     ["path", { d: "M18 5h4", key: "1lhgn2" }],
     ["path", { d: "M20 3v4", key: "1olli1" }],
     [
@@ -64404,10 +64411,10 @@ ${parts.join("\n")}
       }
     ]
   ];
-  var MoonStar = createLucideIcon("moon-star", __iconNode14);
+  var MoonStar = createLucideIcon("moon-star", __iconNode15);
 
   // ../node_modules/lucide-react/dist/esm/icons/mouse-pointer-2.mjs
-  var __iconNode15 = [
+  var __iconNode16 = [
     [
       "path",
       {
@@ -64416,10 +64423,10 @@ ${parts.join("\n")}
       }
     ]
   ];
-  var MousePointer2 = createLucideIcon("mouse-pointer-2", __iconNode15);
+  var MousePointer2 = createLucideIcon("mouse-pointer-2", __iconNode16);
 
   // ../node_modules/lucide-react/dist/esm/icons/pencil.mjs
-  var __iconNode16 = [
+  var __iconNode17 = [
     [
       "path",
       {
@@ -64429,17 +64436,17 @@ ${parts.join("\n")}
     ],
     ["path", { d: "m15 5 4 4", key: "1mk7zo" }]
   ];
-  var Pencil = createLucideIcon("pencil", __iconNode16);
+  var Pencil = createLucideIcon("pencil", __iconNode17);
 
   // ../node_modules/lucide-react/dist/esm/icons/plus.mjs
-  var __iconNode17 = [
+  var __iconNode18 = [
     ["path", { d: "M5 12h14", key: "1ays0h" }],
     ["path", { d: "M12 5v14", key: "s699le" }]
   ];
-  var Plus = createLucideIcon("plus", __iconNode17);
+  var Plus = createLucideIcon("plus", __iconNode18);
 
   // ../node_modules/lucide-react/dist/esm/icons/radar.mjs
-  var __iconNode18 = [
+  var __iconNode19 = [
     ["path", { d: "M19.07 4.93A10 10 0 0 0 6.99 3.34", key: "z3du51" }],
     ["path", { d: "M4 6h.01", key: "oypzma" }],
     ["path", { d: "M2.29 9.62A10 10 0 1 0 21.31 8.35", key: "qzzz0" }],
@@ -64449,26 +64456,26 @@ ${parts.join("\n")}
     ["circle", { cx: "12", cy: "12", r: "2", key: "1c9p78" }],
     ["path", { d: "m13.41 10.59 5.66-5.66", key: "mhq4k0" }]
   ];
-  var Radar = createLucideIcon("radar", __iconNode18);
+  var Radar = createLucideIcon("radar", __iconNode19);
 
   // ../node_modules/lucide-react/dist/esm/icons/refresh-cw.mjs
-  var __iconNode19 = [
+  var __iconNode20 = [
     ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
     ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
     ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
     ["path", { d: "M8 16H3v5", key: "1cv678" }]
   ];
-  var RefreshCw = createLucideIcon("refresh-cw", __iconNode19);
+  var RefreshCw = createLucideIcon("refresh-cw", __iconNode20);
 
   // ../node_modules/lucide-react/dist/esm/icons/rotate-ccw.mjs
-  var __iconNode20 = [
+  var __iconNode21 = [
     ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
     ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
   ];
-  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode20);
+  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode21);
 
   // ../node_modules/lucide-react/dist/esm/icons/save.mjs
-  var __iconNode21 = [
+  var __iconNode22 = [
     [
       "path",
       {
@@ -64479,44 +64486,56 @@ ${parts.join("\n")}
     ["path", { d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", key: "1ydtos" }],
     ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
   ];
-  var Save = createLucideIcon("save", __iconNode21);
+  var Save = createLucideIcon("save", __iconNode22);
 
   // ../node_modules/lucide-react/dist/esm/icons/search.mjs
-  var __iconNode22 = [
+  var __iconNode23 = [
     ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
     ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
   ];
-  var Search = createLucideIcon("search", __iconNode22);
+  var Search = createLucideIcon("search", __iconNode23);
 
   // ../node_modules/lucide-react/dist/esm/icons/smartphone.mjs
-  var __iconNode23 = [
+  var __iconNode24 = [
     ["rect", { width: "14", height: "20", x: "5", y: "2", rx: "2", ry: "2", key: "1yt0o3" }],
     ["path", { d: "M12 18h.01", key: "mhygvu" }]
   ];
-  var Smartphone = createLucideIcon("smartphone", __iconNode23);
+  var Smartphone = createLucideIcon("smartphone", __iconNode24);
+
+  // ../node_modules/lucide-react/dist/esm/icons/star.mjs
+  var __iconNode25 = [
+    [
+      "path",
+      {
+        d: "M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z",
+        key: "r04s7s"
+      }
+    ]
+  ];
+  var Star = createLucideIcon("star", __iconNode25);
 
   // ../node_modules/lucide-react/dist/esm/icons/trash-2.mjs
-  var __iconNode24 = [
+  var __iconNode26 = [
     ["path", { d: "M10 11v6", key: "nco0om" }],
     ["path", { d: "M14 11v6", key: "outv1u" }],
     ["path", { d: "M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6", key: "miytrc" }],
     ["path", { d: "M3 6h18", key: "d0wm0j" }],
     ["path", { d: "M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2", key: "e791ji" }]
   ];
-  var Trash2 = createLucideIcon("trash-2", __iconNode24);
+  var Trash2 = createLucideIcon("trash-2", __iconNode26);
 
   // ../node_modules/lucide-react/dist/esm/icons/unlink-2.mjs
-  var __iconNode25 = [
+  var __iconNode27 = [
     ["path", { d: "M15 7h2a5 5 0 0 1 0 10h-2m-6 0H7A5 5 0 0 1 7 7h2", key: "1re2ne" }]
   ];
-  var Unlink2 = createLucideIcon("unlink-2", __iconNode25);
+  var Unlink2 = createLucideIcon("unlink-2", __iconNode27);
 
   // ../node_modules/lucide-react/dist/esm/icons/x.mjs
-  var __iconNode26 = [
+  var __iconNode28 = [
     ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
     ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
   ];
-  var X = createLucideIcon("x", __iconNode26);
+  var X = createLucideIcon("x", __iconNode28);
 
   // src/controls/modals/CreateSpriteModal.tsx
   var import_react5 = __toESM(require_react());
@@ -79471,128 +79490,351 @@ void main(void) {
 
   // src/controls/modals/SceneFlagsModal.tsx
   var import_react24 = __toESM(require_react());
+
+  // src/simulatorScenes.ts
+  function disqualifyReason(flags, ctx) {
+    const decl = flags ?? {};
+    for (const id of decl.required ?? []) {
+      if (!ctx.activeFlags.has(id)) return `needs ${ctx.flagName(id)}`;
+    }
+    for (const id of decl.excluded ?? []) {
+      if (ctx.activeFlags.has(id)) return `blocked by ${ctx.flagName(id)}`;
+    }
+    return null;
+  }
+  function sceneScore(flags, activeFlags) {
+    return (flags?.scored ?? []).reduce((sum, e2) => sum + (activeFlags.has(e2.flagId) ? e2.weight : 0), 0);
+  }
+  function rankScenes(scenes, orderBy, ctx, sceneCounts) {
+    const evaluated = scenes.map((s2) => ({
+      scene: s2,
+      reason: disqualifyReason(s2.flags, ctx),
+      score: sceneScore(s2.flags, ctx.activeFlags),
+      count: sceneCounts[s2.id] ?? 0
+    }));
+    const qualifying = evaluated.filter((e2) => e2.reason === null);
+    const disqualified = evaluated.filter((e2) => e2.reason !== null);
+    qualifying.sort((a2, b2) => {
+      if (orderBy === "points") {
+        if (b2.score !== a2.score) return b2.score - a2.score;
+        if (a2.count !== b2.count) return a2.count - b2.count;
+      } else {
+        if (a2.count !== b2.count) return a2.count - b2.count;
+        if (b2.score !== a2.score) return b2.score - a2.score;
+      }
+      return a2.scene.label.localeCompare(b2.scene.label);
+    });
+    const ranked = qualifying.map((e2, i2) => ({
+      id: e2.scene.id,
+      name: e2.scene.label,
+      status: i2 === 0 ? "wins" : "ranked",
+      rank: i2 === 0 ? void 0 : i2 + 1,
+      count: e2.count,
+      score: e2.score
+    }));
+    const out2 = disqualified.sort((a2, b2) => a2.scene.label.localeCompare(b2.scene.label)).map((e2) => ({
+      id: e2.scene.id,
+      name: e2.scene.label,
+      status: "out",
+      count: e2.count,
+      score: e2.score,
+      reason: e2.reason
+    }));
+    return [...ranked, ...out2];
+  }
+  function winnerOf(ranked) {
+    return ranked.find((s2) => s2.status === "wins") ?? null;
+  }
+
+  // src/controls/modals/SceneFlagsModal.tsx
   var import_jsx_runtime43 = __toESM(require_jsx_runtime());
-  function FlagCheckList({
-    label,
-    allFlags,
-    selected,
+  var WEIGHT_MIN = -100;
+  var WEIGHT_MAX = 100;
+  var signWeight = (w2) => w2 > 0 ? `+${w2}` : `${w2}`;
+  function buildDeclarations(required, scored, excluded) {
+    const req = required.filter(Boolean);
+    const exc = excluded.filter(Boolean);
+    const sco = scored.filter((e2) => e2.flagId);
+    const result = {};
+    if (req.length > 0) result.required = req;
+    if (sco.length > 0) result.scored = sco;
+    if (exc.length > 0) result.excluded = exc;
+    return result;
+  }
+  function FlagSelect({
+    value,
+    flags,
+    disabledIds,
     onChange
   }) {
-    const toggle = (id) => onChange(selected.includes(id) ? selected.filter((x2) => x2 !== id) : [...selected, id]);
-    return /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "sfm-section", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("h3", { className: "section-title", children: label }),
-      /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "sfm-checklist", children: [
-        allFlags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("label", { className: "sfm-check-label", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
-            "input",
-            {
-              type: "checkbox",
-              checked: selected.includes(f2.id),
-              onChange: () => toggle(f2.id)
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "sfm-flag-name", children: f2.name || f2.id }),
-          /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("code", { className: "sfm-flag-id", children: f2.id })
-        ] }, f2.id)),
-        allFlags.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("p", { className: "sfm-empty", children: "No flags defined. Add flags in the Flags manager." })
+    return /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)(
+      "select",
+      {
+        className: "scene-flags-modal__flag-select",
+        value,
+        onChange: (e2) => onChange(e2.target.value),
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
+          flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("option", { value: f2.id, disabled: f2.id !== value && disabledIds.has(f2.id), children: f2.name || f2.id }, f2.id))
+        ]
+      }
+    );
+  }
+  function WeightStepper({ weight, onChange }) {
+    const clamp3 = (w2) => Math.max(WEIGHT_MIN, Math.min(WEIGHT_MAX, w2));
+    return /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__stepper", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+        "button",
+        {
+          type: "button",
+          className: "scene-flags-modal__step",
+          onClick: () => onChange(clamp3(weight - 1)),
+          "aria-label": "Decrease weight",
+          children: /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Minus, { size: 14, strokeWidth: 2 })
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "scene-flags-modal__weight", children: signWeight(weight) }),
+      /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+        "button",
+        {
+          type: "button",
+          className: "scene-flags-modal__step",
+          onClick: () => onChange(clamp3(weight + 1)),
+          "aria-label": "Increase weight",
+          children: /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Plus, { size: 14, strokeWidth: 2 })
+        }
+      )
+    ] });
+  }
+  function RemoveButton({ onClick }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+      "button",
+      {
+        type: "button",
+        className: "scene-flags-modal__remove",
+        onClick,
+        "aria-label": "Remove flag",
+        children: /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(X, { size: 13, strokeWidth: 2 })
+      }
+    );
+  }
+  function GateMark({ ok }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: `scene-flags-modal__mark scene-flags-modal__mark--${ok ? "ok" : "fail"}`, children: ok ? /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Check, { size: 12, strokeWidth: 2.5 }) : /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(X, { size: 12, strokeWidth: 2.5 }) });
+  }
+  function LiveResult({
+    required,
+    scored,
+    excluded,
+    liveEval
+  }) {
+    const { activeFlags, flagName, stateNote } = liveEval;
+    const draft = (0, import_react24.useMemo)(
+      () => buildDeclarations(required, scored, excluded),
+      [required, scored, excluded]
+    );
+    const reason = disqualifyReason(draft, { activeFlags, flagName });
+    const eligible = reason === null;
+    const score = sceneScore(draft, activeFlags);
+    const hasRequire = (draft.required?.length ?? 0) > 0;
+    const hasExclude = (draft.excluded?.length ?? 0) > 0;
+    const missingRequire = draft.required?.find((id) => !activeFlags.has(id));
+    const activeExclude = draft.excluded?.find((id) => activeFlags.has(id));
+    return /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__result", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__result-head", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "scene-flags-modal__result-label", children: "Result at current world-state" }),
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "scene-flags-modal__result-note", children: stateNote })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__result-body", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+          "span",
+          {
+            className: `scene-flags-modal__badge scene-flags-modal__badge--${eligible ? "eligible" : "hidden"}`,
+            children: eligible ? "Eligible" : "Hidden"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("span", { className: "scene-flags-modal__summary", children: [
+          !hasRequire && !hasExclude && "no gates",
+          hasRequire && /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)(import_jsx_runtime43.Fragment, { children: [
+            "Require ",
+            /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(GateMark, { ok: !missingRequire }),
+            missingRequire && ` needs ${flagName(missingRequire)}`
+          ] }),
+          hasRequire && hasExclude && " \xB7 ",
+          hasExclude && /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)(import_jsx_runtime43.Fragment, { children: [
+            "Exclude ",
+            /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(GateMark, { ok: !activeExclude }),
+            activeExclude ? ` blocked by ${flagName(activeExclude)}` : " none on"
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("span", { className: "scene-flags-modal__score", children: [
+          "score ",
+          /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("b", { children: score })
+        ] })
       ] })
     ] });
   }
-  function ScoredFlagList({
-    allFlags,
-    scored,
-    onChange
+  function SceneFlagsModal({
+    sceneName,
+    flags,
+    declarations,
+    liveEval,
+    onSave,
+    onClose
   }) {
-    const addEntry = () => {
-      const unusedFlag = allFlags.find((f2) => !scored.some((e2) => e2.flagId === f2.id));
-      if (!unusedFlag && allFlags.length > 0) return;
-      onChange([...scored, { flagId: unusedFlag?.id ?? "", weight: 10 }]);
-    };
-    const updateEntry = (i2, patch) => onChange(scored.map((e2, idx) => idx === i2 ? { ...e2, ...patch } : e2));
-    const deleteEntry = (i2) => onChange(scored.filter((_, idx) => idx !== i2));
-    return /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "sfm-section", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("h3", { className: "section-title", children: [
-        "Scored flags ",
-        /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "section-hint", children: "(active flags add their weight to this scene's score)" })
-      ] }),
-      scored.map((entry, i2) => /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "sfm-scored-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)(
-          "select",
-          {
-            value: entry.flagId,
-            onChange: (e2) => updateEntry(i2, { flagId: e2.target.value }),
-            children: [
-              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
-              allFlags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
-            ]
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("label", { children: "Weight" }),
-        /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
-          "input",
-          {
-            type: "number",
-            min: -100,
-            max: 100,
-            value: entry.weight,
-            onChange: (e2) => updateEntry(i2, { weight: +e2.target.value })
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("button", { className: "condition-delete", onClick: () => deleteEntry(i2), title: "Remove", children: "\u2715" })
-      ] }, i2)),
-      /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Button, { onClick: addEntry, disabled: allFlags.length === 0, children: "+ Scored Flag" })
-    ] });
-  }
-  function SceneFlagsModal({ sceneName, flags, declarations, onSave, onClose }) {
     const [required, setRequired] = (0, import_react24.useState)(declarations.required ?? []);
     const [excluded, setExcluded] = (0, import_react24.useState)(declarations.excluded ?? []);
     const [scored, setScored] = (0, import_react24.useState)(declarations.scored ?? []);
+    const usedIds = (0, import_react24.useMemo)(() => {
+      const s2 = /* @__PURE__ */ new Set();
+      required.forEach((id) => id && s2.add(id));
+      excluded.forEach((id) => id && s2.add(id));
+      scored.forEach((e2) => e2.flagId && s2.add(e2.flagId));
+      return s2;
+    }, [required, excluded, scored]);
+    const firstUnusedFlag = () => flags.find((f2) => !usedIds.has(f2.id))?.id ?? "";
+    const addRequired = () => setRequired([...required, firstUnusedFlag()]);
+    const addExcluded = () => setExcluded([...excluded, firstUnusedFlag()]);
+    const addScored = () => setScored([...scored, { flagId: firstUnusedFlag(), weight: 1 }]);
+    const canAdd = flags.some((f2) => !usedIds.has(f2.id));
     const handleSave = (0, import_react24.useCallback)(() => {
-      const result = {};
-      if (required.length > 0) result.required = required;
-      if (excluded.length > 0) result.excluded = excluded;
-      if (scored.length > 0) result.scored = scored;
-      onSave(result);
-    }, [required, excluded, scored, onSave]);
-    return /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "modal-box sfm-modal", onClick: (e2) => e2.stopPropagation(), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("h2", { className: "modal-title", children: [
-        "Scene Flags \u2014 ",
-        sceneName
+      onSave(buildDeclarations(required, scored, excluded));
+    }, [required, scored, excluded, onSave]);
+    return /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { className: "modal-overlay", onClick: onClose, children: /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal", onClick: (e2) => e2.stopPropagation(), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "scene-flags-modal__accent" }),
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "scene-flags-modal__title", children: "Scene Flags" }),
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("span", { className: "scene-flags-modal__scene", children: [
+          "\u2014 ",
+          sceneName
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+          "button",
+          {
+            type: "button",
+            className: "scene-flags-modal__close",
+            onClick: onClose,
+            "aria-label": "Close",
+            children: /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(X, { size: 13, strokeWidth: 2 })
+          }
+        )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("p", { className: "section-hint", children: [
-        "Control when this scene appears. The picker sums scored-flag weights; highest score wins.",
-        /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("br", {}),
-        "Leave all empty for a scene that's always eligible with score 0 (legacy behaviour)."
+      /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__body", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__gate scene-flags-modal__gate--require", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { className: "scene-flags-modal__rail" }),
+          /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__gate-content", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__gate-head", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Check, { size: 12, strokeWidth: 2.5, className: "scene-flags-modal__gate-icon" }),
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "scene-flags-modal__gate-label", children: "Require" }),
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "scene-flags-modal__gate-helper", children: "\u2014 all must be active" })
+            ] }),
+            required.map((id, i2) => /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+                FlagSelect,
+                {
+                  value: id,
+                  flags,
+                  disabledIds: usedIds,
+                  onChange: (next) => setRequired(required.map((v2, j2) => j2 === i2 ? next : v2))
+                }
+              ),
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(RemoveButton, { onClick: () => setRequired(required.filter((_, j2) => j2 !== i2)) })
+            ] }, i2)),
+            /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+              "button",
+              {
+                type: "button",
+                className: "scene-flags-modal__add",
+                onClick: addRequired,
+                disabled: !canAdd,
+                children: "+ Require flag"
+              }
+            )
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__gate scene-flags-modal__gate--score", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { className: "scene-flags-modal__rail" }),
+          /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__gate-content", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__gate-head", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Star, { size: 12, strokeWidth: 2.5, className: "scene-flags-modal__gate-icon" }),
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "scene-flags-modal__gate-label", children: "Score" }),
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "scene-flags-modal__gate-helper", children: "\u2014 active flags add weight" })
+            ] }),
+            scored.map((entry, i2) => /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+                FlagSelect,
+                {
+                  value: entry.flagId,
+                  flags,
+                  disabledIds: usedIds,
+                  onChange: (next) => setScored(scored.map((e2, j2) => j2 === i2 ? { ...e2, flagId: next } : e2))
+                }
+              ),
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+                WeightStepper,
+                {
+                  weight: entry.weight,
+                  onChange: (w2) => setScored(scored.map((e2, j2) => j2 === i2 ? { ...e2, weight: w2 } : e2))
+                }
+              ),
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(RemoveButton, { onClick: () => setScored(scored.filter((_, j2) => j2 !== i2)) })
+            ] }, i2)),
+            /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+              "button",
+              {
+                type: "button",
+                className: "scene-flags-modal__add",
+                onClick: addScored,
+                disabled: !canAdd,
+                children: "+ Score flag"
+              }
+            )
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__gate scene-flags-modal__gate--exclude", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { className: "scene-flags-modal__rail" }),
+          /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__gate-content", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__gate-head", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Ban, { size: 12, strokeWidth: 2.5, className: "scene-flags-modal__gate-icon" }),
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "scene-flags-modal__gate-label", children: "Exclude" }),
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "scene-flags-modal__gate-helper", children: "\u2014 any active hides the scene" })
+            ] }),
+            excluded.map((id, i2) => /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+                FlagSelect,
+                {
+                  value: id,
+                  flags,
+                  disabledIds: usedIds,
+                  onChange: (next) => setExcluded(excluded.map((v2, j2) => j2 === i2 ? next : v2))
+                }
+              ),
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(RemoveButton, { onClick: () => setExcluded(excluded.filter((_, j2) => j2 !== i2)) })
+            ] }, i2)),
+            /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+              "button",
+              {
+                type: "button",
+                className: "scene-flags-modal__add",
+                onClick: addExcluded,
+                disabled: !canAdd,
+                children: "+ Exclude flag"
+              }
+            )
+          ] })
+        ] }),
+        liveEval && /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+          LiveResult,
+          {
+            required,
+            scored,
+            excluded,
+            liveEval
+          }
+        )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
-        FlagCheckList,
-        {
-          label: "Required flags (scene hidden unless ALL are active)",
-          allFlags: flags,
-          selected: required,
-          onChange: setRequired
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
-        ScoredFlagList,
-        {
-          allFlags: flags,
-          scored,
-          onChange: setScored
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
-        FlagCheckList,
-        {
-          label: "Excluded flags (scene hidden if ANY is active)",
-          allFlags: flags,
-          selected: excluded,
-          onChange: setExcluded
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "modal-footer", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__footer", children: [
         /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Button, { onClick: onClose, children: "Cancel" }),
-        /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Button, { variant: "primary", onClick: handleSave, children: "Save" })
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Button, { variant: "primary", onClick: handleSave, children: "Save flags" })
       ] })
     ] }) });
   }
@@ -79943,61 +80185,6 @@ void main(void) {
 
   // src/SimulatorPage.tsx
   var import_react36 = __toESM(require_react());
-
-  // src/simulatorScenes.ts
-  function disqualifyReason(flags, ctx) {
-    const decl = flags ?? {};
-    for (const id of decl.required ?? []) {
-      if (!ctx.activeFlags.has(id)) return `needs ${ctx.flagName(id)}`;
-    }
-    for (const id of decl.excluded ?? []) {
-      if (ctx.activeFlags.has(id)) return `blocked by ${ctx.flagName(id)}`;
-    }
-    return null;
-  }
-  function sceneScore(flags, activeFlags) {
-    return (flags?.scored ?? []).reduce((sum, e2) => sum + (activeFlags.has(e2.flagId) ? e2.weight : 0), 0);
-  }
-  function rankScenes(scenes, orderBy, ctx, sceneCounts) {
-    const evaluated = scenes.map((s2) => ({
-      scene: s2,
-      reason: disqualifyReason(s2.flags, ctx),
-      score: sceneScore(s2.flags, ctx.activeFlags),
-      count: sceneCounts[s2.id] ?? 0
-    }));
-    const qualifying = evaluated.filter((e2) => e2.reason === null);
-    const disqualified = evaluated.filter((e2) => e2.reason !== null);
-    qualifying.sort((a2, b2) => {
-      if (orderBy === "points") {
-        if (b2.score !== a2.score) return b2.score - a2.score;
-        if (a2.count !== b2.count) return a2.count - b2.count;
-      } else {
-        if (a2.count !== b2.count) return a2.count - b2.count;
-        if (b2.score !== a2.score) return b2.score - a2.score;
-      }
-      return a2.scene.label.localeCompare(b2.scene.label);
-    });
-    const ranked = qualifying.map((e2, i2) => ({
-      id: e2.scene.id,
-      name: e2.scene.label,
-      status: i2 === 0 ? "wins" : "ranked",
-      rank: i2 === 0 ? void 0 : i2 + 1,
-      count: e2.count,
-      score: e2.score
-    }));
-    const out2 = disqualified.sort((a2, b2) => a2.scene.label.localeCompare(b2.scene.label)).map((e2) => ({
-      id: e2.scene.id,
-      name: e2.scene.label,
-      status: "out",
-      count: e2.count,
-      score: e2.score,
-      reason: e2.reason
-    }));
-    return [...ranked, ...out2];
-  }
-  function winnerOf(ranked) {
-    return ranked.find((s2) => s2.status === "wins") ?? null;
-  }
 
   // src/SimulatorTopBar.tsx
   var import_jsx_runtime47 = __toESM(require_jsx_runtime());
@@ -81056,13 +81243,14 @@ void main(void) {
         rendererRef.current = null;
       };
     }, []);
+    const sceneId = scene?.id ?? null;
     (0, import_react32.useEffect)(() => {
       const renderer = rendererRef.current;
       if (!renderer) return;
       const { orientation, guide } = ASPECT_CONFIG[aspect];
       renderer.setOrientation(orientation);
       renderer.setGuideAspectRatio(guide);
-    }, [aspect, scene]);
+    }, [aspect, sceneId]);
     (0, import_react32.useEffect)(() => {
       const renderer = rendererRef.current;
       if (!renderer) return;
@@ -81072,7 +81260,7 @@ void main(void) {
       }
       const snapshot = worldRef.current;
       renderer.transitionToScene(scene.data, (group) => matchesConditionGroup(group, snapshot));
-    }, [scene]);
+    }, [sceneId]);
     return containerRef;
   }
 
@@ -82500,6 +82688,11 @@ void main(void) {
           sceneName: flagsSceneTarget.label,
           flags,
           declarations: flagsSceneTarget.data.flags ?? {},
+          liveEval: {
+            activeFlags: activeFlagIds,
+            flagName: (id) => flagsById.get(id)?.name || id,
+            stateNote: `day ${sim.daysSinceInstall} \xB7 ${sim.timeOfDay}`
+          },
           onSave: handleSaveSceneFlags,
           onClose: () => setFlagsSceneTarget(null)
         }
@@ -82792,6 +82985,7 @@ lucide-react/dist/esm/shared/src/utils/hasA11yProp.mjs:
 lucide-react/dist/esm/context.mjs:
 lucide-react/dist/esm/Icon.mjs:
 lucide-react/dist/esm/createLucideIcon.mjs:
+lucide-react/dist/esm/icons/ban.mjs:
 lucide-react/dist/esm/icons/check.mjs:
 lucide-react/dist/esm/icons/chevron-down.mjs:
 lucide-react/dist/esm/icons/chevron-left.mjs:
@@ -82815,6 +83009,7 @@ lucide-react/dist/esm/icons/rotate-ccw.mjs:
 lucide-react/dist/esm/icons/save.mjs:
 lucide-react/dist/esm/icons/search.mjs:
 lucide-react/dist/esm/icons/smartphone.mjs:
+lucide-react/dist/esm/icons/star.mjs:
 lucide-react/dist/esm/icons/trash-2.mjs:
 lucide-react/dist/esm/icons/unlink-2.mjs:
 lucide-react/dist/esm/icons/x.mjs:

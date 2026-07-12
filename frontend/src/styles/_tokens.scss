@@ -55,6 +55,22 @@
   --color-toast: #18181b;
   --color-toast-border: #2a2a2e;
 
+  // Scene-flag gates (Require · Score · Exclude) — the semantic-colored rails,
+  // icons, dashed add-buttons, and eligibility badges of the Scene Flags modal.
+  // Score reuses the indigo --color-accent* family; only green (require) and red
+  // (exclude) need their own values.
+  --color-gate-require-rail: #2f9e6a;
+  --color-gate-require-fg: #5bbf8a;
+  --color-gate-require-border: #235a3f;
+  --color-gate-require-badge-fg: #6ee7a8;
+  --color-gate-require-badge-bg: #132a1f;
+  --color-gate-exclude-rail: #b5474b;
+  --color-gate-exclude-fg: #ef8f8f;
+  --color-gate-exclude-border: #4a2528;
+  --color-gate-exclude-badge-bg: #2a1618;
+  --color-gate-result-bg: #101015;
+  --color-gate-result-border: #2b2e4a;
+
   // ── Type scale ──────────────────────────────────────────────────────────
   // Named directly by pixel value — the design calls for half-pixel steps for
   // a few specific labels, so a handful of named steps (xs/sm/md) wouldn't

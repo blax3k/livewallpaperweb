@@ -680,6 +680,11 @@ export function SimulatorPage({ projectId, projectName, onBack, onEditScene }: S
           sceneName={flagsSceneTarget.label}
           flags={flags}
           declarations={flagsSceneTarget.data.flags ?? {}}
+          liveEval={{
+            activeFlags: activeFlagIds,
+            flagName: id => flagsById.get(id)?.name || id,
+            stateNote: `day ${sim.daysSinceInstall} · ${sim.timeOfDay}`,
+          }}
           onSave={handleSaveSceneFlags}
           onClose={() => setFlagsSceneTarget(null)}
         />
