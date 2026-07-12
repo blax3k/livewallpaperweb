@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown, Pencil, RefreshCw, MoonStar, Trash2 } from 'lucide-react';
+import { ChevronDown, Pencil, RefreshCw, MoonStar, Trash2, Plus } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -76,6 +76,8 @@ interface SimulatorPreviewPanelProps {
   onEditScene: (sceneId: string) => void;
   onEditFlags: (scene: RankedScene) => void;
   onDeleteScene: (scene: RankedScene) => void;
+  /** Create a new scene from the scenes panel. */
+  onAddScene: () => void;
 }
 
 export function SimulatorPreviewPanel({
@@ -89,6 +91,7 @@ export function SimulatorPreviewPanel({
   onEditScene,
   onEditFlags,
   onDeleteScene,
+  onAddScene,
 }: SimulatorPreviewPanelProps) {
   const [aspect, setAspect] = useState<AspectRatio>('9:16');
   const qualifyCount = scenes.filter(s => s.status !== 'out').length;
@@ -150,7 +153,12 @@ export function SimulatorPreviewPanel({
       <div className="simulator-preview-scenes">
         <div className="simulator-preview-scenes__header">
           <span className="simulator-preview-scenes__title">Scenes</span>
-          <span className="simulator-preview-scenes__count">{qualifyCount} qualify</span>
+          <button className="simulator-add-scene-button" onClick={onAddScene}>
+            <Plus size={13} strokeWidth={2.5} /> Add scene
+          </button>
+        </div>
+
+        <div className="simulator-preview-scenes__subheader">
           <div className="simulator-order-toggle">
             <span
               className={`simulator-order-toggle__option ${orderBy === 'least_shown' ? 'simulator-order-toggle__option--active' : ''}`}
@@ -165,6 +173,7 @@ export function SimulatorPreviewPanel({
               Points
             </span>
           </div>
+          <span className="simulator-preview-scenes__count">{qualifyCount} qualify</span>
         </div>
 
         <div className="simulator-scene-grid">

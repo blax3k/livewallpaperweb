@@ -2950,6 +2950,15 @@ body {
   color: var(--color-fg);
   flex-shrink: 0;
 }
+.simulator-topbar__link {
+  font: 500 var(--text-12) var(--font-sans);
+  color: var(--color-fg-subtle);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.simulator-topbar__link:hover {
+  color: var(--color-fg);
+}
 .simulator-topbar__state {
   display: flex;
   align-items: center;
@@ -4060,11 +4069,35 @@ body {
   gap: var(--size-8);
   flex-shrink: 0;
 }
+.simulator-preview-scenes__subheader {
+  display: flex;
+  align-items: center;
+  gap: var(--size-8);
+  flex-shrink: 0;
+}
 .simulator-preview-scenes__title {
   font: 600 var(--text-10) var(--font-sans);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-fg-faint);
+}
+.simulator-add-scene-button {
+  margin-left: auto;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--size-4);
+  height: var(--size-24);
+  padding: 0 var(--size-10) 0 var(--size-8);
+  background: var(--color-accent);
+  border: none;
+  border-radius: var(--size-8);
+  font: 600 var(--text-11) var(--font-sans);
+  color: var(--color-fg);
+  cursor: pointer;
+}
+.simulator-add-scene-button:hover {
+  background: var(--color-accent-bright);
 }
 .simulator-preview-scenes__count {
   margin-left: auto;

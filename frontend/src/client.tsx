@@ -33,13 +33,15 @@ function pageFromPath(): Page {
     const sceneId = decodeURIComponent(sceneMatch[2]);
     return { type: 'scene', sceneId, project: { id: projectId, name: '' } };
   }
-  const simulatorMatch = window.location.pathname.match(/^\/project\/([^/]+)\/simulator$/);
-  if (simulatorMatch) {
-    return { type: 'simulator', project: { id: decodeURIComponent(simulatorMatch[1]), name: '' } };
+  const scenesMatch = window.location.pathname.match(/^\/project\/([^/]+)\/scenes$/);
+  if (scenesMatch) {
+    return { type: 'scenes', project: { id: decodeURIComponent(scenesMatch[1]), name: '' } };
   }
-  const projectMatch = window.location.pathname.match(/^\/project\/([^/]+)$/);
+  // The project's main page is the simulator; both `/project/:id` and the legacy
+  // `/project/:id/simulator` resolve there.
+  const projectMatch = window.location.pathname.match(/^\/project\/([^/]+)(?:\/simulator)?$/);
   if (projectMatch) {
-    return { type: 'scenes', project: { id: decodeURIComponent(projectMatch[1]), name: '' } };
+    return { type: 'simulator', project: { id: decodeURIComponent(projectMatch[1]), name: '' } };
   }
   return { type: 'projects' };
 }
@@ -94,9 +96,10 @@ function App() {
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
+  // The simulator is the project's main page.
   const navigateToProject = useCallback((project: ProjectRecord) => {
     window.history.pushState(null, '', `/project/${encodeURIComponent(project.id)}`);
-    setPage({ type: 'scenes', project });
+    setPage({ type: 'simulator', project });
   }, []);
 
   const navigateToScene = useCallback((scene: SceneRecord, project: ProjectRecord) => {
@@ -109,13 +112,13 @@ function App() {
     setPage({ type: 'projects' });
   }, []);
 
-  const navigateBackToScenes = useCallback((project: ProjectRecord) => {
-    window.history.pushState(null, '', `/project/${encodeURIComponent(project.id)}`);
+  const navigateToScenes = useCallback((project: ProjectRecord) => {
+    window.history.pushState(null, '', `/project/${encodeURIComponent(project.id)}/scenes`);
     setPage({ type: 'scenes', project });
   }, []);
 
   const navigateToSimulator = useCallback((project: ProjectRecord) => {
-    window.history.pushState(null, '', `/project/${encodeURIComponent(project.id)}/simulator`);
+    window.history.pushState(null, '', `/project/${encodeURIComponent(project.id)}`);
     setPage({ type: 'simulator', project });
   }, []);
 
@@ -134,7 +137,7 @@ function App() {
       <ScenePage
         initialSceneId={page.sceneId}
         projectId={page.project.id}
-        onBack={() => navigateBackToScenes(page.project)}
+        onBack={() => navigateToSimulator(page.project)}
         onSaved={handleSaved}
         onDirtyChange={handleDirtyChange}
       />
@@ -146,7 +149,8 @@ function App() {
       <SimulatorPage
         projectId={page.project.id}
         projectName={page.project.name}
-        onBack={() => navigateBackToScenes(page.project)}
+        onBack={navigateBackToProjects}
+        onManageScenes={() => navigateToScenes(page.project)}
         onEditScene={(sceneId) => navigateToScene({ id: sceneId, name: '' }, page.project)}
       />
     );

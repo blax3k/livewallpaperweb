@@ -1,10 +1,11 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import './SimulatorPage.scss';
 import { PageLayout, PageBody } from './components/PageLayout';
-import { ApiError, rulesApi, ruleGroupsApi, flagsApi, flagGroupsApi, scenesApi, type RuleDefinition, type RuleGroup, type FlagDefinition, type FlagGroup, type SceneSummary, type SceneDetail } from './api';
+import { ApiError, rulesApi, ruleGroupsApi, flagsApi, flagGroupsApi, scenesApi, projectsApi, type RuleDefinition, type RuleGroup, type FlagDefinition, type FlagGroup, type SceneSummary, type SceneDetail } from './api';
 import type { SceneFlagDeclarations } from '@livewallpaper/types';
 import { rankScenes, winnerOf, type QualifyContext } from './simulatorScenes';
 import { SceneFlagsModal } from './controls/modals/SceneFlagsModal';
+import { NewSceneDialog } from './controls/modals/NewSceneDialog';
 import { SimulatorTopBar } from './SimulatorTopBar';
 import { SimulatorControlsPanel } from './SimulatorControlsPanel';
 import { useSimulatedState } from './useSimulatedState';
@@ -36,10 +37,11 @@ interface SimulatorPageProps {
   projectId: string;
   projectName: string;
   onBack: () => void;
+  onManageScenes: () => void;
   onEditScene: (sceneId: string) => void;
 }
 
-export function SimulatorPage({ projectId, projectName, onBack, onEditScene }: SimulatorPageProps) {
+export function SimulatorPage({ projectId, projectName, onBack, onManageScenes, onEditScene }: SimulatorPageProps) {
   const [rules, setRules] = useState<RuleDefinition[]>([]);
   const [ruleGroups, setRuleGroups] = useState<RuleGroup[]>([]);
   const [flags, setFlags] = useState<FlagDefinition[]>([]);
@@ -52,11 +54,15 @@ export function SimulatorPage({ projectId, projectName, onBack, onEditScene }: S
   const [sceneDetails, setSceneDetails] = useState<Record<string, SceneDetail>>({});
   const detailPromises = useRef<Map<string, Promise<SceneDetail | null>>>(new Map());
   const [flagsSceneTarget, setFlagsSceneTarget] = useState<SceneDetail | null>(null);
+  const [showNewSceneDialog, setShowNewSceneDialog] = useState(false);
   // Scene painted on the preview surface. Session-only (deliberately not persisted): the preview
   // is blank on every load and only shows a scene after a Wake this session.
   const [wokenSceneId, setWokenSceneId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // Landing directly on the simulator (its URL is the project's main page) arrives with an empty
+  // name; fetch it so the topbar isn't blank on a fresh load or reload.
+  const [fetchedName, setFetchedName] = useState<string | null>(null);
   const [orderBy, setOrderBy] = useState<'least_shown' | 'points'>('least_shown');
   const [editingRuleIndex, setEditingRuleIndex] = useState<number | null>(null);
   const [isNewRule, setIsNewRule] = useState(false);
@@ -92,6 +98,12 @@ export function SimulatorPage({ projectId, projectName, onBack, onEditScene }: S
       .then(([r, rg, f, g, u, scenes]) => { setRules(r); setRuleGroups(rg); setFlags(f); setFlagGroups(g); setFlagUsageCounts(u); setSceneSummaries(scenes); setLoading(false); })
       .catch(err => { setError(String(err)); setLoading(false); });
   }, [projectId]);
+
+  // Resolve the project name when we arrive without one (e.g. a direct load of the simulator URL).
+  useEffect(() => {
+    if (projectName) return;
+    projectsApi.get(projectId).then(p => setFetchedName(p.name)).catch(() => {});
+  }, [projectId, projectName]);
 
   // Fetch (and cache) a scene's full detail on demand. Returns the cached copy immediately if we
   // already have it, dedupes concurrent requests, and surfaces errors without throwing.
@@ -198,6 +210,16 @@ export function SimulatorPage({ projectId, projectName, onBack, onEditScene }: S
     setSceneSummaries(prev => prev.filter(s => s.id !== scene.id));
     setSceneDetails(prev => { const { [scene.id]: _removed, ...rest } = prev; return rest; });
     scenesApi.delete(scene.id).catch(err => setError(String(err)));
+  };
+
+  const handleCreateScene = (label: string, copyFromSceneId?: string) => {
+    const name = label.trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+    scenesApi.create(name, label.trim(), { sprites: [], xFocus: 0 }, projectId, copyFromSceneId)
+      .then(scene => {
+        setShowNewSceneDialog(false);
+        onEditScene(scene.id);
+      })
+      .catch(err => setError(String(err)));
   };
 
   const handleNewChapter = () => {
@@ -494,8 +516,9 @@ export function SimulatorPage({ projectId, projectName, onBack, onEditScene }: S
   return (
     <PageLayout>
       <SimulatorTopBar
-        projectName={projectName}
+        projectName={projectName || fetchedName || ''}
         onBack={onBack}
+        onManageScenes={onManageScenes}
         chapterNumber={currentChapterIndex + 1}
         chapterName={currentChapter?.name || currentChapter?.id || ''}
         timeOfDay={sim.timeOfDay}
@@ -581,6 +604,7 @@ export function SimulatorPage({ projectId, projectName, onBack, onEditScene }: S
                 onEditScene={onEditScene}
                 onEditFlags={handleEditFlags}
                 onDeleteScene={handleDeleteScene}
+                onAddScene={() => setShowNewSceneDialog(true)}
               />
             </div>
           </div>
@@ -680,6 +704,13 @@ export function SimulatorPage({ projectId, projectName, onBack, onEditScene }: S
           affectedFlags={flags.filter(f => f.group === removingGroup.name)}
           onCancel={() => setRemovingGroup(null)}
           onConfirm={handleConfirmRemoveGroup}
+        />
+      )}
+      {showNewSceneDialog && (
+        <NewSceneDialog
+          scenes={sceneSummaries}
+          onConfirm={handleCreateScene}
+          onCancel={() => setShowNewSceneDialog(false)}
         />
       )}
       {flagsSceneTarget && (

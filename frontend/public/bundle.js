@@ -80191,6 +80191,7 @@ void main(void) {
   function SimulatorTopBar({
     projectName,
     onBack,
+    onManageScenes,
     chapterNumber,
     chapterName,
     timeOfDay,
@@ -80203,6 +80204,8 @@ void main(void) {
       /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__back", onClick: onBack, children: "\u2190" }),
       /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__divider" }),
       /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__title", children: projectName }),
+      /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__divider" }),
+      /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__link", onClick: onManageScenes, children: "Scenes" }),
       /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__divider" }),
       /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("span", { className: "simulator-topbar__state", children: [
         /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__dot" }),
@@ -81326,7 +81329,8 @@ void main(void) {
     onWake,
     onEditScene,
     onEditFlags,
-    onDeleteScene
+    onDeleteScene,
+    onAddScene
   }) {
     const [aspect, setAspect] = (0, import_react33.useState)("9:16");
     const qualifyCount = scenes.filter((s2) => s2.status !== "out").length;
@@ -81370,10 +81374,12 @@ void main(void) {
       /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-preview-scenes", children: [
         /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-preview-scenes__header", children: [
           /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { className: "simulator-preview-scenes__title", children: "Scenes" }),
-          /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("span", { className: "simulator-preview-scenes__count", children: [
-            qualifyCount,
-            " qualify"
-          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("button", { className: "simulator-add-scene-button", onClick: onAddScene, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(Plus, { size: 13, strokeWidth: 2.5 }),
+            " Add scene"
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-preview-scenes__subheader", children: [
           /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-order-toggle", children: [
             /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
               "span",
@@ -81391,6 +81397,10 @@ void main(void) {
                 children: "Points"
               }
             )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("span", { className: "simulator-preview-scenes__count", children: [
+            qualifyCount,
+            " qualify"
           ] })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("div", { className: "simulator-scene-grid", children: scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
@@ -82071,7 +82081,7 @@ void main(void) {
 
   // src/SimulatorPage.tsx
   var import_jsx_runtime54 = __toESM(require_jsx_runtime());
-  function SimulatorPage({ projectId, projectName, onBack, onEditScene }) {
+  function SimulatorPage({ projectId, projectName, onBack, onManageScenes, onEditScene }) {
     const [rules, setRules] = (0, import_react36.useState)([]);
     const [ruleGroups, setRuleGroups] = (0, import_react36.useState)([]);
     const [flags, setFlags] = (0, import_react36.useState)([]);
@@ -82081,9 +82091,11 @@ void main(void) {
     const [sceneDetails, setSceneDetails] = (0, import_react36.useState)({});
     const detailPromises = (0, import_react36.useRef)(/* @__PURE__ */ new Map());
     const [flagsSceneTarget, setFlagsSceneTarget] = (0, import_react36.useState)(null);
+    const [showNewSceneDialog, setShowNewSceneDialog] = (0, import_react36.useState)(false);
     const [wokenSceneId, setWokenSceneId] = (0, import_react36.useState)(null);
     const [loading, setLoading] = (0, import_react36.useState)(true);
     const [error, setError] = (0, import_react36.useState)(null);
+    const [fetchedName, setFetchedName] = (0, import_react36.useState)(null);
     const [orderBy, setOrderBy] = (0, import_react36.useState)("least_shown");
     const [editingRuleIndex, setEditingRuleIndex] = (0, import_react36.useState)(null);
     const [isNewRule, setIsNewRule] = (0, import_react36.useState)(false);
@@ -82124,6 +82136,11 @@ void main(void) {
         setLoading(false);
       });
     }, [projectId]);
+    (0, import_react36.useEffect)(() => {
+      if (projectName) return;
+      projectsApi.get(projectId).then((p2) => setFetchedName(p2.name)).catch(() => {
+      });
+    }, [projectId, projectName]);
     const ensureSceneDetail = (id) => {
       if (sceneDetails[id]) return Promise.resolve(sceneDetails[id]);
       const pending = detailPromises.current.get(id);
@@ -82205,6 +82222,13 @@ void main(void) {
         return rest;
       });
       scenesApi.delete(scene.id).catch((err) => setError(String(err)));
+    };
+    const handleCreateScene = (label, copyFromSceneId) => {
+      const name = label.trim().toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
+      scenesApi.create(name, label.trim(), { sprites: [], xFocus: 0 }, projectId, copyFromSceneId).then((scene) => {
+        setShowNewSceneDialog(false);
+        onEditScene(scene.id);
+      }).catch((err) => setError(String(err)));
     };
     const handleNewChapter = () => {
       const existingIds = new Set(flags.map((f2) => f2.id));
@@ -82471,8 +82495,9 @@ void main(void) {
       /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
         SimulatorTopBar,
         {
-          projectName,
+          projectName: projectName || fetchedName || "",
           onBack,
+          onManageScenes,
           chapterNumber: currentChapterIndex + 1,
           chapterName: currentChapter?.name || currentChapter?.id || "",
           timeOfDay: sim.timeOfDay,
@@ -82558,7 +82583,8 @@ void main(void) {
               onWake: handleWake,
               onEditScene,
               onEditFlags: handleEditFlags,
-              onDeleteScene: handleDeleteScene
+              onDeleteScene: handleDeleteScene,
+              onAddScene: () => setShowNewSceneDialog(true)
             }
           )
         ] }) })
@@ -82683,6 +82709,14 @@ void main(void) {
           onConfirm: handleConfirmRemoveGroup
         }
       ),
+      showNewSceneDialog && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
+        NewSceneDialog,
+        {
+          scenes: sceneSummaries,
+          onConfirm: handleCreateScene,
+          onCancel: () => setShowNewSceneDialog(false)
+        }
+      ),
       flagsSceneTarget && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
         SceneFlagsModal,
         {
@@ -82791,13 +82825,13 @@ void main(void) {
       const sceneId = decodeURIComponent(sceneMatch[2]);
       return { type: "scene", sceneId, project: { id: projectId, name: "" } };
     }
-    const simulatorMatch = window.location.pathname.match(/^\/project\/([^/]+)\/simulator$/);
-    if (simulatorMatch) {
-      return { type: "simulator", project: { id: decodeURIComponent(simulatorMatch[1]), name: "" } };
+    const scenesMatch = window.location.pathname.match(/^\/project\/([^/]+)\/scenes$/);
+    if (scenesMatch) {
+      return { type: "scenes", project: { id: decodeURIComponent(scenesMatch[1]), name: "" } };
     }
-    const projectMatch = window.location.pathname.match(/^\/project\/([^/]+)$/);
+    const projectMatch = window.location.pathname.match(/^\/project\/([^/]+)(?:\/simulator)?$/);
     if (projectMatch) {
-      return { type: "scenes", project: { id: decodeURIComponent(projectMatch[1]), name: "" } };
+      return { type: "simulator", project: { id: decodeURIComponent(projectMatch[1]), name: "" } };
     }
     return { type: "projects" };
   }
@@ -82842,7 +82876,7 @@ void main(void) {
     }, []);
     const navigateToProject = (0, import_react38.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
-      setPage({ type: "scenes", project });
+      setPage({ type: "simulator", project });
     }, []);
     const navigateToScene = (0, import_react38.useCallback)((scene, project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/scene/${encodeURIComponent(scene.id)}`);
@@ -82852,12 +82886,12 @@ void main(void) {
       window.history.pushState(null, "", "/");
       setPage({ type: "projects" });
     }, []);
-    const navigateBackToScenes = (0, import_react38.useCallback)((project) => {
-      window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
+    const navigateToScenes = (0, import_react38.useCallback)((project) => {
+      window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/scenes`);
       setPage({ type: "scenes", project });
     }, []);
     const navigateToSimulator = (0, import_react38.useCallback)((project) => {
-      window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/simulator`);
+      window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
       setPage({ type: "simulator", project });
     }, []);
     const handleSaved = (0, import_react38.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
@@ -82873,7 +82907,7 @@ void main(void) {
         {
           initialSceneId: page.sceneId,
           projectId: page.project.id,
-          onBack: () => navigateBackToScenes(page.project),
+          onBack: () => navigateToSimulator(page.project),
           onSaved: handleSaved,
           onDirtyChange: handleDirtyChange
         }
@@ -82885,7 +82919,8 @@ void main(void) {
         {
           projectId: page.project.id,
           projectName: page.project.name,
-          onBack: () => navigateBackToScenes(page.project),
+          onBack: navigateBackToProjects,
+          onManageScenes: () => navigateToScenes(page.project),
           onEditScene: (sceneId) => navigateToScene({ id: sceneId, name: "" }, page.project)
         }
       );

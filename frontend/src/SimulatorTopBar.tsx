@@ -1,6 +1,7 @@
 interface SimulatorTopBarProps {
   projectName: string;
   onBack: () => void;
+  onManageScenes: () => void;
   chapterNumber: number;
   chapterName: string;
   timeOfDay: string;
@@ -15,6 +16,7 @@ interface SimulatorTopBarProps {
 export function SimulatorTopBar({
   projectName,
   onBack,
+  onManageScenes,
   chapterNumber,
   chapterName,
   timeOfDay,
@@ -28,6 +30,8 @@ export function SimulatorTopBar({
       <span className="simulator-topbar__back" onClick={onBack}>←</span>
       <span className="simulator-topbar__divider" />
       <span className="simulator-topbar__title">{projectName}</span>
+      <span className="simulator-topbar__divider" />
+      <span className="simulator-topbar__link" onClick={onManageScenes}>Scenes</span>
       <span className="simulator-topbar__divider" />
       <span className="simulator-topbar__state">
         <span className="simulator-topbar__dot" />
