@@ -82081,6 +82081,7 @@ void main(void) {
     const [sceneDetails, setSceneDetails] = (0, import_react36.useState)({});
     const detailPromises = (0, import_react36.useRef)(/* @__PURE__ */ new Map());
     const [flagsSceneTarget, setFlagsSceneTarget] = (0, import_react36.useState)(null);
+    const [wokenSceneId, setWokenSceneId] = (0, import_react36.useState)(null);
     const [loading, setLoading] = (0, import_react36.useState)(true);
     const [error, setError] = (0, import_react36.useState)(null);
     const [orderBy, setOrderBy] = (0, import_react36.useState)("least_shown");
@@ -82169,19 +82170,19 @@ void main(void) {
     (0, import_react36.useEffect)(() => {
       if (sim.renderedSceneId || !liveWinner) return;
       sim.pinRenderedScene(liveWinner.id);
-      ensureSceneDetail(liveWinner.id);
     }, [sim.renderedSceneId, liveWinner]);
     const renderedSummary = (0, import_react36.useMemo)(
       () => sceneSummaries.find((s2) => s2.id === sim.renderedSceneId) ?? null,
       [sceneSummaries, sim.renderedSceneId]
     );
     const renderedScene = (0, import_react36.useMemo)(
-      () => sim.renderedSceneId ? sceneDetails[sim.renderedSceneId] ?? null : null,
-      [sim.renderedSceneId, sceneDetails]
+      () => wokenSceneId ? sceneDetails[wokenSceneId] ?? null : null,
+      [wokenSceneId, sceneDetails]
     );
     const handleWake = async () => {
       if (liveWinner) await ensureSceneDetail(liveWinner.id);
       sim.wake(liveWinner ? { id: liveWinner.id, name: liveWinner.name } : null);
+      setWokenSceneId(liveWinner ? liveWinner.id : null);
     };
     const handleEditFlags = async (scene) => {
       const detail = await ensureSceneDetail(scene.id);

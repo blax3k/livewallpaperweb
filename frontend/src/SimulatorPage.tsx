@@ -52,6 +52,9 @@ export function SimulatorPage({ projectId, projectName, onBack, onEditScene }: S
   const [sceneDetails, setSceneDetails] = useState<Record<string, SceneDetail>>({});
   const detailPromises = useRef<Map<string, Promise<SceneDetail | null>>>(new Map());
   const [flagsSceneTarget, setFlagsSceneTarget] = useState<SceneDetail | null>(null);
+  // Scene painted on the preview surface. Session-only (deliberately not persisted): the preview
+  // is blank on every load and only shows a scene after a Wake this session.
+  const [wokenSceneId, setWokenSceneId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [orderBy, setOrderBy] = useState<'least_shown' | 'points'>('least_shown');
@@ -142,24 +145,25 @@ export function SimulatorPage({ projectId, projectName, onBack, onEditScene }: S
   }, [sceneSummaries, orderBy, activeFlagIds, sim.sceneCounts, flagsById]);
   const liveWinner = useMemo(() => winnerOf(ranking), [ranking]);
 
-  // Pin an initial on-screen scene once scenes/flags have settled, so the render only moves on
-  // Wake thereafter (matches the "re-picked only on wake" banner). No-op once anything is pinned.
-  // Also warms the detail cache for that one scene so the preview has something to render.
+  // Seed the "last scene shown" reference once scenes/flags settle, so the topbar can label it even
+  // before the first wake. No-op once set (including a value restored from a prior session). This
+  // only feeds the label (renderedSummary); the preview surface is driven by wokenSceneId below.
   useEffect(() => {
     if (sim.renderedSceneId || !liveWinner) return;
     sim.pinRenderedScene(liveWinner.id);
-    ensureSceneDetail(liveWinner.id);
   }, [sim.renderedSceneId, liveWinner]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Summary of the pinned scene — gives us its label immediately, even while its detail loads.
+  // Summary of the last-shown scene — gives the topbar its label without needing the full detail.
   const renderedSummary = useMemo(
     () => sceneSummaries.find(s => s.id === sim.renderedSceneId) ?? null,
     [sceneSummaries, sim.renderedSceneId],
   );
-  // Full detail of the pinned scene for the render surface, or null until its lazy fetch resolves.
+  // Detail of the scene painted on the preview surface, or null when it's blank. Driven only by
+  // wokenSceneId (set by Wake), so the preview starts blank on every load — a refresh never
+  // re-activates the renderer, and neither does caching a scene's detail to edit its flags.
   const renderedScene = useMemo(
-    () => (sim.renderedSceneId ? sceneDetails[sim.renderedSceneId] ?? null : null),
-    [sim.renderedSceneId, sceneDetails],
+    () => (wokenSceneId ? sceneDetails[wokenSceneId] ?? null : null),
+    [wokenSceneId, sceneDetails],
   );
 
   // Wake re-picks the on-screen scene; fetch the winner's detail first (no-op if already cached,
@@ -167,6 +171,9 @@ export function SimulatorPage({ projectId, projectName, onBack, onEditScene }: S
   const handleWake = async () => {
     if (liveWinner) await ensureSceneDetail(liveWinner.id);
     sim.wake(liveWinner ? { id: liveWinner.id, name: liveWinner.name } : null);
+    // The preview only ever changes on wake — pin the just-picked winner (or clear it when nothing
+    // qualifies). The detail was warmed just above, so the render surface has its sprites ready.
+    setWokenSceneId(liveWinner ? liveWinner.id : null);
   };
 
   const handleEditFlags = async (scene: { id: string }) => {
