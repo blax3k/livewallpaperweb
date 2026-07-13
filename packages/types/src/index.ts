@@ -257,8 +257,68 @@ export interface Sprite {
   conditions?: SpriteConditionBlock[];
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Scene Variations — Slots & Options
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * How a slot chooses among its eligible options.
+ * - `weighted-random`: seeded weighted pick — aesthetic variety, changes per wake.
+ * - `first-match`: first eligible option in array order — story-deterministic, no RNG.
+ */
+export type SlotSelection = 'weighted-random' | 'first-match';
+
+/** A tweak an option applies to an existing base sprite (rather than adding a new one). */
+export interface SpriteOverride {
+  /** id of the base scene.sprites entry to modify. */
+  targetSpriteId: string;
+  /** Applied in order; reuses the sprite-condition modification vocabulary. */
+  modifications: SpriteModification[];
+}
+
+/** One concrete filling of a slot. */
+export interface SlotOption {
+  id: string;
+  /** Editor label ("cup of noodles", "cat napping on table", "none"). */
+  name: string;
+  /**
+   * Eligibility gate. Omitted/empty => always eligible. Same semantics as sprite condition
+   * blocks and rule conditions (see ruleEngine.evaluateConditions).
+   */
+  conditions?: RuleConditionGroup;
+  /** Relative weight for weighted-random selection. Defaults to 1. Ignored by first-match. */
+  weight?: number;
+  /**
+   * Sprites this option contributes, positions/textures fully baked in. Appended to the render
+   * list in slot order (= draw order). Omit for a purely-empty option (the "none" case) or an
+   * option that only overrides base sprites.
+   */
+  sprites?: Sprite[];
+  /** Optional tweaks to base sprites (e.g. shift the character's arm when holding a sandwich). */
+  overrides?: SpriteOverride[];
+  /**
+   * ADVANCED / optional cross-slot coherence. Transient flag ids added to the working flag set
+   * when this option is chosen, visible to conditions of *later* slots only. Lets e.g. a
+   * cat-appearance slot react to which cat-position slot won. Not persisted to WorldState.
+   */
+  emitsFlags?: string[];
+}
+
+/** A variable role in a scene, filled by one option at resolve time. */
+export interface SceneSlot {
+  id: string;
+  name: string;
+  selection: SlotSelection;
+  options: SlotOption[];
+}
+
 export interface Scene {
   sprites: Sprite[];
+  /**
+   * Compositional variations resolved at wake time (see resolveScene). Resolved in array order;
+   * omit for legacy scenes, which resolve to exactly `sprites` (current behavior).
+   */
+  slots?: SceneSlot[];
   xFocus: number;
   yFocus: number;
   /**
