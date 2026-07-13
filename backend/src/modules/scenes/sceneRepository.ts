@@ -16,6 +16,7 @@ type SceneBaseRow = {
   x_focus: number;
   y_focus: number;
   flag_declarations: import('@livewallpaper/types').SceneFlagDeclarations | null;
+  slots: import('@livewallpaper/types').SceneSlot[] | null;
 };
 
 type SpriteBaseRow = {
@@ -65,7 +66,7 @@ export async function selectSceneSummaries(projectId?: string) {
 
 export async function selectSceneById(id: string) {
   const sceneResult = await pool.query<SceneBaseRow>(
-    `SELECT id, name, label, status, project_id, created_at, updated_at, x_focus, y_focus, flag_declarations
+    `SELECT id, name, label, status, project_id, created_at, updated_at, x_focus, y_focus, flag_declarations, slots
      FROM scenes WHERE id = $1 AND status <> 'DELETED'`,
     [id],
   );
@@ -92,9 +93,9 @@ export async function insertScene(
   input: { name: string; label: string; data: Scene; projectId?: string },
 ): Promise<{ id: string }> {
   const result = await client.query<{ id: string }>(
-    `INSERT INTO scenes (name, label, project_id, status, x_focus, y_focus, flag_declarations)
-     VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
-    [input.name, input.label, input.projectId ?? null, 'ACTIVE', input.data.xFocus ?? 0.5, input.data.yFocus ?? 0.5, input.data.flags ? JSON.stringify(input.data.flags) : null],
+    `INSERT INTO scenes (name, label, project_id, status, x_focus, y_focus, flag_declarations, slots)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`,
+    [input.name, input.label, input.projectId ?? null, 'ACTIVE', input.data.xFocus ?? 0.5, input.data.yFocus ?? 0.5, input.data.flags ? JSON.stringify(input.data.flags) : null, input.data.slots ? JSON.stringify(input.data.slots) : null],
   );
   return result.rows[0];
 }
@@ -106,10 +107,10 @@ export async function updateScene(
   data: Scene,
 ): Promise<{ id: string; project_id: string | null } | null> {
   const result = await client.query<{ id: string; project_id: string | null }>(
-    `UPDATE scenes SET label = $2, x_focus = $3, y_focus = $4, flag_declarations = $5, updated_at = NOW()
+    `UPDATE scenes SET label = $2, x_focus = $3, y_focus = $4, flag_declarations = $5, slots = $6, updated_at = NOW()
      WHERE id = $1 AND status <> 'DELETED'
      RETURNING id, project_id`,
-    [id, label, data.xFocus ?? 0.5, data.yFocus ?? 0.5, data.flags ? JSON.stringify(data.flags) : null],
+    [id, label, data.xFocus ?? 0.5, data.yFocus ?? 0.5, data.flags ? JSON.stringify(data.flags) : null, data.slots ? JSON.stringify(data.slots) : null],
   );
   return result.rows[0] ?? null;
 }

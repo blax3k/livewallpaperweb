@@ -1,4 +1,4 @@
-import type { Sprite } from '@livewallpaper/types';
+import type { Sprite, SceneSlot, SpriteModification } from '@livewallpaper/types';
 import type { PoolClient } from 'pg';
 import { pool } from '../../db';
 
@@ -6,18 +6,37 @@ function filenameFromTextureResource(textureResource: string): string | null {
   return textureResource.startsWith('/uploads/') ? textureResource.slice(9) : null;
 }
 
-function collectAllFilenames(sprites: Sprite[]): string[] {
+/** Add any texture-swap filenames referenced by a list of modifications. */
+function addModificationFilenames(mods: SpriteModification[] | undefined, filenames: Set<string>): void {
+  for (const mod of mods ?? []) {
+    if (mod.type === 'texture' && mod.textureResource) {
+      const fn = filenameFromTextureResource(mod.textureResource);
+      if (fn) filenames.add(fn);
+    }
+  }
+}
+
+/** Add a sprite's base texture plus any textures its condition blocks can swap in. */
+function addSpriteFilenames(sprite: Sprite, filenames: Set<string>): void {
+  const base = filenameFromTextureResource(sprite.textureResource);
+  if (base) filenames.add(base);
+  for (const block of sprite.conditions ?? []) {
+    addModificationFilenames(block.modifications, filenames);
+  }
+}
+
+/**
+ * Every image filename a scene can render: base sprites plus slot options' contributed sprites
+ * and their base-sprite overrides. Slot sprites live in the scene's JSONB `slots` column rather
+ * than the sprites table, but still need scene_image_links so their images count as in-use.
+ */
+function collectAllFilenames(sprites: Sprite[], slots: SceneSlot[] = []): string[] {
   const filenames = new Set<string>();
-  for (const sprite of sprites) {
-    const base = filenameFromTextureResource(sprite.textureResource);
-    if (base) filenames.add(base);
-    for (const block of sprite.conditions ?? []) {
-      for (const mod of block.modifications ?? []) {
-        if (mod.type === 'texture' && mod.textureResource) {
-          const fn = filenameFromTextureResource(mod.textureResource);
-          if (fn) filenames.add(fn);
-        }
-      }
+  for (const sprite of sprites) addSpriteFilenames(sprite, filenames);
+  for (const slot of slots) {
+    for (const option of slot.options) {
+      for (const sprite of option.sprites ?? []) addSpriteFilenames(sprite, filenames);
+      for (const override of option.overrides ?? []) addModificationFilenames(override.modifications, filenames);
     }
   }
   return [...filenames];
@@ -51,8 +70,11 @@ export async function replaceSpritesForScene(
   client: PoolClient,
   sceneId: string,
   sprites: Sprite[],
+  slots: SceneSlot[] = [],
 ): Promise<void> {
-  const allFilenames = collectAllFilenames(sprites);
+  // Base sprites are rewritten into the sprites table below; slot sprites persist in the scene's
+  // JSONB `slots` column, but both feed scene_image_links so slot-only images stay marked in-use.
+  const allFilenames = collectAllFilenames(sprites, slots);
   const imageIdMap = await resolveImageIds(client, allFilenames);
 
   await client.query('DELETE FROM sprites WHERE scene_id = $1', [sceneId]);

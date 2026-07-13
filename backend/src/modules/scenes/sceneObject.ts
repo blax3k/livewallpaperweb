@@ -1,4 +1,4 @@
-import type { Scene, SceneFlagDeclarations } from '@livewallpaper/types';
+import type { Scene, SceneFlagDeclarations, SceneSlot } from '@livewallpaper/types';
 import { ObjectModel, type ObjectStatus } from '../common/objectModel';
 import { SpriteObject } from '../sprites/spriteObject';
 
@@ -14,6 +14,7 @@ type SceneSummaryRow = {
 type SceneRow = SceneSummaryRow & {
   x_focus: number;
   y_focus: number;
+  slots: SceneSlot[] | null;
   project_id: string | null;
   created_at: string;
   updated_at: string;
@@ -55,6 +56,7 @@ export class SceneObject extends ObjectModel {
       xFocus: row.x_focus,
       yFocus: row.y_focus,
       ...(row.flag_declarations != null && { flags: row.flag_declarations }),
+      ...(row.slots != null && { slots: row.slots }),
       sprites: row.sprites.map(s => s.toSprite()),
     };
     return new SceneObject(

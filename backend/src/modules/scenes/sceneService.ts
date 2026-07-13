@@ -49,7 +49,7 @@ export async function createScene(
     await client.query('BEGIN');
     const { id } = await insertScene(client, { ...input, data: sceneData });
     sceneId = id;
-    await replaceSpritesForScene(client, sceneId, sceneData.sprites);
+    await replaceSpritesForScene(client, sceneId, sceneData.sprites, sceneData.slots);
     await client.query('COMMIT');
   } catch (err) {
     await client.query('ROLLBACK');
@@ -83,7 +83,7 @@ export async function saveSceneById(id: string, label: string, data: Scene) {
       return null;
     }
     projectId = row.project_id;
-    await replaceSpritesForScene(client, id, data.sprites);
+    await replaceSpritesForScene(client, id, data.sprites, data.slots);
     await client.query('COMMIT');
   } catch (err) {
     await client.query('ROLLBACK');
