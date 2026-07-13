@@ -64319,16 +64319,30 @@ ${parts.join("\n")}
   ];
   var CircleCheckBig = createLucideIcon("circle-check-big", __iconNode6);
 
-  // ../node_modules/lucide-react/dist/esm/icons/ellipsis.mjs
+  // ../node_modules/lucide-react/dist/esm/icons/dices.mjs
   var __iconNode7 = [
+    ["rect", { width: "12", height: "12", x: "2", y: "10", rx: "2", ry: "2", key: "6agr2n" }],
+    [
+      "path",
+      { d: "m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6", key: "1o487t" }
+    ],
+    ["path", { d: "M6 18h.01", key: "uhywen" }],
+    ["path", { d: "M10 14h.01", key: "ssrbsk" }],
+    ["path", { d: "M15 6h.01", key: "cblpky" }],
+    ["path", { d: "M18 9h.01", key: "2061c0" }]
+  ];
+  var Dices = createLucideIcon("dices", __iconNode7);
+
+  // ../node_modules/lucide-react/dist/esm/icons/ellipsis.mjs
+  var __iconNode8 = [
     ["circle", { cx: "12", cy: "12", r: "1", key: "41hilf" }],
     ["circle", { cx: "19", cy: "12", r: "1", key: "1wjl8i" }],
     ["circle", { cx: "5", cy: "12", r: "1", key: "1pcz8c" }]
   ];
-  var Ellipsis = createLucideIcon("ellipsis", __iconNode7);
+  var Ellipsis = createLucideIcon("ellipsis", __iconNode8);
 
   // ../node_modules/lucide-react/dist/esm/icons/eye-off.mjs
-  var __iconNode8 = [
+  var __iconNode9 = [
     [
       "path",
       {
@@ -64346,10 +64360,10 @@ ${parts.join("\n")}
     ],
     ["path", { d: "m2 2 20 20", key: "1ooewy" }]
   ];
-  var EyeOff = createLucideIcon("eye-off", __iconNode8);
+  var EyeOff = createLucideIcon("eye-off", __iconNode9);
 
   // ../node_modules/lucide-react/dist/esm/icons/eye.mjs
-  var __iconNode9 = [
+  var __iconNode10 = [
     [
       "path",
       {
@@ -64359,48 +64373,48 @@ ${parts.join("\n")}
     ],
     ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
   ];
-  var Eye = createLucideIcon("eye", __iconNode9);
+  var Eye = createLucideIcon("eye", __iconNode10);
 
   // ../node_modules/lucide-react/dist/esm/icons/image.mjs
-  var __iconNode10 = [
+  var __iconNode11 = [
     ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2", key: "1m3agn" }],
     ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }],
     ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }]
   ];
-  var Image2 = createLucideIcon("image", __iconNode10);
+  var Image2 = createLucideIcon("image", __iconNode11);
 
   // ../node_modules/lucide-react/dist/esm/icons/layout-grid.mjs
-  var __iconNode11 = [
+  var __iconNode12 = [
     ["rect", { width: "7", height: "7", x: "3", y: "3", rx: "1", key: "1g98yp" }],
     ["rect", { width: "7", height: "7", x: "14", y: "3", rx: "1", key: "6d4xhi" }],
     ["rect", { width: "7", height: "7", x: "14", y: "14", rx: "1", key: "nxv5o0" }],
     ["rect", { width: "7", height: "7", x: "3", y: "14", rx: "1", key: "1bb6yr" }]
   ];
-  var LayoutGrid = createLucideIcon("layout-grid", __iconNode11);
+  var LayoutGrid = createLucideIcon("layout-grid", __iconNode12);
 
   // ../node_modules/lucide-react/dist/esm/icons/link-2.mjs
-  var __iconNode12 = [
+  var __iconNode13 = [
     ["path", { d: "M9 17H7A5 5 0 0 1 7 7h2", key: "8i5ue5" }],
     ["path", { d: "M15 7h2a5 5 0 1 1 0 10h-2", key: "1b9ql8" }],
     ["line", { x1: "8", x2: "16", y1: "12", y2: "12", key: "1jonct" }]
   ];
-  var Link2 = createLucideIcon("link-2", __iconNode12);
+  var Link2 = createLucideIcon("link-2", __iconNode13);
 
   // ../node_modules/lucide-react/dist/esm/icons/maximize.mjs
-  var __iconNode13 = [
+  var __iconNode14 = [
     ["path", { d: "M8 3H5a2 2 0 0 0-2 2v3", key: "1dcmit" }],
     ["path", { d: "M21 8V5a2 2 0 0 0-2-2h-3", key: "1e4gt3" }],
     ["path", { d: "M3 16v3a2 2 0 0 0 2 2h3", key: "wsl5sc" }],
     ["path", { d: "M16 21h3a2 2 0 0 0 2-2v-3", key: "18trek" }]
   ];
-  var Maximize = createLucideIcon("maximize", __iconNode13);
+  var Maximize = createLucideIcon("maximize", __iconNode14);
 
   // ../node_modules/lucide-react/dist/esm/icons/minus.mjs
-  var __iconNode14 = [["path", { d: "M5 12h14", key: "1ays0h" }]];
-  var Minus = createLucideIcon("minus", __iconNode14);
+  var __iconNode15 = [["path", { d: "M5 12h14", key: "1ays0h" }]];
+  var Minus = createLucideIcon("minus", __iconNode15);
 
   // ../node_modules/lucide-react/dist/esm/icons/moon-star.mjs
-  var __iconNode15 = [
+  var __iconNode16 = [
     ["path", { d: "M18 5h4", key: "1lhgn2" }],
     ["path", { d: "M20 3v4", key: "1olli1" }],
     [
@@ -64411,10 +64425,10 @@ ${parts.join("\n")}
       }
     ]
   ];
-  var MoonStar = createLucideIcon("moon-star", __iconNode15);
+  var MoonStar = createLucideIcon("moon-star", __iconNode16);
 
   // ../node_modules/lucide-react/dist/esm/icons/mouse-pointer-2.mjs
-  var __iconNode16 = [
+  var __iconNode17 = [
     [
       "path",
       {
@@ -64423,10 +64437,10 @@ ${parts.join("\n")}
       }
     ]
   ];
-  var MousePointer2 = createLucideIcon("mouse-pointer-2", __iconNode16);
+  var MousePointer2 = createLucideIcon("mouse-pointer-2", __iconNode17);
 
   // ../node_modules/lucide-react/dist/esm/icons/pencil.mjs
-  var __iconNode17 = [
+  var __iconNode18 = [
     [
       "path",
       {
@@ -64436,17 +64450,17 @@ ${parts.join("\n")}
     ],
     ["path", { d: "m15 5 4 4", key: "1mk7zo" }]
   ];
-  var Pencil = createLucideIcon("pencil", __iconNode17);
+  var Pencil = createLucideIcon("pencil", __iconNode18);
 
   // ../node_modules/lucide-react/dist/esm/icons/plus.mjs
-  var __iconNode18 = [
+  var __iconNode19 = [
     ["path", { d: "M5 12h14", key: "1ays0h" }],
     ["path", { d: "M12 5v14", key: "s699le" }]
   ];
-  var Plus = createLucideIcon("plus", __iconNode18);
+  var Plus = createLucideIcon("plus", __iconNode19);
 
   // ../node_modules/lucide-react/dist/esm/icons/radar.mjs
-  var __iconNode19 = [
+  var __iconNode20 = [
     ["path", { d: "M19.07 4.93A10 10 0 0 0 6.99 3.34", key: "z3du51" }],
     ["path", { d: "M4 6h.01", key: "oypzma" }],
     ["path", { d: "M2.29 9.62A10 10 0 1 0 21.31 8.35", key: "qzzz0" }],
@@ -64456,26 +64470,26 @@ ${parts.join("\n")}
     ["circle", { cx: "12", cy: "12", r: "2", key: "1c9p78" }],
     ["path", { d: "m13.41 10.59 5.66-5.66", key: "mhq4k0" }]
   ];
-  var Radar = createLucideIcon("radar", __iconNode19);
+  var Radar = createLucideIcon("radar", __iconNode20);
 
   // ../node_modules/lucide-react/dist/esm/icons/refresh-cw.mjs
-  var __iconNode20 = [
+  var __iconNode21 = [
     ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
     ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
     ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
     ["path", { d: "M8 16H3v5", key: "1cv678" }]
   ];
-  var RefreshCw = createLucideIcon("refresh-cw", __iconNode20);
+  var RefreshCw = createLucideIcon("refresh-cw", __iconNode21);
 
   // ../node_modules/lucide-react/dist/esm/icons/rotate-ccw.mjs
-  var __iconNode21 = [
+  var __iconNode22 = [
     ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
     ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
   ];
-  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode21);
+  var RotateCcw = createLucideIcon("rotate-ccw", __iconNode22);
 
   // ../node_modules/lucide-react/dist/esm/icons/save.mjs
-  var __iconNode22 = [
+  var __iconNode23 = [
     [
       "path",
       {
@@ -64486,24 +64500,24 @@ ${parts.join("\n")}
     ["path", { d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", key: "1ydtos" }],
     ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
   ];
-  var Save = createLucideIcon("save", __iconNode22);
+  var Save = createLucideIcon("save", __iconNode23);
 
   // ../node_modules/lucide-react/dist/esm/icons/search.mjs
-  var __iconNode23 = [
+  var __iconNode24 = [
     ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
     ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
   ];
-  var Search = createLucideIcon("search", __iconNode23);
+  var Search = createLucideIcon("search", __iconNode24);
 
   // ../node_modules/lucide-react/dist/esm/icons/smartphone.mjs
-  var __iconNode24 = [
+  var __iconNode25 = [
     ["rect", { width: "14", height: "20", x: "5", y: "2", rx: "2", ry: "2", key: "1yt0o3" }],
     ["path", { d: "M12 18h.01", key: "mhygvu" }]
   ];
-  var Smartphone = createLucideIcon("smartphone", __iconNode24);
+  var Smartphone = createLucideIcon("smartphone", __iconNode25);
 
   // ../node_modules/lucide-react/dist/esm/icons/star.mjs
-  var __iconNode25 = [
+  var __iconNode26 = [
     [
       "path",
       {
@@ -64512,30 +64526,30 @@ ${parts.join("\n")}
       }
     ]
   ];
-  var Star = createLucideIcon("star", __iconNode25);
+  var Star = createLucideIcon("star", __iconNode26);
 
   // ../node_modules/lucide-react/dist/esm/icons/trash-2.mjs
-  var __iconNode26 = [
+  var __iconNode27 = [
     ["path", { d: "M10 11v6", key: "nco0om" }],
     ["path", { d: "M14 11v6", key: "outv1u" }],
     ["path", { d: "M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6", key: "miytrc" }],
     ["path", { d: "M3 6h18", key: "d0wm0j" }],
     ["path", { d: "M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2", key: "e791ji" }]
   ];
-  var Trash2 = createLucideIcon("trash-2", __iconNode26);
+  var Trash2 = createLucideIcon("trash-2", __iconNode27);
 
   // ../node_modules/lucide-react/dist/esm/icons/unlink-2.mjs
-  var __iconNode27 = [
+  var __iconNode28 = [
     ["path", { d: "M15 7h2a5 5 0 0 1 0 10h-2m-6 0H7A5 5 0 0 1 7 7h2", key: "1re2ne" }]
   ];
-  var Unlink2 = createLucideIcon("unlink-2", __iconNode27);
+  var Unlink2 = createLucideIcon("unlink-2", __iconNode28);
 
   // ../node_modules/lucide-react/dist/esm/icons/x.mjs
-  var __iconNode28 = [
+  var __iconNode29 = [
     ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
     ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
   ];
-  var X = createLucideIcon("x", __iconNode28);
+  var X = createLucideIcon("x", __iconNode29);
 
   // src/controls/modals/CreateSpriteModal.tsx
   var import_react5 = __toESM(require_react());
@@ -81243,17 +81257,108 @@ void main(void) {
 
   // src/useSimulatorPreview.ts
   var import_react32 = __toESM(require_react());
+
+  // src/sceneResolver.ts
+  function hash32(str) {
+    let h2 = 2166136261;
+    for (let i2 = 0; i2 < str.length; i2++) {
+      h2 ^= str.charCodeAt(i2);
+      h2 = Math.imul(h2, 16777619);
+    }
+    return h2 >>> 0;
+  }
+  function seedFor(wakeSeed, sceneId, slotId) {
+    return hash32(`${wakeSeed}:${sceneId}:${slotId}`);
+  }
+  function mulberry32(seed) {
+    let a2 = seed | 0;
+    return () => {
+      a2 = a2 + 1831565813 | 0;
+      let t2 = Math.imul(a2 ^ a2 >>> 15, 1 | a2);
+      t2 = t2 + Math.imul(t2 ^ t2 >>> 7, 61 | t2) ^ t2;
+      return ((t2 ^ t2 >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function weightedPick(items, rng) {
+    const total = items.reduce((s2, o2) => s2 + (o2.weight ?? 1), 0);
+    let r2 = rng() * total;
+    for (const o2 of items) {
+      r2 -= o2.weight ?? 1;
+      if (r2 < 0) return o2;
+    }
+    return items[items.length - 1];
+  }
+  function applyModification(sprite, mod) {
+    switch (mod.type) {
+      // `visible` has no field on Sprite yet — how the renderer treats a hidden base sprite is an
+      // open decision (spec §10.5). No-op for now so overrides that only tweak geometry/texture work.
+      case "visible":
+        break;
+      case "texture":
+        if (mod.textureResource != null) sprite.textureResource = mod.textureResource;
+        break;
+      case "texture_coordinates":
+        if (mod.texCoordinates) sprite.texCoordinates = [...mod.texCoordinates];
+        break;
+      case "position":
+        if (mod.positionX != null) sprite.positionX = mod.positionX;
+        if (mod.positionY != null) sprite.positionY = mod.positionY;
+        break;
+      case "parallax":
+        if (mod.parallaxMultiplier != null) sprite.parallaxMultiplier = mod.parallaxMultiplier;
+        break;
+      case "size":
+        if (mod.width != null) sprite.width = mod.width;
+        if (mod.height != null) sprite.height = mod.height;
+        break;
+    }
+  }
+  function resolveScene(scene, sceneId, world, wakeSeed) {
+    const result = scene.sprites.map((s2) => ({ ...s2, texCoordinates: [...s2.texCoordinates] }));
+    const working = new Set(world.activeFlags);
+    for (const slot of scene.slots ?? []) {
+      const ctx = {
+        ...world.clock,
+        activeFlags: working,
+        sceneCounts: world.sceneCounts,
+        flagChanges: world.flagChanges
+      };
+      const eligible = slot.options.filter(
+        (o2) => evaluateConditions(o2.conditions ? [o2.conditions] : void 0, ctx)
+      );
+      if (eligible.length === 0) continue;
+      let chosen;
+      if (slot.selection === "first-match") {
+        chosen = eligible[0];
+      } else {
+        const rng = mulberry32(seedFor(wakeSeed, sceneId, slot.id));
+        chosen = weightedPick(eligible, rng);
+      }
+      for (const f2 of chosen.emitsFlags ?? []) working.add(f2);
+      for (const ov of chosen.overrides ?? []) {
+        const target = result.find((s2) => s2.id === ov.targetSpriteId);
+        if (target) for (const m2 of ov.modifications) applyModification(target, m2);
+      }
+      for (const sp of chosen.sprites ?? []) {
+        result.push({ ...sp, texCoordinates: [...sp.texCoordinates] });
+      }
+    }
+    return result;
+  }
+
+  // src/useSimulatorPreview.ts
   var EMPTY_SCENE = { sprites: [], xFocus: 0.5, yFocus: 0.5 };
   var ASPECT_CONFIG = {
     "9:16": { orientation: "portrait", guide: "16:9" },
     "1:1": { orientation: "portrait", guide: "1:1" },
     "16:9": { orientation: "landscape", guide: "16:9" }
   };
-  function useSimulatorPreview(scene, world, aspect) {
+  function useSimulatorPreview(scene, world, aspect, wakeSeed) {
     const containerRef = (0, import_react32.useRef)(null);
     const rendererRef = (0, import_react32.useRef)(null);
     const worldRef = (0, import_react32.useRef)(world);
     worldRef.current = world;
+    const renderedSceneIdRef = (0, import_react32.useRef)(null);
     (0, import_react32.useEffect)(() => {
       if (!containerRef.current) return;
       const renderer = new SceneRenderer(containerRef.current);
@@ -81277,11 +81382,20 @@ void main(void) {
       if (!renderer) return;
       if (!scene) {
         renderer.loadScene(EMPTY_SCENE);
+        renderedSceneIdRef.current = null;
         return;
       }
       const snapshot = worldRef.current;
-      renderer.transitionToScene(scene.data, (group) => matchesConditionGroup(group, snapshot));
-    }, [sceneId]);
+      const matcher = (group) => matchesConditionGroup(group, snapshot);
+      const resolvedScene = { ...scene.data, slots: void 0, sprites: resolveScene(scene.data, scene.id, snapshot, wakeSeed) };
+      const sceneChanged = renderedSceneIdRef.current !== scene.id;
+      renderedSceneIdRef.current = scene.id;
+      if (sceneChanged) {
+        renderer.transitionToScene(resolvedScene, matcher);
+      } else {
+        renderer.loadScene(resolvedScene).then(() => renderer.applyConditionSelection(matcher));
+      }
+    }, [sceneId, wakeSeed]);
     return containerRef;
   }
 
@@ -81344,6 +81458,7 @@ void main(void) {
     orderBy,
     onOrderByChange,
     stale,
+    wakeSeed,
     onWake,
     onEditScene,
     onEditFlags,
@@ -81351,8 +81466,13 @@ void main(void) {
     onAddScene
   }) {
     const [aspect, setAspect] = (0, import_react33.useState)("9:16");
+    const [rollCount, setRollCount] = (0, import_react33.useState)(0);
+    (0, import_react33.useEffect)(() => {
+      setRollCount(0);
+    }, [wakeSeed]);
     const qualifyCount = scenes.filter((s2) => s2.status !== "out").length;
-    const renderContainerRef = useSimulatorPreview(renderedScene, world, aspect);
+    const renderContainerRef = useSimulatorPreview(renderedScene, world, aspect, wakeSeed + rollCount);
+    const canRoll = (renderedScene?.data.slots?.length ?? 0) > 0;
     const handleEditScene = () => {
       if (renderedScene) onEditScene(renderedScene.id);
     };
@@ -81367,6 +81487,10 @@ void main(void) {
           /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("button", { className: "simulator-wake-button", onClick: onWake, children: [
             /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(MoonStar, { size: 14, strokeWidth: 2 }),
             " Wake screen"
+          ] }),
+          canRoll && /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("button", { className: "simulator-roll-button", onClick: () => setRollCount((c2) => c2 + 1), title: "Reshuffle this scene's random slots", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(Dices, { size: 14, strokeWidth: 2 }),
+            " Roll variant"
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)(DropdownMenu2, { children: [
             /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-aspect-chip", children: [
@@ -82598,6 +82722,7 @@ void main(void) {
               orderBy,
               onOrderByChange: setOrderBy,
               stale: sim.stale,
+              wakeSeed: sim.totalWakes,
               onWake: handleWake,
               onEditScene,
               onEditFlags: handleEditFlags,
@@ -83045,6 +83170,7 @@ lucide-react/dist/esm/icons/chevron-down.mjs:
 lucide-react/dist/esm/icons/chevron-left.mjs:
 lucide-react/dist/esm/icons/chevron-right.mjs:
 lucide-react/dist/esm/icons/circle-check-big.mjs:
+lucide-react/dist/esm/icons/dices.mjs:
 lucide-react/dist/esm/icons/ellipsis.mjs:
 lucide-react/dist/esm/icons/eye-off.mjs:
 lucide-react/dist/esm/icons/eye.mjs:

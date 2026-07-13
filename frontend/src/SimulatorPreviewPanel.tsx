@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ChevronDown, Pencil, RefreshCw, MoonStar, Trash2, Plus } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ChevronDown, Pencil, RefreshCw, MoonStar, Trash2, Plus, Dices } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -71,6 +71,8 @@ interface SimulatorPreviewPanelProps {
   orderBy: 'least_shown' | 'points';
   onOrderByChange: (value: 'least_shown' | 'points') => void;
   stale: boolean;
+  /** Per-wake seed driving weighted-random slot picks (the running wake count). */
+  wakeSeed: number;
   onWake: () => void;
   /** Open a scene in the editor (card click and the "Edit scene" link). */
   onEditScene: (sceneId: string) => void;
@@ -87,6 +89,7 @@ export function SimulatorPreviewPanel({
   orderBy,
   onOrderByChange,
   stale,
+  wakeSeed,
   onWake,
   onEditScene,
   onEditFlags,
@@ -94,8 +97,15 @@ export function SimulatorPreviewPanel({
   onAddScene,
 }: SimulatorPreviewPanelProps) {
   const [aspect, setAspect] = useState<AspectRatio>('9:16');
+  // A roll spot-checks weighted-random variety by advancing the seed without counting as a wake.
+  // Reset on each wake so a wake's own seed stays the canonical, reproducible pick.
+  const [rollCount, setRollCount] = useState(0);
+  useEffect(() => { setRollCount(0); }, [wakeSeed]);
   const qualifyCount = scenes.filter(s => s.status !== 'out').length;
-  const renderContainerRef = useSimulatorPreview(renderedScene, world, aspect);
+  const renderContainerRef = useSimulatorPreview(renderedScene, world, aspect, wakeSeed + rollCount);
+
+  // Rolling only does something when the pinned scene actually has variable slots.
+  const canRoll = (renderedScene?.data.slots?.length ?? 0) > 0;
 
   const handleEditScene = () => { if (renderedScene) onEditScene(renderedScene.id); };
 
@@ -118,6 +128,12 @@ export function SimulatorPreviewPanel({
           <button className="simulator-wake-button" onClick={onWake}>
             <MoonStar size={14} strokeWidth={2} /> Wake screen
           </button>
+
+          {canRoll && (
+            <button className="simulator-roll-button" onClick={() => setRollCount(c => c + 1)} title="Reshuffle this scene's random slots">
+              <Dices size={14} strokeWidth={2} /> Roll variant
+            </button>
+          )}
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

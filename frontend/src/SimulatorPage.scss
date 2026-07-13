@@ -1863,7 +1863,8 @@
   align-items: flex-start;
   gap: var(--size-10);
 
-  .simulator-wake-button {
+  .simulator-wake-button,
+  .simulator-roll-button {
     width: auto;
     align-self: flex-start;
     padding: var(--size-8) var(--size-16);
@@ -2122,4 +2123,25 @@
   gap: var(--size-6);
   font: 600 13px var(--font-sans);
   cursor: pointer;
+}
+
+// Secondary to Wake: reshuffles the pinned scene's random slots for a spot-check, styled as an
+// outline button so it reads as a lighter, non-committal action.
+.simulator-roll-button {
+  width: 100%;
+  border: 1px solid var(--color-border-strong);
+  background: transparent;
+  color: var(--color-fg-default);
+  border-radius: var(--size-8);
+  padding: var(--size-10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--size-6);
+  font: 600 13px var(--font-sans);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--color-hover);
+  }
 }

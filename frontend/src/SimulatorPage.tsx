@@ -600,6 +600,7 @@ export function SimulatorPage({ projectId, projectName, onBack, onManageScenes, 
                 orderBy={orderBy}
                 onOrderByChange={setOrderBy}
                 stale={sim.stale}
+                wakeSeed={sim.totalWakes}
                 onWake={handleWake}
                 onEditScene={onEditScene}
                 onEditFlags={handleEditFlags}

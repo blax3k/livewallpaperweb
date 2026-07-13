@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { SceneRenderer } from './renderers/SceneRenderer';
 import type { PhoneGuideAspectRatio } from './renderers/PhoneGuide';
 import { matchesConditionGroup, type WorldState } from './ruleEngine';
+import { resolveScene } from './sceneResolver';
 import type { SceneDetail } from './api';
 import type { AspectRatio } from './SimulatorPreviewPanel';
 
@@ -24,11 +25,14 @@ const ASPECT_CONFIG: Record<AspectRatio, { orientation: 'portrait' | 'landscape'
  * pinned scene. Sprite condition sets are resolved against the world as it is at the moment the
  * scene changes (i.e. the wake snapshot), so later live flag/time edits don't move the render.
  */
-export function useSimulatorPreview(scene: SceneDetail | null, world: WorldState, aspect: AspectRatio) {
+export function useSimulatorPreview(scene: SceneDetail | null, world: WorldState, aspect: AspectRatio, wakeSeed: number) {
   const containerRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<SceneRenderer | null>(null);
   const worldRef = useRef(world);
   worldRef.current = world;
+  // Which scene id is currently painted, so we can tell a scene *change* (wipe) apart from a
+  // same-scene reshuffle (a fresh wakeSeed or a manual roll — reseed in place, no wipe).
+  const renderedSceneIdRef = useRef<string | null>(null);
 
   // One renderer for the lifetime of the panel.
   useEffect(() => {
@@ -58,27 +62,42 @@ export function useSimulatorPreview(scene: SceneDetail | null, world: WorldState
     renderer.setGuideAspectRatio(guide);
   }, [aspect, sceneId]);
 
-  // (Re)load only when the pinned scene actually changes, reading the world snapshot at that
-  // instant. A scene change animates with the same diagonal wipe the Android wallpaper uses (the
-  // first load has nothing to wipe from, so it's instant). Condition sets resolve against the wake
-  // snapshot, so the new scene wipes in already showing the right sprite variants.
+  // (Re)load when the pinned scene changes or the wake seed advances, reading the world snapshot at
+  // that instant. Slots resolve to a flat sprite list here (see resolveScene): `first-match` slots
+  // and base sprites are deterministic, while `weighted-random` slots pick from the seed, so a
+  // fresh wakeSeed each wake — or a manual roll — reshuffles them. Sprite condition sets then
+  // resolve against the same snapshot, so the scene shows the right variants from the first frame.
   //
-  // This is deliberately keyed on `sceneId`, not the whole `scene` object: flag declarations live
-  // in `scene.data.flags` and don't affect the rendered pixels, so saving the Scene Flags modal —
-  // which swaps in a fresh detail object for the same pinned scene — must not replay the wipe. Only
-  // a wake (which pins a different id) should. See the report about the flags modal "activating"
-  // the renderer.
+  // A genuine scene *change* animates with the same diagonal wipe the Android wallpaper uses (the
+  // first load has nothing to wipe from, so it's instant). A same-scene reseed instead reloads in
+  // place with no wipe — the point of a roll is to spot-check variety, not replay the transition.
+  //
+  // Deliberately keyed on `sceneId` + `wakeSeed`, not the whole `scene` object: flag declarations
+  // live in `scene.data.flags` and don't affect the rendered pixels, so saving the Scene Flags
+  // modal — which swaps in a fresh detail object for the same pinned scene without advancing the
+  // seed — must not replay the wipe. See the report about the flags modal "activating" the renderer.
   useEffect(() => {
     const renderer = rendererRef.current;
     if (!renderer) return;
     if (!scene) {
       renderer.loadScene(EMPTY_SCENE);
+      renderedSceneIdRef.current = null;
       return;
     }
     const snapshot = worldRef.current;
-    renderer.transitionToScene(scene.data, group => matchesConditionGroup(group, snapshot));
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- keyed on scene identity, not the mutable detail object
-  }, [sceneId]);
+    const matcher = (group: Parameters<typeof matchesConditionGroup>[0]) => matchesConditionGroup(group, snapshot);
+    const resolvedScene = { ...scene.data, slots: undefined, sprites: resolveScene(scene.data, scene.id, snapshot, wakeSeed) };
+
+    const sceneChanged = renderedSceneIdRef.current !== scene.id;
+    renderedSceneIdRef.current = scene.id;
+    if (sceneChanged) {
+      renderer.transitionToScene(resolvedScene, matcher);
+    } else {
+      // Same scene, new seed (wake re-picked it, or the user rolled): reshuffle without a wipe.
+      renderer.loadScene(resolvedScene).then(() => renderer.applyConditionSelection(matcher));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- keyed on scene identity + seed, not the mutable detail object
+  }, [sceneId, wakeSeed]);
 
   return containerRef;
 }
