@@ -19,6 +19,7 @@ export interface SelectedSprite {
 export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?: () => void) {
   const [showSceneControls, setShowSceneControls] = useState(false);
   const [currentSceneId, setCurrentSceneId] = useState<string | null>(null);
+  const [currentSceneLabel, setCurrentSceneLabel] = useState<string | null>(null);
   const [xFocus, setXFocus] = useState(0.5);
   const [yFocus, setYFocus] = useState(0.5);
   const [spriteEntries, setSpriteEntries] = useState<SpriteEntry[]>([]);
@@ -94,6 +95,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
       sceneIdRef.current = scene.id;
       sceneLabelRef.current = scene.label;
       setCurrentSceneId(scene.id);
+      setCurrentSceneLabel(scene.label);
 
       rendererRef.current?.destroy();
 
@@ -359,6 +361,17 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     }
   }, [refreshSpriteList]);
 
+  // The scene label is persisted through saveScene() (it's part of the update payload), so
+  // renaming just updates local state and marks the scene dirty — the new name lands on Save,
+  // mirroring how sprite renames only persist when the scene is saved.
+  const handleRenameScene = useCallback((newName: string) => {
+    const trimmed = newName.trim();
+    if (!trimmed || trimmed === sceneLabelRef.current) return;
+    sceneLabelRef.current = trimmed;
+    setCurrentSceneLabel(trimmed);
+    markDirty();
+  }, [markDirty]);
+
   const ZOOM_FACTOR = 1.25;
 
   const handleZoomIn = useCallback(() => {
@@ -412,6 +425,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     rendererRef,
     showSceneControls,
     currentSceneId,
+    currentSceneLabel,
     xFocus,
     yFocus,
     spriteEntries,
@@ -438,6 +452,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     handleChangeTexture,
     handleDeleteSprite,
     handleRenameSprite,
+    handleRenameScene,
     handleSpriteConditions,
     handleSaveSpriteConditions,
     handleSelectConditionSet,

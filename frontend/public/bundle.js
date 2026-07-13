@@ -76395,10 +76395,14 @@ ${e2}`);
       }
     );
   }
-  function TopBar({ projectId, scenes, currentSceneName, sceneLoaded, isSaving, guideAspectRatio, orientation, zoom, gyroMode, sceneSizeLabel, sceneSizeTitle, onBack, onSceneSelect, onGuideAspectRatioChange, onOrientationToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle, onImageReplaced }) {
+  function TopBar({ projectId, sceneLabel, sceneLoaded, isSaving, guideAspectRatio, orientation, zoom, gyroMode, sceneSizeLabel, sceneSizeTitle, onBack, onRenameScene, onGuideAspectRatioChange, onOrientationToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle, onImageReplaced }) {
     const [libraryOpen, setLibraryOpen] = (0, import_react14.useState)(false);
-    const currentScene = scenes.find((s2) => s2.value === currentSceneName);
-    const sceneLabel = currentScene?.label ?? (sceneLoaded ? currentSceneName : null) ?? "Select scene";
+    const [editingName, setEditingName] = (0, import_react14.useState)(false);
+    const [nameValue, setNameValue] = (0, import_react14.useState)("");
+    const commitRename = () => {
+      onRenameScene(nameValue);
+      setEditingName(false);
+    };
     return /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("div", { className: "top-bar", children: [
       onBack && /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
         "button",
@@ -76410,21 +76414,35 @@ ${e2}`);
           children: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(ChevronLeft, { size: 15 })
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(DropdownMenu2, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(
-          "button",
-          {
-            type: "button",
-            disabled: scenes.length === 0,
-            className: "top-bar__scene-trigger",
-            children: [
-              sceneLabel,
-              /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(ChevronDown, { size: 13 })
-            ]
+      editingName ? /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
+        "input",
+        {
+          className: "top-bar__scene-name-input",
+          value: nameValue,
+          autoFocus: true,
+          onChange: (e2) => setNameValue(e2.target.value),
+          onFocus: (e2) => e2.target.select(),
+          onBlur: commitRename,
+          onKeyDown: (e2) => {
+            if (e2.key === "Enter") commitRename();
+            if (e2.key === "Escape") setEditingName(false);
           }
-        ) }),
-        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(DropdownMenuContent2, { align: "start", children: scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(DropdownMenuItem2, { onSelect: () => onSceneSelect(scene.value), children: scene.label }, scene.value)) })
-      ] }),
+        }
+      ) : /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
+        "button",
+        {
+          type: "button",
+          disabled: !sceneLoaded,
+          className: "top-bar__scene-name",
+          title: "Double-click to rename scene",
+          onDoubleClick: () => {
+            if (!sceneLoaded) return;
+            setNameValue(sceneLabel ?? "");
+            setEditingName(true);
+          },
+          children: sceneLabel ?? (sceneLoaded ? "Untitled scene" : "No scene")
+        }
+      ),
       /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("div", { className: "top-bar__divider" }),
       /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(
         "button",
@@ -78379,6 +78397,7 @@ void main(void) {
   function useSceneRenderer(onNotify, onSaved) {
     const [showSceneControls, setShowSceneControls] = (0, import_react18.useState)(false);
     const [currentSceneId, setCurrentSceneId] = (0, import_react18.useState)(null);
+    const [currentSceneLabel, setCurrentSceneLabel] = (0, import_react18.useState)(null);
     const [xFocus, setXFocus] = (0, import_react18.useState)(0.5);
     const [yFocus, setYFocus] = (0, import_react18.useState)(0.5);
     const [spriteEntries, setSpriteEntries] = (0, import_react18.useState)([]);
@@ -78436,6 +78455,7 @@ void main(void) {
         sceneIdRef.current = scene.id;
         sceneLabelRef.current = scene.label;
         setCurrentSceneId(scene.id);
+        setCurrentSceneLabel(scene.label);
         rendererRef.current?.destroy();
         if (!canvasRef.current) return;
         const renderer = new SceneRenderer(canvasRef.current);
@@ -78652,6 +78672,13 @@ void main(void) {
         spritesApi.rename(spriteId, newName).catch(console.error);
       }
     }, [refreshSpriteList]);
+    const handleRenameScene = (0, import_react18.useCallback)((newName) => {
+      const trimmed = newName.trim();
+      if (!trimmed || trimmed === sceneLabelRef.current) return;
+      sceneLabelRef.current = trimmed;
+      setCurrentSceneLabel(trimmed);
+      markDirty();
+    }, [markDirty]);
     const ZOOM_FACTOR = 1.25;
     const handleZoomIn = (0, import_react18.useCallback)(() => {
       rendererRef.current?.zoomAtCenter(ZOOM_FACTOR);
@@ -78695,6 +78722,7 @@ void main(void) {
       rendererRef,
       showSceneControls,
       currentSceneId,
+      currentSceneLabel,
       xFocus,
       yFocus,
       spriteEntries,
@@ -78721,6 +78749,7 @@ void main(void) {
       handleChangeTexture,
       handleDeleteSprite,
       handleRenameSprite,
+      handleRenameScene,
       handleSpriteConditions,
       handleSaveSpriteConditions,
       handleSelectConditionSet,
@@ -78905,7 +78934,6 @@ void main(void) {
   // src/ScenePage.tsx
   var import_jsx_runtime39 = __toESM(require_jsx_runtime());
   function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyChange }) {
-    const [scenes, setScenes] = (0, import_react21.useState)([]);
     const [availableFlags, setAvailableFlags] = (0, import_react21.useState)([]);
     const history = useUndoHistory();
     const { notifications, notify } = useNotifications();
@@ -78924,7 +78952,7 @@ void main(void) {
       canvasRef,
       rendererRef,
       showSceneControls,
-      currentSceneId,
+      currentSceneLabel,
       xFocus,
       yFocus,
       spriteEntries,
@@ -78951,6 +78979,7 @@ void main(void) {
       handleChangeTexture,
       handleDeleteSprite,
       handleRenameSprite,
+      handleRenameScene,
       handleSelectConditionSet,
       handleAddConditionSet,
       handleRemoveConditionSet,
@@ -79004,10 +79033,6 @@ void main(void) {
       if (isDirty && !window.confirm("You have unsaved changes. Leave without saving?")) return;
       onBack?.();
     }, [isDirty, onBack]);
-    const handleSceneSelect = (0, import_react21.useCallback)((sceneId) => {
-      if (isDirty && !window.confirm("You have unsaved changes. Switch scenes without saving?")) return;
-      loadScene(sceneId);
-    }, [isDirty, loadScene]);
     const ensureSpriteSelected = (0, import_react21.useCallback)((spriteIndex) => {
       if (selectedSprite?.index !== spriteIndex) {
         handleSpriteSelect(spriteIndex);
@@ -79086,12 +79111,6 @@ void main(void) {
       onTextureApply: handleTextureApply,
       onMarkDirty: markDirty
     });
-    (0, import_react21.useEffect)(() => {
-      scenesApi.list().then(
-        (data) => setScenes(data.map((s2) => ({ value: s2.id, label: s2.label, thumbnail_url: s2.thumbnail_url })))
-      ).catch(() => {
-      });
-    }, []);
     (0, import_react21.useEffect)(() => {
       if (!projectId) return;
       flagsApi.list(projectId).then(setAvailableFlags).catch(() => {
@@ -79252,14 +79271,13 @@ void main(void) {
         TopBar,
         {
           projectId,
-          scenes,
-          currentSceneName: currentSceneId,
+          sceneLabel: currentSceneLabel,
           sceneLoaded: showSceneControls,
           isSaving,
           guideAspectRatio,
           orientation,
           onBack: handleBack,
-          onSceneSelect: handleSceneSelect,
+          onRenameScene: handleRenameScene,
           onGuideAspectRatioChange: handleGuideAspectRatioChange,
           onOrientationToggle: handleOrientationToggle,
           onSave: saveScene,

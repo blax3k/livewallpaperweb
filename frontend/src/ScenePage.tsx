@@ -1,5 +1,5 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
-import { SceneEditorPanel, SceneOption } from './controls/panels/SceneEditorPanel';
+import { SceneEditorPanel } from './controls/panels/SceneEditorPanel';
 import { SpriteConditionsPanel } from './controls/panels/SpriteConditionsPanel';
 import { AllConditionsPanel } from './controls/panels/AllConditionsPanel';
 import { TopBar } from './controls/TopBar';
@@ -13,7 +13,7 @@ import { useSceneRenderer } from './hooks/useSceneRenderer';
 import { useSpriteDrag } from './hooks/useSpriteDrag';
 import { useKeyboardControls } from './hooks/useKeyboardControls';
 import { computeSceneSize, collectTextureResources, formatBytes } from './utils/sceneSize';
-import { scenesApi, flagsApi, imagesApi } from './api';
+import { flagsApi, imagesApi } from './api';
 import type { FlagDefinition, RuleConditionGroup } from '@livewallpaper/types';
 
 interface ScenePageProps {
@@ -25,7 +25,6 @@ interface ScenePageProps {
 }
 
 export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyChange }: ScenePageProps) {
-  const [scenes, setScenes] = useState<SceneOption[]>([]);
   const [availableFlags, setAvailableFlags] = useState<FlagDefinition[]>([]);
   const history = useUndoHistory();
   const { notifications, notify } = useNotifications();
@@ -45,7 +44,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     canvasRef,
     rendererRef,
     showSceneControls,
-    currentSceneId,
+    currentSceneLabel,
     xFocus,
     yFocus,
     spriteEntries,
@@ -72,6 +71,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     handleChangeTexture,
     handleDeleteSprite,
     handleRenameSprite,
+    handleRenameScene,
     handleSelectConditionSet,
     handleAddConditionSet,
     handleRemoveConditionSet,
@@ -126,11 +126,6 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     if (isDirty && !window.confirm('You have unsaved changes. Leave without saving?')) return;
     onBack?.();
   }, [isDirty, onBack]);
-
-  const handleSceneSelect = useCallback((sceneId: string) => {
-    if (isDirty && !window.confirm('You have unsaved changes. Switch scenes without saving?')) return;
-    loadScene(sceneId);
-  }, [isDirty, loadScene]);
 
   // The AllConditionsPanel lets the user act on any sprite's conditions, not just the one
   // currently selected on canvas — make sure that sprite becomes selected first so the preview
@@ -235,14 +230,6 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     onTextureApply: handleTextureApply,
     onMarkDirty: markDirty,
   });
-
-  useEffect(() => {
-    scenesApi.list()
-      .then((data) =>
-        setScenes(data.map(s => ({ value: s.id, label: s.label, thumbnail_url: s.thumbnail_url })))
-      )
-      .catch(() => {});
-  }, []);
 
   useEffect(() => {
     if (!projectId) return;
@@ -427,14 +414,13 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     <div className="scene-page">
       <TopBar
         projectId={projectId}
-        scenes={scenes}
-        currentSceneName={currentSceneId}
+        sceneLabel={currentSceneLabel}
         sceneLoaded={showSceneControls}
         isSaving={isSaving}
         guideAspectRatio={guideAspectRatio}
         orientation={orientation}
         onBack={handleBack}
-        onSceneSelect={handleSceneSelect}
+        onRenameScene={handleRenameScene}
         onGuideAspectRatioChange={handleGuideAspectRatioChange}
         onOrientationToggle={handleOrientationToggle}
         onSave={saveScene}

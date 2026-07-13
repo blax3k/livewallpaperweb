@@ -1,17 +1,14 @@
 import React, { useState } from 'react';
 import {
-  ChevronLeft, ChevronDown, ImageIcon, MousePointer2, Radar, Minus, Plus, Maximize, Save,
+  ChevronLeft, ImageIcon, MousePointer2, Radar, Minus, Plus, Maximize, Save,
 } from 'lucide-react';
-import { SceneOption } from './SceneSelectorControl';
 import { PhoneGuideControl, PhoneGuideValue } from './PhoneGuideControl';
 import { ImageLibraryModal } from './modals/ImageLibraryModal';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '../components/ui/dropdown-menu';
 import './TopBar.scss';
 
 interface TopBarProps {
   projectId: string;
-  scenes: SceneOption[];
-  currentSceneName: string | null;
+  sceneLabel: string | null;
   sceneLoaded: boolean;
   isSaving: boolean;
   guideAspectRatio: PhoneGuideValue;
@@ -21,7 +18,7 @@ interface TopBarProps {
   sceneSizeLabel?: string;
   sceneSizeTitle?: string;
   onBack?: () => void;
-  onSceneSelect: (sceneName: string) => void;
+  onRenameScene: (name: string) => void;
   onGuideAspectRatioChange: (value: PhoneGuideValue) => void;
   onOrientationToggle: () => void;
   onSave: () => void;
@@ -46,11 +43,15 @@ function SegmentButton({ active, disabled, onClick, title, children }: { active:
   );
 }
 
-export function TopBar({ projectId, scenes, currentSceneName, sceneLoaded, isSaving, guideAspectRatio, orientation, zoom, gyroMode, sceneSizeLabel, sceneSizeTitle, onBack, onSceneSelect, onGuideAspectRatioChange, onOrientationToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle, onImageReplaced }: TopBarProps) {
+export function TopBar({ projectId, sceneLabel, sceneLoaded, isSaving, guideAspectRatio, orientation, zoom, gyroMode, sceneSizeLabel, sceneSizeTitle, onBack, onRenameScene, onGuideAspectRatioChange, onOrientationToggle, onSave, onZoomIn, onZoomOut, onCenter, onGyroModeToggle, onImageReplaced }: TopBarProps) {
   const [libraryOpen, setLibraryOpen] = useState(false);
+  const [editingName, setEditingName] = useState(false);
+  const [nameValue, setNameValue] = useState('');
 
-  const currentScene = scenes.find(s => s.value === currentSceneName);
-  const sceneLabel = currentScene?.label ?? (sceneLoaded ? currentSceneName : null) ?? 'Select scene';
+  const commitRename = () => {
+    onRenameScene(nameValue);
+    setEditingName(false);
+  };
 
   return (
     <div className="top-bar">
@@ -65,25 +66,34 @@ export function TopBar({ projectId, scenes, currentSceneName, sceneLoaded, isSav
         </button>
       )}
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button
-            type="button"
-            disabled={scenes.length === 0}
-            className="top-bar__scene-trigger"
-          >
-            {sceneLabel}
-            <ChevronDown size={13} />
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start">
-          {scenes.map(scene => (
-            <DropdownMenuItem key={scene.value} onSelect={() => onSceneSelect(scene.value)}>
-              {scene.label}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
+      {editingName ? (
+        <input
+          className="top-bar__scene-name-input"
+          value={nameValue}
+          autoFocus
+          onChange={e => setNameValue(e.target.value)}
+          onFocus={e => e.target.select()}
+          onBlur={commitRename}
+          onKeyDown={e => {
+            if (e.key === 'Enter') commitRename();
+            if (e.key === 'Escape') setEditingName(false);
+          }}
+        />
+      ) : (
+        <button
+          type="button"
+          disabled={!sceneLoaded}
+          className="top-bar__scene-name"
+          title="Double-click to rename scene"
+          onDoubleClick={() => {
+            if (!sceneLoaded) return;
+            setNameValue(sceneLabel ?? '');
+            setEditingName(true);
+          }}
+        >
+          {sceneLabel ?? (sceneLoaded ? 'Untitled scene' : 'No scene')}
+        </button>
+      )}
 
       <div className="top-bar__divider" />
 
