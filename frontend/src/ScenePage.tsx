@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useState, useEffect } from 'react';
+import React, { useRef, useCallback, useState, useEffect, useMemo } from 'react';
 import { SceneEditorPanel } from './controls/panels/SceneEditorPanel';
 import { SpriteConditionsPanel } from './controls/panels/SpriteConditionsPanel';
 import { AllConditionsPanel } from './controls/panels/AllConditionsPanel';
@@ -14,7 +14,8 @@ import { useSpriteDrag } from './hooks/useSpriteDrag';
 import { useKeyboardControls } from './hooks/useKeyboardControls';
 import { computeSceneSize, collectTextureResources, formatBytes } from './utils/sceneSize';
 import { flagsApi, imagesApi } from './api';
-import type { FlagDefinition, RuleConditionGroup } from '@livewallpaper/types';
+import type { FlagDefinition, RuleConditionGroup, SlotOption } from '@livewallpaper/types';
+import { matchesConditionGroup, type WorldState } from './ruleEngine';
 
 interface ScenePageProps {
   initialSceneId?: string;
@@ -39,6 +40,13 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
   const gyroOrigin = useRef<{ x: number; y: number } | null>(null);
   const [editTextureIndex, setEditTextureIndex] = useState<number | null>(null);
   const [allConditionsModalOpen, setAllConditionsModalOpen] = useState(false);
+  // Slot authoring UI state (ephemeral — never persisted to the scene).
+  const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
+  const [expandedSlotIds, setExpandedSlotIds] = useState<ReadonlySet<string>>(new Set());
+  // Preview-only world-state for the Scene-flags playground. Seeded from each flag's default so
+  // the Layers list reflects a plausible "current" eligibility before the playground (Phase 3)
+  // lets the user toggle flags. Toggling never writes back to the scene.
+  const [previewFlags, setPreviewFlags] = useState<ReadonlySet<string>>(new Set());
 
   const {
     canvasRef,
@@ -48,6 +56,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     xFocus,
     yFocus,
     spriteEntries,
+    slots,
     selectedSprite,
     setSelectedSprite,
     isSaving,
@@ -233,8 +242,59 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
 
   useEffect(() => {
     if (!projectId) return;
-    flagsApi.list(projectId).then(setAvailableFlags).catch(() => {});
+    flagsApi.list(projectId).then((flags) => {
+      setAvailableFlags(flags);
+      setPreviewFlags(new Set(flags.filter(f => f.defaultActive).map(f => f.id)));
+    }).catch(() => {});
   }, [projectId]);
+
+  // A minimal world for evaluating slot-option gates in the Layers list. Gates are flag-only, so
+  // the clock/counts are placeholders; only `activeFlags` (the preview toggles) matters here.
+  const previewWorld = useMemo<WorldState>(() => ({
+    clock: { currentHour: 0, currentMinuteOfDay: 0, dayOfWeekNum: 0, installHours: 0 },
+    activeFlags: previewFlags,
+    sceneCounts: {},
+    flagChanges: {},
+  }), [previewFlags]);
+
+  const isOptionEligible = useCallback(
+    (_slotId: string, option: SlotOption) => matchesConditionGroup(option.conditions, previewWorld),
+    [previewWorld],
+  );
+
+  const handleSelectSlot = useCallback((slotId: string) => {
+    setSelectedSlotId(slotId);
+    // A slot and a base sprite can't be co-selected — clear the sprite selection & canvas highlight.
+    setSelectedSprite(null);
+    rendererRef.current?.setSelectedSpriteHighlight(null);
+    setExpandedSlotIds((prev) => {
+      if (prev.has(slotId)) return prev;
+      const next = new Set(prev);
+      next.add(slotId);
+      return next;
+    });
+  }, [setSelectedSprite, rendererRef]);
+
+  const handleToggleSlotExpand = useCallback((slotId: string) => {
+    setExpandedSlotIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(slotId)) next.delete(slotId);
+      else next.add(slotId);
+      return next;
+    });
+  }, []);
+
+  // Selecting a base sprite clears any slot selection so the two stay mutually exclusive.
+  const handleSelectSpriteFromLayers = useCallback((index: number) => {
+    setSelectedSlotId(null);
+    handleSpriteSelect(index);
+  }, [handleSpriteSelect]);
+
+  // Canvas clicks/drags select a sprite through the renderer directly; clear any slot selection so
+  // a slot row and a sprite can't both look selected.
+  useEffect(() => {
+    if (selectedSprite) setSelectedSlotId(null);
+  }, [selectedSprite]);
 
   useEffect(() => {
     if (initialSceneId) loadScene(initialSceneId);
@@ -442,6 +502,12 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
           yFocus={yFocus}
           projectId={projectId}
           spriteEntries={spriteEntries}
+          slots={slots}
+          selectedSlotId={selectedSlotId}
+          expandedSlotIds={expandedSlotIds}
+          isOptionEligible={isOptionEligible}
+          onSelectSlot={handleSelectSlot}
+          onToggleSlotExpand={handleToggleSlotExpand}
           selectedSprite={selectedSprite}
           onXFocusChange={handleXFocusChange}
           onXFocusChangeStart={handleXFocusChangeStart}
@@ -450,7 +516,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
           onYFocusChangeStart={handleYFocusChangeStart}
           onYFocusCommit={handleYFocusCommit}
           onSpriteToggle={handleSpriteToggle}
-          onSpriteSelect={handleSpriteSelect}
+          onSpriteSelect={handleSelectSpriteFromLayers}
           onAddSprite={handleAddSprite}
           onChangeTexture={handleChangeTextureWithHistory}
           onDeleteSprite={handleDeleteSprite}

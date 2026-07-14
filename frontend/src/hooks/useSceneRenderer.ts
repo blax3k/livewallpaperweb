@@ -3,7 +3,7 @@ import { SceneRenderer } from '../renderers/SceneRenderer';
 import { scenesApi, spritesApi } from '../api';
 import type { SpriteEntry } from '../controls/panels/SpriteListPanel';
 import type { Scene } from '../interfaces/Scene';
-import type { SpriteConditionBlock, RuleConditionGroup } from '@livewallpaper/types';
+import type { SpriteConditionBlock, RuleConditionGroup, SceneSlot } from '@livewallpaper/types';
 import type { PhoneGuideValue } from '../controls/PhoneGuideControl';
 
 export interface SelectedSprite {
@@ -23,6 +23,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
   const [xFocus, setXFocus] = useState(0.5);
   const [yFocus, setYFocus] = useState(0.5);
   const [spriteEntries, setSpriteEntries] = useState<SpriteEntry[]>([]);
+  const [slots, setSlots] = useState<SceneSlot[]>([]);
   const [selectedSprite, setSelectedSprite] = useState<SelectedSprite | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
@@ -85,6 +86,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
 
   const refreshSpriteList = useCallback((r: SceneRenderer) => {
     setSpriteEntries([...r.getSpriteEntries()]);
+    setSlots([...r.getSlots()]);
   }, []);
 
   const loadScene = useCallback(async (sceneId: string) => {
@@ -429,6 +431,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     xFocus,
     yFocus,
     spriteEntries,
+    slots,
     selectedSprite,
     setSelectedSprite,
     isSaving,

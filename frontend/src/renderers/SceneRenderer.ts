@@ -1033,6 +1033,14 @@ export class SceneRenderer {
     };
   }
 
+  /**
+   * The scene's slots (variable layers), untouched by the renderer — slots aren't composited on
+   * the editor canvas yet, so this just surfaces the loaded data for the Layers panel to author.
+   */
+  getSlots(): import('@livewallpaper/types').SceneSlot[] {
+    return this.originalSceneData?.slots ?? [];
+  }
+
   toggleSpriteByIndex(index: number): void {
     if (index >= 0 && index < this.sprites.length) {
       this.toggleSpriteVisibility(this.sprites[index]);

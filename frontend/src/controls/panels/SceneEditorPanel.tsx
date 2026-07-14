@@ -1,5 +1,7 @@
 import React from 'react';
-import { SpriteListPanel, SpriteEntry } from './SpriteListPanel';
+import type { SceneSlot, SlotOption } from '@livewallpaper/types';
+import { LayersPanel } from './LayersPanel';
+import type { SpriteEntry } from './SpriteListPanel';
 import { FocusControl } from '../FocusControl';
 import { SpritePanelControl } from './SpritePanelControl';
 import { SectionHeading } from './SectionHeading';
@@ -23,6 +25,12 @@ interface SceneEditorPanelProps {
   xFocus: number;
   yFocus: number;
   spriteEntries: SpriteEntry[];
+  slots: SceneSlot[];
+  selectedSlotId: string | null;
+  expandedSlotIds: ReadonlySet<string>;
+  isOptionEligible?: (slotId: string, option: SlotOption) => boolean;
+  onSelectSlot: (slotId: string) => void;
+  onToggleSlotExpand: (slotId: string) => void;
   projectId: string;
   selectedSprite: SelectedSprite | null;
   onXFocusChange: (value: number) => void;
@@ -59,6 +67,12 @@ export function SceneEditorPanel({
   xFocus,
   yFocus,
   spriteEntries,
+  slots,
+  selectedSlotId,
+  expandedSlotIds,
+  isOptionEligible,
+  onSelectSlot,
+  onToggleSlotExpand,
   projectId,
   selectedSprite,
   onXFocusChange,
@@ -74,7 +88,6 @@ export function SceneEditorPanel({
   onDeleteSprite,
   onRenameSprite,
   onEditTexture,
-  onEditConditions,
   activeConditionLabel,
   onSpritePositionChange,
   onSpritePositionChangeStart,
@@ -97,18 +110,23 @@ export function SceneEditorPanel({
       </div>
 
       <div className="scene-editor-panel__section">
-        <SpriteListPanel
-          entries={spriteEntries}
+        <LayersPanel
+          sprites={spriteEntries}
+          slots={slots}
           projectId={projectId}
-          selectedName={selectedSprite?.name ?? null}
-          onToggle={onSpriteToggle}
-          onSelect={onSpriteSelect}
-          onAdd={onAddSprite}
+          selectedSpriteName={selectedSlotId ? null : (selectedSprite?.name ?? null)}
+          selectedSlotId={selectedSlotId}
+          expandedSlotIds={expandedSlotIds}
+          isOptionEligible={isOptionEligible}
+          onSelectSprite={onSpriteSelect}
+          onToggleSprite={onSpriteToggle}
+          onAddSprite={onAddSprite}
           onChangeTexture={onChangeTexture}
-          onDelete={onDeleteSprite}
-          onRename={onRenameSprite}
+          onDeleteSprite={onDeleteSprite}
+          onRenameSprite={onRenameSprite}
           onEditTexture={onEditTexture}
-          onEditConditions={onEditConditions}
+          onSelectSlot={onSelectSlot}
+          onToggleSlotExpand={onToggleSlotExpand}
         />
       </div>
 
