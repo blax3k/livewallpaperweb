@@ -31,6 +31,7 @@ interface LayersPanelProps {
   onRenameSprite: (index: number, newName: string) => void;
   onSelectSlot: (slotId: string) => void;
   onToggleSlotExpand: (slotId: string) => void;
+  onAddSlot: () => void;
 }
 
 /** Whether an option carries any eligibility gate (vs. being always eligible). */
@@ -55,6 +56,7 @@ export function LayersPanel({
   onRenameSprite,
   onSelectSlot,
   onToggleSlotExpand,
+  onAddSlot,
 }: LayersPanelProps) {
   const [showModal, setShowModal] = useState(false);
   const [changeTextureIndex, setChangeTextureIndex] = useState<number | null>(null);
@@ -90,14 +92,21 @@ export function LayersPanel({
       <div className="layers-panel__header">
         <span className="layers-panel__title">Layers</span>
         <span className="layers-panel__sublabel">front → back</span>
-        <button
-          type="button"
-          onClick={() => { setChangeTextureIndex(null); setShowModal(true); }}
-          title="Add sprite"
-          className="layers-panel__add-btn"
-        >
-          <Plus size={13} />
-        </button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button type="button" title="Add layer or slot" className="layers-panel__add-btn">
+              <Plus size={13} />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onSelect={() => { setChangeTextureIndex(null); setShowModal(true); }}>
+              Add sprite
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={onAddSlot}>
+              Add slot
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       <div className="layers-panel__list">

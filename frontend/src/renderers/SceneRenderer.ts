@@ -1041,6 +1041,11 @@ export class SceneRenderer {
     return this.originalSceneData?.slots ?? [];
   }
 
+  /** Replace the scene's slots. Persisted on the next save via getSceneData()'s spread. */
+  setSlots(slots: import('@livewallpaper/types').SceneSlot[]): void {
+    if (this.originalSceneData) this.originalSceneData.slots = slots;
+  }
+
   toggleSpriteByIndex(index: number): void {
     if (index >= 0 && index < this.sprites.length) {
       this.toggleSpriteVisibility(this.sprites[index]);

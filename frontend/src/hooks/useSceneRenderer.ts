@@ -89,6 +89,20 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     setSlots([...r.getSlots()]);
   }, []);
 
+  /**
+   * Apply an immutable update to the scene's slots: persists it on the renderer (so a later save
+   * serializes it), refreshes the reactive `slots`, and marks the scene dirty. Undo-history
+   * integration for slot edits is a later phase; this is the single write path for now.
+   */
+  const updateSlots = useCallback((updater: (slots: SceneSlot[]) => SceneSlot[]) => {
+    const r = rendererRef.current;
+    if (!r) return;
+    const next = updater(r.getSlots());
+    r.setSlots(next);
+    setSlots([...next]);
+    markDirty();
+  }, [markDirty]);
+
   const loadScene = useCallback(async (sceneId: string) => {
     try {
       const scene = await scenesApi.get(sceneId);
@@ -432,6 +446,7 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     yFocus,
     spriteEntries,
     slots,
+    updateSlots,
     selectedSprite,
     setSelectedSprite,
     isSaving,

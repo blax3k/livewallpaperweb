@@ -1,0 +1,381 @@
+.slot-editor-panel {
+  display: flex;
+  width: 300px;
+  flex-shrink: 0;
+  flex-direction: column;
+  overflow-y: auto;
+  border-radius: var(--size-12);
+  border: 1px solid var(--color-border);
+  background: var(--color-panel);
+  box-shadow: var(--shadow-panel);
+}
+
+.slot-editor-panel__empty {
+  padding: var(--size-16) var(--size-14);
+  font-size: var(--text-11);
+  color: var(--color-fg-faint);
+}
+
+// ── Slot header ──────────────────────────────────────────────────────────────
+
+.slot-editor-panel__header {
+  display: flex;
+  align-items: center;
+  gap: var(--size-9);
+  padding: var(--size-12) var(--size-12) var(--size-12);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.slot-editor-panel__glyph {
+  display: flex;
+  flex-shrink: 0;
+  color: var(--color-accent-fg);
+}
+
+.slot-editor-panel__name {
+  font-size: var(--text-13);
+  font-weight: 600;
+  color: var(--color-fg);
+  cursor: default;
+}
+
+.slot-editor-panel__name-input {
+  flex: 1;
+  min-width: 0;
+  border-radius: var(--size-4);
+  border: 1px solid var(--color-accent-border);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-fg);
+  font-size: var(--text-13);
+  font-weight: 600;
+  padding: var(--size-2) var(--size-4);
+  outline: none;
+}
+
+.slot-editor-panel__sublabel {
+  font-size: var(--text-11);
+  color: var(--color-fg-faint);
+}
+
+.slot-editor-panel__kebab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-22);
+  height: var(--size-22);
+  margin-left: auto;
+  border-radius: var(--size-6);
+  color: var(--color-fg-muted);
+  transition: background-color var(--duration-fast), color var(--duration-fast);
+
+  &:hover {
+    background: var(--color-hover);
+    color: var(--color-fg);
+  }
+}
+
+// ── Sprites section ──────────────────────────────────────────────────────────
+
+.slot-editor-panel__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-7);
+  padding: var(--size-12);
+}
+
+.slot-editor-panel__section-head {
+  display: flex;
+  align-items: center;
+  gap: var(--size-6);
+}
+
+.slot-editor-panel__section-label {
+  font-size: var(--text-10);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-fg-faint);
+}
+
+.slot-editor-panel__section-count {
+  font-size: var(--text-10);
+  color: var(--color-meta);
+}
+
+.slot-editor-panel__equal-odds {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4);
+  margin-left: auto;
+  font-size: 9.5px;
+  color: var(--color-fg-faintest);
+}
+
+// ── Option rows ──────────────────────────────────────────────────────────────
+
+.slot-option {
+  border: 1px solid var(--color-border);
+  border-radius: var(--size-9);
+  background: var(--color-panel-inset);
+
+  &--none {
+    display: flex;
+    align-items: center;
+    gap: var(--size-9);
+    padding: var(--size-8) var(--size-10);
+    border-style: dashed;
+    border-color: var(--color-border-strong);
+  }
+
+  &--expanded {
+    border-color: var(--color-accent-border);
+    background: var(--color-accent-input);
+  }
+}
+
+.slot-option__row {
+  display: flex;
+  align-items: center;
+  gap: var(--size-9);
+  padding: var(--size-8) var(--size-10);
+  cursor: pointer;
+
+  .slot-option:not(.slot-option--expanded):hover & {
+    border-radius: var(--size-9);
+  }
+}
+
+.slot-option__swatch {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-22);
+  height: var(--size-22);
+  border-radius: var(--size-6);
+  background: #8a7d6b;
+
+  &--ineligible {
+    opacity: 0.4;
+  }
+
+  &--none {
+    background: none;
+    border: 1px dashed var(--color-border-strong);
+    color: var(--color-fg-faintest);
+  }
+}
+
+.slot-option__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.slot-option__title {
+  font-size: var(--text-12);
+  font-weight: 500;
+  color: var(--color-fg-default);
+
+  .slot-option--expanded & {
+    color: var(--color-fg);
+  }
+}
+
+.slot-option__name-input {
+  width: 100%;
+  border-radius: var(--size-4);
+  border: 1px solid var(--color-accent-border);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-fg);
+  font-size: var(--text-12);
+  padding: var(--size-1) var(--size-4);
+  outline: none;
+}
+
+.slot-option__empty-chip {
+  margin-left: var(--size-2);
+  border-radius: var(--size-4);
+  border: 1px solid var(--color-border);
+  background: var(--color-elevated);
+  padding: var(--size-1) var(--size-5);
+  font-size: var(--text-10);
+  font-weight: 400;
+  color: var(--color-fg-faintest);
+}
+
+.slot-option__subtitle {
+  margin-top: var(--size-2);
+  font-size: var(--text-10);
+  color: var(--color-fg-faintest);
+
+  &--editing {
+    color: var(--color-accent-dim);
+  }
+}
+
+.slot-option__gate-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--size-5);
+  margin-top: var(--size-2);
+}
+
+.slot-option__gate-none {
+  font-size: 9.5px;
+  color: var(--color-fg-faintest);
+}
+
+.slot-option__gate-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+  font-size: 9.5px;
+
+  &--show {
+    color: var(--color-gate-require-fg);
+  }
+
+  &--hide {
+    color: var(--color-gate-exclude-fg);
+  }
+}
+
+.slot-option__kebab {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--size-4);
+  padding: var(--size-2);
+  color: var(--color-fg-faint);
+  transition: color var(--duration-fast);
+
+  &:hover {
+    color: var(--color-fg-muted);
+  }
+}
+
+// ── Gate cards (Show when / Hide when) ───────────────────────────────────────
+
+.slot-option__gates {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-8);
+  padding: 0 var(--size-10) var(--size-10);
+}
+
+.gate-card {
+  display: flex;
+  overflow: hidden;
+  border-radius: var(--size-10);
+  border: 1px solid var(--color-border);
+  background: var(--color-panel-inset);
+}
+
+.gate-card__rail {
+  width: var(--size-4);
+  flex-shrink: 0;
+
+  .gate-card--show & { background: var(--color-gate-require-rail); }
+  .gate-card--hide & { background: var(--color-gate-exclude-rail); }
+}
+
+.gate-card__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-7);
+  padding: var(--size-9) var(--size-10);
+}
+
+.gate-card__head {
+  display: flex;
+  align-items: center;
+  gap: var(--size-7);
+}
+
+.gate-card__icon {
+  display: flex;
+
+  .gate-card--show & { color: var(--color-gate-require-fg); }
+  .gate-card--hide & { color: var(--color-gate-exclude-fg); }
+}
+
+.gate-card__title {
+  font-size: var(--text-11-5);
+  font-weight: 600;
+  color: var(--color-fg-default);
+}
+
+.gate-card__hint {
+  font-size: 9.5px;
+  color: var(--color-fg-faintest);
+}
+
+.gate-card__flag-row {
+  display: flex;
+  align-items: center;
+  gap: var(--size-7);
+}
+
+.gate-card__flag-select {
+  flex: 1;
+  min-width: 0;
+  font-family: ui-monospace, Menlo, monospace;
+}
+
+.gate-card__remove {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-fg-faint);
+  transition: color var(--duration-fast);
+
+  &:hover { color: var(--color-fg-muted); }
+}
+
+.gate-card__add {
+  padding: var(--size-5);
+  border-radius: var(--size-7);
+  border: 1px dashed;
+  text-align: center;
+  font-size: var(--text-10-5);
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity var(--duration-fast);
+
+  .gate-card--show & { color: var(--color-gate-require-fg); border-color: var(--color-gate-require-border); }
+  .gate-card--hide & { color: var(--color-gate-exclude-fg); border-color: var(--color-gate-exclude-border); }
+
+  &:disabled { opacity: 0.4; cursor: default; }
+}
+
+// ── Add sprite + helper ──────────────────────────────────────────────────────
+
+.slot-editor-panel__add-sprite {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--size-6);
+  height: var(--size-32);
+  border-radius: var(--size-8);
+  border: 1px dashed var(--color-border-strong);
+  color: var(--color-fg-subtle);
+  font-size: var(--text-11);
+  cursor: pointer;
+  transition: border-color var(--duration-fast), color var(--duration-fast);
+
+  &:hover {
+    border-color: var(--color-accent-border);
+    color: var(--color-accent-fg);
+  }
+}
+
+.slot-editor-panel__helper {
+  font-size: var(--text-10);
+  line-height: 1.5;
+  color: var(--color-fg-faintest);
+}

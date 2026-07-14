@@ -1,11 +1,9 @@
 import React, { useRef, useCallback, useState, useEffect, useMemo } from 'react';
 import { SceneEditorPanel } from './controls/panels/SceneEditorPanel';
-import { SpriteConditionsPanel } from './controls/panels/SpriteConditionsPanel';
-import { AllConditionsPanel } from './controls/panels/AllConditionsPanel';
+import { SlotEditorPanel } from './controls/panels/SlotEditorPanel';
 import { TopBar } from './controls/TopBar';
 import { NotificationStack } from './controls/NotificationStack';
 import { EditTextureModal } from './controls/modals/EditTextureModal';
-import { Dialog, DialogContent } from './components/ui/dialog';
 import './ScenePage.scss';
 import { useUndoHistory } from './hooks/useUndoHistory';
 import { useNotifications } from './hooks/useNotifications';
@@ -14,8 +12,9 @@ import { useSpriteDrag } from './hooks/useSpriteDrag';
 import { useKeyboardControls } from './hooks/useKeyboardControls';
 import { computeSceneSize, collectTextureResources, formatBytes } from './utils/sceneSize';
 import { flagsApi, imagesApi } from './api';
-import type { FlagDefinition, RuleConditionGroup, SlotOption } from '@livewallpaper/types';
+import type { FlagDefinition, SlotOption } from '@livewallpaper/types';
 import { matchesConditionGroup, type WorldState } from './ruleEngine';
+import { createSlot, createOptionFromTexture, mapSlot, setOptionGates } from './slotOps';
 
 interface ScenePageProps {
   initialSceneId?: string;
@@ -39,7 +38,6 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
   const isGyroDragging = useRef(false);
   const gyroOrigin = useRef<{ x: number; y: number } | null>(null);
   const [editTextureIndex, setEditTextureIndex] = useState<number | null>(null);
-  const [allConditionsModalOpen, setAllConditionsModalOpen] = useState(false);
   // Slot authoring UI state (ephemeral — never persisted to the scene).
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
   const [expandedSlotIds, setExpandedSlotIds] = useState<ReadonlySet<string>>(new Set());
@@ -57,6 +55,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     yFocus,
     spriteEntries,
     slots,
+    updateSlots,
     selectedSprite,
     setSelectedSprite,
     isSaving,
@@ -81,11 +80,6 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     handleDeleteSprite,
     handleRenameSprite,
     handleRenameScene,
-    handleSelectConditionSet,
-    handleAddConditionSet,
-    handleRemoveConditionSet,
-    handleRenameConditionSet,
-    handleSetConditionSetFlags,
     handleZoomIn,
     handleZoomOut,
     handleZoomAtPoint,
@@ -135,47 +129,6 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     if (isDirty && !window.confirm('You have unsaved changes. Leave without saving?')) return;
     onBack?.();
   }, [isDirty, onBack]);
-
-  // The AllConditionsPanel lets the user act on any sprite's conditions, not just the one
-  // currently selected on canvas — make sure that sprite becomes selected first so the preview
-  // (and the Sprite panel's X/Y/Z/W/H fields) end up reflecting the right sprite.
-  const ensureSpriteSelected = useCallback((spriteIndex: number) => {
-    if (selectedSprite?.index !== spriteIndex) {
-      handleSpriteSelect(spriteIndex);
-    }
-  }, [selectedSprite, handleSpriteSelect]);
-
-  const handleSelectConditionSetForSprite = useCallback((spriteIndex: number, conditionIndex: number) => {
-    ensureSpriteSelected(spriteIndex);
-    handleSelectConditionSet(spriteIndex, conditionIndex);
-  }, [ensureSpriteSelected, handleSelectConditionSet]);
-
-  // Same as above, but also used from the "All conditions" modal — picking a set there
-  // both previews it and returns focus to the editor.
-  const handleSelectConditionSetFromModal = useCallback((spriteIndex: number, conditionIndex: number) => {
-    handleSelectConditionSetForSprite(spriteIndex, conditionIndex);
-    setAllConditionsModalOpen(false);
-  }, [handleSelectConditionSetForSprite]);
-
-  const handleAddConditionSetForSprite = useCallback((spriteIndex: number) => {
-    ensureSpriteSelected(spriteIndex);
-    handleAddConditionSet(spriteIndex);
-  }, [ensureSpriteSelected, handleAddConditionSet]);
-
-  const handleRemoveConditionSetForSprite = useCallback((spriteIndex: number, conditionIndex: number) => {
-    ensureSpriteSelected(spriteIndex);
-    handleRemoveConditionSet(spriteIndex, conditionIndex);
-  }, [ensureSpriteSelected, handleRemoveConditionSet]);
-
-  const handleRenameConditionSetForSprite = useCallback((spriteIndex: number, conditionIndex: number, name: string) => {
-    ensureSpriteSelected(spriteIndex);
-    handleRenameConditionSet(spriteIndex, conditionIndex, name);
-  }, [ensureSpriteSelected, handleRenameConditionSet]);
-
-  const handleSetConditionSetFlagsForSprite = useCallback((spriteIndex: number, conditionIndex: number, conditions: RuleConditionGroup) => {
-    ensureSpriteSelected(spriteIndex);
-    handleSetConditionSetFlags(spriteIndex, conditionIndex, conditions);
-  }, [ensureSpriteSelected, handleSetConditionSetFlags]);
 
   const getConditionsForSprite = useCallback((spriteIndex: number) => {
     return rendererRef.current?.getSpriteConditions(spriteIndex) ?? [];
@@ -295,6 +248,58 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
   useEffect(() => {
     if (selectedSprite) setSelectedSlotId(null);
   }, [selectedSprite]);
+
+  const selectedSlot = slots.find(s => s.id === selectedSlotId) ?? null;
+
+  // ── Slot mutations (persisted + dirty via updateSlots; undo/redo is a later phase) ──────────
+  const handleAddSlot = useCallback(() => {
+    const existing = new Set(slots.map(s => s.name));
+    let n = existing.size + 1;
+    let name = `slot ${n}`;
+    while (existing.has(name)) name = `slot ${++n}`;
+    const slot = createSlot(name);
+    updateSlots(s => [...s, slot]);
+    setSelectedSprite(null);
+    rendererRef.current?.setSelectedSpriteHighlight(null);
+    setSelectedSlotId(slot.id);
+    setExpandedSlotIds(prev => new Set(prev).add(slot.id));
+  }, [slots, updateSlots, setSelectedSprite, rendererRef]);
+
+  const handleRenameSlot = useCallback((slotId: string, name: string) => {
+    updateSlots(s => mapSlot(s, slotId, sl => ({ ...sl, name })));
+  }, [updateSlots]);
+
+  const handleDeleteSlot = useCallback((slotId: string) => {
+    updateSlots(s => s.filter(sl => sl.id !== slotId));
+    setSelectedSlotId(prev => (prev === slotId ? null : prev));
+    setExpandedSlotIds(prev => {
+      if (!prev.has(slotId)) return prev;
+      const next = new Set(prev);
+      next.delete(slotId);
+      return next;
+    });
+  }, [updateSlots]);
+
+  const handleAddOption = useCallback((slotId: string, textureResource: string) => {
+    const name = textureResource.replace(/^.*\//, '').replace(/\.[^.]+$/, '') || 'sprite';
+    const option = createOptionFromTexture(textureResource, name);
+    updateSlots(s => mapSlot(s, slotId, sl => ({ ...sl, options: [...sl.options, option] })));
+  }, [updateSlots]);
+
+  const handleRemoveOption = useCallback((slotId: string, optionId: string) => {
+    updateSlots(s => mapSlot(s, slotId, sl => ({ ...sl, options: sl.options.filter(o => o.id !== optionId) })));
+  }, [updateSlots]);
+
+  const handleRenameOption = useCallback((slotId: string, optionId: string, name: string) => {
+    updateSlots(s => mapSlot(s, slotId, sl => ({
+      ...sl,
+      options: sl.options.map(o => (o.id === optionId ? { ...o, name } : o)),
+    })));
+  }, [updateSlots]);
+
+  const handleSetGates = useCallback((slotId: string, optionId: string, showFlagIds: string[], hideFlagIds: string[]) => {
+    updateSlots(s => setOptionGates(s, slotId, optionId, showFlagIds, hideFlagIds));
+  }, [updateSlots]);
 
   useEffect(() => {
     if (initialSceneId) loadScene(initialSceneId);
@@ -508,6 +513,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
           isOptionEligible={isOptionEligible}
           onSelectSlot={handleSelectSlot}
           onToggleSlotExpand={handleToggleSlotExpand}
+          onAddSlot={handleAddSlot}
           selectedSprite={selectedSprite}
           onXFocusChange={handleXFocusChange}
           onXFocusChangeStart={handleXFocusChangeStart}
@@ -522,7 +528,6 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
           onDeleteSprite={handleDeleteSprite}
           onRenameSprite={handleRenameSprite}
           onEditTexture={setEditTextureIndex}
-          onEditConditions={handleSpriteSelect}
           activeConditionLabel={activeConditionLabel}
           onSpritePositionChange={handleSpritePositionChange}
           onSpritePositionChangeStart={handleSpritePositionChangeStart}
@@ -552,17 +557,17 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
           />
         </div>
         {showSceneControls && (
-          <SpriteConditionsPanel
-            selectedSprite={selectedSprite}
-            conditionBlocks={selectedSprite ? getConditionsForSprite(selectedSprite.index) : []}
+          <SlotEditorPanel
+            slot={selectedSlot}
             availableFlags={availableFlags}
-            activeConditionIndex={activeConditionSet?.conditionIndex ?? null}
-            onSelectCondition={handleSelectConditionSetForSprite}
-            onAdd={handleAddConditionSetForSprite}
-            onRemove={handleRemoveConditionSetForSprite}
-            onRename={handleRenameConditionSetForSprite}
-            onSetFlags={handleSetConditionSetFlagsForSprite}
-            onOpenAllConditions={() => setAllConditionsModalOpen(true)}
+            projectId={projectId}
+            isOptionEligible={(option) => isOptionEligible(selectedSlot?.id ?? '', option)}
+            onRenameSlot={handleRenameSlot}
+            onDeleteSlot={handleDeleteSlot}
+            onAddOption={handleAddOption}
+            onRemoveOption={handleRemoveOption}
+            onRenameOption={handleRenameOption}
+            onSetGates={handleSetGates}
           />
         )}
       </div>
@@ -570,18 +575,6 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
       <div className="scene-page__toast-wrap">
         <NotificationStack notifications={notifications} />
       </div>
-
-      <Dialog open={allConditionsModalOpen} onOpenChange={setAllConditionsModalOpen}>
-        <DialogContent showClose={false} className="dialog-content--fit">
-          <AllConditionsPanel
-            spriteEntries={spriteEntries}
-            getConditionsForSprite={getConditionsForSprite}
-            selectedSpriteIndex={selectedSprite?.index ?? null}
-            getActiveConditionIndexForSprite={getActiveConditionIndexForSprite}
-            onSelectConditionSet={handleSelectConditionSetFromModal}
-          />
-        </DialogContent>
-      </Dialog>
 
       {editTextureIndex !== null && (() => {
         const texData = rendererRef.current?.getSpriteTexData(editTextureIndex);

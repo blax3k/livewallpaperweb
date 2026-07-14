@@ -31,6 +31,7 @@ interface SceneEditorPanelProps {
   isOptionEligible?: (slotId: string, option: SlotOption) => boolean;
   onSelectSlot: (slotId: string) => void;
   onToggleSlotExpand: (slotId: string) => void;
+  onAddSlot: () => void;
   projectId: string;
   selectedSprite: SelectedSprite | null;
   onXFocusChange: (value: number) => void;
@@ -46,9 +47,8 @@ interface SceneEditorPanelProps {
   onDeleteSprite: (index: number) => void;
   onRenameSprite: (index: number, newName: string) => void;
   onEditTexture: (index: number) => void;
-  onEditConditions?: (index: number) => void;
-  // Name of the condition set currently being previewed for this sprite, if any.
-  // Condition sets themselves live in the sprite conditions panel on the right.
+  // Name of the condition set currently being previewed for this sprite, if any (legacy scenes
+  // may still carry sprite conditions even though the editor no longer authors them).
   activeConditionLabel?: string | null;
   onSpritePositionChange: (x: number, y: number) => void;
   onSpritePositionChangeStart?: (x: number, y: number) => void;
@@ -73,6 +73,7 @@ export function SceneEditorPanel({
   isOptionEligible,
   onSelectSlot,
   onToggleSlotExpand,
+  onAddSlot,
   projectId,
   selectedSprite,
   onXFocusChange,
@@ -127,6 +128,7 @@ export function SceneEditorPanel({
           onEditTexture={onEditTexture}
           onSelectSlot={onSelectSlot}
           onToggleSlotExpand={onToggleSlotExpand}
+          onAddSlot={onAddSlot}
         />
       </div>
 
