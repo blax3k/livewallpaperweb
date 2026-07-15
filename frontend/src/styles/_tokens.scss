@@ -50,6 +50,9 @@
   // README's table
   --color-track: #26262b;
   --color-chip: #1f1f23;
+  // Neutral stand-in for a slot option's sprite art in list swatches (real thumbnails TBD).
+  // Matches the canvas legend's "base" swatch so slot swatches read as generic sprites.
+  --color-sprite-placeholder: #3a3a42;
   --color-pill-active: #2e2e36;
   --color-meta: #4b4b52;
   --color-toast: #18181b;
@@ -75,6 +78,9 @@
   // Named directly by pixel value — the design calls for half-pixel steps for
   // a few specific labels, so a handful of named steps (xs/sm/md) wouldn't
   // leave room for those without overloading a name to mean two sizes.
+  --text-8: 8px;     // slot cycler sub-label
+  --text-8-5: 8.5px; // "on" micro-labels (flag toggle, slot option "always")
+  --text-9-5: 9.5px; // slot gate chips / "equal odds" / eligibility hints
   --text-10: 10px;   // section headings, badges, meta text
   --text-10-5: 10.5px; // "Match" label / ALL-ANY toggle
   --text-11: 11px;   // values, axis labels

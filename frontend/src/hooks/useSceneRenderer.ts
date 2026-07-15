@@ -3,7 +3,7 @@ import { SceneRenderer } from '../renderers/SceneRenderer';
 import { scenesApi, spritesApi } from '../api';
 import type { SpriteEntry } from '../controls/panels/SpriteListPanel';
 import type { Scene } from '../interfaces/Scene';
-import type { SpriteConditionBlock, RuleConditionGroup, SceneSlot } from '@livewallpaper/types';
+import type { SceneSlot } from '@livewallpaper/types';
 import type { PhoneGuideValue } from '../controls/PhoneGuideControl';
 
 export interface SelectedSprite {
@@ -43,28 +43,6 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
   // queried fresh via renderer.getSelectedConditionIndex(spriteIndex) wherever it's needed.
   const [conditionsVersion, setConditionsVersion] = useState(0);
   const bumpConditionsVersion = useCallback(() => setConditionsVersion(v => v + 1), []);
-
-  // Declared early (before loadScene/handleSpriteSelect) since they depend on it.
-  const handleSelectConditionSet = useCallback((spriteIndex: number, conditionIndex: number) => {
-    const renderer = rendererRef.current;
-    if (!renderer) return;
-
-    if (conditionIndex === -1) {
-      renderer.selectDefaultCondition(spriteIndex);
-    } else {
-      renderer.selectCondition(spriteIndex, conditionIndex);
-    }
-    bumpConditionsVersion();
-    // If this is the sprite currently focused for editing, reflect its new override values.
-    const pos = renderer.getSpritePosition(spriteIndex);
-    const scale = renderer.getSpriteScale(spriteIndex);
-    const parallax = renderer.getSpriteParallax(spriteIndex);
-    if (pos && scale && parallax !== null) {
-      setSelectedSprite(prev => (prev && prev.index === spriteIndex)
-        ? { ...prev, x: pos.x, y: pos.y, width: scale.width, height: scale.height, depth: parallax }
-        : prev);
-    }
-  }, [bumpConditionsVersion]);
 
   const markDirty = useCallback(() => {
     if (isDirtyRef.current) return;
@@ -310,59 +288,6 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     markDirty();
   }, [refreshSpriteList, markDirty]);
 
-  const handleSpriteConditions = useCallback((index: number): SpriteConditionBlock[] => {
-    return rendererRef.current?.getSpriteConditions(index) ?? [];
-  }, []);
-
-  const handleSaveSpriteConditions = useCallback((index: number, conditions: SpriteConditionBlock[]) => {
-    rendererRef.current?.setSpriteConditions(index, conditions);
-    markDirty();
-  }, [markDirty]);
-
-  const handleAddConditionSet = useCallback((spriteIndex: number) => {
-    const renderer = rendererRef.current;
-    if (!renderer) return;
-    const newIndex = renderer.addConditionBlock(spriteIndex);
-    bumpConditionsVersion();
-    markDirty();
-    // Select the newly added set — also covers the case where this is the sprite's first
-    // condition set, so it never sits unselected once one exists.
-    if (newIndex >= 0) {
-      handleSelectConditionSet(spriteIndex, newIndex);
-    }
-  }, [bumpConditionsVersion, markDirty, handleSelectConditionSet]);
-
-  const handleRemoveConditionSet = useCallback((spriteIndex: number, conditionIndex: number) => {
-    const renderer = rendererRef.current;
-    if (!renderer) return;
-    // The renderer keeps a sprite with conditions always selected on its own — if the removed
-    // set was the selected one, it re-selects a remaining set (or restores base values if that
-    // was the last one). We just need to reflect the result if this is the focused sprite.
-    renderer.removeConditionBlock(spriteIndex, conditionIndex);
-    bumpConditionsVersion();
-    markDirty();
-
-    const pos = renderer.getSpritePosition(spriteIndex);
-    const scale = renderer.getSpriteScale(spriteIndex);
-    const parallax = renderer.getSpriteParallax(spriteIndex);
-    if (pos && scale && parallax !== null) {
-      setSelectedSprite(prev => (prev && prev.index === spriteIndex)
-        ? { ...prev, x: pos.x, y: pos.y, width: scale.width, height: scale.height, depth: parallax }
-        : prev);
-    }
-  }, [bumpConditionsVersion, markDirty]);
-
-  const handleRenameConditionSet = useCallback((spriteIndex: number, conditionIndex: number, name: string) => {
-    rendererRef.current?.setConditionBlockName(spriteIndex, conditionIndex, name);
-    bumpConditionsVersion();
-  }, [bumpConditionsVersion]);
-
-  const handleSetConditionSetFlags = useCallback((spriteIndex: number, conditionIndex: number, conditions: RuleConditionGroup) => {
-    rendererRef.current?.setConditionBlockFlags(spriteIndex, conditionIndex, conditions);
-    bumpConditionsVersion();
-    markDirty();
-  }, [bumpConditionsVersion, markDirty]);
-
   const handleRenameSprite = useCallback((index: number, newName: string) => {
     if (!rendererRef.current) return;
 
@@ -470,13 +395,6 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
     handleDeleteSprite,
     handleRenameSprite,
     handleRenameScene,
-    handleSpriteConditions,
-    handleSaveSpriteConditions,
-    handleSelectConditionSet,
-    handleAddConditionSet,
-    handleRemoveConditionSet,
-    handleRenameConditionSet,
-    handleSetConditionSetFlags,
     handleZoomIn,
     handleZoomOut,
     handleZoomAtPoint,

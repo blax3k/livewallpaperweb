@@ -78637,22 +78637,6 @@ void main(void) {
     onSavedRef.current = onSaved;
     const [conditionsVersion, setConditionsVersion] = (0, import_react18.useState)(0);
     const bumpConditionsVersion = (0, import_react18.useCallback)(() => setConditionsVersion((v2) => v2 + 1), []);
-    const handleSelectConditionSet = (0, import_react18.useCallback)((spriteIndex, conditionIndex) => {
-      const renderer = rendererRef.current;
-      if (!renderer) return;
-      if (conditionIndex === -1) {
-        renderer.selectDefaultCondition(spriteIndex);
-      } else {
-        renderer.selectCondition(spriteIndex, conditionIndex);
-      }
-      bumpConditionsVersion();
-      const pos = renderer.getSpritePosition(spriteIndex);
-      const scale = renderer.getSpriteScale(spriteIndex);
-      const parallax = renderer.getSpriteParallax(spriteIndex);
-      if (pos && scale && parallax !== null) {
-        setSelectedSprite((prev) => prev && prev.index === spriteIndex ? { ...prev, x: pos.x, y: pos.y, width: scale.width, height: scale.height, depth: parallax } : prev);
-      }
-    }, [bumpConditionsVersion]);
     const markDirty = (0, import_react18.useCallback)(() => {
       if (isDirtyRef.current) return;
       isDirtyRef.current = true;
@@ -78855,45 +78839,6 @@ void main(void) {
       });
       markDirty();
     }, [refreshSpriteList, markDirty]);
-    const handleSpriteConditions = (0, import_react18.useCallback)((index2) => {
-      return rendererRef.current?.getSpriteConditions(index2) ?? [];
-    }, []);
-    const handleSaveSpriteConditions = (0, import_react18.useCallback)((index2, conditions) => {
-      rendererRef.current?.setSpriteConditions(index2, conditions);
-      markDirty();
-    }, [markDirty]);
-    const handleAddConditionSet = (0, import_react18.useCallback)((spriteIndex) => {
-      const renderer = rendererRef.current;
-      if (!renderer) return;
-      const newIndex = renderer.addConditionBlock(spriteIndex);
-      bumpConditionsVersion();
-      markDirty();
-      if (newIndex >= 0) {
-        handleSelectConditionSet(spriteIndex, newIndex);
-      }
-    }, [bumpConditionsVersion, markDirty, handleSelectConditionSet]);
-    const handleRemoveConditionSet = (0, import_react18.useCallback)((spriteIndex, conditionIndex) => {
-      const renderer = rendererRef.current;
-      if (!renderer) return;
-      renderer.removeConditionBlock(spriteIndex, conditionIndex);
-      bumpConditionsVersion();
-      markDirty();
-      const pos = renderer.getSpritePosition(spriteIndex);
-      const scale = renderer.getSpriteScale(spriteIndex);
-      const parallax = renderer.getSpriteParallax(spriteIndex);
-      if (pos && scale && parallax !== null) {
-        setSelectedSprite((prev) => prev && prev.index === spriteIndex ? { ...prev, x: pos.x, y: pos.y, width: scale.width, height: scale.height, depth: parallax } : prev);
-      }
-    }, [bumpConditionsVersion, markDirty]);
-    const handleRenameConditionSet = (0, import_react18.useCallback)((spriteIndex, conditionIndex, name) => {
-      rendererRef.current?.setConditionBlockName(spriteIndex, conditionIndex, name);
-      bumpConditionsVersion();
-    }, [bumpConditionsVersion]);
-    const handleSetConditionSetFlags = (0, import_react18.useCallback)((spriteIndex, conditionIndex, conditions) => {
-      rendererRef.current?.setConditionBlockFlags(spriteIndex, conditionIndex, conditions);
-      bumpConditionsVersion();
-      markDirty();
-    }, [bumpConditionsVersion, markDirty]);
     const handleRenameSprite = (0, import_react18.useCallback)((index2, newName) => {
       if (!rendererRef.current) return;
       rendererRef.current.renameSpriteByIndex(index2, newName);
@@ -78984,13 +78929,6 @@ void main(void) {
       handleDeleteSprite,
       handleRenameSprite,
       handleRenameScene,
-      handleSpriteConditions,
-      handleSaveSpriteConditions,
-      handleSelectConditionSet,
-      handleAddConditionSet,
-      handleRemoveConditionSet,
-      handleRenameConditionSet,
-      handleSetConditionSetFlags,
       handleZoomIn,
       handleZoomOut,
       handleZoomAtPoint,

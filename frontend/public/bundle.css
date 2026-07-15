@@ -38,6 +38,7 @@
   --color-danger-bright: #ef6a6a;
   --color-track: #26262b;
   --color-chip: #1f1f23;
+  --color-sprite-placeholder: #3a3a42;
   --color-pill-active: #2e2e36;
   --color-meta: #4b4b52;
   --color-toast: #18181b;
@@ -53,6 +54,9 @@
   --color-gate-exclude-badge-bg: #2a1618;
   --color-gate-result-bg: #101015;
   --color-gate-result-border: #2b2e4a;
+  --text-8: 8px;
+  --text-8-5: 8.5px;
+  --text-9-5: 9.5px;
   --text-10: 10px;
   --text-10-5: 10.5px;
   --text-11: 11px;
@@ -879,7 +883,7 @@ body {
   width: 11px;
   height: 11px;
   border-radius: var(--size-4);
-  background: #8a7d6b;
+  background: var(--color-sprite-placeholder);
 }
 .layers-option__swatch--none {
   background: none;
@@ -897,7 +901,7 @@ body {
   margin-left: auto;
 }
 .layers-option__always {
-  font-size: 8.5px;
+  font-size: var(--text-8-5);
   color: var(--color-fg-faintest);
 }
 .layers-option__check {
@@ -1340,7 +1344,7 @@ body {
   align-items: center;
   gap: var(--size-4);
   margin-left: auto;
-  font-size: 9.5px;
+  font-size: var(--text-9-5);
   color: var(--color-fg-faintest);
 }
 .slot-option {
@@ -1378,7 +1382,7 @@ body {
   width: var(--size-22);
   height: var(--size-22);
   border-radius: var(--size-6);
-  background: #8a7d6b;
+  background: var(--color-sprite-placeholder);
 }
 .slot-option__swatch--ineligible {
   opacity: 0.4;
@@ -1436,14 +1440,14 @@ body {
   margin-top: var(--size-2);
 }
 .slot-option__gate-none {
-  font-size: 9.5px;
+  font-size: var(--text-9-5);
   color: var(--color-fg-faintest);
 }
 .slot-option__gate-chip {
   display: flex;
   align-items: center;
   gap: var(--size-2);
-  font-size: 9.5px;
+  font-size: var(--text-9-5);
 }
 .slot-option__gate-chip--show {
   color: var(--color-gate-require-fg);
@@ -1515,7 +1519,7 @@ body {
   color: var(--color-fg-default);
 }
 .gate-card__hint {
-  font-size: 9.5px;
+  font-size: var(--text-9-5);
   color: var(--color-fg-faintest);
 }
 .gate-card__flag-row {
@@ -1612,7 +1616,7 @@ body {
 }
 .scene-flags-playground__note {
   margin-left: auto;
-  font-size: 9.5px;
+  font-size: var(--text-9-5);
   color: var(--color-fg-faintest);
 }
 .scene-flags-playground__desc {
@@ -1664,7 +1668,7 @@ body {
   color: var(--color-fg-muted);
 }
 .flag-toggle__on-label {
-  font-size: 8.5px;
+  font-size: var(--text-8-5);
   color: var(--color-gate-require-fg);
 }
 .flag-toggle__switch {
@@ -2376,7 +2380,7 @@ body {
   color: var(--color-fg);
 }
 .slot-cycler__meta {
-  font-size: 8px;
+  font-size: var(--text-8);
   color: var(--color-accent-bright);
 }
 

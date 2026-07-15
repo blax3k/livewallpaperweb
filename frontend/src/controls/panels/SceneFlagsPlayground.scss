@@ -27,7 +27,7 @@
 
 .scene-flags-playground__note {
   margin-left: auto;
-  font-size: 9.5px;
+  font-size: var(--text-9-5);
   color: var(--color-fg-faintest);
 }
 
@@ -86,7 +86,7 @@
 }
 
 .flag-toggle__on-label {
-  font-size: 8.5px;
+  font-size: var(--text-8-5);
   color: var(--color-gate-require-fg);
 }
 
