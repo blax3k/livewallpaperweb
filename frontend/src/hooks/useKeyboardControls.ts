@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import type { SceneSlot } from '@livewallpaper/types';
 import { SceneRenderer } from '../renderers/SceneRenderer';
 import type { SelectedSprite } from './useSceneRenderer';
 import type { useUndoHistory } from './useUndoHistory';
@@ -17,6 +18,7 @@ interface UseKeyboardControlsOptions {
   onXFocusApply?: (value: number) => void;
   onYFocusApply?: (value: number) => void;
   onTextureApply?: (index: number, textureResource: string, width: number, height: number, texCoordinates: number[]) => void;
+  onSlotsApply?: (slots: SceneSlot[]) => void;
   onMarkDirty?: () => void;
 }
 
@@ -32,6 +34,7 @@ export function useKeyboardControls({
   onXFocusApply,
   onYFocusApply,
   onTextureApply,
+  onSlotsApply,
   onMarkDirty,
 }: UseKeyboardControlsOptions) {
   useEffect(() => {
@@ -56,6 +59,8 @@ export function useKeyboardControls({
             onYFocusApply?.(action.before);
           } else if (action.type === 'texture') {
             onTextureApply?.(action.spriteIndex, action.before.textureResource, action.before.width, action.before.height, action.before.texCoordinates);
+          } else if (action.type === 'slots') {
+            onSlotsApply?.(action.before);
           }
         }
         return;
@@ -80,6 +85,8 @@ export function useKeyboardControls({
             onYFocusApply?.(action.after);
           } else if (action.type === 'texture') {
             onTextureApply?.(action.spriteIndex, action.after.textureResource, action.after.width, action.after.height, action.after.texCoordinates);
+          } else if (action.type === 'slots') {
+            onSlotsApply?.(action.after);
           }
         }
         return;

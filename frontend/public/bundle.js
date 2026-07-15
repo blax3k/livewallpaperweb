@@ -1337,7 +1337,7 @@
           return dispatcher;
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var React56 = require_react(), Internals = {
+        var React57 = require_react(), Internals = {
           d: {
             f: noop3,
             r: function() {
@@ -1355,7 +1355,7 @@
           },
           p: 0,
           findDOMNode: null
-        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React56.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+        }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React57.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
         "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
           "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
         );
@@ -2890,7 +2890,7 @@
           "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
         }
         function validateOptionProps(element, props) {
-          null == props.value && ("object" === typeof props.children && null !== props.children ? React56.Children.forEach(props.children, function(child) {
+          null == props.value && ("object" === typeof props.children && null !== props.children ? React57.Children.forEach(props.children, function(child) {
             null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
               "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
             ));
@@ -18522,14 +18522,14 @@
           ));
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var Scheduler = require_scheduler(), React56 = require_react(), ReactDOM5 = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE2 = /* @__PURE__ */ Symbol.for("react.lazy");
+        var Scheduler = require_scheduler(), React57 = require_react(), ReactDOM5 = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE2 = /* @__PURE__ */ Symbol.for("react.lazy");
         /* @__PURE__ */ Symbol.for("react.scope");
         var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity");
         /* @__PURE__ */ Symbol.for("react.legacy_hidden");
         /* @__PURE__ */ Symbol.for("react.tracing_marker");
         var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel");
         /* @__PURE__ */ Symbol.for("react.view_transition");
-        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React56.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM5.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React57.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM5.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
           pending: false,
           data: null,
           method: null,
@@ -21317,7 +21317,7 @@
           }
         };
         (function() {
-          var isomorphicReactPackageVersion = React56.version;
+          var isomorphicReactPackageVersion = React57.version;
           if ("19.2.5" !== isomorphicReactPackageVersion)
             throw Error(
               'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.5\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21671,18 +21671,18 @@
         function isValidElement2(object) {
           return "object" === typeof object && null !== object && object.$$typeof === REACT_ELEMENT_TYPE;
         }
-        var React56 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE2 = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React56.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
+        var React57 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE2 = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React57.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
           return null;
         };
-        React56 = {
+        React57 = {
           react_stack_bottom_frame: function(callStackForError) {
             return callStackForError();
           }
         };
         var specialPropKeyWarningShown;
         var didWarnAboutElementRef = {};
-        var unknownOwnerDebugStack = React56.react_stack_bottom_frame.bind(
-          React56,
+        var unknownOwnerDebugStack = React57.react_stack_bottom_frame.bind(
+          React57,
           UnknownOwner
         )();
         var unknownOwnerDebugTask = createTask(getTaskName(UnknownOwner));
@@ -64176,11 +64176,11 @@ ${parts.join("\n")}
   });
 
   // src/client.tsx
-  var import_react38 = __toESM(require_react());
+  var import_react39 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/ScenePage.tsx
-  var import_react21 = __toESM(require_react());
+  var import_react22 = __toESM(require_react());
 
   // src/controls/panels/LayersPanel.tsx
   var import_react9 = __toESM(require_react());
@@ -77112,6 +77112,10 @@ void main(void) {
       this.slotPreviewMeta = /* @__PURE__ */ new Map();
       this.slotFrame = null;
       this.slotFrameTarget = null;
+      // All preview sprites of the framed (selected) slot's option, moved together while dragging.
+      this.slotFrameGroup = [];
+      // Per-sprite meta captured at drag start so a live drag is applied as a pure offset.
+      this.slotFrameDragStart = null;
       // Bumped on each renderSlotPreview call so an earlier call's async tail (awaiting textures) bails
       // instead of appending stale sprites after a newer call already rebuilt the preview.
       this.slotPreviewToken = 0;
@@ -77951,7 +77955,7 @@ void main(void) {
       const token = ++this.slotPreviewToken;
       this.clearSlotPreview();
       for (const group of groups) {
-        let firstSprite = null;
+        const groupSprites = [];
         for (const spriteData of group.sprites) {
           await this.loadTexture(spriteData.textureResource);
           if (token !== this.slotPreviewToken || !this.app) return;
@@ -77969,9 +77973,12 @@ void main(void) {
             parallaxMultiplier: spriteData.parallaxMultiplier
           });
           this.app.stage.addChild(sprite);
-          if (!firstSprite) firstSprite = sprite;
+          groupSprites.push(sprite);
         }
-        if (group.frame) this.slotFrameTarget = firstSprite;
+        if (group.frame) {
+          this.slotFrameGroup = groupSprites;
+          this.slotFrameTarget = groupSprites[0] ?? null;
+        }
       }
       this.raiseOverlays();
       this.applyAllPositions();
@@ -77981,7 +77988,45 @@ void main(void) {
       this.slotPreviewSprites = [];
       this.slotPreviewMeta.clear();
       this.slotFrameTarget = null;
+      this.slotFrameGroup = [];
+      this.slotFrameDragStart = null;
       this.slotFrame?.clear();
+    }
+    // ── Slot-sprite drag (move the selected slot's previewed option on the canvas) ──────────────
+    /** True if the CSS-pixel point is over the selected slot's framed sprite. */
+    hitTestSlotFrame(cssX, cssY) {
+      const t2 = this.slotFrameTarget;
+      if (!t2) return false;
+      const world = this.canvasToWorld(cssX, cssY);
+      return world.x >= t2.x - t2.width / 2 && world.x <= t2.x + t2.width / 2 && world.y >= t2.y - t2.height / 2 && world.y <= t2.y + t2.height / 2;
+    }
+    /** Snapshot the framed group's positions so the drag can be applied as a pure offset. */
+    beginSlotFrameDrag() {
+      this.slotFrameDragStart = /* @__PURE__ */ new Map();
+      for (const sprite of this.slotFrameGroup) {
+        const meta = this.slotPreviewMeta.get(sprite);
+        if (meta) this.slotFrameDragStart.set(sprite, { x: meta.x, y: meta.y });
+      }
+    }
+    /**
+     * Live-move the framed group by a world-space delta (position-space, i.e. +dy moves the sprite
+     * up on screen — see applyAllPositions' y negation). Repositions without a rebuild so dragging
+     * stays smooth; the scene isn't mutated until the drag commits.
+     */
+    updateSlotFrameDrag(dx, dy) {
+      if (!this.slotFrameDragStart) return;
+      for (const sprite of this.slotFrameGroup) {
+        const start = this.slotFrameDragStart.get(sprite);
+        const meta = this.slotPreviewMeta.get(sprite);
+        if (start && meta) {
+          meta.x = start.x + dx;
+          meta.y = start.y + dy;
+        }
+      }
+      this.applyAllPositions();
+    }
+    endSlotFrameDrag() {
+      this.slotFrameDragStart = null;
     }
     /** Keep the guide, letterbox, and selection/frame graphics above the freshly added preview sprites. */
     raiseOverlays() {
@@ -79048,6 +79093,7 @@ void main(void) {
     onXFocusApply,
     onYFocusApply,
     onTextureApply,
+    onSlotsApply,
     onMarkDirty
   }) {
     (0, import_react20.useEffect)(() => {
@@ -79071,6 +79117,8 @@ void main(void) {
               onYFocusApply?.(action.before);
             } else if (action.type === "texture") {
               onTextureApply?.(action.spriteIndex, action.before.textureResource, action.before.width, action.before.height, action.before.texCoordinates);
+            } else if (action.type === "slots") {
+              onSlotsApply?.(action.before);
             }
           }
           return;
@@ -79094,6 +79142,8 @@ void main(void) {
               onYFocusApply?.(action.after);
             } else if (action.type === "texture") {
               onTextureApply?.(action.spriteIndex, action.after.textureResource, action.after.width, action.after.height, action.after.texCoordinates);
+            } else if (action.type === "slots") {
+              onSlotsApply?.(action.after);
             }
           }
           return;
@@ -79225,6 +79275,50 @@ void main(void) {
     return runRules({ ...input, activeFlags: reconciled });
   }
 
+  // src/hooks/useSlotDrag.ts
+  var import_react21 = __toESM(require_react());
+  function useSlotDrag({ rendererRef, onCommit }) {
+    const dragState = (0, import_react21.useRef)(null);
+    const onCommitRef = (0, import_react21.useRef)(onCommit);
+    onCommitRef.current = onCommit;
+    const startSlotDrag = (0, import_react21.useCallback)((cssX, cssY) => {
+      const renderer = rendererRef.current;
+      if (!renderer) return;
+      const world = renderer.canvasToWorld(cssX, cssY);
+      renderer.beginSlotFrameDrag();
+      dragState.current = { startWorldX: world.x, startWorldY: world.y, dx: 0, dy: 0 };
+    }, [rendererRef]);
+    (0, import_react21.useEffect)(() => {
+      const handleMouseMove = (event) => {
+        const drag = dragState.current;
+        const renderer = rendererRef.current;
+        if (!drag || !renderer) return;
+        const canvas = renderer.getCanvas();
+        if (!canvas) return;
+        const rect = canvas.getBoundingClientRect();
+        const world = renderer.canvasToWorld(event.clientX - rect.left, event.clientY - rect.top);
+        drag.dx = world.x - drag.startWorldX;
+        drag.dy = -(world.y - drag.startWorldY);
+        renderer.updateSlotFrameDrag(drag.dx, drag.dy);
+      };
+      const handleMouseUp = () => {
+        const drag = dragState.current;
+        const renderer = rendererRef.current;
+        if (!drag || !renderer) return;
+        dragState.current = null;
+        renderer.endSlotFrameDrag();
+        if (drag.dx !== 0 || drag.dy !== 0) onCommitRef.current(drag.dx, drag.dy);
+      };
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+      return () => {
+        window.removeEventListener("mousemove", handleMouseMove);
+        window.removeEventListener("mouseup", handleMouseUp);
+      };
+    }, [rendererRef]);
+    return { startSlotDrag };
+  }
+
   // src/controls/panels/SlotCyclerPill.tsx
   var import_jsx_runtime38 = __toESM(require_jsx_runtime());
   function SlotCyclerPill({ slot, optionIndex, onPrev, onNext }) {
@@ -79251,23 +79345,23 @@ void main(void) {
   // src/ScenePage.tsx
   var import_jsx_runtime39 = __toESM(require_jsx_runtime());
   function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyChange }) {
-    const [availableFlags, setAvailableFlags] = (0, import_react21.useState)([]);
+    const [availableFlags, setAvailableFlags] = (0, import_react22.useState)([]);
     const history = useUndoHistory();
     const { notifications, notify } = useNotifications();
-    const dragStartPos = (0, import_react21.useRef)(null);
-    const dragStartSize = (0, import_react21.useRef)(null);
-    const dragStartDepth = (0, import_react21.useRef)(null);
-    const dragStartXFocus = (0, import_react21.useRef)(null);
-    const dragStartYFocus = (0, import_react21.useRef)(null);
-    const midDragStart = (0, import_react21.useRef)(null);
-    const [isPanning, setIsPanning] = (0, import_react21.useState)(false);
-    const isGyroDragging = (0, import_react21.useRef)(false);
-    const gyroOrigin = (0, import_react21.useRef)(null);
-    const [editTextureIndex, setEditTextureIndex] = (0, import_react21.useState)(null);
-    const [selectedSlotId, setSelectedSlotId] = (0, import_react21.useState)(null);
-    const [expandedSlotIds, setExpandedSlotIds] = (0, import_react21.useState)(/* @__PURE__ */ new Set());
-    const [previewFlags, setPreviewFlags] = (0, import_react21.useState)(/* @__PURE__ */ new Set());
-    const [previewOptionIndexBySlot, setPreviewOptionIndexBySlot] = (0, import_react21.useState)({});
+    const dragStartPos = (0, import_react22.useRef)(null);
+    const dragStartSize = (0, import_react22.useRef)(null);
+    const dragStartDepth = (0, import_react22.useRef)(null);
+    const dragStartXFocus = (0, import_react22.useRef)(null);
+    const dragStartYFocus = (0, import_react22.useRef)(null);
+    const midDragStart = (0, import_react22.useRef)(null);
+    const [isPanning, setIsPanning] = (0, import_react22.useState)(false);
+    const isGyroDragging = (0, import_react22.useRef)(false);
+    const gyroOrigin = (0, import_react22.useRef)(null);
+    const [editTextureIndex, setEditTextureIndex] = (0, import_react22.useState)(null);
+    const [selectedSlotId, setSelectedSlotId] = (0, import_react22.useState)(null);
+    const [expandedSlotIds, setExpandedSlotIds] = (0, import_react22.useState)(/* @__PURE__ */ new Set());
+    const [previewFlags, setPreviewFlags] = (0, import_react22.useState)(/* @__PURE__ */ new Set());
+    const [previewOptionIndexBySlot, setPreviewOptionIndexBySlot] = (0, import_react22.useState)({});
     const {
       canvasRef,
       rendererRef,
@@ -79312,8 +79406,8 @@ void main(void) {
       handleGyroModeToggle,
       handleGyroOffset
     } = useSceneRenderer(notify, onSaved);
-    const [sceneSize, setSceneSize] = (0, import_react21.useState)(null);
-    (0, import_react21.useEffect)(() => {
+    const [sceneSize, setSceneSize] = (0, import_react22.useState)(null);
+    (0, import_react22.useEffect)(() => {
       const sceneData = rendererRef.current?.getSceneData();
       if (!sceneData) {
         setSceneSize(null);
@@ -79335,10 +79429,10 @@ void main(void) {
         cancelled = true;
       };
     }, [spriteEntries, conditionsVersion, rendererRef]);
-    (0, import_react21.useEffect)(() => {
+    (0, import_react22.useEffect)(() => {
       onDirtyChange?.(isDirty);
     }, [isDirty, onDirtyChange]);
-    (0, import_react21.useEffect)(() => {
+    (0, import_react22.useEffect)(() => {
       if (!isDirty) return;
       const onBeforeUnload = (e2) => {
         e2.preventDefault();
@@ -79346,14 +79440,14 @@ void main(void) {
       window.addEventListener("beforeunload", onBeforeUnload);
       return () => window.removeEventListener("beforeunload", onBeforeUnload);
     }, [isDirty]);
-    const handleBack = (0, import_react21.useCallback)(() => {
+    const handleBack = (0, import_react22.useCallback)(() => {
       if (isDirty && !window.confirm("You have unsaved changes. Leave without saving?")) return;
       onBack?.();
     }, [isDirty, onBack]);
-    const getConditionsForSprite = (0, import_react21.useCallback)((spriteIndex) => {
+    const getConditionsForSprite = (0, import_react22.useCallback)((spriteIndex) => {
       return rendererRef.current?.getSpriteConditions(spriteIndex) ?? [];
     }, [rendererRef]);
-    const getActiveConditionIndexForSprite = (0, import_react21.useCallback)((spriteIndex) => {
+    const getActiveConditionIndexForSprite = (0, import_react22.useCallback)((spriteIndex) => {
       return rendererRef.current?.getSelectedConditionIndex(spriteIndex) ?? null;
     }, [rendererRef]);
     const activeConditionSet = selectedSprite !== null ? (() => {
@@ -79361,17 +79455,17 @@ void main(void) {
       return conditionIndex !== null && conditionIndex !== -1 ? { spriteIndex: selectedSprite.index, conditionIndex } : null;
     })() : null;
     const activeConditionLabel = activeConditionSet ? getConditionsForSprite(activeConditionSet.spriteIndex)[activeConditionSet.conditionIndex]?.name ?? `Set ${activeConditionSet.conditionIndex + 1}` : null;
-    const applySelectedSpriteMove = (0, import_react21.useCallback)((x2, y2) => {
+    const applySelectedSpriteMove = (0, import_react22.useCallback)((x2, y2) => {
       setSelectedSprite((prev) => prev ? { ...prev, x: x2, y: y2 } : null);
     }, [setSelectedSprite]);
-    const applySelectedSpriteSize = (0, import_react21.useCallback)((width, height) => {
+    const applySelectedSpriteSize = (0, import_react22.useCallback)((width, height) => {
       setSelectedSprite((prev) => prev ? { ...prev, width, height } : null);
     }, [setSelectedSprite]);
-    const handleImageReplaced = (0, import_react21.useCallback)(async (oldResource, newResource) => {
+    const handleImageReplaced = (0, import_react22.useCallback)(async (oldResource, newResource) => {
       await rendererRef.current?.replaceTexture(oldResource, newResource);
       markDirty();
     }, [rendererRef, markDirty]);
-    const handleTextureApply = (0, import_react21.useCallback)((index2, textureResource, width, height, texCoordinates) => {
+    const handleTextureApply = (0, import_react22.useCallback)((index2, textureResource, width, height, texCoordinates) => {
       rendererRef.current?.changeTexture(index2, textureResource, { width, height }, texCoordinates);
       setSelectedSprite((prev) => prev?.index === index2 ? { ...prev, width, height } : prev);
       markDirty();
@@ -79397,9 +79491,11 @@ void main(void) {
       onXFocusApply: handleXFocusChange,
       onYFocusApply: handleYFocusChange,
       onTextureApply: handleTextureApply,
+      // Undo/redo of a slots snapshot — apply directly (updateSlots does not re-push to history).
+      onSlotsApply: (slots2) => updateSlots(() => slots2),
       onMarkDirty: markDirty
     });
-    (0, import_react21.useEffect)(() => {
+    (0, import_react22.useEffect)(() => {
       if (!projectId) return;
       flagsApi.list(projectId).then((flags) => {
         setAvailableFlags(flags);
@@ -79407,17 +79503,17 @@ void main(void) {
       }).catch(() => {
       });
     }, [projectId]);
-    const previewWorld = (0, import_react21.useMemo)(() => ({
+    const previewWorld = (0, import_react22.useMemo)(() => ({
       clock: { currentHour: 0, currentMinuteOfDay: 0, dayOfWeekNum: 0, installHours: 0 },
       activeFlags: previewFlags,
       sceneCounts: {},
       flagChanges: {}
     }), [previewFlags]);
-    const isOptionEligible = (0, import_react21.useCallback)(
+    const isOptionEligible = (0, import_react22.useCallback)(
       (_slotId, option) => matchesConditionGroup(option.conditions, previewWorld),
       [previewWorld]
     );
-    const handleSelectSlot = (0, import_react21.useCallback)((slotId) => {
+    const handleSelectSlot = (0, import_react22.useCallback)((slotId) => {
       setSelectedSlotId(slotId);
       setSelectedSprite(null);
       rendererRef.current?.setSelectedSpriteHighlight(null);
@@ -79428,7 +79524,7 @@ void main(void) {
         return next;
       });
     }, [setSelectedSprite, rendererRef]);
-    const handleToggleSlotExpand = (0, import_react21.useCallback)((slotId) => {
+    const handleToggleSlotExpand = (0, import_react22.useCallback)((slotId) => {
       setExpandedSlotIds((prev) => {
         const next = new Set(prev);
         if (next.has(slotId)) next.delete(slotId);
@@ -79436,31 +79532,37 @@ void main(void) {
         return next;
       });
     }, []);
-    const handleSelectSpriteFromLayers = (0, import_react21.useCallback)((index2) => {
+    const handleSelectSpriteFromLayers = (0, import_react22.useCallback)((index2) => {
       setSelectedSlotId(null);
       handleSpriteSelect(index2);
     }, [handleSpriteSelect]);
-    (0, import_react21.useEffect)(() => {
+    (0, import_react22.useEffect)(() => {
       if (selectedSprite) setSelectedSlotId(null);
     }, [selectedSprite]);
     const selectedSlot = slots.find((s2) => s2.id === selectedSlotId) ?? null;
-    const handleAddSlot = (0, import_react21.useCallback)(() => {
+    const applySlots = (0, import_react22.useCallback)((updater) => {
+      const before = [...rendererRef.current?.getSlots() ?? []];
+      const after = updater(before);
+      updateSlots(() => after);
+      history.push({ type: "slots", before, after });
+    }, [updateSlots, history, rendererRef]);
+    const handleAddSlot = (0, import_react22.useCallback)(() => {
       const existing = new Set(slots.map((s2) => s2.name));
       let n2 = existing.size + 1;
       let name = `slot ${n2}`;
       while (existing.has(name)) name = `slot ${++n2}`;
       const slot = createSlot2(name);
-      updateSlots((s2) => [...s2, slot]);
+      applySlots((s2) => [...s2, slot]);
       setSelectedSprite(null);
       rendererRef.current?.setSelectedSpriteHighlight(null);
       setSelectedSlotId(slot.id);
       setExpandedSlotIds((prev) => new Set(prev).add(slot.id));
-    }, [slots, updateSlots, setSelectedSprite, rendererRef]);
-    const handleRenameSlot = (0, import_react21.useCallback)((slotId, name) => {
-      updateSlots((s2) => mapSlot(s2, slotId, (sl) => ({ ...sl, name })));
-    }, [updateSlots]);
-    const handleDeleteSlot = (0, import_react21.useCallback)((slotId) => {
-      updateSlots((s2) => s2.filter((sl) => sl.id !== slotId));
+    }, [slots, applySlots, setSelectedSprite, rendererRef]);
+    const handleRenameSlot = (0, import_react22.useCallback)((slotId, name) => {
+      applySlots((s2) => mapSlot(s2, slotId, (sl) => ({ ...sl, name })));
+    }, [applySlots]);
+    const handleDeleteSlot = (0, import_react22.useCallback)((slotId) => {
+      applySlots((s2) => s2.filter((sl) => sl.id !== slotId));
       setSelectedSlotId((prev) => prev === slotId ? null : prev);
       setExpandedSlotIds((prev) => {
         if (!prev.has(slotId)) return prev;
@@ -79468,25 +79570,25 @@ void main(void) {
         next.delete(slotId);
         return next;
       });
-    }, [updateSlots]);
-    const handleAddOption = (0, import_react21.useCallback)((slotId, textureResource) => {
+    }, [applySlots]);
+    const handleAddOption = (0, import_react22.useCallback)((slotId, textureResource) => {
       const name = textureResource.replace(/^.*\//, "").replace(/\.[^.]+$/, "") || "sprite";
       const option = createOptionFromTexture(textureResource, name);
-      updateSlots((s2) => mapSlot(s2, slotId, (sl) => ({ ...sl, options: [...sl.options, option] })));
-    }, [updateSlots]);
-    const handleRemoveOption = (0, import_react21.useCallback)((slotId, optionId) => {
-      updateSlots((s2) => mapSlot(s2, slotId, (sl) => ({ ...sl, options: sl.options.filter((o2) => o2.id !== optionId) })));
-    }, [updateSlots]);
-    const handleRenameOption = (0, import_react21.useCallback)((slotId, optionId, name) => {
-      updateSlots((s2) => mapSlot(s2, slotId, (sl) => ({
+      applySlots((s2) => mapSlot(s2, slotId, (sl) => ({ ...sl, options: [...sl.options, option] })));
+    }, [applySlots]);
+    const handleRemoveOption = (0, import_react22.useCallback)((slotId, optionId) => {
+      applySlots((s2) => mapSlot(s2, slotId, (sl) => ({ ...sl, options: sl.options.filter((o2) => o2.id !== optionId) })));
+    }, [applySlots]);
+    const handleRenameOption = (0, import_react22.useCallback)((slotId, optionId, name) => {
+      applySlots((s2) => mapSlot(s2, slotId, (sl) => ({
         ...sl,
         options: sl.options.map((o2) => o2.id === optionId ? { ...o2, name } : o2)
       })));
-    }, [updateSlots]);
-    const handleSetGates = (0, import_react21.useCallback)((slotId, optionId, showFlagIds, hideFlagIds) => {
-      updateSlots((s2) => setOptionGates(s2, slotId, optionId, showFlagIds, hideFlagIds));
-    }, [updateSlots]);
-    const handleTogglePreviewFlag = (0, import_react21.useCallback)((flagId) => {
+    }, [applySlots]);
+    const handleSetGates = (0, import_react22.useCallback)((slotId, optionId, showFlagIds, hideFlagIds) => {
+      applySlots((s2) => setOptionGates(s2, slotId, optionId, showFlagIds, hideFlagIds));
+    }, [applySlots]);
+    const handleTogglePreviewFlag = (0, import_react22.useCallback)((flagId) => {
       setPreviewFlags((prev) => {
         const next = new Set(prev);
         if (next.has(flagId)) next.delete(flagId);
@@ -79494,13 +79596,13 @@ void main(void) {
         return next;
       });
     }, []);
-    const resolvePreviewIndex = (0, import_react21.useCallback)((slot) => {
+    const resolvePreviewIndex = (0, import_react22.useCallback)((slot) => {
       const explicit = previewOptionIndexBySlot[slot.id];
       if (explicit != null && explicit >= 0 && explicit < slot.options.length) return explicit;
       const firstEligible = slot.options.findIndex((o2) => isOptionEligible(slot.id, o2));
       return firstEligible >= 0 ? firstEligible : 0;
     }, [previewOptionIndexBySlot, isOptionEligible]);
-    const slotPreviewGroups = (0, import_react21.useMemo)(() => {
+    const slotPreviewGroups = (0, import_react22.useMemo)(() => {
       const groups = [];
       for (const slot of slots) {
         const option = slot.id === selectedSlotId ? slot.options[resolvePreviewIndex(slot)] : slot.options.find((o2) => isOptionEligible(slot.id, o2));
@@ -79514,21 +79616,50 @@ void main(void) {
       }
       return groups;
     }, [slots, selectedSlotId, resolvePreviewIndex, isOptionEligible]);
-    (0, import_react21.useEffect)(() => {
+    (0, import_react22.useEffect)(() => {
       if (!showSceneControls) return;
       rendererRef.current?.renderSlotPreview(slotPreviewGroups);
     }, [slotPreviewGroups, showSceneControls, rendererRef]);
-    const cycleSelectedSlot = (0, import_react21.useCallback)((delta) => {
+    const cycleSelectedSlot = (0, import_react22.useCallback)((delta) => {
       if (!selectedSlot) return;
       const n2 = selectedSlot.options.length;
       if (n2 === 0) return;
       const current = resolvePreviewIndex(selectedSlot);
       setPreviewOptionIndexBySlot((prev) => ({ ...prev, [selectedSlot.id]: (current + delta + n2) % n2 }));
     }, [selectedSlot, resolvePreviewIndex]);
-    (0, import_react21.useEffect)(() => {
+    const { startSlotDrag } = useSlotDrag({
+      rendererRef,
+      onCommit: (dx, dy) => {
+        if (!selectedSlot) return;
+        const option = selectedSlot.options[resolvePreviewIndex(selectedSlot)];
+        if (!option?.sprites?.length) return;
+        applySlots((s2) => mapOption(s2, selectedSlot.id, option.id, (o2) => ({
+          ...o2,
+          sprites: o2.sprites?.map((sp) => ({ ...sp, positionX: sp.positionX + dx, positionY: sp.positionY + dy }))
+        })));
+      }
+    });
+    const handleCanvasPointerDown = (0, import_react22.useCallback)((e2) => {
+      const renderer = rendererRef.current;
+      if (selectedSlot && renderer) {
+        const canvas = renderer.getCanvas();
+        if (canvas) {
+          const rect = canvas.getBoundingClientRect();
+          const cssX = e2.clientX - rect.left;
+          const cssY = e2.clientY - rect.top;
+          if (renderer.hitTestSlotFrame(cssX, cssY)) {
+            e2.preventDefault();
+            startSlotDrag(cssX, cssY);
+            return;
+          }
+        }
+      }
+      handleCanvasMouseDown(e2);
+    }, [selectedSlot, rendererRef, startSlotDrag, handleCanvasMouseDown]);
+    (0, import_react22.useEffect)(() => {
       if (initialSceneId) loadScene(initialSceneId);
     }, []);
-    (0, import_react21.useEffect)(() => {
+    (0, import_react22.useEffect)(() => {
       const el = canvasRef.current;
       if (!el) return;
       const onWheel = (e2) => {
@@ -79542,7 +79673,7 @@ void main(void) {
       el.addEventListener("wheel", onWheel, { passive: false });
       return () => el.removeEventListener("wheel", onWheel);
     }, [canvasRef, rendererRef, handleZoomAtPoint]);
-    (0, import_react21.useEffect)(() => {
+    (0, import_react22.useEffect)(() => {
       const el = canvasRef.current;
       if (!el) return;
       const onMouseDown = (e2) => {
@@ -79574,7 +79705,7 @@ void main(void) {
         window.removeEventListener("mouseup", onMouseUp);
       };
     }, [canvasRef, rendererRef, cancelDrag]);
-    (0, import_react21.useEffect)(() => {
+    (0, import_react22.useEffect)(() => {
       const el = canvasRef.current;
       if (!el) return;
       const onMouseDown = (e2) => {
@@ -79607,10 +79738,10 @@ void main(void) {
         window.removeEventListener("mouseup", onMouseUp);
       };
     }, [canvasRef, rendererRef, gyroMode, handleGyroOffset, cancelDrag]);
-    const handleSpritePositionChangeStart = (0, import_react21.useCallback)((x2, y2) => {
+    const handleSpritePositionChangeStart = (0, import_react22.useCallback)((x2, y2) => {
       dragStartPos.current = { x: x2, y: y2 };
     }, []);
-    const handleSpritePositionCommit = (0, import_react21.useCallback)((x2, y2) => {
+    const handleSpritePositionCommit = (0, import_react22.useCallback)((x2, y2) => {
       if (!selectedSprite || !dragStartPos.current || activeConditionSet !== null) return;
       const before = dragStartPos.current;
       dragStartPos.current = null;
@@ -79618,10 +79749,10 @@ void main(void) {
         history.push({ type: "position", spriteIndex: selectedSprite.index, before, after: { x: x2, y: y2 } });
       }
     }, [selectedSprite, history, activeConditionSet]);
-    const handleSpriteSizeChangeStart = (0, import_react21.useCallback)(() => {
+    const handleSpriteSizeChangeStart = (0, import_react22.useCallback)(() => {
       if (selectedSprite) dragStartSize.current = { width: selectedSprite.width, height: selectedSprite.height };
     }, [selectedSprite]);
-    const handleSpriteSizeCommit = (0, import_react21.useCallback)((width, height) => {
+    const handleSpriteSizeCommit = (0, import_react22.useCallback)((width, height) => {
       if (!selectedSprite || !dragStartSize.current || activeConditionSet !== null) return;
       const before = dragStartSize.current;
       dragStartSize.current = null;
@@ -79629,7 +79760,7 @@ void main(void) {
         history.push({ type: "scale", spriteIndex: selectedSprite.index, before, after: { width, height } });
       }
     }, [selectedSprite, history, activeConditionSet]);
-    const handleChangeTextureWithHistory = (0, import_react21.useCallback)(async (index2, textureResource) => {
+    const handleChangeTextureWithHistory = (0, import_react22.useCallback)(async (index2, textureResource) => {
       const beforeTexture = rendererRef.current?.getSpriteTextureResource(index2) ?? "";
       const beforeSize = rendererRef.current?.getSpriteScale(index2);
       const beforeTexCoords = rendererRef.current?.getSpriteTexCoordinates(index2) ?? [0, 1, 0, 0, 1, 1, 1, 0];
@@ -79642,13 +79773,13 @@ void main(void) {
         after: { textureResource, width: afterSize?.width ?? 0, height: afterSize?.height ?? 0, texCoordinates: [0, 1, 0, 0, 1, 1, 1, 0] }
       });
     }, [handleChangeTexture, rendererRef, history]);
-    const handleSpriteDepthChangeStart = (0, import_react21.useCallback)((depth) => {
+    const handleSpriteDepthChangeStart = (0, import_react22.useCallback)((depth) => {
       dragStartDepth.current = depth;
     }, []);
-    const handleXFocusChangeStart = (0, import_react21.useCallback)((value) => {
+    const handleXFocusChangeStart = (0, import_react22.useCallback)((value) => {
       dragStartXFocus.current = value;
     }, []);
-    const handleXFocusCommit = (0, import_react21.useCallback)((value) => {
+    const handleXFocusCommit = (0, import_react22.useCallback)((value) => {
       if (dragStartXFocus.current === null) return;
       const before = dragStartXFocus.current;
       dragStartXFocus.current = null;
@@ -79656,10 +79787,10 @@ void main(void) {
         history.push({ type: "xFocus", before, after: value });
       }
     }, [history]);
-    const handleYFocusChangeStart = (0, import_react21.useCallback)((value) => {
+    const handleYFocusChangeStart = (0, import_react22.useCallback)((value) => {
       dragStartYFocus.current = value;
     }, []);
-    const handleYFocusCommit = (0, import_react21.useCallback)((value) => {
+    const handleYFocusCommit = (0, import_react22.useCallback)((value) => {
       if (dragStartYFocus.current === null) return;
       const before = dragStartYFocus.current;
       dragStartYFocus.current = null;
@@ -79667,7 +79798,7 @@ void main(void) {
         history.push({ type: "yFocus", before, after: value });
       }
     }, [history]);
-    const handleSpriteDepthCommit = (0, import_react21.useCallback)((depth) => {
+    const handleSpriteDepthCommit = (0, import_react22.useCallback)((depth) => {
       if (!selectedSprite || dragStartDepth.current === null || activeConditionSet !== null) return;
       const before = dragStartDepth.current;
       dragStartDepth.current = null;
@@ -79751,7 +79882,7 @@ void main(void) {
               id: "canvas-container",
               ref: canvasRef,
               className: "scene-page__canvas-inner",
-              onMouseDown: gyroMode ? void 0 : handleCanvasMouseDown,
+              onMouseDown: gyroMode ? void 0 : handleCanvasPointerDown,
               style: gyroMode ? { cursor: isGyroDragging.current ? "crosshair" : "crosshair" } : isPanning ? { cursor: "grabbing" } : zoom > 1 ? { cursor: "grab" } : void 0
             }
           ),
@@ -79820,14 +79951,14 @@ void main(void) {
   }
 
   // src/SceneListPage.tsx
-  var import_react25 = __toESM(require_react());
+  var import_react26 = __toESM(require_react());
 
   // src/components/SceneCard.tsx
-  var import_react22 = __toESM(require_react());
+  var import_react23 = __toESM(require_react());
   var import_jsx_runtime40 = __toESM(require_jsx_runtime());
   function SceneCard({ label, thumbnail_url, selected, onClick, thumbBuster = 0 }) {
-    const [thumbFailed, setThumbFailed] = (0, import_react22.useState)(false);
-    (0, import_react22.useEffect)(() => {
+    const [thumbFailed, setThumbFailed] = (0, import_react23.useState)(false);
+    (0, import_react23.useEffect)(() => {
       setThumbFailed(false);
     }, [thumbnail_url, thumbBuster]);
     const thumbnailSrc = thumbnail_url ? `${thumbnail_url}${thumbnail_url.includes("?") ? "&" : "?"}v=${thumbBuster}` : null;
@@ -79869,13 +80000,13 @@ void main(void) {
   }
 
   // src/controls/modals/NewSceneDialog.tsx
-  var import_react23 = __toESM(require_react());
+  var import_react24 = __toESM(require_react());
   var import_jsx_runtime42 = __toESM(require_jsx_runtime());
   function NewSceneDialog({ onConfirm, onCancel, scenes = [] }) {
-    const [name, setName] = (0, import_react23.useState)("");
-    const [copyFromId, setCopyFromId] = (0, import_react23.useState)(void 0);
-    const inputRef = (0, import_react23.useRef)(null);
-    (0, import_react23.useEffect)(() => {
+    const [name, setName] = (0, import_react24.useState)("");
+    const [copyFromId, setCopyFromId] = (0, import_react24.useState)(void 0);
+    const inputRef = (0, import_react24.useRef)(null);
+    (0, import_react24.useEffect)(() => {
       inputRef.current?.focus();
     }, []);
     const handleSubmit = (e2) => {
@@ -79935,7 +80066,7 @@ void main(void) {
   }
 
   // src/controls/modals/SceneFlagsModal.tsx
-  var import_react24 = __toESM(require_react());
+  var import_react25 = __toESM(require_react());
 
   // src/simulatorScenes.ts
   function disqualifyReason(flags, ctx) {
@@ -80074,7 +80205,7 @@ void main(void) {
     liveEval
   }) {
     const { activeFlags, flagName: flagName2, stateNote } = liveEval;
-    const draft = (0, import_react24.useMemo)(
+    const draft = (0, import_react25.useMemo)(
       () => buildDeclarations(required, scored, excluded),
       [required, scored, excluded]
     );
@@ -80127,10 +80258,10 @@ void main(void) {
     onSave,
     onClose
   }) {
-    const [required, setRequired] = (0, import_react24.useState)(declarations.required ?? []);
-    const [excluded, setExcluded] = (0, import_react24.useState)(declarations.excluded ?? []);
-    const [scored, setScored] = (0, import_react24.useState)(declarations.scored ?? []);
-    const usedIds = (0, import_react24.useMemo)(() => {
+    const [required, setRequired] = (0, import_react25.useState)(declarations.required ?? []);
+    const [excluded, setExcluded] = (0, import_react25.useState)(declarations.excluded ?? []);
+    const [scored, setScored] = (0, import_react25.useState)(declarations.scored ?? []);
+    const usedIds = (0, import_react25.useMemo)(() => {
       const s2 = /* @__PURE__ */ new Set();
       required.forEach((id) => id && s2.add(id));
       excluded.forEach((id) => id && s2.add(id));
@@ -80142,7 +80273,7 @@ void main(void) {
     const addExcluded = () => setExcluded([...excluded, firstUnusedFlag()]);
     const addScored = () => setScored([...scored, { flagId: firstUnusedFlag(), weight: 1 }]);
     const canAdd = flags.some((f2) => !usedIds.has(f2.id));
-    const handleSave = (0, import_react24.useCallback)(() => {
+    const handleSave = (0, import_react25.useCallback)(() => {
       onSave(buildDeclarations(required, scored, excluded));
     }, [required, scored, excluded, onSave]);
     return /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { className: "modal-overlay", onClick: onClose, children: /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal", onClick: (e2) => e2.stopPropagation(), children: [
@@ -80288,23 +80419,23 @@ void main(void) {
   // src/SceneListPage.tsx
   var import_jsx_runtime44 = __toESM(require_jsx_runtime());
   function SceneListPage({ onSelect, onBack, onSimulator, projectId, projectname, projectSize, thumbBuster = 0 }) {
-    const [scenes, setScenes] = (0, import_react25.useState)([]);
-    const [loading, setLoading] = (0, import_react25.useState)(true);
-    const [showNewSceneDialog, setShowNewSceneDialog] = (0, import_react25.useState)(false);
-    const [fetchedName, setFetchedName] = (0, import_react25.useState)(void 0);
-    const [fetchedSize, setFetchedSize] = (0, import_react25.useState)(void 0);
-    const [deleteScene, setDeleteScene] = (0, import_react25.useState)(null);
-    const [flagsScene, setFlagsScene] = (0, import_react25.useState)(null);
-    const [flagsModalData, setFlagsModalData] = (0, import_react25.useState)(null);
-    const [availableFlags, setAvailableFlags] = (0, import_react25.useState)([]);
-    const [flagsModalLoading, setFlagsModalLoading] = (0, import_react25.useState)(false);
-    (0, import_react25.useEffect)(() => {
+    const [scenes, setScenes] = (0, import_react26.useState)([]);
+    const [loading, setLoading] = (0, import_react26.useState)(true);
+    const [showNewSceneDialog, setShowNewSceneDialog] = (0, import_react26.useState)(false);
+    const [fetchedName, setFetchedName] = (0, import_react26.useState)(void 0);
+    const [fetchedSize, setFetchedSize] = (0, import_react26.useState)(void 0);
+    const [deleteScene, setDeleteScene] = (0, import_react26.useState)(null);
+    const [flagsScene, setFlagsScene] = (0, import_react26.useState)(null);
+    const [flagsModalData, setFlagsModalData] = (0, import_react26.useState)(null);
+    const [availableFlags, setAvailableFlags] = (0, import_react26.useState)([]);
+    const [flagsModalLoading, setFlagsModalLoading] = (0, import_react26.useState)(false);
+    (0, import_react26.useEffect)(() => {
       scenesApi.list(projectId).then((records) => {
         setScenes(records);
         setLoading(false);
       }).catch(() => setLoading(false));
     }, []);
-    (0, import_react25.useEffect)(() => {
+    (0, import_react26.useEffect)(() => {
       if (!projectId || projectname && projectSize !== void 0) return;
       projectsApi.get(projectId).then((p2) => {
         if (!projectname) setFetchedName(p2.name);
@@ -80325,7 +80456,7 @@ void main(void) {
         window.alert(message);
       });
     };
-    const handleDeleteScene = (0, import_react25.useCallback)(async () => {
+    const handleDeleteScene = (0, import_react26.useCallback)(async () => {
       if (!deleteScene) return;
       try {
         await scenesApi.delete(deleteScene.id);
@@ -80336,7 +80467,7 @@ void main(void) {
         setDeleteScene(null);
       }
     }, [deleteScene]);
-    const openSceneFlags = (0, import_react25.useCallback)(async (scene) => {
+    const openSceneFlags = (0, import_react26.useCallback)(async (scene) => {
       setFlagsScene(scene);
       setFlagsModalLoading(true);
       try {
@@ -80353,7 +80484,7 @@ void main(void) {
         setFlagsModalLoading(false);
       }
     }, [projectId]);
-    const handleSaveSceneFlags = (0, import_react25.useCallback)(async (declarations) => {
+    const handleSaveSceneFlags = (0, import_react26.useCallback)(async (declarations) => {
       if (!flagsScene || !flagsModalData) return;
       try {
         const sceneDetail = await scenesApi.get(flagsScene.id);
@@ -80456,15 +80587,15 @@ void main(void) {
   }
 
   // src/ProjectListPage.tsx
-  var import_react27 = __toESM(require_react());
+  var import_react28 = __toESM(require_react());
 
   // src/controls/modals/NewProjectDialog.tsx
-  var import_react26 = __toESM(require_react());
+  var import_react27 = __toESM(require_react());
   var import_jsx_runtime45 = __toESM(require_jsx_runtime());
   function NewProjectDialog({ onConfirm, onCancel }) {
-    const [name, setName] = (0, import_react26.useState)("");
-    const inputRef = (0, import_react26.useRef)(null);
-    (0, import_react26.useEffect)(() => {
+    const [name, setName] = (0, import_react27.useState)("");
+    const inputRef = (0, import_react27.useRef)(null);
+    (0, import_react27.useEffect)(() => {
       inputRef.current?.focus();
     }, []);
     const handleSubmit = (e2) => {
@@ -80503,7 +80634,7 @@ void main(void) {
   // src/ProjectListPage.tsx
   var import_jsx_runtime46 = __toESM(require_jsx_runtime());
   function ProjectCollage({ sceneIds, sceneThumbnailUrls }) {
-    const [failedThumbs, setFailedThumbs] = (0, import_react27.useState)(/* @__PURE__ */ new Set());
+    const [failedThumbs, setFailedThumbs] = (0, import_react28.useState)(/* @__PURE__ */ new Set());
     if (!sceneIds || sceneIds.length === 0) {
       return /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: "project-card-icon", children: "\u{1F4C1}" });
     }
@@ -80522,11 +80653,11 @@ void main(void) {
     }) });
   }
   function ProjectListPage({ onSelect, onLogout }) {
-    const [projects, setProjects] = (0, import_react27.useState)([]);
-    const [loading, setLoading] = (0, import_react27.useState)(true);
-    const [showDialog, setShowDialog] = (0, import_react27.useState)(false);
-    const [showArchived, setShowArchived] = (0, import_react27.useState)(false);
-    (0, import_react27.useEffect)(() => {
+    const [projects, setProjects] = (0, import_react28.useState)([]);
+    const [loading, setLoading] = (0, import_react28.useState)(true);
+    const [showDialog, setShowDialog] = (0, import_react28.useState)(false);
+    const [showArchived, setShowArchived] = (0, import_react28.useState)(false);
+    (0, import_react28.useEffect)(() => {
       projectsApi.list().then((records) => {
         setProjects(records);
         setLoading(false);
@@ -80630,7 +80761,7 @@ void main(void) {
   }
 
   // src/SimulatorPage.tsx
-  var import_react36 = __toESM(require_react());
+  var import_react37 = __toESM(require_react());
 
   // src/SimulatorTopBar.tsx
   var import_jsx_runtime47 = __toESM(require_jsx_runtime());
@@ -80677,10 +80808,10 @@ void main(void) {
   }
 
   // src/SimulatorControlsPanel.tsx
-  var import_react29 = __toESM(require_react());
+  var import_react30 = __toESM(require_react());
 
   // src/useSimulatedState.ts
-  var import_react28 = __toESM(require_react());
+  var import_react29 = __toESM(require_react());
   var DAY_OPTIONS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   var SCENE_OPTIONS = ["Aurora Forest", "Night City", "Day Forest"];
   var TIME_STEP_MINUTES = 30;
@@ -80773,35 +80904,35 @@ void main(void) {
     };
   }
   function useSimulatedState(projectId, flags, rules) {
-    const [fields, setFields] = (0, import_react28.useState)(() => loadPersisted(projectId));
-    const [stale, setStale] = (0, import_react28.useState)(false);
-    const loadedProjectId = (0, import_react28.useRef)(projectId);
-    const chapters = (0, import_react28.useMemo)(
+    const [fields, setFields] = (0, import_react29.useState)(() => loadPersisted(projectId));
+    const [stale, setStale] = (0, import_react29.useState)(false);
+    const loadedProjectId = (0, import_react29.useRef)(projectId);
+    const chapters = (0, import_react29.useMemo)(
       () => flags.filter((f2) => f2.isChapter).sort((a2, b2) => (a2.chapterOrder ?? 0) - (b2.chapterOrder ?? 0)),
       [flags]
     );
-    (0, import_react28.useEffect)(() => {
+    (0, import_react29.useEffect)(() => {
       if (loadedProjectId.current === projectId) return;
       loadedProjectId.current = projectId;
       setFields(loadPersisted(projectId));
       setStale(false);
     }, [projectId]);
-    (0, import_react28.useEffect)(() => {
+    (0, import_react29.useEffect)(() => {
       localStorage.setItem(storageKey(projectId), JSON.stringify(fields));
     }, [projectId, fields]);
-    (0, import_react28.useEffect)(() => {
+    (0, import_react29.useEffect)(() => {
       if (fields.chapterId !== null && chapters.some((c2) => c2.id === fields.chapterId)) return;
       const fallback = chapters.length > 0 ? chapters[0].id : null;
       if (fallback !== fields.chapterId) {
         setFields((f2) => ({ ...f2, chapterId: fallback }));
       }
     }, [chapters, fields.chapterId]);
-    (0, import_react28.useEffect)(() => {
+    (0, import_react29.useEffect)(() => {
       if (flags.length === 0 || fields.seeded) return;
       const baseline = flags.filter((f2) => f2.defaultActive).map((f2) => f2.id);
       setFields((f2) => f2.seeded ? f2 : { ...f2, activeFlagIds: baseline, seeded: true });
     }, [flags, fields.seeded]);
-    (0, import_react28.useEffect)(() => {
+    (0, import_react29.useEffect)(() => {
       if (!fields.seeded) return;
       setFields((f2) => ({ ...f2, ...runEngine(f2, flags, rules) }));
     }, [flags, rules, fields.seeded, fields.chapterId, fields.timeOfDay, fields.dayOfWeek, fields.daysSinceInstall]);
@@ -80825,7 +80956,7 @@ void main(void) {
       }));
       setStale(true);
     };
-    const world = (0, import_react28.useMemo)(() => ({
+    const world = (0, import_react29.useMemo)(() => ({
       clock: worldClockFor(fields),
       activeFlags: new Set(fields.activeFlagIds),
       sceneCounts: fields.sceneCounts,
@@ -80997,8 +81128,8 @@ void main(void) {
     ] });
   }
   function TimeOfDayField({ value, onChange }) {
-    const [draft, setDraft] = (0, import_react29.useState)(value);
-    (0, import_react29.useEffect)(() => setDraft(value), [value]);
+    const [draft, setDraft] = (0, import_react30.useState)(value);
+    (0, import_react30.useEffect)(() => setDraft(value), [value]);
     const step = (delta) => onChange(minutesToTime(timeToMinutes(value) + delta));
     const commit = (raw) => {
       const mins = parseTimeInput(raw);
@@ -81068,7 +81199,7 @@ void main(void) {
   }
 
   // src/SimulatorRulesPanel.tsx
-  var import_react30 = __toESM(require_react());
+  var import_react31 = __toESM(require_react());
   var import_jsx_runtime49 = __toESM(require_jsx_runtime());
   var COMBO_CONDITION_TYPES = /* @__PURE__ */ new Set(["flag_active", "flag_inactive", "time_since_flag_change"]);
   function isCombo(rule) {
@@ -81137,7 +81268,7 @@ void main(void) {
     ] });
   }
   function RuleGroupSection({ title, count: count4, ungrouped, onAdd, onRenameGroup, onRemoveGroup, children }) {
-    const [open, setOpen] = (0, import_react30.useState)(true);
+    const [open, setOpen] = (0, import_react31.useState)(true);
     return /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "simulator-rules-group", children: [
       /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(
         "div",
@@ -81181,13 +81312,13 @@ void main(void) {
     onRenameGroup,
     onRemoveGroup
   }) {
-    const [search, setSearch] = (0, import_react30.useState)("");
+    const [search, setSearch] = (0, import_react31.useState)("");
     const query = search.trim().toLowerCase();
-    const matchingGroupNames = (0, import_react30.useMemo)(() => {
+    const matchingGroupNames = (0, import_react31.useMemo)(() => {
       if (!query) return null;
       return new Set(groups.filter((g2) => g2.name.toLowerCase().includes(query)).map((g2) => g2.name));
     }, [groups, query]);
-    const filteredRules = (0, import_react30.useMemo)(() => {
+    const filteredRules = (0, import_react31.useMemo)(() => {
       if (!query) return rules;
       return rules.filter((r2) => {
         if ((r2.name || r2.id).toLowerCase().includes(query)) return true;
@@ -81195,7 +81326,7 @@ void main(void) {
         return !!groupName && matchingGroupNames.has(groupName);
       });
     }, [rules, query, matchingGroupNames]);
-    const { byGroup, ungrouped } = (0, import_react30.useMemo)(() => {
+    const { byGroup, ungrouped } = (0, import_react31.useMemo)(() => {
       const byGroup2 = /* @__PURE__ */ new Map();
       for (const group of groups) byGroup2.set(group.name, []);
       const ungrouped2 = [];
@@ -81211,7 +81342,7 @@ void main(void) {
       return { byGroup: byGroup2, ungrouped: ungrouped2 };
     }, [filteredRules, rules, groups]);
     const isEmpty = rules.length === 0 && groups.length === 0;
-    const visibleGroups = (0, import_react30.useMemo)(() => {
+    const visibleGroups = (0, import_react31.useMemo)(() => {
       if (!query) return groups;
       return groups.filter((g2) => matchingGroupNames.has(g2.name) || (byGroup.get(g2.name)?.length ?? 0) > 0);
     }, [groups, query, matchingGroupNames, byGroup]);
@@ -81314,7 +81445,7 @@ void main(void) {
   }
 
   // src/SimulatorFlagsPanel.tsx
-  var import_react31 = __toESM(require_react());
+  var import_react32 = __toESM(require_react());
   var import_jsx_runtime50 = __toESM(require_jsx_runtime());
   function usageLabel(usage) {
     if (!usage) return null;
@@ -81381,7 +81512,7 @@ void main(void) {
     ] });
   }
   function FlagGroupSection({ title, count: count4, ungrouped, onAdd, onRenameGroup, onRemoveGroup, children }) {
-    const [open, setOpen] = (0, import_react31.useState)(true);
+    const [open, setOpen] = (0, import_react32.useState)(true);
     return /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-flags-group", children: [
       /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(
         "div",
@@ -81426,13 +81557,13 @@ void main(void) {
     onRenameGroup,
     onRemoveGroup
   }) {
-    const [search, setSearch] = (0, import_react31.useState)("");
+    const [search, setSearch] = (0, import_react32.useState)("");
     const query = search.trim().toLowerCase();
-    const matchingGroupNames = (0, import_react31.useMemo)(() => {
+    const matchingGroupNames = (0, import_react32.useMemo)(() => {
       if (!query) return null;
       return new Set(groups.filter((g2) => g2.name.toLowerCase().includes(query)).map((g2) => g2.name));
     }, [groups, query]);
-    const filteredFlags = (0, import_react31.useMemo)(() => {
+    const filteredFlags = (0, import_react32.useMemo)(() => {
       if (!query) return flags;
       return flags.filter((f2) => {
         if ((f2.name || f2.id).toLowerCase().includes(query)) return true;
@@ -81440,7 +81571,7 @@ void main(void) {
         return !!groupName && matchingGroupNames.has(groupName);
       });
     }, [flags, query, matchingGroupNames]);
-    const { byGroup, ungrouped } = (0, import_react31.useMemo)(() => {
+    const { byGroup, ungrouped } = (0, import_react32.useMemo)(() => {
       const byGroup2 = /* @__PURE__ */ new Map();
       for (const group of groups) byGroup2.set(group.name, []);
       const ungrouped2 = [];
@@ -81455,7 +81586,7 @@ void main(void) {
       return { byGroup: byGroup2, ungrouped: ungrouped2 };
     }, [filteredFlags, groups]);
     const isEmpty = flags.length === 0 && groups.length === 0;
-    const visibleGroups = (0, import_react31.useMemo)(() => {
+    const visibleGroups = (0, import_react32.useMemo)(() => {
       if (!query) return groups;
       return groups.filter((g2) => matchingGroupNames.has(g2.name) || (byGroup.get(g2.name)?.length ?? 0) > 0);
     }, [groups, query, matchingGroupNames, byGroup]);
@@ -81560,10 +81691,10 @@ void main(void) {
   }
 
   // src/SimulatorPreviewPanel.tsx
-  var import_react33 = __toESM(require_react());
+  var import_react34 = __toESM(require_react());
 
   // src/useSimulatorPreview.ts
-  var import_react32 = __toESM(require_react());
+  var import_react33 = __toESM(require_react());
 
   // src/sceneResolver.ts
   function hash32(str) {
@@ -81661,12 +81792,12 @@ void main(void) {
     "16:9": { orientation: "landscape", guide: "16:9" }
   };
   function useSimulatorPreview(scene, world, aspect, wakeSeed) {
-    const containerRef = (0, import_react32.useRef)(null);
-    const rendererRef = (0, import_react32.useRef)(null);
-    const worldRef = (0, import_react32.useRef)(world);
+    const containerRef = (0, import_react33.useRef)(null);
+    const rendererRef = (0, import_react33.useRef)(null);
+    const worldRef = (0, import_react33.useRef)(world);
     worldRef.current = world;
-    const renderedSceneIdRef = (0, import_react32.useRef)(null);
-    (0, import_react32.useEffect)(() => {
+    const renderedSceneIdRef = (0, import_react33.useRef)(null);
+    (0, import_react33.useEffect)(() => {
       if (!containerRef.current) return;
       const renderer = new SceneRenderer(containerRef.current);
       renderer.setLetterboxEnabled(true);
@@ -81677,14 +81808,14 @@ void main(void) {
       };
     }, []);
     const sceneId = scene?.id ?? null;
-    (0, import_react32.useEffect)(() => {
+    (0, import_react33.useEffect)(() => {
       const renderer = rendererRef.current;
       if (!renderer) return;
       const { orientation, guide } = ASPECT_CONFIG[aspect];
       renderer.setOrientation(orientation);
       renderer.setGuideAspectRatio(guide);
     }, [aspect, sceneId]);
-    (0, import_react32.useEffect)(() => {
+    (0, import_react33.useEffect)(() => {
       const renderer = rendererRef.current;
       if (!renderer) return;
       if (!scene) {
@@ -81772,9 +81903,9 @@ void main(void) {
     onDeleteScene,
     onAddScene
   }) {
-    const [aspect, setAspect] = (0, import_react33.useState)("9:16");
-    const [rollCount, setRollCount] = (0, import_react33.useState)(0);
-    (0, import_react33.useEffect)(() => {
+    const [aspect, setAspect] = (0, import_react34.useState)("9:16");
+    const [rollCount, setRollCount] = (0, import_react34.useState)(0);
+    (0, import_react34.useEffect)(() => {
       setRollCount(0);
     }, [wakeSeed]);
     const qualifyCount = scenes.filter((s2) => s2.status !== "out").length;
@@ -81867,7 +81998,7 @@ void main(void) {
   }
 
   // src/SimulatorFlagModals.tsx
-  var import_react34 = __toESM(require_react());
+  var import_react35 = __toESM(require_react());
   var import_jsx_runtime52 = __toESM(require_jsx_runtime());
   function generateUniqueId(existingIds) {
     let id;
@@ -81877,7 +82008,7 @@ void main(void) {
     return id;
   }
   function FlagEditModal({ flag: initial, isNew, groups, onSave, onCancel }) {
-    const [flag, setFlag] = (0, import_react34.useState)(() => ({ ...initial }));
+    const [flag, setFlag] = (0, import_react35.useState)(() => ({ ...initial }));
     const handleGroupSelect = (value) => {
       setFlag({ ...flag, group: value || void 0 });
     };
@@ -81909,7 +82040,7 @@ void main(void) {
     ] }) });
   }
   function RenameFlagModal({ flag, onSave, onCancel }) {
-    const [name, setName] = (0, import_react34.useState)(flag.name);
+    const [name, setName] = (0, import_react35.useState)(flag.name);
     return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("h2", { className: "modal-title", children: "Rename Flag" }),
       /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "form-row", children: [
@@ -81931,7 +82062,7 @@ void main(void) {
     ] }) });
   }
   function NewGroupModal({ onCreate, onCancel, error }) {
-    const [name, setName] = (0, import_react34.useState)("");
+    const [name, setName] = (0, import_react35.useState)("");
     return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("h2", { className: "modal-title", children: "New Group" }),
       /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "form-row", children: [
@@ -81958,7 +82089,7 @@ void main(void) {
     ] }) });
   }
   function RenameGroupModal({ group, onSave, onCancel, error }) {
-    const [name, setName] = (0, import_react34.useState)(group.name);
+    const [name, setName] = (0, import_react35.useState)(group.name);
     return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("h2", { className: "modal-title", children: "Rename Group" }),
       /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "form-row", children: [
@@ -82053,7 +82184,7 @@ void main(void) {
   }
 
   // src/SimulatorRuleModals.tsx
-  var import_react35 = __toESM(require_react());
+  var import_react36 = __toESM(require_react());
   var import_jsx_runtime53 = __toESM(require_jsx_runtime());
   function emptyRule() {
     return {
@@ -82207,8 +82338,8 @@ void main(void) {
   }
   var TIME_FIELD_STEP_MINUTES = 15;
   function TimeField({ minutes, onChange }) {
-    const [draft, setDraft] = (0, import_react35.useState)(minutesToTime(minutes));
-    (0, import_react35.useEffect)(() => setDraft(minutesToTime(minutes)), [minutes]);
+    const [draft, setDraft] = (0, import_react36.useState)(minutesToTime(minutes));
+    (0, import_react36.useEffect)(() => setDraft(minutesToTime(minutes)), [minutes]);
     const step = (delta) => onChange(((minutes + delta) % 1440 + 1440) % 1440);
     const commit = (raw) => {
       const parsed = parseTimeInput(raw);
@@ -82250,7 +82381,7 @@ void main(void) {
     ] });
   }
   function RuleEditModal({ rule: initial, flags, scenes, groups, onSave, onCancel }) {
-    const [rule, setRule] = (0, import_react35.useState)(() => ({
+    const [rule, setRule] = (0, import_react36.useState)(() => ({
       ...JSON.parse(JSON.stringify(initial)),
       conditions: normalizeConditionGroups(initial.conditions)
     }));
@@ -82319,14 +82450,14 @@ void main(void) {
               "'d \u2014 the rule fires if any one group fully matches. Leave empty to always fire."
             ] })
           ] }),
-          conditions.map((group, groupIndex) => /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(import_react35.Fragment, { children: [
+          conditions.map((group, groupIndex) => /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(import_react36.Fragment, { children: [
             groupIndex > 0 && /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "rule-edit-modal__or-divider", children: [
               /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", {}),
               /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("em", { children: "OR" }),
               /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", {})
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "rule-edit-modal__group", children: [
-              group.checks.map((c2, checkIndex) => /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(import_react35.Fragment, { children: [
+              group.checks.map((c2, checkIndex) => /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(import_react36.Fragment, { children: [
                 checkIndex > 0 && /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "rule-edit-modal__and-divider", children: [
                   /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", {}),
                   /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("em", { children: "AND" }),
@@ -82374,7 +82505,7 @@ void main(void) {
     ] }) });
   }
   function RenameRuleModal({ rule, comboCount, onSave, onCancel }) {
-    const [name, setName] = (0, import_react35.useState)(rule.name);
+    const [name, setName] = (0, import_react36.useState)(rule.name);
     return /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("h2", { className: "modal-title", children: "Rename Rule" }),
       /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "form-row", children: [
@@ -82405,7 +82536,7 @@ void main(void) {
     ] }) });
   }
   function NewGroupModal2({ onCreate, onCancel, error }) {
-    const [name, setName] = (0, import_react35.useState)("");
+    const [name, setName] = (0, import_react36.useState)("");
     return /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("h2", { className: "modal-title", children: "New Group" }),
       /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "form-row", children: [
@@ -82432,7 +82563,7 @@ void main(void) {
     ] }) });
   }
   function RenameGroupModal2({ group, onSave, onCancel, error }) {
-    const [name, setName] = (0, import_react35.useState)(group.name);
+    const [name, setName] = (0, import_react36.useState)(group.name);
     return /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
       /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("h2", { className: "modal-title", children: "Rename Group" }),
       /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "form-row", children: [
@@ -82531,40 +82662,40 @@ void main(void) {
   // src/SimulatorPage.tsx
   var import_jsx_runtime54 = __toESM(require_jsx_runtime());
   function SimulatorPage({ projectId, projectName, onBack, onManageScenes, onEditScene }) {
-    const [rules, setRules] = (0, import_react36.useState)([]);
-    const [ruleGroups, setRuleGroups] = (0, import_react36.useState)([]);
-    const [flags, setFlags] = (0, import_react36.useState)([]);
-    const [flagGroups, setFlagGroups] = (0, import_react36.useState)([]);
-    const [flagUsageCounts, setFlagUsageCounts] = (0, import_react36.useState)({});
-    const [sceneSummaries, setSceneSummaries] = (0, import_react36.useState)([]);
-    const [sceneDetails, setSceneDetails] = (0, import_react36.useState)({});
-    const detailPromises = (0, import_react36.useRef)(/* @__PURE__ */ new Map());
-    const [flagsSceneTarget, setFlagsSceneTarget] = (0, import_react36.useState)(null);
-    const [showNewSceneDialog, setShowNewSceneDialog] = (0, import_react36.useState)(false);
-    const [wokenSceneId, setWokenSceneId] = (0, import_react36.useState)(null);
-    const [loading, setLoading] = (0, import_react36.useState)(true);
-    const [error, setError] = (0, import_react36.useState)(null);
-    const [fetchedName, setFetchedName] = (0, import_react36.useState)(null);
-    const [orderBy, setOrderBy] = (0, import_react36.useState)("least_shown");
-    const [editingRuleIndex, setEditingRuleIndex] = (0, import_react36.useState)(null);
-    const [isNewRule, setIsNewRule] = (0, import_react36.useState)(false);
-    const [editingFlagId, setEditingFlagId] = (0, import_react36.useState)(null);
-    const [isNewFlag, setIsNewFlag] = (0, import_react36.useState)(false);
-    const [renamingFlag, setRenamingFlag] = (0, import_react36.useState)(null);
-    const [removeFlagTarget, setRemoveFlagTarget] = (0, import_react36.useState)(null);
-    const [newGroupContext, setNewGroupContext] = (0, import_react36.useState)(null);
-    const [newGroupError, setNewGroupError] = (0, import_react36.useState)(null);
-    const [renamingGroup, setRenamingGroup] = (0, import_react36.useState)(null);
-    const [renameGroupError, setRenameGroupError] = (0, import_react36.useState)(null);
-    const [removingGroup, setRemovingGroup] = (0, import_react36.useState)(null);
-    const [renamingRule, setRenamingRule] = (0, import_react36.useState)(null);
-    const [removeRuleTarget, setRemoveRuleTarget] = (0, import_react36.useState)(null);
-    const [newRuleGroupContext, setNewRuleGroupContext] = (0, import_react36.useState)(null);
-    const [newRuleGroupError, setNewRuleGroupError] = (0, import_react36.useState)(null);
-    const [renamingRuleGroup, setRenamingRuleGroup] = (0, import_react36.useState)(null);
-    const [renameRuleGroupError, setRenameRuleGroupError] = (0, import_react36.useState)(null);
-    const [removingRuleGroup, setRemovingRuleGroup] = (0, import_react36.useState)(null);
-    (0, import_react36.useEffect)(() => {
+    const [rules, setRules] = (0, import_react37.useState)([]);
+    const [ruleGroups, setRuleGroups] = (0, import_react37.useState)([]);
+    const [flags, setFlags] = (0, import_react37.useState)([]);
+    const [flagGroups, setFlagGroups] = (0, import_react37.useState)([]);
+    const [flagUsageCounts, setFlagUsageCounts] = (0, import_react37.useState)({});
+    const [sceneSummaries, setSceneSummaries] = (0, import_react37.useState)([]);
+    const [sceneDetails, setSceneDetails] = (0, import_react37.useState)({});
+    const detailPromises = (0, import_react37.useRef)(/* @__PURE__ */ new Map());
+    const [flagsSceneTarget, setFlagsSceneTarget] = (0, import_react37.useState)(null);
+    const [showNewSceneDialog, setShowNewSceneDialog] = (0, import_react37.useState)(false);
+    const [wokenSceneId, setWokenSceneId] = (0, import_react37.useState)(null);
+    const [loading, setLoading] = (0, import_react37.useState)(true);
+    const [error, setError] = (0, import_react37.useState)(null);
+    const [fetchedName, setFetchedName] = (0, import_react37.useState)(null);
+    const [orderBy, setOrderBy] = (0, import_react37.useState)("least_shown");
+    const [editingRuleIndex, setEditingRuleIndex] = (0, import_react37.useState)(null);
+    const [isNewRule, setIsNewRule] = (0, import_react37.useState)(false);
+    const [editingFlagId, setEditingFlagId] = (0, import_react37.useState)(null);
+    const [isNewFlag, setIsNewFlag] = (0, import_react37.useState)(false);
+    const [renamingFlag, setRenamingFlag] = (0, import_react37.useState)(null);
+    const [removeFlagTarget, setRemoveFlagTarget] = (0, import_react37.useState)(null);
+    const [newGroupContext, setNewGroupContext] = (0, import_react37.useState)(null);
+    const [newGroupError, setNewGroupError] = (0, import_react37.useState)(null);
+    const [renamingGroup, setRenamingGroup] = (0, import_react37.useState)(null);
+    const [renameGroupError, setRenameGroupError] = (0, import_react37.useState)(null);
+    const [removingGroup, setRemovingGroup] = (0, import_react37.useState)(null);
+    const [renamingRule, setRenamingRule] = (0, import_react37.useState)(null);
+    const [removeRuleTarget, setRemoveRuleTarget] = (0, import_react37.useState)(null);
+    const [newRuleGroupContext, setNewRuleGroupContext] = (0, import_react37.useState)(null);
+    const [newRuleGroupError, setNewRuleGroupError] = (0, import_react37.useState)(null);
+    const [renamingRuleGroup, setRenamingRuleGroup] = (0, import_react37.useState)(null);
+    const [renameRuleGroupError, setRenameRuleGroupError] = (0, import_react37.useState)(null);
+    const [removingRuleGroup, setRemovingRuleGroup] = (0, import_react37.useState)(null);
+    (0, import_react37.useEffect)(() => {
       Promise.all([
         rulesApi.list(projectId),
         ruleGroupsApi.list(projectId),
@@ -82585,7 +82716,7 @@ void main(void) {
         setLoading(false);
       });
     }, [projectId]);
-    (0, import_react36.useEffect)(() => {
+    (0, import_react37.useEffect)(() => {
       if (projectName) return;
       projectsApi.get(projectId).then((p2) => setFetchedName(p2.name)).catch(() => {
       });
@@ -82615,33 +82746,33 @@ void main(void) {
     const refreshRuleGroups = () => {
       ruleGroupsApi.list(projectId).then(setRuleGroups).catch((err) => setError(String(err)));
     };
-    const flagsById = (0, import_react36.useMemo)(() => new Map(flags.map((f2) => [f2.id, f2])), [flags]);
-    const chapters = (0, import_react36.useMemo)(
+    const flagsById = (0, import_react37.useMemo)(() => new Map(flags.map((f2) => [f2.id, f2])), [flags]);
+    const chapters = (0, import_react37.useMemo)(
       () => flags.filter((f2) => f2.isChapter).sort((a2, b2) => (a2.chapterOrder ?? 0) - (b2.chapterOrder ?? 0)),
       [flags]
     );
-    const nonChapterFlags = (0, import_react36.useMemo)(() => flags.filter((f2) => !f2.isChapter), [flags]);
+    const nonChapterFlags = (0, import_react37.useMemo)(() => flags.filter((f2) => !f2.isChapter), [flags]);
     const sim = useSimulatedState(projectId, flags, rules);
-    const activeFlagIds = (0, import_react36.useMemo)(() => new Set(sim.activeFlagIds), [sim.activeFlagIds]);
-    const currentChapter = (0, import_react36.useMemo)(() => chapters.find((c2) => c2.id === sim.chapterId) ?? null, [chapters, sim.chapterId]);
+    const activeFlagIds = (0, import_react37.useMemo)(() => new Set(sim.activeFlagIds), [sim.activeFlagIds]);
+    const currentChapter = (0, import_react37.useMemo)(() => chapters.find((c2) => c2.id === sim.chapterId) ?? null, [chapters, sim.chapterId]);
     const currentChapterIndex = currentChapter ? chapters.indexOf(currentChapter) : -1;
-    const ranking = (0, import_react36.useMemo)(() => {
+    const ranking = (0, import_react37.useMemo)(() => {
       const ctx = {
         activeFlags: activeFlagIds,
         flagName: (id) => flagsById.get(id)?.name || id
       };
       return rankScenes(sceneSummaries, orderBy, ctx, sim.sceneCounts);
     }, [sceneSummaries, orderBy, activeFlagIds, sim.sceneCounts, flagsById]);
-    const liveWinner = (0, import_react36.useMemo)(() => winnerOf(ranking), [ranking]);
-    (0, import_react36.useEffect)(() => {
+    const liveWinner = (0, import_react37.useMemo)(() => winnerOf(ranking), [ranking]);
+    (0, import_react37.useEffect)(() => {
       if (sim.renderedSceneId || !liveWinner) return;
       sim.pinRenderedScene(liveWinner.id);
     }, [sim.renderedSceneId, liveWinner]);
-    const renderedSummary = (0, import_react36.useMemo)(
+    const renderedSummary = (0, import_react37.useMemo)(
       () => sceneSummaries.find((s2) => s2.id === sim.renderedSceneId) ?? null,
       [sceneSummaries, sim.renderedSceneId]
     );
-    const renderedScene = (0, import_react36.useMemo)(
+    const renderedScene = (0, import_react37.useMemo)(
       () => wokenSceneId ? sceneDetails[wokenSceneId] ?? null : null,
       [wokenSceneId, sceneDetails]
     );
@@ -83192,14 +83323,14 @@ void main(void) {
   }
 
   // src/LoginPage.tsx
-  var import_react37 = __toESM(require_react());
+  var import_react38 = __toESM(require_react());
   var import_jsx_runtime55 = __toESM(require_jsx_runtime());
   function LoginPage({ onAuthenticated }) {
-    const [mode, setMode] = (0, import_react37.useState)("login");
-    const [email, setEmail] = (0, import_react37.useState)("");
-    const [password, setPassword] = (0, import_react37.useState)("");
-    const [error, setError] = (0, import_react37.useState)("");
-    const [loading, setLoading] = (0, import_react37.useState)(false);
+    const [mode, setMode] = (0, import_react38.useState)("login");
+    const [email, setEmail] = (0, import_react38.useState)("");
+    const [password, setPassword] = (0, import_react38.useState)("");
+    const [error, setError] = (0, import_react38.useState)("");
+    const [loading, setLoading] = (0, import_react38.useState)(false);
     const handleSubmit = async (e2) => {
       e2.preventDefault();
       setError("");
@@ -83286,28 +83417,28 @@ void main(void) {
     return { type: "projects" };
   }
   function App() {
-    const [authState, setAuthState] = (0, import_react38.useState)({ status: "loading" });
-    const [page, setPage] = (0, import_react38.useState)(pageFromPath);
-    const [thumbBuster, setThumbBuster] = (0, import_react38.useState)(0);
-    const isDirtyRef = (0, import_react38.useRef)(false);
-    const pageRef = (0, import_react38.useRef)(page);
-    (0, import_react38.useEffect)(() => {
+    const [authState, setAuthState] = (0, import_react39.useState)({ status: "loading" });
+    const [page, setPage] = (0, import_react39.useState)(pageFromPath);
+    const [thumbBuster, setThumbBuster] = (0, import_react39.useState)(0);
+    const isDirtyRef = (0, import_react39.useRef)(false);
+    const pageRef = (0, import_react39.useRef)(page);
+    (0, import_react39.useEffect)(() => {
       pageRef.current = page;
     }, [page]);
-    (0, import_react38.useEffect)(() => {
+    (0, import_react39.useEffect)(() => {
       setUnauthorizedHandler(() => setAuthState({ status: "unauthenticated" }));
       authApi.me().then((user) => setAuthState({ status: "authenticated", user })).catch(() => {
       });
     }, []);
-    const handleLogout = (0, import_react38.useCallback)(async () => {
+    const handleLogout = (0, import_react39.useCallback)(async () => {
       await authApi.logout().catch(() => {
       });
       setAuthState({ status: "unauthenticated" });
     }, []);
-    const handleDirtyChange = (0, import_react38.useCallback)((dirty) => {
+    const handleDirtyChange = (0, import_react39.useCallback)((dirty) => {
       isDirtyRef.current = dirty;
     }, []);
-    (0, import_react38.useEffect)(() => {
+    (0, import_react39.useEffect)(() => {
       const onPopState = () => {
         const currentPage = pageRef.current;
         if (currentPage.type !== "scene" || !isDirtyRef.current) {
@@ -83324,27 +83455,27 @@ void main(void) {
       window.addEventListener("popstate", onPopState);
       return () => window.removeEventListener("popstate", onPopState);
     }, []);
-    const navigateToProject = (0, import_react38.useCallback)((project) => {
+    const navigateToProject = (0, import_react39.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
       setPage({ type: "simulator", project });
     }, []);
-    const navigateToScene = (0, import_react38.useCallback)((scene, project) => {
+    const navigateToScene = (0, import_react39.useCallback)((scene, project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/scene/${encodeURIComponent(scene.id)}`);
       setPage({ type: "scene", sceneId: scene.id, project });
     }, []);
-    const navigateBackToProjects = (0, import_react38.useCallback)(() => {
+    const navigateBackToProjects = (0, import_react39.useCallback)(() => {
       window.history.pushState(null, "", "/");
       setPage({ type: "projects" });
     }, []);
-    const navigateToScenes = (0, import_react38.useCallback)((project) => {
+    const navigateToScenes = (0, import_react39.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}/scenes`);
       setPage({ type: "scenes", project });
     }, []);
-    const navigateToSimulator = (0, import_react38.useCallback)((project) => {
+    const navigateToSimulator = (0, import_react39.useCallback)((project) => {
       window.history.pushState(null, "", `/project/${encodeURIComponent(project.id)}`);
       setPage({ type: "simulator", project });
     }, []);
-    const handleSaved = (0, import_react38.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
+    const handleSaved = (0, import_react39.useCallback)(() => setThumbBuster((b2) => b2 + 1), []);
     if (authState.status === "loading") {
       return null;
     }

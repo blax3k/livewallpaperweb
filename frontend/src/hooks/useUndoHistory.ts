@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import type { SceneSlot } from '@livewallpaper/types';
 
 export interface PositionAction {
   type: 'position';
@@ -40,7 +41,18 @@ export interface TextureAction {
   after: { textureResource: string; width: number; height: number; texCoordinates: number[] };
 }
 
-export type HistoryAction = PositionAction | ScaleAction | DepthAction | XFocusAction | YFocusAction | TextureAction;
+/**
+ * A whole-slots snapshot. Slot edits (add/remove/rename slot or sprite, gate changes, drag-move)
+ * all go through one immutable array replace, so a before/after snapshot is the simplest uniform
+ * way to make every slot mutation undoable.
+ */
+export interface SlotsAction {
+  type: 'slots';
+  before: SceneSlot[];
+  after: SceneSlot[];
+}
+
+export type HistoryAction = PositionAction | ScaleAction | DepthAction | XFocusAction | YFocusAction | TextureAction | SlotsAction;
 
 export function useUndoHistory() {
   const past = useRef<HistoryAction[]>([]);

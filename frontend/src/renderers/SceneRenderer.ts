@@ -59,6 +59,10 @@ export class SceneRenderer {
   private slotPreviewMeta: Map<PIXI.Sprite, { x: number; y: number; parallaxMultiplier: number }> = new Map();
   private slotFrame: PIXI.Graphics | null = null;
   private slotFrameTarget: PIXI.Sprite | null = null;
+  // All preview sprites of the framed (selected) slot's option, moved together while dragging.
+  private slotFrameGroup: PIXI.Sprite[] = [];
+  // Per-sprite meta captured at drag start so a live drag is applied as a pure offset.
+  private slotFrameDragStart: Map<PIXI.Sprite, { x: number; y: number }> | null = null;
   // Bumped on each renderSlotPreview call so an earlier call's async tail (awaiting textures) bails
   // instead of appending stale sprites after a newer call already rebuilt the preview.
   private slotPreviewToken = 0;
@@ -1090,7 +1094,7 @@ export class SceneRenderer {
     const token = ++this.slotPreviewToken;
     this.clearSlotPreview();
     for (const group of groups) {
-      let firstSprite: PIXI.Sprite | null = null;
+      const groupSprites: PIXI.Sprite[] = [];
       for (const spriteData of group.sprites) {
         await this.loadTexture(spriteData.textureResource);
         if (token !== this.slotPreviewToken || !this.app) return; // superseded by a newer call
@@ -1105,9 +1109,12 @@ export class SceneRenderer {
           parallaxMultiplier: spriteData.parallaxMultiplier,
         });
         this.app.stage.addChild(sprite);
-        if (!firstSprite) firstSprite = sprite;
+        groupSprites.push(sprite);
       }
-      if (group.frame) this.slotFrameTarget = firstSprite;
+      if (group.frame) {
+        this.slotFrameGroup = groupSprites;
+        this.slotFrameTarget = groupSprites[0] ?? null;
+      }
     }
     this.raiseOverlays();
     this.applyAllPositions();
@@ -1118,7 +1125,55 @@ export class SceneRenderer {
     this.slotPreviewSprites = [];
     this.slotPreviewMeta.clear();
     this.slotFrameTarget = null;
+    this.slotFrameGroup = [];
+    this.slotFrameDragStart = null;
     this.slotFrame?.clear();
+  }
+
+  // ── Slot-sprite drag (move the selected slot's previewed option on the canvas) ──────────────
+
+  /** True if the CSS-pixel point is over the selected slot's framed sprite. */
+  hitTestSlotFrame(cssX: number, cssY: number): boolean {
+    const t = this.slotFrameTarget;
+    if (!t) return false;
+    const world = this.canvasToWorld(cssX, cssY);
+    return (
+      world.x >= t.x - t.width / 2 &&
+      world.x <= t.x + t.width / 2 &&
+      world.y >= t.y - t.height / 2 &&
+      world.y <= t.y + t.height / 2
+    );
+  }
+
+  /** Snapshot the framed group's positions so the drag can be applied as a pure offset. */
+  beginSlotFrameDrag(): void {
+    this.slotFrameDragStart = new Map();
+    for (const sprite of this.slotFrameGroup) {
+      const meta = this.slotPreviewMeta.get(sprite);
+      if (meta) this.slotFrameDragStart.set(sprite, { x: meta.x, y: meta.y });
+    }
+  }
+
+  /**
+   * Live-move the framed group by a world-space delta (position-space, i.e. +dy moves the sprite
+   * up on screen — see applyAllPositions' y negation). Repositions without a rebuild so dragging
+   * stays smooth; the scene isn't mutated until the drag commits.
+   */
+  updateSlotFrameDrag(dx: number, dy: number): void {
+    if (!this.slotFrameDragStart) return;
+    for (const sprite of this.slotFrameGroup) {
+      const start = this.slotFrameDragStart.get(sprite);
+      const meta = this.slotPreviewMeta.get(sprite);
+      if (start && meta) {
+        meta.x = start.x + dx;
+        meta.y = start.y + dy;
+      }
+    }
+    this.applyAllPositions();
+  }
+
+  endSlotFrameDrag(): void {
+    this.slotFrameDragStart = null;
   }
 
   /** Keep the guide, letterbox, and selection/frame graphics above the freshly added preview sprites. */

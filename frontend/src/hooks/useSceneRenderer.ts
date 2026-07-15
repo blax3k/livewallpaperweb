@@ -36,11 +36,10 @@ export function useSceneRenderer(onNotify?: (message: string) => void, onSaved?:
   const onSavedRef = useRef(onSaved);
   onSavedRef.current = onSaved;
 
-  // Bumped on any condition-set mutation/selection (add/remove/rename/set-flags/select) so
-  // components that read condition data straight from the renderer (e.g. AllConditionsPanel,
-  // which shows every sprite's conditions at once) know to re-render even when no other state
-  // changed. There's no separate "active condition" state here — a sprite with one or more
-  // condition sets always has exactly one selected, tracked entirely inside the renderer, and
+  // Bumped on any condition-set mutation/selection so consumers that read condition data straight
+  // from the renderer re-render even when no other state changed. Legacy sprite conditions are no
+  // longer authored in the editor (replaced by scene slots), but the renderer still tracks them
+  // for scenes that carry them, and a sprite with condition sets always has exactly one selected,
   // queried fresh via renderer.getSelectedConditionIndex(spriteIndex) wherever it's needed.
   const [conditionsVersion, setConditionsVersion] = useState(0);
   const bumpConditionsVersion = useCallback(() => setConditionsVersion(v => v + 1), []);

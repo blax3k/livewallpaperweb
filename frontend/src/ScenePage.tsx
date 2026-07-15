@@ -15,7 +15,8 @@ import { computeSceneSize, collectTextureResources, formatBytes } from './utils/
 import { flagsApi, imagesApi } from './api';
 import type { FlagDefinition, SceneSlot, SlotOption } from '@livewallpaper/types';
 import { matchesConditionGroup, type WorldState } from './ruleEngine';
-import { createSlot, createOptionFromTexture, mapSlot, setOptionGates } from './slotOps';
+import { createSlot, createOptionFromTexture, mapSlot, mapOption, setOptionGates } from './slotOps';
+import { useSlotDrag } from './hooks/useSlotDrag';
 import type { SlotPreviewGroup } from './renderers/SceneRenderer';
 import { SlotCyclerPill } from './controls/panels/SlotCyclerPill';
 
@@ -196,6 +197,8 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     onXFocusApply: handleXFocusChange,
     onYFocusApply: handleYFocusChange,
     onTextureApply: handleTextureApply,
+    // Undo/redo of a slots snapshot — apply directly (updateSlots does not re-push to history).
+    onSlotsApply: (slots) => updateSlots(() => slots),
     onMarkDirty: markDirty,
   });
 
@@ -257,26 +260,35 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
 
   const selectedSlot = slots.find(s => s.id === selectedSlotId) ?? null;
 
-  // ── Slot mutations (persisted + dirty via updateSlots; undo/redo is a later phase) ──────────
+  // ── Slot mutations ──────────────────────────────────────────────────────────────────────────
+  // All slot edits go through here: persists + marks dirty (updateSlots) and records a before/after
+  // snapshot on the undo stack. Undo/redo replay via onSlotsApply (which does NOT re-push).
+  const applySlots = useCallback((updater: (slots: SceneSlot[]) => SceneSlot[]) => {
+    const before = [...(rendererRef.current?.getSlots() ?? [])];
+    const after = updater(before);
+    updateSlots(() => after);
+    history.push({ type: 'slots', before, after });
+  }, [updateSlots, history, rendererRef]);
+
   const handleAddSlot = useCallback(() => {
     const existing = new Set(slots.map(s => s.name));
     let n = existing.size + 1;
     let name = `slot ${n}`;
     while (existing.has(name)) name = `slot ${++n}`;
     const slot = createSlot(name);
-    updateSlots(s => [...s, slot]);
+    applySlots(s => [...s, slot]);
     setSelectedSprite(null);
     rendererRef.current?.setSelectedSpriteHighlight(null);
     setSelectedSlotId(slot.id);
     setExpandedSlotIds(prev => new Set(prev).add(slot.id));
-  }, [slots, updateSlots, setSelectedSprite, rendererRef]);
+  }, [slots, applySlots, setSelectedSprite, rendererRef]);
 
   const handleRenameSlot = useCallback((slotId: string, name: string) => {
-    updateSlots(s => mapSlot(s, slotId, sl => ({ ...sl, name })));
-  }, [updateSlots]);
+    applySlots(s => mapSlot(s, slotId, sl => ({ ...sl, name })));
+  }, [applySlots]);
 
   const handleDeleteSlot = useCallback((slotId: string) => {
-    updateSlots(s => s.filter(sl => sl.id !== slotId));
+    applySlots(s => s.filter(sl => sl.id !== slotId));
     setSelectedSlotId(prev => (prev === slotId ? null : prev));
     setExpandedSlotIds(prev => {
       if (!prev.has(slotId)) return prev;
@@ -284,28 +296,28 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
       next.delete(slotId);
       return next;
     });
-  }, [updateSlots]);
+  }, [applySlots]);
 
   const handleAddOption = useCallback((slotId: string, textureResource: string) => {
     const name = textureResource.replace(/^.*\//, '').replace(/\.[^.]+$/, '') || 'sprite';
     const option = createOptionFromTexture(textureResource, name);
-    updateSlots(s => mapSlot(s, slotId, sl => ({ ...sl, options: [...sl.options, option] })));
-  }, [updateSlots]);
+    applySlots(s => mapSlot(s, slotId, sl => ({ ...sl, options: [...sl.options, option] })));
+  }, [applySlots]);
 
   const handleRemoveOption = useCallback((slotId: string, optionId: string) => {
-    updateSlots(s => mapSlot(s, slotId, sl => ({ ...sl, options: sl.options.filter(o => o.id !== optionId) })));
-  }, [updateSlots]);
+    applySlots(s => mapSlot(s, slotId, sl => ({ ...sl, options: sl.options.filter(o => o.id !== optionId) })));
+  }, [applySlots]);
 
   const handleRenameOption = useCallback((slotId: string, optionId: string, name: string) => {
-    updateSlots(s => mapSlot(s, slotId, sl => ({
+    applySlots(s => mapSlot(s, slotId, sl => ({
       ...sl,
       options: sl.options.map(o => (o.id === optionId ? { ...o, name } : o)),
     })));
-  }, [updateSlots]);
+  }, [applySlots]);
 
   const handleSetGates = useCallback((slotId: string, optionId: string, showFlagIds: string[], hideFlagIds: string[]) => {
-    updateSlots(s => setOptionGates(s, slotId, optionId, showFlagIds, hideFlagIds));
-  }, [updateSlots]);
+    applySlots(s => setOptionGates(s, slotId, optionId, showFlagIds, hideFlagIds));
+  }, [applySlots]);
 
   // Scene-flags playground toggle — preview-only, never written to the scene.
   const handleTogglePreviewFlag = useCallback((flagId: string) => {
@@ -356,6 +368,40 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     const current = resolvePreviewIndex(selectedSlot);
     setPreviewOptionIndexBySlot(prev => ({ ...prev, [selectedSlot.id]: (current + delta + n) % n }));
   }, [selectedSlot, resolvePreviewIndex]);
+
+  // Drag-to-move the selected slot's framed sprite; commit shifts that option's sprites (undoable).
+  const { startSlotDrag } = useSlotDrag({
+    rendererRef,
+    onCommit: (dx, dy) => {
+      if (!selectedSlot) return;
+      const option = selectedSlot.options[resolvePreviewIndex(selectedSlot)];
+      if (!option?.sprites?.length) return;
+      applySlots(s => mapOption(s, selectedSlot.id, option.id, o => ({
+        ...o,
+        sprites: o.sprites?.map(sp => ({ ...sp, positionX: sp.positionX + dx, positionY: sp.positionY + dy })),
+      })));
+    },
+  });
+
+  // Canvas mousedown: when a slot is selected and the click lands on its frame, drag the slot
+  // sprite; otherwise fall through to the base-sprite drag.
+  const handleCanvasPointerDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const renderer = rendererRef.current;
+    if (selectedSlot && renderer) {
+      const canvas = renderer.getCanvas();
+      if (canvas) {
+        const rect = canvas.getBoundingClientRect();
+        const cssX = e.clientX - rect.left;
+        const cssY = e.clientY - rect.top;
+        if (renderer.hitTestSlotFrame(cssX, cssY)) {
+          e.preventDefault();
+          startSlotDrag(cssX, cssY);
+          return;
+        }
+      }
+    }
+    handleCanvasMouseDown(e);
+  }, [selectedSlot, rendererRef, startSlotDrag, handleCanvasMouseDown]);
 
   useEffect(() => {
     if (initialSceneId) loadScene(initialSceneId);
@@ -600,7 +646,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
             id="canvas-container"
             ref={canvasRef}
             className="scene-page__canvas-inner"
-            onMouseDown={gyroMode ? undefined : handleCanvasMouseDown}
+            onMouseDown={gyroMode ? undefined : handleCanvasPointerDown}
             style={
               gyroMode
                 ? { cursor: isGyroDragging.current ? 'crosshair' : 'crosshair' }
