@@ -1,6 +1,7 @@
 import React, { useRef, useCallback, useState, useEffect, useMemo } from 'react';
 import { SceneEditorPanel } from './controls/panels/SceneEditorPanel';
 import { SlotEditorPanel } from './controls/panels/SlotEditorPanel';
+import { SceneFlagsPlayground } from './controls/panels/SceneFlagsPlayground';
 import { TopBar } from './controls/TopBar';
 import { NotificationStack } from './controls/NotificationStack';
 import { EditTextureModal } from './controls/modals/EditTextureModal';
@@ -301,6 +302,16 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     updateSlots(s => setOptionGates(s, slotId, optionId, showFlagIds, hideFlagIds));
   }, [updateSlots]);
 
+  // Scene-flags playground toggle — preview-only, never written to the scene.
+  const handleTogglePreviewFlag = useCallback((flagId: string) => {
+    setPreviewFlags((prev) => {
+      const next = new Set(prev);
+      if (next.has(flagId)) next.delete(flagId);
+      else next.add(flagId);
+      return next;
+    });
+  }, []);
+
   useEffect(() => {
     if (initialSceneId) loadScene(initialSceneId);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -557,18 +568,27 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
           />
         </div>
         {showSceneControls && (
-          <SlotEditorPanel
-            slot={selectedSlot}
-            availableFlags={availableFlags}
-            projectId={projectId}
-            isOptionEligible={(option) => isOptionEligible(selectedSlot?.id ?? '', option)}
-            onRenameSlot={handleRenameSlot}
-            onDeleteSlot={handleDeleteSlot}
-            onAddOption={handleAddOption}
-            onRemoveOption={handleRemoveOption}
-            onRenameOption={handleRenameOption}
-            onSetGates={handleSetGates}
-          />
+          <div className="scene-page__right-rail">
+            <SlotEditorPanel
+              slot={selectedSlot}
+              availableFlags={availableFlags}
+              projectId={projectId}
+              isOptionEligible={(option) => isOptionEligible(selectedSlot?.id ?? '', option)}
+              onRenameSlot={handleRenameSlot}
+              onDeleteSlot={handleDeleteSlot}
+              onAddOption={handleAddOption}
+              onRemoveOption={handleRemoveOption}
+              onRenameOption={handleRenameOption}
+              onSetGates={handleSetGates}
+            />
+            <SceneFlagsPlayground
+              availableFlags={availableFlags}
+              previewFlags={previewFlags}
+              onToggleFlag={handleTogglePreviewFlag}
+              selectedSlot={selectedSlot}
+              isOptionEligible={(option) => isOptionEligible(selectedSlot?.id ?? '', option)}
+            />
+          </div>
         )}
       </div>
 

@@ -28,6 +28,19 @@
   background: var(--color-panel-inset);
 }
 
+// Right rail: one scrolling panel stacking the slot editor over the Scene-flags playground.
+.scene-page__right-rail {
+  display: flex;
+  width: 300px;
+  flex-shrink: 0;
+  flex-direction: column;
+  overflow-y: auto;
+  border-radius: var(--size-12);
+  border: 1px solid var(--color-border);
+  background: var(--color-panel);
+  box-shadow: var(--shadow-panel);
+}
+
 .scene-page__canvas-inner {
   display: flex;
   height: 100%;
@@ -39,7 +52,7 @@
 .scene-page__toast-wrap {
   position: absolute;
   bottom: var(--size-20);
-  // 294px = right panel width (264px) + row gap (10px) + shell padding (10px)
+  // 330px = right rail width (300px) + row gap (10px) + shell padding (10px)
   // + a hair more — a one-off placement, not a shared scale value.
-  right: 294px;
+  right: 330px;
 }

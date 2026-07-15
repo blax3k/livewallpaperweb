@@ -1,0 +1,163 @@
+// A section within the shared right rail, below the slot editor.
+.scene-flags-playground {
+  display: flex;
+  flex-direction: column;
+  padding: var(--size-12) var(--size-12) var(--size-14);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.scene-flags-playground__head {
+  display: flex;
+  align-items: center;
+  gap: var(--size-6);
+  margin-bottom: var(--size-4);
+}
+
+.scene-flags-playground__glyph {
+  color: var(--color-accent-fg);
+}
+
+.scene-flags-playground__label {
+  font-size: var(--text-10);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-fg-faint);
+}
+
+.scene-flags-playground__note {
+  margin-left: auto;
+  font-size: 9.5px;
+  color: var(--color-fg-faintest);
+}
+
+.scene-flags-playground__desc {
+  margin-bottom: var(--size-9);
+  font-size: var(--text-10);
+  line-height: 1.5;
+  color: var(--color-fg-faintest);
+}
+
+.scene-flags-playground__empty {
+  font-size: var(--text-10);
+  color: var(--color-fg-faintest);
+}
+
+.scene-flags-playground__rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-5);
+}
+
+// ── Flag toggle row ──────────────────────────────────────────────────────────
+
+.flag-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--size-8);
+  height: var(--size-32);
+  padding: 0 var(--size-5) 0 var(--size-10);
+  border-radius: var(--size-8);
+  border: 1px solid var(--color-border);
+  background: var(--color-panel-inset);
+  cursor: pointer;
+  transition: background-color var(--duration-fast), border-color var(--duration-fast);
+
+  &--on {
+    background: var(--color-gate-require-badge-bg);
+    border-color: var(--color-gate-require-border);
+  }
+}
+
+.flag-toggle__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: var(--text-12);
+  color: var(--color-fg-subtle);
+
+  .flag-toggle--on & {
+    color: var(--color-fg-muted);
+  }
+}
+
+.flag-toggle__on-label {
+  font-size: 8.5px;
+  color: var(--color-gate-require-fg);
+}
+
+.flag-toggle__switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 34px;
+  height: 19px;
+  border-radius: var(--size-10);
+  background: var(--color-border-strong);
+  transition: background-color var(--duration-fast);
+
+  .flag-toggle--on & {
+    background: var(--color-gate-require-rail);
+  }
+}
+
+.flag-toggle__knob {
+  position: absolute;
+  top: var(--size-2);
+  left: var(--size-2);
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--color-fg-faint);
+  transition: transform var(--duration-fast), background-color var(--duration-fast);
+
+  .flag-toggle--on & {
+    transform: translateX(15px);
+    background: #fff;
+  }
+}
+
+// ── Eligibility readout ──────────────────────────────────────────────────────
+
+.scene-flags-playground__readout {
+  margin-top: var(--size-10);
+  border-radius: var(--size-9);
+  border: 1px solid var(--color-gate-require-border);
+  background: var(--color-gate-require-badge-bg);
+  padding: var(--size-9) var(--size-10);
+
+  &--muted {
+    border-color: var(--color-border);
+    background: var(--color-panel-inset);
+    color: var(--color-fg-faintest);
+    font-size: var(--text-10);
+    line-height: 1.5;
+  }
+}
+
+.scene-flags-playground__readout-head {
+  display: flex;
+  align-items: center;
+  gap: var(--size-6);
+  margin-bottom: var(--size-5);
+  font-size: var(--text-10);
+  color: var(--color-accent-dim);
+
+  svg {
+    color: var(--color-gate-require-fg);
+  }
+}
+
+.scene-flags-playground__readout-body {
+  font-size: var(--text-10-5);
+  line-height: 1.6;
+  color: var(--color-fg-muted);
+
+  b {
+    color: var(--color-fg-muted);
+    font-weight: 600;
+  }
+}

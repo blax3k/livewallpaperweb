@@ -1,13 +1,8 @@
+// A section within the shared right rail (.scene-page__right-rail owns the panel chrome), stacked
+// above the Scene-flags playground.
 .slot-editor-panel {
   display: flex;
-  width: 300px;
-  flex-shrink: 0;
   flex-direction: column;
-  overflow-y: auto;
-  border-radius: var(--size-12);
-  border: 1px solid var(--color-border);
-  background: var(--color-panel);
-  box-shadow: var(--shadow-panel);
 }
 
 .slot-editor-panel__empty {
