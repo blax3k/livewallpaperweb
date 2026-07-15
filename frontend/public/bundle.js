@@ -77104,6 +77104,17 @@ void main(void) {
       this.currentYFocus = 0.5;
       this.selectionHighlight = null;
       this.selectedHighlightIndex = null;
+      // Slot preview: the composited option sprites drawn on top of the base scene (one displayed
+      // option per slot). Purely a preview surface — never part of the persisted `sprites`. The
+      // editor recomputes which option to show (from preview flags / the cycler) and hands the flat
+      // sprite groups to renderSlotPreview().
+      this.slotPreviewSprites = [];
+      this.slotPreviewMeta = /* @__PURE__ */ new Map();
+      this.slotFrame = null;
+      this.slotFrameTarget = null;
+      // Bumped on each renderSlotPreview call so an earlier call's async tail (awaiting textures) bails
+      // instead of appending stale sprites after a newer call already rebuilt the preview.
+      this.slotPreviewToken = 0;
       // Black letterbox/pillarbox bars masking the render down to the viewable window's aspect
       // ratio (opt-in; used by the simulator preview, not the editor).
       this.letterboxGraphics = null;
@@ -77221,6 +77232,8 @@ void main(void) {
       this.selectedDefaultBySprite.clear();
       this.selectionHighlight = null;
       this.selectedHighlightIndex = null;
+      this.clearSlotPreview();
+      this.slotFrame = null;
       this.app.stage.removeChildren();
       for (const spriteData of sceneData.sprites) {
         await this.loadTexture(spriteData.textureResource);
@@ -77514,7 +77527,15 @@ void main(void) {
           sprite.y = -metadata.y + (scrollOffsetY + this.gyroOffsetY) * metadata.parallaxMultiplier;
         }
       }
+      for (const sprite of this.slotPreviewSprites) {
+        const meta = this.slotPreviewMeta.get(sprite);
+        if (meta) {
+          sprite.x = meta.x + (scrollOffset + this.gyroOffsetX) * meta.parallaxMultiplier;
+          sprite.y = -meta.y + (scrollOffsetY + this.gyroOffsetY) * meta.parallaxMultiplier;
+        }
+      }
       this.updateSelectionHighlight();
+      this.updateSlotFrame();
     }
     setSpriteSize(index2, width, height) {
       if (index2 < 0 || index2 >= this.sprites.length) return;
@@ -77918,6 +77939,79 @@ void main(void) {
     /** Replace the scene's slots. Persisted on the next save via getSceneData()'s spread. */
     setSlots(slots) {
       if (this.originalSceneData) this.originalSceneData.slots = slots;
+    }
+    /**
+     * Draw the slot preview composite: the editor decides which option each slot displays (from the
+     * preview flags / cycler) and passes the flat sprite groups here. `dim` fades an ineligible
+     * option; `frame` marks the selected slot's group for the editable frame. Fully rebuilt on each
+     * call — cheap enough for an editor, and keeps this renderer free of eligibility logic.
+     */
+    async renderSlotPreview(groups) {
+      if (!this.app) return;
+      const token = ++this.slotPreviewToken;
+      this.clearSlotPreview();
+      for (const group of groups) {
+        let firstSprite = null;
+        for (const spriteData of group.sprites) {
+          await this.loadTexture(spriteData.textureResource);
+          if (token !== this.slotPreviewToken || !this.app) return;
+          const sprite = await this.createSprite(spriteData);
+          if (token !== this.slotPreviewToken || !this.app) {
+            sprite?.destroy();
+            return;
+          }
+          if (!sprite) continue;
+          sprite.alpha = group.dim ? 0.35 : 1;
+          this.slotPreviewSprites.push(sprite);
+          this.slotPreviewMeta.set(sprite, {
+            x: spriteData.positionX,
+            y: spriteData.positionY,
+            parallaxMultiplier: spriteData.parallaxMultiplier
+          });
+          this.app.stage.addChild(sprite);
+          if (!firstSprite) firstSprite = sprite;
+        }
+        if (group.frame) this.slotFrameTarget = firstSprite;
+      }
+      this.raiseOverlays();
+      this.applyAllPositions();
+    }
+    clearSlotPreview() {
+      for (const sprite of this.slotPreviewSprites) sprite.destroy();
+      this.slotPreviewSprites = [];
+      this.slotPreviewMeta.clear();
+      this.slotFrameTarget = null;
+      this.slotFrame?.clear();
+    }
+    /** Keep the guide, letterbox, and selection/frame graphics above the freshly added preview sprites. */
+    raiseOverlays() {
+      if (!this.app) return;
+      const guide = this.phoneGuide?.getGraphics();
+      if (guide) this.app.stage.addChild(guide);
+      if (this.letterboxGraphics) this.app.stage.addChild(this.letterboxGraphics);
+      if (this.selectionHighlight) this.app.stage.addChild(this.selectionHighlight);
+      if (this.slotFrame) this.app.stage.addChild(this.slotFrame);
+    }
+    /** Indigo frame + corner handle dots around the selected slot's previewed sprite. */
+    updateSlotFrame() {
+      if (!this.app) return;
+      if (!this.slotFrame) {
+        this.slotFrame = new Graphics();
+        this.app.stage.addChild(this.slotFrame);
+      }
+      this.slotFrame.clear();
+      const target = this.slotFrameTarget;
+      if (!target) return;
+      const left = target.x - target.width / 2;
+      const top = target.y - target.height / 2;
+      const w2 = target.width;
+      const h2 = target.height;
+      const color = 8161023;
+      this.slotFrame.moveTo(left, top).lineTo(left + w2, top).lineTo(left + w2, top + h2).lineTo(left, top + h2).lineTo(left, top).stroke({ color, width: 0.015, alpha: 1 });
+      const r2 = 0.09;
+      for (const [cx, cy] of [[left, top], [left + w2, top], [left, top + h2], [left + w2, top + h2]]) {
+        this.slotFrame.circle(cx, cy, r2).fill({ color, alpha: 1 });
+      }
     }
     toggleSpriteByIndex(index2) {
       if (index2 >= 0 && index2 < this.sprites.length) {
@@ -79131,8 +79225,31 @@ void main(void) {
     return runRules({ ...input, activeFlags: reconciled });
   }
 
-  // src/ScenePage.tsx
+  // src/controls/panels/SlotCyclerPill.tsx
   var import_jsx_runtime38 = __toESM(require_jsx_runtime());
+  function SlotCyclerPill({ slot, optionIndex, onPrev, onNext }) {
+    const count4 = slot.options.length;
+    if (count4 <= 1) return null;
+    const option = slot.options[optionIndex];
+    const label = option ? isNoneOption(option) ? "none" : option.name : "\u2014";
+    return /* @__PURE__ */ (0, import_jsx_runtime38.jsxs)("div", { className: "slot-cycler", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("button", { className: "slot-cycler__btn", onClick: onPrev, title: "Previous sprite", children: /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(ChevronLeft, { size: 12 }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime38.jsxs)("div", { className: "slot-cycler__label", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("span", { className: "slot-cycler__name", children: label }),
+        /* @__PURE__ */ (0, import_jsx_runtime38.jsxs)("span", { className: "slot-cycler__meta", children: [
+          slot.name,
+          " \xB7 preview ",
+          optionIndex + 1,
+          "/",
+          count4
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("button", { className: "slot-cycler__btn", onClick: onNext, title: "Next sprite", children: /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(ChevronRight, { size: 12 }) })
+    ] });
+  }
+
+  // src/ScenePage.tsx
+  var import_jsx_runtime39 = __toESM(require_jsx_runtime());
   function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyChange }) {
     const [availableFlags, setAvailableFlags] = (0, import_react21.useState)([]);
     const history = useUndoHistory();
@@ -79150,6 +79267,7 @@ void main(void) {
     const [selectedSlotId, setSelectedSlotId] = (0, import_react21.useState)(null);
     const [expandedSlotIds, setExpandedSlotIds] = (0, import_react21.useState)(/* @__PURE__ */ new Set());
     const [previewFlags, setPreviewFlags] = (0, import_react21.useState)(/* @__PURE__ */ new Set());
+    const [previewOptionIndexBySlot, setPreviewOptionIndexBySlot] = (0, import_react21.useState)({});
     const {
       canvasRef,
       rendererRef,
@@ -79376,6 +79494,37 @@ void main(void) {
         return next;
       });
     }, []);
+    const resolvePreviewIndex = (0, import_react21.useCallback)((slot) => {
+      const explicit = previewOptionIndexBySlot[slot.id];
+      if (explicit != null && explicit >= 0 && explicit < slot.options.length) return explicit;
+      const firstEligible = slot.options.findIndex((o2) => isOptionEligible(slot.id, o2));
+      return firstEligible >= 0 ? firstEligible : 0;
+    }, [previewOptionIndexBySlot, isOptionEligible]);
+    const slotPreviewGroups = (0, import_react21.useMemo)(() => {
+      const groups = [];
+      for (const slot of slots) {
+        const option = slot.id === selectedSlotId ? slot.options[resolvePreviewIndex(slot)] : slot.options.find((o2) => isOptionEligible(slot.id, o2));
+        if (option?.sprites?.length) {
+          groups.push({
+            sprites: option.sprites,
+            dim: !isOptionEligible(slot.id, option),
+            frame: slot.id === selectedSlotId
+          });
+        }
+      }
+      return groups;
+    }, [slots, selectedSlotId, resolvePreviewIndex, isOptionEligible]);
+    (0, import_react21.useEffect)(() => {
+      if (!showSceneControls) return;
+      rendererRef.current?.renderSlotPreview(slotPreviewGroups);
+    }, [slotPreviewGroups, showSceneControls, rendererRef]);
+    const cycleSelectedSlot = (0, import_react21.useCallback)((delta) => {
+      if (!selectedSlot) return;
+      const n2 = selectedSlot.options.length;
+      if (n2 === 0) return;
+      const current = resolvePreviewIndex(selectedSlot);
+      setPreviewOptionIndexBySlot((prev) => ({ ...prev, [selectedSlot.id]: (current + delta + n2) % n2 }));
+    }, [selectedSlot, resolvePreviewIndex]);
     (0, import_react21.useEffect)(() => {
       if (initialSceneId) loadScene(initialSceneId);
     }, []);
@@ -79526,8 +79675,8 @@ void main(void) {
         history.push({ type: "depth", spriteIndex: selectedSprite.index, before, after: depth });
       }
     }, [selectedSprite, history, activeConditionSet]);
-    return /* @__PURE__ */ (0, import_jsx_runtime38.jsxs)("div", { className: "scene-page", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)("div", { className: "scene-page", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
         TopBar,
         {
           projectId,
@@ -79552,8 +79701,8 @@ void main(void) {
           onImageReplaced: handleImageReplaced
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime38.jsxs)("div", { className: "scene-page__row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)("div", { className: "scene-page__row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
           SceneEditorPanel,
           {
             sceneLoaded: showSceneControls,
@@ -79595,18 +79744,29 @@ void main(void) {
             onSpriteSizeCommit: handleSpriteSizeCommit
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("div", { className: "scene-page__canvas", children: /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
-          "div",
-          {
-            id: "canvas-container",
-            ref: canvasRef,
-            className: "scene-page__canvas-inner",
-            onMouseDown: gyroMode ? void 0 : handleCanvasMouseDown,
-            style: gyroMode ? { cursor: isGyroDragging.current ? "crosshair" : "crosshair" } : isPanning ? { cursor: "grabbing" } : zoom > 1 ? { cursor: "grab" } : void 0
-          }
-        ) }),
-        showSceneControls && /* @__PURE__ */ (0, import_jsx_runtime38.jsxs)("div", { className: "scene-page__right-rail", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)("div", { className: "scene-page__canvas", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
+            "div",
+            {
+              id: "canvas-container",
+              ref: canvasRef,
+              className: "scene-page__canvas-inner",
+              onMouseDown: gyroMode ? void 0 : handleCanvasMouseDown,
+              style: gyroMode ? { cursor: isGyroDragging.current ? "crosshair" : "crosshair" } : isPanning ? { cursor: "grabbing" } : zoom > 1 ? { cursor: "grab" } : void 0
+            }
+          ),
+          selectedSlot && /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
+            SlotCyclerPill,
+            {
+              slot: selectedSlot,
+              optionIndex: resolvePreviewIndex(selectedSlot),
+              onPrev: () => cycleSelectedSlot(-1),
+              onNext: () => cycleSelectedSlot(1)
+            }
+          )
+        ] }),
+        showSceneControls && /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)("div", { className: "scene-page__right-rail", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
             SlotEditorPanel,
             {
               slot: selectedSlot,
@@ -79621,7 +79781,7 @@ void main(void) {
               onSetGates: handleSetGates
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
             SceneFlagsPlayground,
             {
               availableFlags,
@@ -79633,11 +79793,11 @@ void main(void) {
           )
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("div", { className: "scene-page__toast-wrap", children: /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(NotificationStack, { notifications }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("div", { className: "scene-page__toast-wrap", children: /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(NotificationStack, { notifications }) }),
       editTextureIndex !== null && (() => {
         const texData = rendererRef.current?.getSpriteTexData(editTextureIndex);
         if (!texData) return null;
-        return /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
+        return /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
           EditTextureModal,
           {
             spriteName: spriteEntries[editTextureIndex]?.name ?? `Sprite ${editTextureIndex}`,
@@ -79664,20 +79824,20 @@ void main(void) {
 
   // src/components/SceneCard.tsx
   var import_react22 = __toESM(require_react());
-  var import_jsx_runtime39 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime40 = __toESM(require_jsx_runtime());
   function SceneCard({ label, thumbnail_url, selected, onClick, thumbBuster = 0 }) {
     const [thumbFailed, setThumbFailed] = (0, import_react22.useState)(false);
     (0, import_react22.useEffect)(() => {
       setThumbFailed(false);
     }, [thumbnail_url, thumbBuster]);
     const thumbnailSrc = thumbnail_url ? `${thumbnail_url}${thumbnail_url.includes("?") ? "&" : "?"}v=${thumbBuster}` : null;
-    return /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime40.jsxs)(
       "div",
       {
         className: `scene-card${selected ? " scene-card--selected" : ""}`,
         onClick,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("div", { className: "scene-card-preview", children: thumbnailSrc && !thumbFailed ? /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("div", { className: "scene-card-preview", children: thumbnailSrc && !thumbFailed ? /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(
             "img",
             {
               src: thumbnailSrc,
@@ -79685,32 +79845,32 @@ void main(void) {
               className: "scene-card-thumb",
               onError: () => setThumbFailed(true)
             }
-          ) : /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("span", { className: "scene-card-icon", children: "\u{1F3AC}" }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("div", { className: "scene-card-label", children: label })
+          ) : /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("span", { className: "scene-card-icon", children: "\u{1F3AC}" }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("div", { className: "scene-card-label", children: label })
         ]
       }
     );
   }
 
   // src/components/PageLayout.tsx
-  var import_jsx_runtime40 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime41 = __toESM(require_jsx_runtime());
   function PageLayout({ children }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("div", { className: "page-layout", children });
+    return /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("div", { className: "page-layout", children });
   }
   function PageHeader({ title, left, children }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime40.jsxs)("div", { className: "page-header", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)("div", { className: "page-header", children: [
       left,
-      /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("span", { className: "page-header-title", children: title }),
+      /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("span", { className: "page-header-title", children: title }),
       children
     ] });
   }
   function PageBody({ children }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("div", { className: "page-body", children });
+    return /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("div", { className: "page-body", children });
   }
 
   // src/controls/modals/NewSceneDialog.tsx
   var import_react23 = __toESM(require_react());
-  var import_jsx_runtime41 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime42 = __toESM(require_jsx_runtime());
   function NewSceneDialog({ onConfirm, onCancel, scenes = [] }) {
     const [name, setName] = (0, import_react23.useState)("");
     const [copyFromId, setCopyFromId] = (0, import_react23.useState)(void 0);
@@ -79726,12 +79886,12 @@ void main(void) {
     const handleKeyDown = (e2) => {
       if (e2.key === "Escape") onCancel();
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("div", { className: "new-scene-overlay", onKeyDown: handleKeyDown, children: /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)("div", { className: "new-scene-dialog", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("h2", { className: "new-scene-title", children: "New Scene" }),
-      /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)("form", { onSubmit: handleSubmit, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)("div", { className: "new-scene-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("label", { htmlFor: "new-scene-name", children: "Scene name" }),
-          /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("div", { className: "new-scene-overlay", onKeyDown: handleKeyDown, children: /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "new-scene-dialog", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("h2", { className: "new-scene-title", children: "New Scene" }),
+      /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("form", { onSubmit: handleSubmit, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "new-scene-field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("label", { htmlFor: "new-scene-name", children: "Scene name" }),
+          /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
             "input",
             {
               id: "new-scene-name",
@@ -79743,10 +79903,10 @@ void main(void) {
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)("div", { className: "new-scene-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("label", { children: "Copy from" }),
-          /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)("div", { className: "new-scene-copy-grid", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "new-scene-field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("label", { children: "Copy from" }),
+          /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "new-scene-copy-grid", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
               SceneCard,
               {
                 label: "Blank",
@@ -79754,7 +79914,7 @@ void main(void) {
                 onClick: () => setCopyFromId(void 0)
               }
             ),
-            scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
+            scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
               SceneCard,
               {
                 label: scene.label,
@@ -79766,9 +79926,9 @@ void main(void) {
             ))
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)("div", { className: "new-scene-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(Button, { type: "button", onClick: onCancel, children: "Cancel" }),
-          /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(Button, { type: "submit", variant: "primary", disabled: !name.trim(), children: "OK" })
+        /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "new-scene-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(Button, { type: "button", onClick: onCancel, children: "Cancel" }),
+          /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(Button, { type: "submit", variant: "primary", disabled: !name.trim(), children: "OK" })
         ] })
       ] })
     ] }) });
@@ -79833,7 +79993,7 @@ void main(void) {
   }
 
   // src/controls/modals/SceneFlagsModal.tsx
-  var import_jsx_runtime42 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime43 = __toESM(require_jsx_runtime());
   var WEIGHT_MIN = -100;
   var WEIGHT_MAX = 100;
   var signWeight = (w2) => w2 > 0 ? `+${w2}` : `${w2}`;
@@ -79853,59 +80013,59 @@ void main(void) {
     disabledIds,
     onChange
   }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)(
       "select",
       {
         className: "scene-flags-modal__flag-select",
         value,
         onChange: (e2) => onChange(e2.target.value),
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
-          flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("option", { value: f2.id, disabled: f2.id !== value && disabledIds.has(f2.id), children: f2.name || f2.id }, f2.id))
+          /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
+          flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("option", { value: f2.id, disabled: f2.id !== value && disabledIds.has(f2.id), children: f2.name || f2.id }, f2.id))
         ]
       }
     );
   }
   function WeightStepper({ weight, onChange }) {
     const clamp3 = (w2) => Math.max(WEIGHT_MIN, Math.min(WEIGHT_MAX, w2));
-    return /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "scene-flags-modal__stepper", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__stepper", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
         "button",
         {
           type: "button",
           className: "scene-flags-modal__step",
           onClick: () => onChange(clamp3(weight - 1)),
           "aria-label": "Decrease weight",
-          children: /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(Minus, { size: 14, strokeWidth: 2 })
+          children: /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Minus, { size: 14, strokeWidth: 2 })
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("span", { className: "scene-flags-modal__weight", children: signWeight(weight) }),
-      /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "scene-flags-modal__weight", children: signWeight(weight) }),
+      /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
         "button",
         {
           type: "button",
           className: "scene-flags-modal__step",
           onClick: () => onChange(clamp3(weight + 1)),
           "aria-label": "Increase weight",
-          children: /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(Plus, { size: 14, strokeWidth: 2 })
+          children: /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Plus, { size: 14, strokeWidth: 2 })
         }
       )
     ] });
   }
   function RemoveButton({ onClick }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
       "button",
       {
         type: "button",
         className: "scene-flags-modal__remove",
         onClick,
         "aria-label": "Remove flag",
-        children: /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(X, { size: 13, strokeWidth: 2 })
+        children: /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(X, { size: 13, strokeWidth: 2 })
       }
     );
   }
   function GateMark({ ok }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("span", { className: `scene-flags-modal__mark scene-flags-modal__mark--${ok ? "ok" : "fail"}`, children: ok ? /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(Check, { size: 12, strokeWidth: 2.5 }) : /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(X, { size: 12, strokeWidth: 2.5 }) });
+    return /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: `scene-flags-modal__mark scene-flags-modal__mark--${ok ? "ok" : "fail"}`, children: ok ? /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Check, { size: 12, strokeWidth: 2.5 }) : /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(X, { size: 12, strokeWidth: 2.5 }) });
   }
   function LiveResult({
     required,
@@ -79925,36 +80085,36 @@ void main(void) {
     const hasExclude = (draft.excluded?.length ?? 0) > 0;
     const missingRequire = draft.required?.find((id) => !activeFlags.has(id));
     const activeExclude = draft.excluded?.find((id) => activeFlags.has(id));
-    return /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "scene-flags-modal__result", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "scene-flags-modal__result-head", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("span", { className: "scene-flags-modal__result-label", children: "Result at current world-state" }),
-        /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("span", { className: "scene-flags-modal__result-note", children: stateNote })
+    return /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__result", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__result-head", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "scene-flags-modal__result-label", children: "Result at current world-state" }),
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "scene-flags-modal__result-note", children: stateNote })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "scene-flags-modal__result-body", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__result-body", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
           "span",
           {
             className: `scene-flags-modal__badge scene-flags-modal__badge--${eligible ? "eligible" : "hidden"}`,
             children: eligible ? "Eligible" : "Hidden"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("span", { className: "scene-flags-modal__summary", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("span", { className: "scene-flags-modal__summary", children: [
           !hasRequire && !hasExclude && "no gates",
-          hasRequire && /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)(import_jsx_runtime42.Fragment, { children: [
+          hasRequire && /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)(import_jsx_runtime43.Fragment, { children: [
             "Require ",
-            /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(GateMark, { ok: !missingRequire }),
+            /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(GateMark, { ok: !missingRequire }),
             missingRequire && ` needs ${flagName2(missingRequire)}`
           ] }),
           hasRequire && hasExclude && " \xB7 ",
-          hasExclude && /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)(import_jsx_runtime42.Fragment, { children: [
+          hasExclude && /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)(import_jsx_runtime43.Fragment, { children: [
             "Exclude ",
-            /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(GateMark, { ok: !activeExclude }),
+            /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(GateMark, { ok: !activeExclude }),
             activeExclude ? ` blocked by ${flagName2(activeExclude)}` : " none on"
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("span", { className: "scene-flags-modal__score", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("span", { className: "scene-flags-modal__score", children: [
           "score ",
-          /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("b", { children: score })
+          /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("b", { children: score })
         ] })
       ] })
     ] });
@@ -79985,36 +80145,36 @@ void main(void) {
     const handleSave = (0, import_react24.useCallback)(() => {
       onSave(buildDeclarations(required, scored, excluded));
     }, [required, scored, excluded, onSave]);
-    return /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("div", { className: "modal-overlay", onClick: onClose, children: /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "scene-flags-modal", onClick: (e2) => e2.stopPropagation(), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "scene-flags-modal__header", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("span", { className: "scene-flags-modal__accent" }),
-        /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("span", { className: "scene-flags-modal__title", children: "Scene Flags" }),
-        /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("span", { className: "scene-flags-modal__scene", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { className: "modal-overlay", onClick: onClose, children: /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal", onClick: (e2) => e2.stopPropagation(), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "scene-flags-modal__accent" }),
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "scene-flags-modal__title", children: "Scene Flags" }),
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("span", { className: "scene-flags-modal__scene", children: [
           "\u2014 ",
           sceneName
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
           "button",
           {
             type: "button",
             className: "scene-flags-modal__close",
             onClick: onClose,
             "aria-label": "Close",
-            children: /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(X, { size: 13, strokeWidth: 2 })
+            children: /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(X, { size: 13, strokeWidth: 2 })
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "scene-flags-modal__body", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "scene-flags-modal__gate scene-flags-modal__gate--require", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("div", { className: "scene-flags-modal__rail" }),
-          /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "scene-flags-modal__gate-content", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "scene-flags-modal__gate-head", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(Check, { size: 12, strokeWidth: 2.5, className: "scene-flags-modal__gate-icon" }),
-              /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("span", { className: "scene-flags-modal__gate-label", children: "Require" }),
-              /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("span", { className: "scene-flags-modal__gate-helper", children: "\u2014 all must be active" })
+      /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__body", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__gate scene-flags-modal__gate--require", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { className: "scene-flags-modal__rail" }),
+          /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__gate-content", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__gate-head", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Check, { size: 12, strokeWidth: 2.5, className: "scene-flags-modal__gate-icon" }),
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "scene-flags-modal__gate-label", children: "Require" }),
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "scene-flags-modal__gate-helper", children: "\u2014 all must be active" })
             ] }),
-            required.map((id, i2) => /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "scene-flags-modal__row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
+            required.map((id, i2) => /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
                 FlagSelect,
                 {
                   value: id,
@@ -80023,9 +80183,9 @@ void main(void) {
                   onChange: (next) => setRequired(required.map((v2, j2) => j2 === i2 ? next : v2))
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(RemoveButton, { onClick: () => setRequired(required.filter((_, j2) => j2 !== i2)) })
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(RemoveButton, { onClick: () => setRequired(required.filter((_, j2) => j2 !== i2)) })
             ] }, i2)),
-            /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
               "button",
               {
                 type: "button",
@@ -80037,16 +80197,16 @@ void main(void) {
             )
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "scene-flags-modal__gate scene-flags-modal__gate--score", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("div", { className: "scene-flags-modal__rail" }),
-          /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "scene-flags-modal__gate-content", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "scene-flags-modal__gate-head", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(Star, { size: 12, strokeWidth: 2.5, className: "scene-flags-modal__gate-icon" }),
-              /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("span", { className: "scene-flags-modal__gate-label", children: "Score" }),
-              /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("span", { className: "scene-flags-modal__gate-helper", children: "\u2014 active flags add weight" })
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__gate scene-flags-modal__gate--score", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { className: "scene-flags-modal__rail" }),
+          /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__gate-content", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__gate-head", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Star, { size: 12, strokeWidth: 2.5, className: "scene-flags-modal__gate-icon" }),
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "scene-flags-modal__gate-label", children: "Score" }),
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "scene-flags-modal__gate-helper", children: "\u2014 active flags add weight" })
             ] }),
-            scored.map((entry, i2) => /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "scene-flags-modal__row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
+            scored.map((entry, i2) => /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
                 FlagSelect,
                 {
                   value: entry.flagId,
@@ -80055,16 +80215,16 @@ void main(void) {
                   onChange: (next) => setScored(scored.map((e2, j2) => j2 === i2 ? { ...e2, flagId: next } : e2))
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
                 WeightStepper,
                 {
                   weight: entry.weight,
                   onChange: (w2) => setScored(scored.map((e2, j2) => j2 === i2 ? { ...e2, weight: w2 } : e2))
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(RemoveButton, { onClick: () => setScored(scored.filter((_, j2) => j2 !== i2)) })
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(RemoveButton, { onClick: () => setScored(scored.filter((_, j2) => j2 !== i2)) })
             ] }, i2)),
-            /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
               "button",
               {
                 type: "button",
@@ -80076,16 +80236,16 @@ void main(void) {
             )
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "scene-flags-modal__gate scene-flags-modal__gate--exclude", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("div", { className: "scene-flags-modal__rail" }),
-          /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "scene-flags-modal__gate-content", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "scene-flags-modal__gate-head", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(Ban, { size: 12, strokeWidth: 2.5, className: "scene-flags-modal__gate-icon" }),
-              /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("span", { className: "scene-flags-modal__gate-label", children: "Exclude" }),
-              /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("span", { className: "scene-flags-modal__gate-helper", children: "\u2014 any active hides the scene" })
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__gate scene-flags-modal__gate--exclude", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { className: "scene-flags-modal__rail" }),
+          /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__gate-content", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__gate-head", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Ban, { size: 12, strokeWidth: 2.5, className: "scene-flags-modal__gate-icon" }),
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "scene-flags-modal__gate-label", children: "Exclude" }),
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "scene-flags-modal__gate-helper", children: "\u2014 any active hides the scene" })
             ] }),
-            excluded.map((id, i2) => /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "scene-flags-modal__row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
+            excluded.map((id, i2) => /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
                 FlagSelect,
                 {
                   value: id,
@@ -80094,9 +80254,9 @@ void main(void) {
                   onChange: (next) => setExcluded(excluded.map((v2, j2) => j2 === i2 ? next : v2))
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(RemoveButton, { onClick: () => setExcluded(excluded.filter((_, j2) => j2 !== i2)) })
+              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(RemoveButton, { onClick: () => setExcluded(excluded.filter((_, j2) => j2 !== i2)) })
             ] }, i2)),
-            /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
               "button",
               {
                 type: "button",
@@ -80108,7 +80268,7 @@ void main(void) {
             )
           ] })
         ] }),
-        liveEval && /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
+        liveEval && /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
           LiveResult,
           {
             required,
@@ -80118,15 +80278,15 @@ void main(void) {
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "scene-flags-modal__footer", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(Button, { onClick: onClose, children: "Cancel" }),
-        /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(Button, { variant: "primary", onClick: handleSave, children: "Save flags" })
+      /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-flags-modal__footer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Button, { onClick: onClose, children: "Cancel" }),
+        /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Button, { variant: "primary", onClick: handleSave, children: "Save flags" })
       ] })
     ] }) });
   }
 
   // src/SceneListPage.tsx
-  var import_jsx_runtime43 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime44 = __toESM(require_jsx_runtime());
   function SceneListPage({ onSelect, onBack, onSimulator, projectId, projectname, projectSize, thumbBuster = 0 }) {
     const [scenes, setScenes] = (0, import_react25.useState)([]);
     const [loading, setLoading] = (0, import_react25.useState)(true);
@@ -80205,26 +80365,26 @@ void main(void) {
         setFlagsModalData(null);
       }
     }, [flagsScene, flagsModalData]);
-    return /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)(PageLayout, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime44.jsxs)(PageLayout, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime44.jsxs)(
         PageHeader,
         {
-          title: /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)(import_jsx_runtime43.Fragment, { children: [
+          title: /* @__PURE__ */ (0, import_jsx_runtime44.jsxs)(import_jsx_runtime44.Fragment, { children: [
             projectname || fetchedName,
-            (projectSize ?? fetchedSize) !== void 0 && /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("span", { className: "project-size-badge", children: formatBytes(projectSize ?? fetchedSize) })
+            (projectSize ?? fetchedSize) !== void 0 && /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("span", { className: "project-size-badge", children: formatBytes(projectSize ?? fetchedSize) })
           ] }),
-          left: onBack && /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Button, { onClick: onBack, children: "\u2190" }),
+          left: onBack && /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(Button, { onClick: onBack, children: "\u2190" }),
           children: [
-            onSimulator && /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Button, { onClick: onSimulator, children: "Simulator" }),
-            /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Button, { onClick: () => setShowNewSceneDialog(true), children: "+ Scene" })
+            onSimulator && /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(Button, { onClick: onSimulator, children: "Simulator" }),
+            /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(Button, { onClick: () => setShowNewSceneDialog(true), children: "+ Scene" })
           ]
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)(PageBody, { children: [
-        loading && /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { className: "scene-list-empty", children: "Loading\u2026" }),
-        !loading && scenes.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { className: "scene-list-empty", children: "No scenes found. Create one from within the editor." }),
-        !loading && scenes.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { className: "scene-list-grid", children: scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "scene-card-wrapper", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime44.jsxs)(PageBody, { children: [
+        loading && /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("div", { className: "scene-list-empty", children: "Loading\u2026" }),
+        !loading && scenes.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("div", { className: "scene-list-empty", children: "No scenes found. Create one from within the editor." }),
+        !loading && scenes.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("div", { className: "scene-list-grid", children: scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime44.jsxs)("div", { className: "scene-card-wrapper", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(
             SceneCard,
             {
               label: scene.label,
@@ -80233,7 +80393,7 @@ void main(void) {
               onClick: () => onSelect(scene)
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(
             "button",
             {
               className: "scene-flags-btn",
@@ -80245,7 +80405,7 @@ void main(void) {
               children: "\u{1F6A9}"
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(
             "button",
             {
               className: "scene-delete-btn",
@@ -80259,7 +80419,7 @@ void main(void) {
           )
         ] }, scene.id)) })
       ] }),
-      showNewSceneDialog && /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+      showNewSceneDialog && /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(
         NewSceneDialog,
         {
           onConfirm: handleCreate,
@@ -80267,19 +80427,19 @@ void main(void) {
           scenes: scenes.map((s2) => ({ id: s2.id, label: s2.label, thumbnail_url: s2.thumbnail_url }))
         }
       ),
-      deleteScene && /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "modal-box", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("p", { children: [
+      deleteScene && /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime44.jsxs)("div", { className: "modal-box", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime44.jsxs)("p", { children: [
           "Delete scene ",
-          /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("strong", { children: deleteScene.label }),
+          /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("strong", { children: deleteScene.label }),
           "? This cannot be undone."
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: "modal-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Button, { onClick: () => setDeleteScene(null), children: "Cancel" }),
-          /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Button, { onClick: handleDeleteScene, variant: "danger", children: "Delete" })
+        /* @__PURE__ */ (0, import_jsx_runtime44.jsxs)("div", { className: "modal-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(Button, { onClick: () => setDeleteScene(null), children: "Cancel" }),
+          /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(Button, { onClick: handleDeleteScene, variant: "danger", children: "Delete" })
         ] })
       ] }) }),
-      flagsScene && flagsModalLoading && /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { className: "modal-box", style: { minWidth: 200, textAlign: "center" }, children: "Loading\u2026" }) }),
-      flagsScene && !flagsModalLoading && flagsModalData && /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+      flagsScene && flagsModalLoading && /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("div", { className: "modal-box", style: { minWidth: 200, textAlign: "center" }, children: "Loading\u2026" }) }),
+      flagsScene && !flagsModalLoading && flagsModalData && /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(
         SceneFlagsModal,
         {
           sceneName: flagsScene.label,
@@ -80300,7 +80460,7 @@ void main(void) {
 
   // src/controls/modals/NewProjectDialog.tsx
   var import_react26 = __toESM(require_react());
-  var import_jsx_runtime44 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime45 = __toESM(require_jsx_runtime());
   function NewProjectDialog({ onConfirm, onCancel }) {
     const [name, setName] = (0, import_react26.useState)("");
     const inputRef = (0, import_react26.useRef)(null);
@@ -80315,12 +80475,12 @@ void main(void) {
     const handleKeyDown = (e2) => {
       if (e2.key === "Escape") onCancel();
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("div", { className: "new-scene-overlay", onKeyDown: handleKeyDown, children: /* @__PURE__ */ (0, import_jsx_runtime44.jsxs)("div", { className: "new-scene-dialog", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("h2", { className: "new-scene-title", children: "New Project" }),
-      /* @__PURE__ */ (0, import_jsx_runtime44.jsxs)("form", { onSubmit: handleSubmit, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime44.jsxs)("div", { className: "new-scene-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("label", { htmlFor: "new-project-name", children: "Project name" }),
-          /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime45.jsx)("div", { className: "new-scene-overlay", onKeyDown: handleKeyDown, children: /* @__PURE__ */ (0, import_jsx_runtime45.jsxs)("div", { className: "new-scene-dialog", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime45.jsx)("h2", { className: "new-scene-title", children: "New Project" }),
+      /* @__PURE__ */ (0, import_jsx_runtime45.jsxs)("form", { onSubmit: handleSubmit, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime45.jsxs)("div", { className: "new-scene-field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime45.jsx)("label", { htmlFor: "new-project-name", children: "Project name" }),
+          /* @__PURE__ */ (0, import_jsx_runtime45.jsx)(
             "input",
             {
               id: "new-project-name",
@@ -80332,26 +80492,26 @@ void main(void) {
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime44.jsxs)("div", { className: "new-scene-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(Button, { type: "button", onClick: onCancel, children: "Cancel" }),
-          /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(Button, { type: "submit", variant: "primary", disabled: !name.trim(), children: "OK" })
+        /* @__PURE__ */ (0, import_jsx_runtime45.jsxs)("div", { className: "new-scene-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime45.jsx)(Button, { type: "button", onClick: onCancel, children: "Cancel" }),
+          /* @__PURE__ */ (0, import_jsx_runtime45.jsx)(Button, { type: "submit", variant: "primary", disabled: !name.trim(), children: "OK" })
         ] })
       ] })
     ] }) });
   }
 
   // src/ProjectListPage.tsx
-  var import_jsx_runtime45 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime46 = __toESM(require_jsx_runtime());
   function ProjectCollage({ sceneIds, sceneThumbnailUrls }) {
     const [failedThumbs, setFailedThumbs] = (0, import_react27.useState)(/* @__PURE__ */ new Set());
     if (!sceneIds || sceneIds.length === 0) {
-      return /* @__PURE__ */ (0, import_jsx_runtime45.jsx)("div", { className: "project-card-icon", children: "\u{1F4C1}" });
+      return /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: "project-card-icon", children: "\u{1F4C1}" });
     }
     const cells = [...sceneIds.slice(0, 4)];
     while (cells.length < 4) cells.push("");
-    return /* @__PURE__ */ (0, import_jsx_runtime45.jsx)("div", { className: "project-card-collage", children: cells.map((id, i2) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: "project-card-collage", children: cells.map((id, i2) => {
       const thumbnailSrc = id ? sceneThumbnailUrls?.[i2] ?? "" : "";
-      return /* @__PURE__ */ (0, import_jsx_runtime45.jsx)("div", { className: "project-card-collage-cell", children: thumbnailSrc && !failedThumbs.has(thumbnailSrc) && /* @__PURE__ */ (0, import_jsx_runtime45.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: "project-card-collage-cell", children: thumbnailSrc && !failedThumbs.has(thumbnailSrc) && /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
         "img",
         {
           src: thumbnailSrc,
@@ -80399,25 +80559,25 @@ void main(void) {
         window.alert("Failed to unarchive project");
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime45.jsxs)(PageLayout, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime45.jsxs)(PageHeader, { title: "Projects", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime45.jsx)(Button, { onClick: () => setShowDialog(true), children: "+ Project" }),
-        onLogout && /* @__PURE__ */ (0, import_jsx_runtime45.jsx)(Button, { onClick: onLogout, children: "Log out" })
+    return /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)(PageLayout, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)(PageHeader, { title: "Projects", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(Button, { onClick: () => setShowDialog(true), children: "+ Project" }),
+        onLogout && /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(Button, { onClick: onLogout, children: "Log out" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime45.jsxs)(PageBody, { children: [
-        loading && /* @__PURE__ */ (0, import_jsx_runtime45.jsx)("div", { className: "project-list-empty", children: "Loading\u2026" }),
-        !loading && projects.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime45.jsx)("div", { className: "project-list-empty", children: "No projects yet. Create one to get started." }),
-        !loading && activeProjects.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime45.jsx)("div", { className: "project-list-grid", children: activeProjects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime45.jsxs)("div", { className: "project-card", onClick: () => onSelect(project), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime45.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)(PageBody, { children: [
+        loading && /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: "project-list-empty", children: "Loading\u2026" }),
+        !loading && projects.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: "project-list-empty", children: "No projects yet. Create one to get started." }),
+        !loading && activeProjects.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: "project-list-grid", children: activeProjects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)("div", { className: "project-card", onClick: () => onSelect(project), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
             ProjectCollage,
             {
               sceneIds: project.scene_ids,
               sceneThumbnailUrls: project.scene_thumbnail_urls
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime45.jsx)("div", { className: "project-card-name", children: project.name }),
-          /* @__PURE__ */ (0, import_jsx_runtime45.jsx)("div", { className: "project-card-size", children: formatBytes(project.total_size_bytes) }),
-          /* @__PURE__ */ (0, import_jsx_runtime45.jsx)("div", { className: "project-card-actions", children: /* @__PURE__ */ (0, import_jsx_runtime45.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: "project-card-name", children: project.name }),
+          /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: "project-card-size", children: formatBytes(project.total_size_bytes) }),
+          /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: "project-card-actions", children: /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
             Button,
             {
               className: "project-card-action",
@@ -80426,29 +80586,29 @@ void main(void) {
             }
           ) })
         ] }, project.id)) }),
-        !loading && archivedProjects.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime45.jsxs)("div", { className: "project-archive-section", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime45.jsxs)(
+        !loading && archivedProjects.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)("div", { className: "project-archive-section", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)(
             Button,
             {
               className: "project-archive-toggle",
               onClick: () => setShowArchived((prev) => !prev),
               children: [
-                /* @__PURE__ */ (0, import_jsx_runtime45.jsx)("span", { className: `project-archive-toggle-icon${showArchived ? " is-open" : ""}`, children: "\u25B8" }),
+                /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { className: `project-archive-toggle-icon${showArchived ? " is-open" : ""}`, children: "\u25B8" }),
                 "Archived projects"
               ]
             }
           ),
-          showArchived && /* @__PURE__ */ (0, import_jsx_runtime45.jsx)("div", { className: "project-list-grid project-list-grid--archived", children: archivedProjects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime45.jsxs)("div", { className: "project-card project-card--archived", onClick: () => onSelect(project), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime45.jsx)(
+          showArchived && /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: "project-list-grid project-list-grid--archived", children: archivedProjects.map((project) => /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)("div", { className: "project-card project-card--archived", onClick: () => onSelect(project), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
               ProjectCollage,
               {
                 sceneIds: project.scene_ids,
                 sceneThumbnailUrls: project.scene_thumbnail_urls
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime45.jsx)("div", { className: "project-card-name", children: project.name }),
-            /* @__PURE__ */ (0, import_jsx_runtime45.jsx)("div", { className: "project-card-size", children: formatBytes(project.total_size_bytes) }),
-            /* @__PURE__ */ (0, import_jsx_runtime45.jsx)("div", { className: "project-card-actions", children: /* @__PURE__ */ (0, import_jsx_runtime45.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: "project-card-name", children: project.name }),
+            /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: "project-card-size", children: formatBytes(project.total_size_bytes) }),
+            /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: "project-card-actions", children: /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
               Button,
               {
                 className: "project-card-action",
@@ -80459,7 +80619,7 @@ void main(void) {
           ] }, project.id)) })
         ] })
       ] }),
-      showDialog && /* @__PURE__ */ (0, import_jsx_runtime45.jsx)(
+      showDialog && /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
         NewProjectDialog,
         {
           onConfirm: handleCreate,
@@ -80473,7 +80633,7 @@ void main(void) {
   var import_react36 = __toESM(require_react());
 
   // src/SimulatorTopBar.tsx
-  var import_jsx_runtime46 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime47 = __toESM(require_jsx_runtime());
   function SimulatorTopBar({
     projectName,
     onBack,
@@ -80486,33 +80646,33 @@ void main(void) {
     totalWakes,
     lastSceneShown
   }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)("div", { className: "simulator-topbar", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { className: "simulator-topbar__back", onClick: onBack, children: "\u2190" }),
-      /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { className: "simulator-topbar__divider" }),
-      /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { className: "simulator-topbar__title", children: projectName }),
-      /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { className: "simulator-topbar__divider" }),
-      /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { className: "simulator-topbar__link", onClick: onManageScenes, children: "Scenes" }),
-      /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { className: "simulator-topbar__divider" }),
-      /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)("span", { className: "simulator-topbar__state", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { className: "simulator-topbar__dot" }),
+    return /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-topbar", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__back", onClick: onBack, children: "\u2190" }),
+      /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__divider" }),
+      /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__title", children: projectName }),
+      /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__divider" }),
+      /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__link", onClick: onManageScenes, children: "Scenes" }),
+      /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__divider" }),
+      /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("span", { className: "simulator-topbar__state", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__dot" }),
         "Simulated state"
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)("div", { className: "simulator-topbar__summary", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(Segment, { label: "Chapter", value: chapterName ? `${chapterNumber} \xB7 ${chapterName}` : "\u2014" }),
-        /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { className: "simulator-topbar__divider" }),
-        /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(Segment, { label: "Ambient", value: `${timeOfDay} \xB7 ${dayOfWeek}` }),
-        /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { className: "simulator-topbar__divider" }),
-        /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(Segment, { label: "Active days", value: String(daysSinceInstall) }),
-        /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(Segment, { label: "Wakes", value: String(totalWakes) }),
-        /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { className: "simulator-topbar__divider" }),
-        /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(Segment, { label: "Last shown", value: lastSceneShown, truncate: true })
+      /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-topbar__summary", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(Segment, { label: "Chapter", value: chapterName ? `${chapterNumber} \xB7 ${chapterName}` : "\u2014" }),
+        /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__divider" }),
+        /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(Segment, { label: "Ambient", value: `${timeOfDay} \xB7 ${dayOfWeek}` }),
+        /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__divider" }),
+        /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(Segment, { label: "Active days", value: String(daysSinceInstall) }),
+        /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(Segment, { label: "Wakes", value: String(totalWakes) }),
+        /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__divider" }),
+        /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(Segment, { label: "Last shown", value: lastSceneShown, truncate: true })
       ] })
     ] });
   }
   function Segment({ label, value, truncate }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)("span", { className: `simulator-topbar__seg ${truncate ? "simulator-topbar__seg--truncate" : ""}`, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { className: "simulator-topbar__seg-label", children: label }),
-      /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { className: "simulator-topbar__seg-value", children: value })
+    return /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("span", { className: `simulator-topbar__seg ${truncate ? "simulator-topbar__seg--truncate" : ""}`, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__seg-label", children: label }),
+      /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-topbar__seg-value", children: value })
     ] });
   }
 
@@ -80710,7 +80870,7 @@ void main(void) {
   }
 
   // src/SimulatorControlsPanel.tsx
-  var import_jsx_runtime47 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime48 = __toESM(require_jsx_runtime());
   var MAX_VISIBLE_CHAPTERS = 8;
   function SimulatorControlsPanel({
     chapters,
@@ -80733,49 +80893,49 @@ void main(void) {
     const currentIndex = currentChapter ? chapters.indexOf(currentChapter) : -1;
     const visible = chapters.slice(0, MAX_VISIBLE_CHAPTERS);
     const overflow = chapters.slice(MAX_VISIBLE_CHAPTERS);
-    return /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-controls", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-spine", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("span", { className: "simulator-spine__label", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-controls", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-spine", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("span", { className: "simulator-spine__label", children: [
           "SPINE \xB7 ",
           currentIndex >= 0 ? currentIndex + 1 : 0,
           "/",
           chapters.length
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-spine__pills", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-spine__pills", children: [
           visible.map((chapter, i2) => {
             const isCurrent = chapter.id === currentChapterId;
-            return /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)(
+            return /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(
               "button",
               {
                 className: `simulator-chip ${isCurrent ? "simulator-chip--current" : ""}`,
                 onClick: () => onEditChapter(chapter),
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-chip__num", children: i2 + 1 }),
-                  isCurrent && /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)(import_jsx_runtime47.Fragment, { children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-chip__name", children: chapter.name || chapter.id }),
-                    /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-chip__here", children: "\u2605 here" })
+                  /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-chip__num", children: i2 + 1 }),
+                  isCurrent && /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(import_jsx_runtime48.Fragment, { children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-chip__name", children: chapter.name || chapter.id }),
+                    /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-chip__here", children: "\u2605 here" })
                   ] })
                 ]
               },
               chapter.id
             );
           }),
-          /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)(DropdownMenu2, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("button", { className: "simulator-chip simulator-chip--more", children: overflow.length > 0 ? `+${overflow.length}` : "\u22EF" }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)(DropdownMenuContent2, { align: "start", className: "simulator-chapter-menu", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-chapter-menu__label", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(DropdownMenu2, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("button", { className: "simulator-chip simulator-chip--more", children: overflow.length > 0 ? `+${overflow.length}` : "\u22EF" }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(DropdownMenuContent2, { align: "start", className: "simulator-chapter-menu", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-chapter-menu__label", children: [
                 "Chapters \xB7 ",
                 chapters.length
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("div", { className: "simulator-chapter-menu__list", children: chapters.map((chapter, i2) => /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)(
+              /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("div", { className: "simulator-chapter-menu__list", children: chapters.map((chapter, i2) => /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(
                 DropdownMenuItem2,
                 {
                   className: `simulator-chapter-menu__item ${chapter.id === currentChapterId ? "simulator-chapter-menu__item--current" : ""}`,
                   onSelect: () => onSelectChapter(chapter.id),
                   children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-chapter-menu__item-num", children: i2 + 1 }),
-                    /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-chapter-menu__item-name", children: chapter.name || chapter.id }),
-                    chapter.id === currentChapterId ? /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-chapter-menu__item-current", children: "\u2605 current" }) : /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(
+                    /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-chapter-menu__item-num", children: i2 + 1 }),
+                    /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-chapter-menu__item-name", children: chapter.name || chapter.id }),
+                    chapter.id === currentChapterId ? /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-chapter-menu__item-current", children: "\u2605 current" }) : /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
                       "span",
                       {
                         className: "simulator-chapter-menu__item-remove",
@@ -80791,48 +80951,48 @@ void main(void) {
                 },
                 chapter.id
               )) }),
-              /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(DropdownMenuSeparator2, {}),
-              /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(DropdownMenuItem2, { className: "simulator-chapter-menu__new", onSelect: onNewChapter, children: "+ New chapter" })
+              /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuSeparator2, {}),
+              /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuItem2, { className: "simulator-chapter-menu__new", onSelect: onNewChapter, children: "+ New chapter" })
             ] })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("button", { className: "simulator-spine__new", onClick: onNewChapter, children: "+ Chapter" }),
-        /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("button", { className: "simulator-controls__reset", onClick: onReset, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(RotateCcw, { size: 12, strokeWidth: 2 }),
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("button", { className: "simulator-spine__new", onClick: onNewChapter, children: "+ Chapter" }),
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("button", { className: "simulator-controls__reset", onClick: onReset, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(RotateCcw, { size: 12, strokeWidth: 2 }),
           " Reset"
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-controls__grid", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-section", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-section__head", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-section__title", children: "Engagement" }),
-            /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-section__hint", children: "fuels progression \xB7 idle never advances" })
+      /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-controls__grid", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-section", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-section__head", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-section__title", children: "Engagement" }),
+            /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-section__hint", children: "fuels progression \xB7 idle never advances" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-section__fields", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(StepperField, { label: "Active days", value: daysSinceInstall, onChange: onDaysSinceInstallChange }),
-            /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(StepperField, { label: "Total wakes", value: totalWakes, onChange: onTotalWakesChange })
+          /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-section__fields", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(StepperField, { label: "Active days", value: daysSinceInstall, onChange: onDaysSinceInstallChange }),
+            /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(StepperField, { label: "Total wakes", value: totalWakes, onChange: onTotalWakesChange })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-section", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-section__head", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-section__title", children: "Ambient" }),
-            /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-section__hint", children: "mood \xB7 re-checked every wake" })
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-section", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-section__head", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-section__title", children: "Ambient" }),
+            /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-section__hint", children: "mood \xB7 re-checked every wake" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-section__fields", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(TimeOfDayField, { value: timeOfDay, onChange: onTimeOfDayChange }),
-            /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(SelectField, { label: "Weekday", value: dayOfWeek, options: DAY_OPTIONS, onChange: onDayOfWeekChange })
+          /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-section__fields", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(TimeOfDayField, { value: timeOfDay, onChange: onTimeOfDayChange }),
+            /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(SelectField, { label: "Weekday", value: dayOfWeek, options: DAY_OPTIONS, onChange: onDayOfWeekChange })
           ] })
         ] })
       ] })
     ] });
   }
   function StepperField({ label, value, onChange }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-cfield", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-cfield__label", children: label }),
-      /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-stepper", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("button", { className: "simulator-stepper__btn", onClick: () => onChange((v2) => Math.max(0, v2 - 1)), children: "\u2212" }),
-        /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-stepper__value", children: value }),
-        /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("button", { className: "simulator-stepper__btn", onClick: () => onChange((v2) => v2 + 1), children: "+" })
+    return /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-cfield", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-cfield__label", children: label }),
+      /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-stepper", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("button", { className: "simulator-stepper__btn", onClick: () => onChange((v2) => Math.max(0, v2 - 1)), children: "\u2212" }),
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-stepper__value", children: value }),
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("button", { className: "simulator-stepper__btn", onClick: () => onChange((v2) => v2 + 1), children: "+" })
       ] })
     ] });
   }
@@ -80845,10 +81005,10 @@ void main(void) {
       if (mins === null) setDraft(value);
       else onChange(minutesToTime(mins));
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-cfield", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-cfield__label", children: "Time of day" }),
-      /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-timefield", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-cfield", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-cfield__label", children: "Time of day" }),
+      /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-timefield", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
           "button",
           {
             className: "simulator-timefield__step",
@@ -80857,7 +81017,7 @@ void main(void) {
             children: "\u2212"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
           "input",
           {
             className: "simulator-timefield__input",
@@ -80872,14 +81032,14 @@ void main(void) {
             "aria-label": "Time of day"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)(DropdownMenu2, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("button", { className: "simulator-timefield__list", "aria-label": "Pick from list", children: /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(ChevronDown, { size: 12, strokeWidth: 2 }) }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(DropdownMenuContent2, { align: "start", className: "simulator-time-menu", children: TIME_LIST.map((t2) => /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)(DropdownMenuItem2, { onSelect: () => onChange(t2), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(DropdownMenu2, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("button", { className: "simulator-timefield__list", "aria-label": "Pick from list", children: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(ChevronDown, { size: 12, strokeWidth: 2 }) }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuContent2, { align: "start", className: "simulator-time-menu", children: TIME_LIST.map((t2) => /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(DropdownMenuItem2, { onSelect: () => onChange(t2), children: [
             t2 === value ? "\u2713 " : "",
             t2
           ] }, t2)) })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
           "button",
           {
             className: "simulator-timefield__step",
@@ -80892,14 +81052,14 @@ void main(void) {
     ] });
   }
   function SelectField({ label, value, options, onChange, wide }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "simulator-cfield", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-cfield__label", children: label }),
-      /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)(DropdownMenu2, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("button", { className: `simulator-select ${wide ? "simulator-select--wide" : ""}`, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "simulator-select__value", children: value }),
-          /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(ChevronDown, { className: "simulator-select__caret", size: 12, strokeWidth: 2 })
+    return /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-cfield", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-cfield__label", children: label }),
+      /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(DropdownMenu2, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("button", { className: `simulator-select ${wide ? "simulator-select--wide" : ""}`, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-select__value", children: value }),
+          /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(ChevronDown, { className: "simulator-select__caret", size: 12, strokeWidth: 2 })
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(DropdownMenuContent2, { align: "start", children: options.map((opt) => /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)(DropdownMenuItem2, { onSelect: () => onChange(opt), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuContent2, { align: "start", children: options.map((opt) => /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(DropdownMenuItem2, { onSelect: () => onChange(opt), children: [
           opt === value ? "\u2713 " : "",
           opt
         ] }, opt)) })
@@ -80909,7 +81069,7 @@ void main(void) {
 
   // src/SimulatorRulesPanel.tsx
   var import_react30 = __toESM(require_react());
-  var import_jsx_runtime48 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime49 = __toESM(require_jsx_runtime());
   var COMBO_CONDITION_TYPES = /* @__PURE__ */ new Set(["flag_active", "flag_inactive", "time_since_flag_change"]);
   function isCombo(rule) {
     return (rule.conditions ?? []).some((group) => group.checks.some((c2) => COMBO_CONDITION_TYPES.has(c2.type)));
@@ -80920,30 +81080,30 @@ void main(void) {
     return flagIds.map((id) => flagsById.get(id)?.name || id).join(", ");
   }
   function RuleRowMenu({ rule, groups, onRename, onMove, onNewGroup, onRemove }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(DropdownMenu2, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("button", { className: "simulator-rules-row__menu-btn", onClick: (e2) => e2.stopPropagation(), children: "\u22EF" }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(DropdownMenuContent2, { align: "end", onClick: (e2) => e2.stopPropagation(), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuItem2, { onSelect: onRename, children: "\u270E Rename\u2026" }),
-        /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(DropdownMenuSub2, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuSubTrigger2, { children: "\u21C4 Move to group" }),
-          /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(DropdownMenuSubContent2, { onClick: (e2) => e2.stopPropagation(), children: [
-            groups.map((g2) => /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(DropdownMenuItem2, { onSelect: () => onMove(g2.name), children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(DropdownMenu2, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("button", { className: "simulator-rules-row__menu-btn", onClick: (e2) => e2.stopPropagation(), children: "\u22EF" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(DropdownMenuContent2, { align: "end", onClick: (e2) => e2.stopPropagation(), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuItem2, { onSelect: onRename, children: "\u270E Rename\u2026" }),
+        /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(DropdownMenuSub2, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuSubTrigger2, { children: "\u21C4 Move to group" }),
+          /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(DropdownMenuSubContent2, { onClick: (e2) => e2.stopPropagation(), children: [
+            groups.map((g2) => /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(DropdownMenuItem2, { onSelect: () => onMove(g2.name), children: [
               rule.group === g2.name ? "\u2713 " : "",
               g2.name,
               rule.group === g2.name ? " (current)" : ""
             ] }, g2.id)),
-            /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuSeparator2, {}),
-            /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(DropdownMenuItem2, { onSelect: () => onMove(void 0), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuSeparator2, {}),
+            /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(DropdownMenuItem2, { onSelect: () => onMove(void 0), children: [
               !rule.group ? "\u2713 " : "",
               "Ungrouped",
               !rule.group ? " (current)" : ""
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuSeparator2, {}),
-            /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuItem2, { onSelect: onNewGroup, children: "+ New group\u2026" })
+            /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuSeparator2, {}),
+            /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuItem2, { onSelect: onNewGroup, children: "+ New group\u2026" })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuSeparator2, {}),
-        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuItem2, { danger: true, onSelect: onRemove, children: "\u2715 Remove\u2026" })
+        /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuSeparator2, {}),
+        /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuItem2, { danger: true, onSelect: onRemove, children: "\u2715 Remove\u2026" })
       ] })
     ] });
   }
@@ -80958,38 +81118,38 @@ void main(void) {
     onRemove
   }) {
     const sets = setsLabel(rule, flagsById);
-    return /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-rules-row", onClick, children: [
-      rule.oneShot && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-row__lock", title: "Fires only once, ever", children: "\u{1F512}" }),
-      isCombo(rule) && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-row__combo", title: "Reads other flags", children: "\u26D3" }),
-      /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-row__name", children: rule.name || rule.id }),
-      /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-row__sets", children: sets ? `\u2192 ${sets}` : /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-row__unused", children: "Unused" }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(RuleRowMenu, { rule, groups, onRename, onMove, onNewGroup, onRemove })
+    return /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "simulator-rules-row", onClick, children: [
+      rule.oneShot && /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-rules-row__lock", title: "Fires only once, ever", children: "\u{1F512}" }),
+      isCombo(rule) && /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-rules-row__combo", title: "Reads other flags", children: "\u26D3" }),
+      /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-rules-row__name", children: rule.name || rule.id }),
+      /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-rules-row__sets", children: sets ? `\u2192 ${sets}` : /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-rules-row__unused", children: "Unused" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(RuleRowMenu, { rule, groups, onRename, onMove, onNewGroup, onRemove })
     ] });
   }
   function GroupHeaderMenu({ onAddRule, onRename, onRemove }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(DropdownMenu2, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("button", { className: "simulator-rules-group__menu-btn", onClick: (e2) => e2.stopPropagation(), children: "\u22EF" }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(DropdownMenuContent2, { align: "end", onClick: (e2) => e2.stopPropagation(), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuItem2, { onSelect: onRename, children: "\u270E Rename group\u2026" }),
-        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuSeparator2, {}),
-        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuItem2, { danger: true, onSelect: onRemove, children: "\u2715 Remove group\u2026" })
+    return /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(DropdownMenu2, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("button", { className: "simulator-rules-group__menu-btn", onClick: (e2) => e2.stopPropagation(), children: "\u22EF" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(DropdownMenuContent2, { align: "end", onClick: (e2) => e2.stopPropagation(), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuItem2, { onSelect: onRename, children: "\u270E Rename group\u2026" }),
+        /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuSeparator2, {}),
+        /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuItem2, { danger: true, onSelect: onRemove, children: "\u2715 Remove group\u2026" })
       ] })
     ] });
   }
   function RuleGroupSection({ title, count: count4, ungrouped, onAdd, onRenameGroup, onRemoveGroup, children }) {
     const [open, setOpen] = (0, import_react30.useState)(true);
-    return /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-rules-group", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "simulator-rules-group", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(
         "div",
         {
           className: `simulator-rules-group__header ${ungrouped ? "simulator-rules-group__header--ungrouped" : ""}`,
           onClick: () => setOpen((o2) => !o2),
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-group__caret", children: open ? "\u25BE" : "\u25B8" }),
-            /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-group__name", children: title }),
-            /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-group__count", children: count4 }),
-            ungrouped && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-group__hint", children: "rules with no group" }),
-            onAdd && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-rules-group__caret", children: open ? "\u25BE" : "\u25B8" }),
+            /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-rules-group__name", children: title }),
+            /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-rules-group__count", children: count4 }),
+            ungrouped && /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-rules-group__hint", children: "rules with no group" }),
+            onAdd && /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(
               "button",
               {
                 className: "simulator-rules-group__add",
@@ -81000,11 +81160,11 @@ void main(void) {
                 children: "+"
               }
             ),
-            !ungrouped && onRenameGroup && onRemoveGroup && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(GroupHeaderMenu, { onAddRule: () => onAdd?.(), onRename: onRenameGroup, onRemove: onRemoveGroup })
+            !ungrouped && onRenameGroup && onRemoveGroup && /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(GroupHeaderMenu, { onAddRule: () => onAdd?.(), onRename: onRenameGroup, onRemove: onRemoveGroup })
           ]
         }
       ),
-      open && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("div", { className: "simulator-rules-group__rows", children })
+      open && /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("div", { className: "simulator-rules-group__rows", children })
     ] });
   }
   function SimulatorRulesPanel({
@@ -81057,21 +81217,21 @@ void main(void) {
     }, [groups, query, matchingGroupNames, byGroup]);
     const showUngrouped = !query || ungrouped.length > 0;
     const noSearchResults = !!query && visibleGroups.length === 0 && !showUngrouped;
-    return /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-panel simulator-panel--rules", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-rules-header", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("span", { className: "simulator-rules-header__title", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-header__dot" }),
+    return /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "simulator-panel simulator-panel--rules", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "simulator-rules-header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("span", { className: "simulator-rules-header__title", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-rules-header__dot" }),
           "Rules"
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("span", { className: "simulator-rules-header__count", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("span", { className: "simulator-rules-header__count", children: [
           rules.length,
           " rules \xB7 ",
           groups.length + 1,
           " groups"
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-rules-header__actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-rules-header__search-wrap", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "simulator-rules-header__actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "simulator-rules-header__search-wrap", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(
               "input",
               {
                 className: "simulator-rules-header__search",
@@ -81080,7 +81240,7 @@ void main(void) {
                 placeholder: "Search rules"
               }
             ),
-            search !== "" && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+            search !== "" && /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(
               "button",
               {
                 className: "simulator-rules-header__search-clear",
@@ -81090,20 +81250,20 @@ void main(void) {
               }
             )
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("button", { className: "simulator-rules-header__new-group-btn", onClick: onNewGroup, children: "+ New group" }),
-          /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("button", { className: "simulator-rules-header__new-btn", onClick: () => onNewRule(), children: "+ New rule" })
+          /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("button", { className: "simulator-rules-header__new-group-btn", onClick: onNewGroup, children: "+ New group" }),
+          /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("button", { className: "simulator-rules-header__new-btn", onClick: () => onNewRule(), children: "+ New rule" })
         ] })
       ] }),
-      !isEmpty && /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-rules-columns", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { children: "Rule" }),
-        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-columns__sets", children: "Sets" })
+      !isEmpty && /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "simulator-rules-columns", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { children: "Rule" }),
+        /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-rules-columns__sets", children: "Sets" })
       ] }),
-      isEmpty ? /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("p", { className: "simulator-empty", children: "No rules defined." }) : noSearchResults ? /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("p", { className: "simulator-empty", children: [
+      isEmpty ? /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("p", { className: "simulator-empty", children: "No rules defined." }) : noSearchResults ? /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("p", { className: "simulator-empty", children: [
         'No rules match "',
         search.trim(),
         '".'
-      ] }) : /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-rules-list", children: [
-        visibleGroups.map((group) => /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "simulator-rules-list", children: [
+        visibleGroups.map((group) => /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(
           RuleGroupSection,
           {
             title: group.name,
@@ -81111,7 +81271,7 @@ void main(void) {
             onAdd: () => onNewRule(group.name),
             onRenameGroup: () => onRenameGroup(group),
             onRemoveGroup: () => onRemoveGroup(group),
-            children: (byGroup.get(group.name) ?? []).map(({ rule, index: index2 }) => /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+            children: (byGroup.get(group.name) ?? []).map(({ rule, index: index2 }) => /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(
               RuleRow,
               {
                 rule,
@@ -81128,7 +81288,7 @@ void main(void) {
           },
           group.id
         )),
-        showUngrouped && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(RuleGroupSection, { title: "Ungrouped", count: ungrouped.length, ungrouped: true, onAdd: () => onNewRule(), children: ungrouped.map(({ rule, index: index2 }) => /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+        showUngrouped && /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(RuleGroupSection, { title: "Ungrouped", count: ungrouped.length, ungrouped: true, onAdd: () => onNewRule(), children: ungrouped.map(({ rule, index: index2 }) => /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(
           RuleRow,
           {
             rule,
@@ -81143,19 +81303,19 @@ void main(void) {
           rule.id
         )) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: "simulator-rules-legend", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-legend__combo", children: "\u26D3" }),
+      /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "simulator-rules-legend", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-rules-legend__combo", children: "\u26D3" }),
         "combo of flags",
-        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-legend__lock", children: "\u{1F512}" }),
+        /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-rules-legend__lock", children: "\u{1F512}" }),
         "fires once",
-        /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "simulator-rules-legend__hint", children: "\u22EF opens rename \xB7 move \xB7 remove" })
+        /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-rules-legend__hint", children: "\u22EF opens rename \xB7 move \xB7 remove" })
       ] })
     ] });
   }
 
   // src/SimulatorFlagsPanel.tsx
   var import_react31 = __toESM(require_react());
-  var import_jsx_runtime49 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime50 = __toESM(require_jsx_runtime());
   function usageLabel(usage) {
     if (!usage) return null;
     const parts = [];
@@ -81164,30 +81324,30 @@ void main(void) {
     return parts.length > 0 ? parts.join(" \xB7 ") : null;
   }
   function FlagRowMenu({ flag, groups, onRename, onMove, onNewGroup, onRemove }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(DropdownMenu2, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("button", { className: "simulator-flags-row__menu-btn", onClick: (e2) => e2.stopPropagation(), children: "\u22EF" }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(DropdownMenuContent2, { align: "end", onClick: (e2) => e2.stopPropagation(), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuItem2, { onSelect: onRename, children: "\u270E Rename\u2026" }),
-        /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(DropdownMenuSub2, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuSubTrigger2, { children: "\u21C4 Move to group" }),
-          /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(DropdownMenuSubContent2, { onClick: (e2) => e2.stopPropagation(), children: [
-            groups.map((g2) => /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(DropdownMenuItem2, { onSelect: () => onMove(g2.name), children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(DropdownMenu2, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("button", { className: "simulator-flags-row__menu-btn", onClick: (e2) => e2.stopPropagation(), children: "\u22EF" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(DropdownMenuContent2, { align: "end", onClick: (e2) => e2.stopPropagation(), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(DropdownMenuItem2, { onSelect: onRename, children: "\u270E Rename\u2026" }),
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(DropdownMenuSub2, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(DropdownMenuSubTrigger2, { children: "\u21C4 Move to group" }),
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(DropdownMenuSubContent2, { onClick: (e2) => e2.stopPropagation(), children: [
+            groups.map((g2) => /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(DropdownMenuItem2, { onSelect: () => onMove(g2.name), children: [
               flag.group === g2.name ? "\u2713 " : "",
               g2.name,
               flag.group === g2.name ? " (current)" : ""
             ] }, g2.id)),
-            /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuSeparator2, {}),
-            /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(DropdownMenuItem2, { onSelect: () => onMove(void 0), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(DropdownMenuSeparator2, {}),
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(DropdownMenuItem2, { onSelect: () => onMove(void 0), children: [
               !flag.group ? "\u2713 " : "",
               "Ungrouped",
               !flag.group ? " (current)" : ""
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuSeparator2, {}),
-            /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuItem2, { onSelect: onNewGroup, children: "+ New group\u2026" })
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(DropdownMenuSeparator2, {}),
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(DropdownMenuItem2, { onSelect: onNewGroup, children: "+ New group\u2026" })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuSeparator2, {}),
-        /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuItem2, { danger: true, onSelect: onRemove, children: "\u2715 Remove\u2026" })
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(DropdownMenuSeparator2, {}),
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(DropdownMenuItem2, { danger: true, onSelect: onRemove, children: "\u2715 Remove\u2026" })
       ] })
     ] });
   }
@@ -81203,37 +81363,37 @@ void main(void) {
     onRemove
   }) {
     const label = usageLabel(usage);
-    return /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "simulator-flags-row", onClick, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: `simulator-flags-row__dot ${active ? "simulator-flags-row__dot--on" : ""}` }),
-      /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-flags-row__name", children: flag.name || flag.id }),
-      /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-flags-row__used", children: label ?? /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-flags-row__unused", children: "Unused" }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(FlagRowMenu, { flag, groups, onRename, onMove, onNewGroup, onRemove })
+    return /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-flags-row", onClick, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: `simulator-flags-row__dot ${active ? "simulator-flags-row__dot--on" : ""}` }),
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-flags-row__name", children: flag.name || flag.id }),
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-flags-row__used", children: label ?? /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-flags-row__unused", children: "Unused" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(FlagRowMenu, { flag, groups, onRename, onMove, onNewGroup, onRemove })
     ] });
   }
   function GroupHeaderMenu2({ onAddFlag, onRename, onRemove }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(DropdownMenu2, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("button", { className: "simulator-flags-group__menu-btn", onClick: (e2) => e2.stopPropagation(), children: "\u22EF" }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(DropdownMenuContent2, { align: "end", onClick: (e2) => e2.stopPropagation(), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuItem2, { onSelect: onRename, children: "\u270E Rename group\u2026" }),
-        /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuSeparator2, {}),
-        /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(DropdownMenuItem2, { danger: true, onSelect: onRemove, children: "\u2715 Remove group\u2026" })
+    return /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(DropdownMenu2, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("button", { className: "simulator-flags-group__menu-btn", onClick: (e2) => e2.stopPropagation(), children: "\u22EF" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(DropdownMenuContent2, { align: "end", onClick: (e2) => e2.stopPropagation(), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(DropdownMenuItem2, { onSelect: onRename, children: "\u270E Rename group\u2026" }),
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(DropdownMenuSeparator2, {}),
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(DropdownMenuItem2, { danger: true, onSelect: onRemove, children: "\u2715 Remove group\u2026" })
       ] })
     ] });
   }
   function FlagGroupSection({ title, count: count4, ungrouped, onAdd, onRenameGroup, onRemoveGroup, children }) {
     const [open, setOpen] = (0, import_react31.useState)(true);
-    return /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "simulator-flags-group", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-flags-group", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(
         "div",
         {
           className: `simulator-flags-group__header ${ungrouped ? "simulator-flags-group__header--ungrouped" : ""}`,
           onClick: () => setOpen((o2) => !o2),
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-flags-group__caret", children: open ? "\u25BE" : "\u25B8" }),
-            /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-flags-group__name", children: title }),
-            /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-flags-group__count", children: count4 }),
-            ungrouped && /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-flags-group__hint" }),
-            onAdd && /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-flags-group__caret", children: open ? "\u25BE" : "\u25B8" }),
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-flags-group__name", children: title }),
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-flags-group__count", children: count4 }),
+            ungrouped && /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-flags-group__hint" }),
+            onAdd && /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
               "button",
               {
                 className: "simulator-flags-group__add",
@@ -81244,11 +81404,11 @@ void main(void) {
                 children: "+"
               }
             ),
-            !ungrouped && onRenameGroup && onRemoveGroup && /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(GroupHeaderMenu2, { onAddFlag: () => onAdd?.(), onRename: onRenameGroup, onRemove: onRemoveGroup })
+            !ungrouped && onRenameGroup && onRemoveGroup && /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(GroupHeaderMenu2, { onAddFlag: () => onAdd?.(), onRename: onRenameGroup, onRemove: onRemoveGroup })
           ]
         }
       ),
-      open && /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("div", { className: "simulator-flags-group__rows", children })
+      open && /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "simulator-flags-group__rows", children })
     ] });
   }
   function SimulatorFlagsPanel({
@@ -81301,21 +81461,21 @@ void main(void) {
     }, [groups, query, matchingGroupNames, byGroup]);
     const showUngrouped = !query || ungrouped.length > 0;
     const noSearchResults = !!query && visibleGroups.length === 0 && !showUngrouped;
-    return /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "simulator-panel simulator-panel--flags", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "simulator-flags-header", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("span", { className: "simulator-flags-header__title", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-flags-header__dot" }),
+    return /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-panel simulator-panel--flags", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-flags-header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("span", { className: "simulator-flags-header__title", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-flags-header__dot" }),
           "Flags"
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("span", { className: "simulator-flags-header__count", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("span", { className: "simulator-flags-header__count", children: [
           flags.length,
           " flags \xB7 ",
           groups.length + 1,
           " groups"
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "simulator-flags-header__actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "simulator-flags-header__search-wrap", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-flags-header__actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-flags-header__search-wrap", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
               "input",
               {
                 className: "simulator-flags-header__search",
@@ -81324,7 +81484,7 @@ void main(void) {
                 placeholder: "Search flags"
               }
             ),
-            search !== "" && /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(
+            search !== "" && /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
               "button",
               {
                 className: "simulator-flags-header__search-clear",
@@ -81334,20 +81494,20 @@ void main(void) {
               }
             )
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("button", { className: "simulator-flags-header__new-group-btn", onClick: onNewGroup, children: "+ New group" }),
-          /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("button", { className: "simulator-flags-header__new-btn", onClick: () => onNewFlag(), children: "+ New flag" })
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("button", { className: "simulator-flags-header__new-group-btn", onClick: onNewGroup, children: "+ New group" }),
+          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("button", { className: "simulator-flags-header__new-btn", onClick: () => onNewFlag(), children: "+ New flag" })
         ] })
       ] }),
-      !isEmpty && /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "simulator-flags-columns", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { children: "Flag" }),
-        /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-flags-columns__used", children: "Used by" })
+      !isEmpty && /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-flags-columns", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { children: "Flag" }),
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-flags-columns__used", children: "Used by" })
       ] }),
-      isEmpty ? /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("p", { className: "simulator-empty", children: "No flags defined." }) : noSearchResults ? /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("p", { className: "simulator-empty", children: [
+      isEmpty ? /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("p", { className: "simulator-empty", children: "No flags defined." }) : noSearchResults ? /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("p", { className: "simulator-empty", children: [
         'No flags match "',
         search.trim(),
         '".'
-      ] }) : /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "simulator-flags-list", children: [
-        visibleGroups.map((group) => /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-flags-list", children: [
+        visibleGroups.map((group) => /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
           FlagGroupSection,
           {
             title: group.name,
@@ -81355,7 +81515,7 @@ void main(void) {
             onAdd: () => onNewFlag(group.name),
             onRenameGroup: () => onRenameGroup(group),
             onRemoveGroup: () => onRemoveGroup(group),
-            children: (byGroup.get(group.name) ?? []).map((flag) => /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(
+            children: (byGroup.get(group.name) ?? []).map((flag) => /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
               FlagRow,
               {
                 flag,
@@ -81373,7 +81533,7 @@ void main(void) {
           },
           group.id
         )),
-        showUngrouped && /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(FlagGroupSection, { title: "Ungrouped", count: ungrouped.length, ungrouped: true, onAdd: () => onNewFlag(), children: ungrouped.map((flag) => /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(
+        showUngrouped && /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(FlagGroupSection, { title: "Ungrouped", count: ungrouped.length, ungrouped: true, onAdd: () => onNewFlag(), children: ungrouped.map((flag) => /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
           FlagRow,
           {
             flag,
@@ -81389,12 +81549,12 @@ void main(void) {
           flag.id
         )) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: "simulator-flags-legend", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-flags-legend__dot simulator-flags-legend__dot--on" }),
+      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-flags-legend", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-flags-legend__dot simulator-flags-legend__dot--on" }),
         "on now",
-        /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-flags-legend__dot" }),
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-flags-legend__dot" }),
         "off",
-        /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { className: "simulator-flags-legend__hint", children: "\u22EF opens rename \xB7 move \xB7 remove" })
+        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-flags-legend__hint", children: "\u22EF opens rename \xB7 move \xB7 remove" })
       ] })
     ] });
   }
@@ -81547,7 +81707,7 @@ void main(void) {
   }
 
   // src/SimulatorPreviewPanel.tsx
-  var import_jsx_runtime50 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime51 = __toESM(require_jsx_runtime());
   var ASPECT_OPTIONS = [
     { value: "9:16", label: "Portrait 9:16" },
     { value: "1:1", label: "Square 1:1" },
@@ -81555,21 +81715,21 @@ void main(void) {
   ];
   function SceneCard2({ scene, onEditFlags, onEditScene, onDelete }) {
     const badgeLabel = scene.status === "wins" ? "WINS" : scene.status === "out" ? "OUT" : `#${scene.rank}`;
-    return /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)(
       "div",
       {
         className: `simulator-scard simulator-scard--${scene.status}`,
         onClick: () => onEditFlags(scene),
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "simulator-scard__top", children: /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-scard__badge", children: badgeLabel }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-scard__name", children: scene.name }),
-          scene.reason && /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-scard__reason", children: scene.reason }),
-          scene.status !== "out" && /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("span", { className: "simulator-scard__count", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("div", { className: "simulator-scard__top", children: /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { className: "simulator-scard__badge", children: badgeLabel }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { className: "simulator-scard__name", children: scene.name }),
+          scene.reason && /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { className: "simulator-scard__reason", children: scene.reason }),
+          scene.status !== "out" && /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("span", { className: "simulator-scard__count", children: [
             scene.count,
             "\xD7"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-scard__actions", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-scard__actions", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
               "button",
               {
                 className: "simulator-scard__action",
@@ -81578,10 +81738,10 @@ void main(void) {
                   e2.stopPropagation();
                   onEditScene(scene);
                 },
-                children: /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(Pencil, { size: 14, strokeWidth: 2 })
+                children: /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(Pencil, { size: 14, strokeWidth: 2 })
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
               "button",
               {
                 className: "simulator-scard__action simulator-scard__action--danger",
@@ -81590,7 +81750,7 @@ void main(void) {
                   e2.stopPropagation();
                   onDelete(scene);
                 },
-                children: /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(Trash2, { size: 14, strokeWidth: 2 })
+                children: /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(Trash2, { size: 14, strokeWidth: 2 })
               }
             )
           ] })
@@ -81623,54 +81783,54 @@ void main(void) {
     const handleEditScene = () => {
       if (renderedScene) onEditScene(renderedScene.id);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-panel simulator-panel--preview", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-panel__header simulator-panel__header--preview", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { children: "Preview" }),
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-panel__hint", children: "composited \xB7 real sprites" })
+    return /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-panel simulator-panel--preview", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-panel__header simulator-panel__header--preview", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { children: "Preview" }),
+        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { className: "simulator-panel__hint", children: "composited \xB7 real sprites" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-preview-top", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "simulator-preview-square", children: /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "simulator-render-surface", ref: renderContainerRef }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-preview-controls", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("button", { className: "simulator-wake-button", onClick: onWake, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(MoonStar, { size: 14, strokeWidth: 2 }),
+      /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-preview-top", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("div", { className: "simulator-preview-square", children: /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("div", { className: "simulator-render-surface", ref: renderContainerRef }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-preview-controls", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("button", { className: "simulator-wake-button", onClick: onWake, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(MoonStar, { size: 14, strokeWidth: 2 }),
             " Wake screen"
           ] }),
-          canRoll && /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("button", { className: "simulator-roll-button", onClick: () => setRollCount((c2) => c2 + 1), title: "Reshuffle this scene's random slots", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(Dices, { size: 14, strokeWidth: 2 }),
+          canRoll && /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("button", { className: "simulator-roll-button", onClick: () => setRollCount((c2) => c2 + 1), title: "Reshuffle this scene's random slots", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(Dices, { size: 14, strokeWidth: 2 }),
             " Roll variant"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(DropdownMenu2, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-aspect-chip", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-aspect-chip__label", children: "ASPECT" }),
-              /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-aspect-chip__value", children: aspect }),
-              /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(ChevronDown, { className: "simulator-aspect-chip__caret", size: 11, strokeWidth: 2 })
+          /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)(DropdownMenu2, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(DropdownMenuTrigger2, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-aspect-chip", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { className: "simulator-aspect-chip__label", children: "ASPECT" }),
+              /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { className: "simulator-aspect-chip__value", children: aspect }),
+              /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(ChevronDown, { className: "simulator-aspect-chip__caret", size: 11, strokeWidth: 2 })
             ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(DropdownMenuContent2, { align: "start", children: ASPECT_OPTIONS.map((opt) => /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(DropdownMenuItem2, { onSelect: () => setAspect(opt.value), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(DropdownMenuContent2, { align: "start", children: ASPECT_OPTIONS.map((opt) => /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)(DropdownMenuItem2, { onSelect: () => setAspect(opt.value), children: [
               opt.value === aspect ? "\u2713 " : "",
               opt.label
             ] }, opt.value)) })
           ] }),
-          stale && /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-stale-banner", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(RefreshCw, { size: 12, strokeWidth: 2 }),
-            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { children: "Stale \u2014 re-picked only on wake" })
+          stale && /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-stale-banner", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(RefreshCw, { size: 12, strokeWidth: 2 }),
+            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { children: "Stale \u2014 re-picked only on wake" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("span", { className: "simulator-edit-scene-link", onClick: handleEditScene, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(Pencil, { size: 11, strokeWidth: 2 }),
+          /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("span", { className: "simulator-edit-scene-link", onClick: handleEditScene, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(Pencil, { size: 11, strokeWidth: 2 }),
             " Edit scene \u25B8"
           ] })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-preview-scenes", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-preview-scenes__header", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("span", { className: "simulator-preview-scenes__title", children: "Scenes" }),
-          /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("button", { className: "simulator-add-scene-button", onClick: onAddScene, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(Plus, { size: 13, strokeWidth: 2.5 }),
+      /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-preview-scenes", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-preview-scenes__header", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { className: "simulator-preview-scenes__title", children: "Scenes" }),
+          /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("button", { className: "simulator-add-scene-button", onClick: onAddScene, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(Plus, { size: 13, strokeWidth: 2.5 }),
             " Add scene"
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-preview-scenes__subheader", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { className: "simulator-order-toggle", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-preview-scenes__subheader", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "simulator-order-toggle", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
               "span",
               {
                 className: `simulator-order-toggle__option ${orderBy === "least_shown" ? "simulator-order-toggle__option--active" : ""}`,
@@ -81678,7 +81838,7 @@ void main(void) {
                 children: "Least shown"
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
               "span",
               {
                 className: `simulator-order-toggle__option ${orderBy === "points" ? "simulator-order-toggle__option--active" : ""}`,
@@ -81687,12 +81847,12 @@ void main(void) {
               }
             )
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("span", { className: "simulator-preview-scenes__count", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("span", { className: "simulator-preview-scenes__count", children: [
             qualifyCount,
             " qualify"
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "simulator-scene-grid", children: scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("div", { className: "simulator-scene-grid", children: scenes.map((scene) => /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
           SceneCard2,
           {
             scene,
@@ -81708,7 +81868,7 @@ void main(void) {
 
   // src/SimulatorFlagModals.tsx
   var import_react34 = __toESM(require_react());
-  var import_jsx_runtime51 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime52 = __toESM(require_jsx_runtime());
   function generateUniqueId(existingIds) {
     let id;
     do {
@@ -81721,11 +81881,11 @@ void main(void) {
     const handleGroupSelect = (value) => {
       setFlag({ ...flag, group: value || void 0 });
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("h2", { className: "modal-title", children: isNew ? "New Flag" : flag.isChapter ? "Edit Chapter" : "Edit Flag" }),
-      /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "form-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("label", { children: "Name" }),
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("h2", { className: "modal-title", children: isNew ? "New Flag" : flag.isChapter ? "Edit Chapter" : "Edit Flag" }),
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "form-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("label", { children: "Name" }),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
           "input",
           {
             value: flag.name,
@@ -81735,26 +81895,26 @@ void main(void) {
           }
         )
       ] }),
-      !flag.isChapter && /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "form-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("label", { children: "Group" }),
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("select", { value: flag.group ?? "", onChange: (e2) => handleGroupSelect(e2.target.value), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("option", { value: "", children: "(ungrouped)" }),
-          groups.map((g2) => /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("option", { value: g2.name, children: g2.name }, g2.id))
+      !flag.isChapter && /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "form-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("label", { children: "Group" }),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("select", { value: flag.group ?? "", onChange: (e2) => handleGroupSelect(e2.target.value), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("option", { value: "", children: "(ungrouped)" }),
+          groups.map((g2) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("option", { value: g2.name, children: g2.name }, g2.id))
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "modal-footer", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(Button, { variant: "primary", disabled: !flag.name.trim(), onClick: () => onSave(flag), children: "Save Flag" })
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-footer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { variant: "primary", disabled: !flag.name.trim(), onClick: () => onSave(flag), children: "Save Flag" })
       ] })
     ] }) });
   }
   function RenameFlagModal({ flag, onSave, onCancel }) {
     const [name, setName] = (0, import_react34.useState)(flag.name);
-    return /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("h2", { className: "modal-title", children: "Rename Flag" }),
-      /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "form-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("label", { children: "Name" }),
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("h2", { className: "modal-title", children: "Rename Flag" }),
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "form-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("label", { children: "Name" }),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
           "input",
           {
             value: name,
@@ -81764,19 +81924,19 @@ void main(void) {
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "modal-footer", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(Button, { variant: "primary", disabled: !name.trim(), onClick: () => onSave(name.trim()), children: "Save" })
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-footer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { variant: "primary", disabled: !name.trim(), onClick: () => onSave(name.trim()), children: "Save" })
       ] })
     ] }) });
   }
   function NewGroupModal({ onCreate, onCancel, error }) {
     const [name, setName] = (0, import_react34.useState)("");
-    return /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("h2", { className: "modal-title", children: "New Group" }),
-      /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "form-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("label", { children: "Name" }),
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("h2", { className: "modal-title", children: "New Group" }),
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "form-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("label", { children: "Name" }),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
           "input",
           {
             value: name,
@@ -81789,21 +81949,21 @@ void main(void) {
           }
         )
       ] }),
-      error && /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("p", { style: { color: "var(--color-danger)", fontSize: "var(--text-12)" }, children: error }),
-      /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("p", { className: "section-hint", children: "Starts empty. Add flags from a group's \u22EF menu, or move existing ones in." }),
-      /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "modal-footer", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(Button, { variant: "primary", disabled: !name.trim(), onClick: () => onCreate(name.trim()), children: "Create group" })
+      error && /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("p", { style: { color: "var(--color-danger)", fontSize: "var(--text-12)" }, children: error }),
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("p", { className: "section-hint", children: "Starts empty. Add flags from a group's \u22EF menu, or move existing ones in." }),
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-footer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { variant: "primary", disabled: !name.trim(), onClick: () => onCreate(name.trim()), children: "Create group" })
       ] })
     ] }) });
   }
   function RenameGroupModal({ group, onSave, onCancel, error }) {
     const [name, setName] = (0, import_react34.useState)(group.name);
-    return /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("h2", { className: "modal-title", children: "Rename Group" }),
-      /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "form-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("label", { children: "Name" }),
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("h2", { className: "modal-title", children: "Rename Group" }),
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "form-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("label", { children: "Name" }),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
           "input",
           {
             value: name,
@@ -81816,57 +81976,57 @@ void main(void) {
           }
         )
       ] }),
-      error && /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("p", { style: { color: "var(--color-danger)", fontSize: "var(--text-12)" }, children: error }),
-      /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "modal-footer", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(Button, { variant: "primary", disabled: !name.trim(), onClick: () => onSave(name.trim()), children: "Save" })
+      error && /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("p", { style: { color: "var(--color-danger)", fontSize: "var(--text-12)" }, children: error }),
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-footer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { variant: "primary", disabled: !name.trim(), onClick: () => onSave(name.trim()), children: "Save" })
       ] })
     ] }) });
   }
   function RemoveFlagGuardedModal({ flag, usage, onCancel, onConfirm }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("h2", { className: "modal-title", style: { color: "var(--color-danger)" }, children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("h2", { className: "modal-title", style: { color: "var(--color-danger)" }, children: [
         '\u26A0 Remove "',
         flag.name || flag.id,
         '"?'
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("p", { style: { fontSize: "var(--text-12)", lineHeight: 1.55, color: "var(--color-fg-subtle)" }, children: "This flag is still referenced. Removing it will turn those conditions off and may change which scenes qualify." }),
-      /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("p", { className: "section-title", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("p", { style: { fontSize: "var(--text-12)", lineHeight: 1.55, color: "var(--color-fg-subtle)" }, children: "This flag is still referenced. Removing it will turn those conditions off and may change which scenes qualify." }),
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("p", { className: "section-title", children: [
         "Used by ",
         usage.scenes.length + usage.rules.length
       ] }),
-      usage.rules.map((name) => /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "form-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("label", { children: "RULE" }),
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { children: name })
+      usage.rules.map((name) => /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "form-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("label", { children: "RULE" }),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { children: name })
       ] }, `rule-${name}`)),
-      usage.scenes.map((name) => /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "form-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("label", { children: "SCENE" }),
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { children: name })
+      usage.scenes.map((name) => /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "form-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("label", { children: "SCENE" }),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { children: name })
       ] }, `scene-${name}`)),
-      /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "modal-footer", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(Button, { variant: "danger", onClick: onConfirm, children: "Remove anyway" })
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-footer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { variant: "danger", onClick: onConfirm, children: "Remove anyway" })
       ] })
     ] }) });
   }
   function RemoveGroupModal({ group, affectedFlags, onCancel, onConfirm }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("h2", { className: "modal-title", style: { color: "var(--color-danger)" }, children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("h2", { className: "modal-title", style: { color: "var(--color-danger)" }, children: [
         '\u26A0 Remove group "',
         group.name,
         '"?'
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("p", { style: { fontSize: "var(--text-12)", lineHeight: 1.55, color: "var(--color-fg-subtle)" }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("p", { style: { fontSize: "var(--text-12)", lineHeight: 1.55, color: "var(--color-fg-subtle)" }, children: [
         "The group is deleted, but its flags aren't. These ",
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("strong", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("strong", { children: [
           affectedFlags.length,
           " flags"
         ] }),
         " move to ",
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("strong", { children: "Ungrouped" }),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("strong", { children: "Ungrouped" }),
         " and keep every rule & scene reference:"
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("div", { style: { display: "flex", flexWrap: "wrap", gap: "var(--size-6)" }, children: affectedFlags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { style: { display: "flex", flexWrap: "wrap", gap: "var(--size-6)" }, children: affectedFlags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
         "span",
         {
           style: {
@@ -81885,16 +82045,16 @@ void main(void) {
         },
         f2.id
       )) }),
-      /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { className: "modal-footer", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(Button, { variant: "danger", onClick: onConfirm, children: "Remove group" })
+      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-footer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { variant: "danger", onClick: onConfirm, children: "Remove group" })
       ] })
     ] }) });
   }
 
   // src/SimulatorRuleModals.tsx
   var import_react35 = __toESM(require_react());
-  var import_jsx_runtime52 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime53 = __toESM(require_jsx_runtime());
   function emptyRule() {
     return {
       id: "",
@@ -81968,33 +82128,33 @@ void main(void) {
       }
       onChange(base);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "rule-edit-modal__row-group", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "rule-edit-modal__condition-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "rule-edit-modal__row-group", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "rule-edit-modal__condition-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
           "select",
           {
             className: "rule-edit-modal__type-select",
             style: { minWidth: CONDITION_TYPE_MIN_WIDTH[condition.type] },
             value: condition.type,
             onChange: (e2) => typeChanged(e2.target.value),
-            children: CONDITION_TYPES.map((t2) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("option", { value: t2.value, children: t2.label }, t2.value))
+            children: CONDITION_TYPES.map((t2) => /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("option", { value: t2.value, children: t2.label }, t2.value))
           }
         ),
-        (condition.type === "flag_active" || condition.type === "flag_inactive") && /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("select", { className: "rule-edit-modal__value-select", value: condition.flagId ?? "", onChange: (e2) => set({ flagId: e2.target.value }), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
-          flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
+        (condition.type === "flag_active" || condition.type === "flag_inactive") && /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("select", { className: "rule-edit-modal__value-select", value: condition.flagId ?? "", onChange: (e2) => set({ flagId: e2.target.value }), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
+          flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
         ] }),
-        condition.type === "time_of_day" && /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)(import_jsx_runtime52.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "rule-edit-modal__mini-label", children: "Start" }),
-          /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
+        condition.type === "time_of_day" && /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(import_jsx_runtime53.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "rule-edit-modal__mini-label", children: "Start" }),
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
             TimeField,
             {
               minutes: (condition.startHour ?? 0) * 60 + (condition.startMinute ?? 0),
               onChange: (m2) => set({ startHour: Math.floor(m2 / 60), startMinute: m2 % 60 })
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "rule-edit-modal__mini-label", children: "End" }),
-          /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "rule-edit-modal__mini-label", children: "End" }),
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
             TimeField,
             {
               minutes: (condition.endHour ?? 0) * 60 + (condition.endMinute ?? 0),
@@ -82002,10 +82162,10 @@ void main(void) {
             }
           )
         ] }),
-        condition.type === "day_of_week" && /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "rule-edit-modal__days", children: DAY_LABELS.map((label, i2) => {
+        condition.type === "day_of_week" && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "rule-edit-modal__days", children: DAY_LABELS.map((label, i2) => {
           const checked = (condition.daysOfWeek ?? []).includes(i2);
-          return /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("label", { className: "rule-edit-modal__day-label", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("label", { className: "rule-edit-modal__day-label", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
               "input",
               {
                 type: "checkbox",
@@ -82019,30 +82179,30 @@ void main(void) {
             label
           ] }, i2);
         }) }),
-        condition.type === "scene_count" && /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("select", { className: "rule-edit-modal__value-select", value: condition.sceneId ?? "", onChange: (e2) => set({ sceneId: e2.target.value }), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("option", { value: "", children: "\u2014 select scene \u2014" }),
-          scenes.map((s2) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("option", { value: s2.id, children: s2.label || s2.name }, s2.id))
+        condition.type === "scene_count" && /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("select", { className: "rule-edit-modal__value-select", value: condition.sceneId ?? "", onChange: (e2) => set({ sceneId: e2.target.value }), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("option", { value: "", children: "\u2014 select scene \u2014" }),
+          scenes.map((s2) => /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("option", { value: s2.id, children: s2.label || s2.name }, s2.id))
         ] }),
-        (condition.type === "scene_count" || condition.type === "install_duration_hours") && /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)(import_jsx_runtime52.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("select", { className: "rule-edit-modal__op-select", value: condition.operator ?? ">=", onChange: (e2) => set({ operator: e2.target.value }), children: [">=", "<=", "==", ">", "<"].map((op) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("option", { value: op, children: op }, op)) }),
-          /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("input", { className: "rule-edit-modal__num-input", type: "number", min: 0, value: condition.intValue ?? 0, onChange: (e2) => set({ intValue: +e2.target.value }) })
+        (condition.type === "scene_count" || condition.type === "install_duration_hours") && /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(import_jsx_runtime53.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("select", { className: "rule-edit-modal__op-select", value: condition.operator ?? ">=", onChange: (e2) => set({ operator: e2.target.value }), children: [">=", "<=", "==", ">", "<"].map((op) => /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("option", { value: op, children: op }, op)) }),
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("input", { className: "rule-edit-modal__num-input", type: "number", min: 0, value: condition.intValue ?? 0, onChange: (e2) => set({ intValue: +e2.target.value }) })
         ] }),
-        condition.type === "time_since_flag_change" && /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)(import_jsx_runtime52.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("select", { className: "rule-edit-modal__value-select", value: condition.flagId ?? "", onChange: (e2) => set({ flagId: e2.target.value }), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
-            flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
+        condition.type === "time_since_flag_change" && /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(import_jsx_runtime53.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("select", { className: "rule-edit-modal__value-select", value: condition.flagId ?? "", onChange: (e2) => set({ flagId: e2.target.value }), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
+            flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("select", { className: "rule-edit-modal__op-select", value: condition.flagChangeType ?? "activated", onChange: (e2) => set({ flagChangeType: e2.target.value }), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("option", { value: "activated", children: "was activated" }),
-            /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("option", { value: "deactivated", children: "was deactivated" })
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("select", { className: "rule-edit-modal__op-select", value: condition.flagChangeType ?? "activated", onChange: (e2) => set({ flagChangeType: e2.target.value }), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("option", { value: "activated", children: "was activated" }),
+            /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("option", { value: "deactivated", children: "was deactivated" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("select", { className: "rule-edit-modal__op-select", value: condition.operator ?? ">=", onChange: (e2) => set({ operator: e2.target.value }), children: [">=", "<=", "==", ">", "<"].map((op) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("option", { value: op, children: op }, op)) }),
-          /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("input", { className: "rule-edit-modal__num-input", type: "number", min: 0, value: condition.intValue ?? 0, onChange: (e2) => set({ intValue: +e2.target.value }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "rule-edit-modal__mini-label", children: "hours" })
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("select", { className: "rule-edit-modal__op-select", value: condition.operator ?? ">=", onChange: (e2) => set({ operator: e2.target.value }), children: [">=", "<=", "==", ">", "<"].map((op) => /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("option", { value: op, children: op }, op)) }),
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("input", { className: "rule-edit-modal__num-input", type: "number", min: 0, value: condition.intValue ?? 0, onChange: (e2) => set({ intValue: +e2.target.value }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "rule-edit-modal__mini-label", children: "hours" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("button", { type: "button", className: "rule-edit-modal__remove", onClick: onDelete, title: "Remove condition", children: "\u2715" })
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("button", { type: "button", className: "rule-edit-modal__remove", onClick: onDelete, title: "Remove condition", children: "\u2715" })
       ] }),
-      condition.type === "time_of_day" && /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "rule-edit-modal__hint", children: "exclusive; 22\u20136 wraps overnight" })
+      condition.type === "time_of_day" && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "rule-edit-modal__hint", children: "exclusive; 22\u20136 wraps overnight" })
     ] });
   }
   var TIME_FIELD_STEP_MINUTES = 15;
@@ -82055,9 +82215,9 @@ void main(void) {
       if (parsed === null) setDraft(minutesToTime(minutes));
       else onChange(parsed);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "rule-edit-modal__timefield", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("button", { type: "button", className: "rule-edit-modal__time-step", onClick: () => step(-TIME_FIELD_STEP_MINUTES), "aria-label": "Earlier", children: "\u2212" }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "rule-edit-modal__timefield", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("button", { type: "button", className: "rule-edit-modal__time-step", onClick: () => step(-TIME_FIELD_STEP_MINUTES), "aria-label": "Earlier", children: "\u2212" }),
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
         "input",
         {
           className: "rule-edit-modal__time-input",
@@ -82072,21 +82232,21 @@ void main(void) {
           "aria-label": "Time of day"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("button", { type: "button", className: "rule-edit-modal__time-step", onClick: () => step(TIME_FIELD_STEP_MINUTES), "aria-label": "Later", children: "+" })
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("button", { type: "button", className: "rule-edit-modal__time-step", onClick: () => step(TIME_FIELD_STEP_MINUTES), "aria-label": "Later", children: "+" })
     ] });
   }
   function ActionEditor({ index: index2, action, flags, onChange, onDelete }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "rule-edit-modal__action-row", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "rule-edit-modal__action-index", children: index2 + 1 }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("select", { className: "rule-edit-modal__action-type-select", value: action.type, onChange: (e2) => onChange({ ...action, type: e2.target.value }), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("option", { value: "activate_flag", children: "Activate flag" }),
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("option", { value: "deactivate_flag", children: "Deactivate flag" })
+    return /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "rule-edit-modal__action-row", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "rule-edit-modal__action-index", children: index2 + 1 }),
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("select", { className: "rule-edit-modal__action-type-select", value: action.type, onChange: (e2) => onChange({ ...action, type: e2.target.value }), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("option", { value: "activate_flag", children: "Activate flag" }),
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("option", { value: "deactivate_flag", children: "Deactivate flag" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("select", { className: "rule-edit-modal__action-value-select", value: action.flagId ?? "", onChange: (e2) => onChange({ ...action, flagId: e2.target.value }), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
-        flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("select", { className: "rule-edit-modal__action-value-select", value: action.flagId ?? "", onChange: (e2) => onChange({ ...action, flagId: e2.target.value }), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("option", { value: "", children: "\u2014 select flag \u2014" }),
+        flags.map((f2) => /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("option", { value: f2.id, children: f2.name || f2.id }, f2.id))
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("button", { type: "button", className: "rule-edit-modal__remove", onClick: onDelete, title: "Remove action", children: "\u2715" })
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("button", { type: "button", className: "rule-edit-modal__remove", onClick: onDelete, title: "Remove action", children: "\u2715" })
     ] });
   }
   function RuleEditModal({ rule: initial, flags, scenes, groups, onSave, onCancel }) {
@@ -82108,16 +82268,16 @@ void main(void) {
     const addAction = () => setField("actions", [...rule.actions, emptyAction()]);
     const updateAction = (i2, a2) => setField("actions", rule.actions.map((act, idx) => idx === i2 ? a2 : act));
     const deleteAction = (i2) => setField("actions", rule.actions.filter((_, idx) => idx !== i2));
-    return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "rule-edit-modal", onClick: (e2) => e2.stopPropagation(), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "rule-edit-modal__header", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "rule-edit-modal__title", children: initial.id ? "Edit rule" : "New rule" }),
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("button", { type: "button", className: "rule-edit-modal__close", onClick: onCancel, "aria-label": "Close", children: "\u2715" })
+    return /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "rule-edit-modal", onClick: (e2) => e2.stopPropagation(), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "rule-edit-modal__header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "rule-edit-modal__title", children: initial.id ? "Edit rule" : "New rule" }),
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("button", { type: "button", className: "rule-edit-modal__close", onClick: onCancel, "aria-label": "Close", children: "\u2715" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "rule-edit-modal__body", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "rule-edit-modal__row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("label", { className: "rule-edit-modal__field", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "rule-edit-modal__label", children: "Name" }),
-            /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "rule-edit-modal__body", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "rule-edit-modal__row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("label", { className: "rule-edit-modal__field", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "rule-edit-modal__label", children: "Name" }),
+            /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
               "input",
               {
                 className: "rule-edit-modal__input",
@@ -82128,51 +82288,51 @@ void main(void) {
               }
             )
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("label", { className: "rule-edit-modal__field", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "rule-edit-modal__label", children: "Group" }),
-            /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)(
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("label", { className: "rule-edit-modal__field", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "rule-edit-modal__label", children: "Group" }),
+            /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(
               "select",
               {
                 className: "rule-edit-modal__input rule-edit-modal__input--select",
                 value: rule.group ?? "",
                 onChange: (e2) => setField("group", e2.target.value || void 0),
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("option", { value: "", children: "Ungrouped" }),
-                  groups.map((g2) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("option", { value: g2.name, children: g2.name }, g2.id))
+                  /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("option", { value: "", children: "Ungrouped" }),
+                  groups.map((g2) => /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("option", { value: g2.name, children: g2.name }, g2.id))
                 ]
               }
             )
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("label", { className: "rule-edit-modal__oneshot", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("input", { type: "checkbox", checked: rule.oneShot ?? false, onChange: (e2) => setField("oneShot", e2.target.checked) }),
-          /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { children: "One-shot \u2014 fires only once, ever" })
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("label", { className: "rule-edit-modal__oneshot", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("input", { type: "checkbox", checked: rule.oneShot ?? false, onChange: (e2) => setField("oneShot", e2.target.checked) }),
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { children: "One-shot \u2014 fires only once, ever" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "rule-edit-modal__section", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "rule-edit-modal__section-head", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "rule-edit-modal__section-title", children: "Conditions" }),
-            /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("span", { className: "rule-edit-modal__section-hint", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "rule-edit-modal__section", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "rule-edit-modal__section-head", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "rule-edit-modal__section-title", children: "Conditions" }),
+            /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("span", { className: "rule-edit-modal__section-hint", children: [
               "Rows in a group must ",
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("b", { children: "all" }),
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("b", { children: "all" }),
               " pass (AND). Groups are ",
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("b", { children: "OR" }),
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("b", { children: "OR" }),
               "'d \u2014 the rule fires if any one group fully matches. Leave empty to always fire."
             ] })
           ] }),
-          conditions.map((group, groupIndex) => /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)(import_react35.Fragment, { children: [
-            groupIndex > 0 && /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "rule-edit-modal__or-divider", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", {}),
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("em", { children: "OR" }),
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", {})
+          conditions.map((group, groupIndex) => /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(import_react35.Fragment, { children: [
+            groupIndex > 0 && /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "rule-edit-modal__or-divider", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", {}),
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("em", { children: "OR" }),
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", {})
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "rule-edit-modal__group", children: [
-              group.checks.map((c2, checkIndex) => /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)(import_react35.Fragment, { children: [
-                checkIndex > 0 && /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "rule-edit-modal__and-divider", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", {}),
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("em", { children: "AND" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", {})
+            /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "rule-edit-modal__group", children: [
+              group.checks.map((c2, checkIndex) => /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(import_react35.Fragment, { children: [
+                checkIndex > 0 && /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "rule-edit-modal__and-divider", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", {}),
+                  /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("em", { children: "AND" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", {})
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
+                /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
                   ConditionEditor,
                   {
                     condition: c2,
@@ -82183,17 +82343,17 @@ void main(void) {
                   }
                 )
               ] }, checkIndex)),
-              /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("button", { type: "button", className: "rule-edit-modal__dashed-btn", onClick: () => addConditionToGroup(groupIndex), children: "+ Condition" })
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("button", { type: "button", className: "rule-edit-modal__dashed-btn", onClick: () => addConditionToGroup(groupIndex), children: "+ Condition" })
             ] })
           ] }, groupIndex)),
-          /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("button", { type: "button", className: "rule-edit-modal__dashed-btn rule-edit-modal__dashed-btn--accent", onClick: addGroup, children: "+ Or group" })
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("button", { type: "button", className: "rule-edit-modal__dashed-btn rule-edit-modal__dashed-btn--accent", onClick: addGroup, children: "+ Or group" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "rule-edit-modal__section", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "rule-edit-modal__section-head", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "rule-edit-modal__section-title", children: "Actions" }),
-            /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "rule-edit-modal__section-hint", children: "Run in order, top to bottom, whenever the conditions above resolve true." })
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "rule-edit-modal__section", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "rule-edit-modal__section-head", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "rule-edit-modal__section-title", children: "Actions" }),
+            /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { className: "rule-edit-modal__section-hint", children: "Run in order, top to bottom, whenever the conditions above resolve true." })
           ] }),
-          rule.actions.map((a2, i2) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
+          rule.actions.map((a2, i2) => /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
             ActionEditor,
             {
               index: i2,
@@ -82204,22 +82364,22 @@ void main(void) {
             },
             i2
           )),
-          /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("button", { type: "button", className: "rule-edit-modal__dashed-btn", onClick: addAction, children: "+ Action" })
+          /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("button", { type: "button", className: "rule-edit-modal__dashed-btn", onClick: addAction, children: "+ Action" })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "rule-edit-modal__footer", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { variant: "primary", disabled: !rule.name.trim(), onClick: () => onSave(rule), children: "Save rule" })
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "rule-edit-modal__footer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Button, { variant: "primary", disabled: !rule.name.trim(), onClick: () => onSave(rule), children: "Save rule" })
       ] })
     ] }) });
   }
   function RenameRuleModal({ rule, comboCount, onSave, onCancel }) {
     const [name, setName] = (0, import_react35.useState)(rule.name);
-    return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("h2", { className: "modal-title", children: "Rename Rule" }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "form-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("label", { children: "Name" }),
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("h2", { className: "modal-title", children: "Rename Rule" }),
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "form-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("label", { children: "Name" }),
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
           "input",
           {
             value: name,
@@ -82229,28 +82389,28 @@ void main(void) {
           }
         )
       ] }),
-      comboCount > 0 && /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("p", { className: "section-hint", children: [
+      comboCount > 0 && /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("p", { className: "section-hint", children: [
         "Renaming updates its label everywhere it's referenced \u2014 ",
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("strong", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("strong", { children: [
           comboCount,
           " combo rule",
           comboCount === 1 ? "" : "s"
         ] }),
         "."
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-footer", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { variant: "primary", disabled: !name.trim(), onClick: () => onSave(name.trim()), children: "Save" })
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "modal-footer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Button, { variant: "primary", disabled: !name.trim(), onClick: () => onSave(name.trim()), children: "Save" })
       ] })
     ] }) });
   }
   function NewGroupModal2({ onCreate, onCancel, error }) {
     const [name, setName] = (0, import_react35.useState)("");
-    return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("h2", { className: "modal-title", children: "New Group" }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "form-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("label", { children: "Name" }),
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("h2", { className: "modal-title", children: "New Group" }),
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "form-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("label", { children: "Name" }),
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
           "input",
           {
             value: name,
@@ -82263,21 +82423,21 @@ void main(void) {
           }
         )
       ] }),
-      error && /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("p", { style: { color: "var(--color-danger)", fontSize: "var(--text-12)" }, children: error }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("p", { className: "section-hint", children: "Starts empty. Add rules from a group's \u22EF menu, or move existing ones in." }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-footer", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { variant: "primary", disabled: !name.trim(), onClick: () => onCreate(name.trim()), children: "Create group" })
+      error && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("p", { style: { color: "var(--color-danger)", fontSize: "var(--text-12)" }, children: error }),
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("p", { className: "section-hint", children: "Starts empty. Add rules from a group's \u22EF menu, or move existing ones in." }),
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "modal-footer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Button, { variant: "primary", disabled: !name.trim(), onClick: () => onCreate(name.trim()), children: "Create group" })
       ] })
     ] }) });
   }
   function RenameGroupModal2({ group, onSave, onCancel, error }) {
     const [name, setName] = (0, import_react35.useState)(group.name);
-    return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("h2", { className: "modal-title", children: "Rename Group" }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "form-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("label", { children: "Name" }),
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("h2", { className: "modal-title", children: "Rename Group" }),
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "form-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("label", { children: "Name" }),
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
           "input",
           {
             value: name,
@@ -82290,60 +82450,60 @@ void main(void) {
           }
         )
       ] }),
-      error && /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("p", { style: { color: "var(--color-danger)", fontSize: "var(--text-12)" }, children: error }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-footer", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { variant: "primary", disabled: !name.trim(), onClick: () => onSave(name.trim()), children: "Save" })
+      error && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("p", { style: { color: "var(--color-danger)", fontSize: "var(--text-12)" }, children: error }),
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "modal-footer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Button, { variant: "primary", disabled: !name.trim(), onClick: () => onSave(name.trim()), children: "Save" })
       ] })
     ] }) });
   }
   function RemoveRuleGuardedModal({ rule, usage, onCancel, onConfirm }) {
     const flagNames = usage.filter((u2) => u2.type === "FLAG").map((u2) => u2.name);
-    return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("h2", { className: "modal-title", style: { color: "var(--color-danger)" }, children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("h2", { className: "modal-title", style: { color: "var(--color-danger)" }, children: [
         '\u26A0 Remove "',
         rule.name || rule.id,
         '"?'
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("p", { style: { fontSize: "var(--text-12)", lineHeight: 1.55, color: "var(--color-fg-subtle)" }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("p", { style: { fontSize: "var(--text-12)", lineHeight: 1.55, color: "var(--color-fg-subtle)" }, children: [
         "This rule sets ",
         flagNames.join(", "),
         ". Removing it means ",
         flagNames.length === 1 ? "that flag" : "those flags",
         " can never trip, which may change which scenes qualify."
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("p", { className: "section-title", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("p", { className: "section-title", children: [
         "Affects ",
         usage.length
       ] }),
-      usage.map((ref) => /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "form-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("label", { children: ref.type }),
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { children: ref.name })
+      usage.map((ref) => /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "form-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("label", { children: ref.type }),
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { children: ref.name })
       ] }, `${ref.type}-${ref.name}`)),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-footer", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { variant: "danger", onClick: onConfirm, children: "Remove anyway" })
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "modal-footer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Button, { variant: "danger", onClick: onConfirm, children: "Remove anyway" })
       ] })
     ] }) });
   }
   function RemoveGroupModal2({ group, affectedRules, onCancel, onConfirm }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("h2", { className: "modal-title", style: { color: "var(--color-danger)" }, children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "modal-box", onClick: (e2) => e2.stopPropagation(), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("h2", { className: "modal-title", style: { color: "var(--color-danger)" }, children: [
         '\u26A0 Remove group "',
         group.name,
         '"?'
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("p", { style: { fontSize: "var(--text-12)", lineHeight: 1.55, color: "var(--color-fg-subtle)" }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("p", { style: { fontSize: "var(--text-12)", lineHeight: 1.55, color: "var(--color-fg-subtle)" }, children: [
         "The group is deleted, but its rules aren't. These ",
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("strong", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("strong", { children: [
           affectedRules.length,
           " rules"
         ] }),
         " move to ",
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("strong", { children: "Ungrouped" }),
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("strong", { children: "Ungrouped" }),
         " and keep setting their flags:"
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { style: { display: "flex", flexWrap: "wrap", gap: "var(--size-6)" }, children: affectedRules.map((r2) => /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { style: { display: "flex", flexWrap: "wrap", gap: "var(--size-6)" }, children: affectedRules.map((r2) => /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
         "span",
         {
           style: {
@@ -82361,15 +82521,15 @@ void main(void) {
         },
         r2.id
       )) }),
-      /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "modal-footer", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
-        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Button, { variant: "danger", onClick: onConfirm, children: "Remove group" })
+      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "modal-footer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Button, { onClick: onCancel, children: "Cancel" }),
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Button, { variant: "danger", onClick: onConfirm, children: "Remove group" })
       ] })
     ] }) });
   }
 
   // src/SimulatorPage.tsx
-  var import_jsx_runtime53 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime54 = __toESM(require_jsx_runtime());
   function SimulatorPage({ projectId, projectName, onBack, onManageScenes, onEditScene }) {
     const [rules, setRules] = (0, import_react36.useState)([]);
     const [ruleGroups, setRuleGroups] = (0, import_react36.useState)([]);
@@ -82780,8 +82940,8 @@ void main(void) {
       performRemoveFlag(removeFlagTarget.flag);
       setRemoveFlagTarget(null);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(PageLayout, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime54.jsxs)(PageLayout, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
         SimulatorTopBar,
         {
           projectName: projectName || fetchedName || "",
@@ -82796,12 +82956,12 @@ void main(void) {
           lastSceneShown: renderedSummary?.label ?? sim.lastSceneShown
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(PageBody, { children: [
-        loading && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("p", { style: { padding: "var(--size-16)" }, children: "Loading\u2026" }),
-        error && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("p", { style: { padding: "var(--size-16)", color: "var(--color-danger)" }, children: error }),
-        !loading && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "simulator-root", children: /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-stage", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-stage__left", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime54.jsxs)(PageBody, { children: [
+        loading && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("p", { style: { padding: "var(--size-16)" }, children: "Loading\u2026" }),
+        error && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("p", { style: { padding: "var(--size-16)", color: "var(--color-danger)" }, children: error }),
+        !loading && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("div", { className: "simulator-root", children: /* @__PURE__ */ (0, import_jsx_runtime54.jsxs)("div", { className: "simulator-stage", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime54.jsxs)("div", { className: "simulator-stage__left", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
               SimulatorControlsPanel,
               {
                 chapters,
@@ -82821,8 +82981,8 @@ void main(void) {
                 onReset: sim.handleReset
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { className: "simulator-pipeline__row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime54.jsxs)("div", { className: "simulator-pipeline__row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
                 SimulatorRulesPanel,
                 {
                   rules,
@@ -82839,8 +82999,8 @@ void main(void) {
                   onRemoveGroup: setRemovingRuleGroup
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Arrow3, {}),
-              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+              /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(Arrow3, {}),
+              /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
                 SimulatorFlagsPanel,
                 {
                   flags: nonChapterFlags,
@@ -82860,7 +83020,7 @@ void main(void) {
               )
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
             SimulatorPreviewPanel,
             {
               scenes: ranking,
@@ -82879,7 +83039,7 @@ void main(void) {
           )
         ] }) })
       ] }),
-      editingRuleIndex !== null && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+      editingRuleIndex !== null && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
         RuleEditModal,
         {
           rule: rules[editingRuleIndex],
@@ -82890,7 +83050,7 @@ void main(void) {
           onCancel: handleCancelEditRule
         }
       ),
-      renamingRule && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+      renamingRule && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
         RenameRuleModal,
         {
           rule: renamingRule,
@@ -82899,7 +83059,7 @@ void main(void) {
           onCancel: () => setRenamingRule(null)
         }
       ),
-      newRuleGroupContext && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+      newRuleGroupContext && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
         NewGroupModal2,
         {
           error: newRuleGroupError,
@@ -82910,7 +83070,7 @@ void main(void) {
           }
         }
       ),
-      renamingRuleGroup && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+      renamingRuleGroup && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
         RenameGroupModal2,
         {
           group: renamingRuleGroup,
@@ -82922,7 +83082,7 @@ void main(void) {
           }
         }
       ),
-      removeRuleTarget && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+      removeRuleTarget && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
         RemoveRuleGuardedModal,
         {
           rule: removeRuleTarget.rule,
@@ -82931,7 +83091,7 @@ void main(void) {
           onConfirm: handleConfirmRemoveRule
         }
       ),
-      removingRuleGroup && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+      removingRuleGroup && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
         RemoveGroupModal2,
         {
           group: removingRuleGroup,
@@ -82940,7 +83100,7 @@ void main(void) {
           onConfirm: handleConfirmRemoveRuleGroup
         }
       ),
-      editingFlagId !== null && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+      editingFlagId !== null && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
         FlagEditModal,
         {
           flag: flags.find((f2) => f2.id === editingFlagId),
@@ -82950,7 +83110,7 @@ void main(void) {
           onCancel: handleCancelEditFlag
         }
       ),
-      renamingFlag && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+      renamingFlag && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
         RenameFlagModal,
         {
           flag: renamingFlag,
@@ -82958,7 +83118,7 @@ void main(void) {
           onCancel: () => setRenamingFlag(null)
         }
       ),
-      newGroupContext && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+      newGroupContext && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
         NewGroupModal,
         {
           error: newGroupError,
@@ -82969,7 +83129,7 @@ void main(void) {
           }
         }
       ),
-      renamingGroup && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+      renamingGroup && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
         RenameGroupModal,
         {
           group: renamingGroup,
@@ -82981,7 +83141,7 @@ void main(void) {
           }
         }
       ),
-      removeFlagTarget && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+      removeFlagTarget && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
         RemoveFlagGuardedModal,
         {
           flag: removeFlagTarget.flag,
@@ -82990,7 +83150,7 @@ void main(void) {
           onConfirm: handleConfirmRemoveFlag
         }
       ),
-      removingGroup && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+      removingGroup && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
         RemoveGroupModal,
         {
           group: removingGroup,
@@ -82999,7 +83159,7 @@ void main(void) {
           onConfirm: handleConfirmRemoveGroup
         }
       ),
-      showNewSceneDialog && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+      showNewSceneDialog && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
         NewSceneDialog,
         {
           scenes: sceneSummaries,
@@ -83007,7 +83167,7 @@ void main(void) {
           onCancel: () => setShowNewSceneDialog(false)
         }
       ),
-      flagsSceneTarget && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+      flagsSceneTarget && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
         SceneFlagsModal,
         {
           sceneName: flagsSceneTarget.label,
@@ -83025,15 +83185,15 @@ void main(void) {
     ] });
   }
   function Arrow3() {
-    return /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "simulator-arrow", children: /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("svg", { width: "24", height: "16", viewBox: "0 0 24 16", fill: "none", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("path", { d: "M2 8 H17", stroke: "#3f3f46", strokeWidth: "1.5" }),
-      /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("path", { d: "M13 3 L18 8 L13 13", stroke: "#3f3f46", strokeWidth: "1.5", strokeLinecap: "round", strokeLinejoin: "round" })
+    return /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("div", { className: "simulator-arrow", children: /* @__PURE__ */ (0, import_jsx_runtime54.jsxs)("svg", { width: "24", height: "16", viewBox: "0 0 24 16", fill: "none", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("path", { d: "M2 8 H17", stroke: "#3f3f46", strokeWidth: "1.5" }),
+      /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("path", { d: "M13 3 L18 8 L13 13", stroke: "#3f3f46", strokeWidth: "1.5", strokeLinecap: "round", strokeLinejoin: "round" })
     ] }) });
   }
 
   // src/LoginPage.tsx
   var import_react37 = __toESM(require_react());
-  var import_jsx_runtime54 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime55 = __toESM(require_jsx_runtime());
   function LoginPage({ onAuthenticated }) {
     const [mode, setMode] = (0, import_react37.useState)("login");
     const [email, setEmail] = (0, import_react37.useState)("");
@@ -83057,11 +83217,11 @@ void main(void) {
         setLoading(false);
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("div", { className: "login-page", children: /* @__PURE__ */ (0, import_jsx_runtime54.jsxs)("form", { className: "login-card", onSubmit: handleSubmit, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("div", { className: "login-title", children: "Live Wallpaper Editor" }),
-      /* @__PURE__ */ (0, import_jsx_runtime54.jsxs)("div", { className: "login-field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("label", { htmlFor: "email", children: "Email" }),
-        /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime55.jsx)("div", { className: "login-page", children: /* @__PURE__ */ (0, import_jsx_runtime55.jsxs)("form", { className: "login-card", onSubmit: handleSubmit, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime55.jsx)("div", { className: "login-title", children: "Live Wallpaper Editor" }),
+      /* @__PURE__ */ (0, import_jsx_runtime55.jsxs)("div", { className: "login-field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime55.jsx)("label", { htmlFor: "email", children: "Email" }),
+        /* @__PURE__ */ (0, import_jsx_runtime55.jsx)(
           "input",
           {
             id: "email",
@@ -83073,9 +83233,9 @@ void main(void) {
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime54.jsxs)("div", { className: "login-field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("label", { htmlFor: "password", children: "Password" }),
-        /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime55.jsxs)("div", { className: "login-field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime55.jsx)("label", { htmlFor: "password", children: "Password" }),
+        /* @__PURE__ */ (0, import_jsx_runtime55.jsx)(
           "input",
           {
             id: "password",
@@ -83087,17 +83247,17 @@ void main(void) {
           }
         )
       ] }),
-      error && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("div", { className: "login-error", children: error }),
-      /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("button", { className: "login-submit", type: "submit", disabled: loading, children: loading ? "Please wait\u2026" : mode === "login" ? "Log in" : "Create account" }),
-      /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("div", { className: "login-toggle", children: mode === "login" ? /* @__PURE__ */ (0, import_jsx_runtime54.jsxs)(import_jsx_runtime54.Fragment, { children: [
+      error && /* @__PURE__ */ (0, import_jsx_runtime55.jsx)("div", { className: "login-error", children: error }),
+      /* @__PURE__ */ (0, import_jsx_runtime55.jsx)("button", { className: "login-submit", type: "submit", disabled: loading, children: loading ? "Please wait\u2026" : mode === "login" ? "Log in" : "Create account" }),
+      /* @__PURE__ */ (0, import_jsx_runtime55.jsx)("div", { className: "login-toggle", children: mode === "login" ? /* @__PURE__ */ (0, import_jsx_runtime55.jsxs)(import_jsx_runtime55.Fragment, { children: [
         "No account? ",
-        /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("button", { type: "button", onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime55.jsx)("button", { type: "button", onClick: () => {
           setMode("register");
           setError("");
         }, children: "Register" })
-      ] }) : /* @__PURE__ */ (0, import_jsx_runtime54.jsxs)(import_jsx_runtime54.Fragment, { children: [
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime55.jsxs)(import_jsx_runtime55.Fragment, { children: [
         "Already have an account? ",
-        /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("button", { type: "button", onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime55.jsx)("button", { type: "button", onClick: () => {
           setMode("login");
           setError("");
         }, children: "Log in" })
@@ -83106,7 +83266,7 @@ void main(void) {
   }
 
   // src/client.tsx
-  var import_jsx_runtime55 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime56 = __toESM(require_jsx_runtime());
   console.log("[bundle] loaded \u2014 build b85774b");
   function pageFromPath() {
     const sceneMatch = window.location.pathname.match(/^\/project\/([^/]+)\/scene\/([^/]+)$/);
@@ -83189,10 +83349,10 @@ void main(void) {
       return null;
     }
     if (authState.status === "unauthenticated") {
-      return /* @__PURE__ */ (0, import_jsx_runtime55.jsx)(LoginPage, { onAuthenticated: (user) => setAuthState({ status: "authenticated", user }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime56.jsx)(LoginPage, { onAuthenticated: (user) => setAuthState({ status: "authenticated", user }) });
     }
     if (page.type === "scene") {
-      return /* @__PURE__ */ (0, import_jsx_runtime55.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime56.jsx)(
         ScenePage,
         {
           initialSceneId: page.sceneId,
@@ -83204,7 +83364,7 @@ void main(void) {
       );
     }
     if (page.type === "simulator") {
-      return /* @__PURE__ */ (0, import_jsx_runtime55.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime56.jsx)(
         SimulatorPage,
         {
           projectId: page.project.id,
@@ -83216,7 +83376,7 @@ void main(void) {
       );
     }
     if (page.type === "scenes") {
-      return /* @__PURE__ */ (0, import_jsx_runtime55.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime56.jsx)(
         SceneListPage,
         {
           onSelect: (scene) => navigateToScene(scene, page.project),
@@ -83229,11 +83389,11 @@ void main(void) {
         }
       );
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime55.jsx)(ProjectListPage, { onSelect: navigateToProject, onLogout: handleLogout });
+    return /* @__PURE__ */ (0, import_jsx_runtime56.jsx)(ProjectListPage, { onSelect: navigateToProject, onLogout: handleLogout });
   }
   window.addEventListener("DOMContentLoaded", () => {
     const root = (0, import_client.createRoot)(document.body);
-    root.render(/* @__PURE__ */ (0, import_jsx_runtime55.jsx)(App, {}));
+    root.render(/* @__PURE__ */ (0, import_jsx_runtime56.jsx)(App, {}));
   });
 })();
 /*! Bundled license information:

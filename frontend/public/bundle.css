@@ -2332,6 +2332,54 @@ body {
   right: 330px;
 }
 
+/* src/controls/panels/SlotCyclerPill.scss */
+.slot-cycler {
+  position: absolute;
+  top: var(--size-16);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+  padding: var(--size-2);
+  border-radius: var(--size-18);
+  border: 1px solid var(--color-accent-border);
+  background: var(--color-accent-panel);
+  box-shadow: var(--shadow-toast);
+}
+.slot-cycler__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-22);
+  height: var(--size-22);
+  border-radius: 50%;
+  background: var(--color-accent-input);
+  color: var(--color-accent-fg);
+  cursor: pointer;
+  transition: background-color var(--duration-fast);
+}
+.slot-cycler__btn:hover {
+  background: var(--color-accent-bg-strong);
+}
+.slot-cycler__label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 78px;
+  padding: 0 var(--size-4);
+}
+.slot-cycler__name {
+  font-size: var(--text-10-5);
+  font-weight: 600;
+  color: var(--color-fg);
+}
+.slot-cycler__meta {
+  font-size: 8px;
+  color: var(--color-accent-bright);
+}
+
 /* src/SceneListPage.scss */
 .project-size-badge {
   font-size: var(--text-11);

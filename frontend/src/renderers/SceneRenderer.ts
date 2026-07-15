@@ -5,6 +5,16 @@ import { createWipeFilter } from './WipeFilter';
 import type { SpriteEntry } from '../controls/panels/SpriteListPanel';
 import type { SpriteConditionBlock, SpriteModification, RuleConditionGroup } from '@livewallpaper/types';
 
+/** One slot's displayed option, ready to composite on the editor canvas. */
+export interface SlotPreviewGroup {
+  /** The option's baked sprites (empty for a "none"/empty option). */
+  sprites: Sprite[];
+  /** Fade the sprites — the displayed option is ineligible under the current preview flags. */
+  dim: boolean;
+  /** Draw the editable frame around this group (the selected slot). */
+  frame: boolean;
+}
+
 interface SpriteMetadata {
   id?: string;
   x: number;
@@ -41,6 +51,17 @@ export class SceneRenderer {
   private currentYFocus: number = 0.5;
   private selectionHighlight: PIXI.Graphics | null = null;
   private selectedHighlightIndex: number | null = null;
+  // Slot preview: the composited option sprites drawn on top of the base scene (one displayed
+  // option per slot). Purely a preview surface — never part of the persisted `sprites`. The
+  // editor recomputes which option to show (from preview flags / the cycler) and hands the flat
+  // sprite groups to renderSlotPreview().
+  private slotPreviewSprites: PIXI.Sprite[] = [];
+  private slotPreviewMeta: Map<PIXI.Sprite, { x: number; y: number; parallaxMultiplier: number }> = new Map();
+  private slotFrame: PIXI.Graphics | null = null;
+  private slotFrameTarget: PIXI.Sprite | null = null;
+  // Bumped on each renderSlotPreview call so an earlier call's async tail (awaiting textures) bails
+  // instead of appending stale sprites after a newer call already rebuilt the preview.
+  private slotPreviewToken = 0;
   // Black letterbox/pillarbox bars masking the render down to the viewable window's aspect
   // ratio (opt-in; used by the simulator preview, not the editor).
   private letterboxGraphics: PIXI.Graphics | null = null;
@@ -170,6 +191,8 @@ export class SceneRenderer {
     this.selectedDefaultBySprite.clear();
     this.selectionHighlight = null;
     this.selectedHighlightIndex = null;
+    this.clearSlotPreview();
+    this.slotFrame = null;
     this.app.stage.removeChildren();
 
     // Load textures and create sprites
@@ -561,7 +584,17 @@ export class SceneRenderer {
       }
     }
 
+    // Slot preview sprites use the same parallax/focus mapping as base sprites.
+    for (const sprite of this.slotPreviewSprites) {
+      const meta = this.slotPreviewMeta.get(sprite);
+      if (meta) {
+        sprite.x = meta.x + (scrollOffset + this.gyroOffsetX) * meta.parallaxMultiplier;
+        sprite.y = -meta.y + (scrollOffsetY + this.gyroOffsetY) * meta.parallaxMultiplier;
+      }
+    }
+
     this.updateSelectionHighlight();
+    this.updateSlotFrame();
   }
 
   setSpriteSize(index: number, width: number, height: number): void {
@@ -1044,6 +1077,90 @@ export class SceneRenderer {
   /** Replace the scene's slots. Persisted on the next save via getSceneData()'s spread. */
   setSlots(slots: import('@livewallpaper/types').SceneSlot[]): void {
     if (this.originalSceneData) this.originalSceneData.slots = slots;
+  }
+
+  /**
+   * Draw the slot preview composite: the editor decides which option each slot displays (from the
+   * preview flags / cycler) and passes the flat sprite groups here. `dim` fades an ineligible
+   * option; `frame` marks the selected slot's group for the editable frame. Fully rebuilt on each
+   * call — cheap enough for an editor, and keeps this renderer free of eligibility logic.
+   */
+  async renderSlotPreview(groups: SlotPreviewGroup[]): Promise<void> {
+    if (!this.app) return;
+    const token = ++this.slotPreviewToken;
+    this.clearSlotPreview();
+    for (const group of groups) {
+      let firstSprite: PIXI.Sprite | null = null;
+      for (const spriteData of group.sprites) {
+        await this.loadTexture(spriteData.textureResource);
+        if (token !== this.slotPreviewToken || !this.app) return; // superseded by a newer call
+        const sprite = await this.createSprite(spriteData);
+        if (token !== this.slotPreviewToken || !this.app) { sprite?.destroy(); return; }
+        if (!sprite) continue;
+        sprite.alpha = group.dim ? 0.35 : 1.0;
+        this.slotPreviewSprites.push(sprite);
+        this.slotPreviewMeta.set(sprite, {
+          x: spriteData.positionX,
+          y: spriteData.positionY,
+          parallaxMultiplier: spriteData.parallaxMultiplier,
+        });
+        this.app.stage.addChild(sprite);
+        if (!firstSprite) firstSprite = sprite;
+      }
+      if (group.frame) this.slotFrameTarget = firstSprite;
+    }
+    this.raiseOverlays();
+    this.applyAllPositions();
+  }
+
+  private clearSlotPreview(): void {
+    for (const sprite of this.slotPreviewSprites) sprite.destroy();
+    this.slotPreviewSprites = [];
+    this.slotPreviewMeta.clear();
+    this.slotFrameTarget = null;
+    this.slotFrame?.clear();
+  }
+
+  /** Keep the guide, letterbox, and selection/frame graphics above the freshly added preview sprites. */
+  private raiseOverlays(): void {
+    if (!this.app) return;
+    const guide = this.phoneGuide?.getGraphics();
+    if (guide) this.app.stage.addChild(guide);
+    if (this.letterboxGraphics) this.app.stage.addChild(this.letterboxGraphics);
+    if (this.selectionHighlight) this.app.stage.addChild(this.selectionHighlight);
+    if (this.slotFrame) this.app.stage.addChild(this.slotFrame);
+  }
+
+  /** Indigo frame + corner handle dots around the selected slot's previewed sprite. */
+  private updateSlotFrame(): void {
+    if (!this.app) return;
+    if (!this.slotFrame) {
+      this.slotFrame = new PIXI.Graphics();
+      this.app.stage.addChild(this.slotFrame);
+    }
+    this.slotFrame.clear();
+
+    const target = this.slotFrameTarget;
+    if (!target) return;
+
+    const left = target.x - target.width / 2;
+    const top = target.y - target.height / 2;
+    const w = target.width;
+    const h = target.height;
+    const color = 0x7c86ff;
+
+    this.slotFrame
+      .moveTo(left, top)
+      .lineTo(left + w, top)
+      .lineTo(left + w, top + h)
+      .lineTo(left, top + h)
+      .lineTo(left, top)
+      .stroke({ color, width: 0.015, alpha: 1.0 });
+
+    const r = 0.09;
+    for (const [cx, cy] of [[left, top], [left + w, top], [left, top + h], [left + w, top + h]]) {
+      this.slotFrame.circle(cx, cy, r).fill({ color, alpha: 1.0 });
+    }
   }
 
   toggleSpriteByIndex(index: number): void {

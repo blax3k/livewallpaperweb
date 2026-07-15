@@ -13,9 +13,11 @@ import { useSpriteDrag } from './hooks/useSpriteDrag';
 import { useKeyboardControls } from './hooks/useKeyboardControls';
 import { computeSceneSize, collectTextureResources, formatBytes } from './utils/sceneSize';
 import { flagsApi, imagesApi } from './api';
-import type { FlagDefinition, SlotOption } from '@livewallpaper/types';
+import type { FlagDefinition, SceneSlot, SlotOption } from '@livewallpaper/types';
 import { matchesConditionGroup, type WorldState } from './ruleEngine';
 import { createSlot, createOptionFromTexture, mapSlot, setOptionGates } from './slotOps';
+import type { SlotPreviewGroup } from './renderers/SceneRenderer';
+import { SlotCyclerPill } from './controls/panels/SlotCyclerPill';
 
 interface ScenePageProps {
   initialSceneId?: string;
@@ -46,6 +48,9 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
   // the Layers list reflects a plausible "current" eligibility before the playground (Phase 3)
   // lets the user toggle flags. Toggling never writes back to the scene.
   const [previewFlags, setPreviewFlags] = useState<ReadonlySet<string>>(new Set());
+  // Which option each slot previews on the canvas (cycler position). Only meaningful for the
+  // selected slot; other slots resolve to their first eligible option.
+  const [previewOptionIndexBySlot, setPreviewOptionIndexBySlot] = useState<Record<string, number>>({});
 
   const {
     canvasRef,
@@ -312,6 +317,46 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     });
   }, []);
 
+  // ── Canvas slot preview (composite + frame + cycler) ────────────────────────────────────────
+  // The previewed option index for a slot: explicit cycler value, else its first eligible option.
+  const resolvePreviewIndex = useCallback((slot: SceneSlot): number => {
+    const explicit = previewOptionIndexBySlot[slot.id];
+    if (explicit != null && explicit >= 0 && explicit < slot.options.length) return explicit;
+    const firstEligible = slot.options.findIndex(o => isOptionEligible(slot.id, o));
+    return firstEligible >= 0 ? firstEligible : 0;
+  }, [previewOptionIndexBySlot, isOptionEligible]);
+
+  // What each slot draws: the selected slot follows its cycler; others resolve to first eligible.
+  const slotPreviewGroups = useMemo<SlotPreviewGroup[]>(() => {
+    const groups: SlotPreviewGroup[] = [];
+    for (const slot of slots) {
+      const option = slot.id === selectedSlotId
+        ? slot.options[resolvePreviewIndex(slot)]
+        : slot.options.find(o => isOptionEligible(slot.id, o));
+      if (option?.sprites?.length) {
+        groups.push({
+          sprites: option.sprites,
+          dim: !isOptionEligible(slot.id, option),
+          frame: slot.id === selectedSlotId,
+        });
+      }
+    }
+    return groups;
+  }, [slots, selectedSlotId, resolvePreviewIndex, isOptionEligible]);
+
+  useEffect(() => {
+    if (!showSceneControls) return;
+    rendererRef.current?.renderSlotPreview(slotPreviewGroups);
+  }, [slotPreviewGroups, showSceneControls, rendererRef]);
+
+  const cycleSelectedSlot = useCallback((delta: number) => {
+    if (!selectedSlot) return;
+    const n = selectedSlot.options.length;
+    if (n === 0) return;
+    const current = resolvePreviewIndex(selectedSlot);
+    setPreviewOptionIndexBySlot(prev => ({ ...prev, [selectedSlot.id]: (current + delta + n) % n }));
+  }, [selectedSlot, resolvePreviewIndex]);
+
   useEffect(() => {
     if (initialSceneId) loadScene(initialSceneId);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -566,6 +611,14 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
                     : undefined
             }
           />
+          {selectedSlot && (
+            <SlotCyclerPill
+              slot={selectedSlot}
+              optionIndex={resolvePreviewIndex(selectedSlot)}
+              onPrev={() => cycleSelectedSlot(-1)}
+              onNext={() => cycleSelectedSlot(1)}
+            />
+          )}
         </div>
         {showSceneControls && (
           <div className="scene-page__right-rail">
