@@ -15,10 +15,9 @@ import { computeSceneSize, collectTextureResources, formatBytes } from './utils/
 import { flagsApi, imagesApi } from './api';
 import type { FlagDefinition, SceneSlot, SlotOption } from '@livewallpaper/types';
 import { matchesConditionGroup, type WorldState } from './ruleEngine';
-import { createSlot, createOptionFromTexture, mapSlot, mapOption, setOptionGates } from './slotOps';
+import { createSlot, createOptionFromTexture, createNoneOption, isNoneOption, mapSlot, mapOption, setOptionGates } from './slotOps';
 import { useSlotDrag } from './hooks/useSlotDrag';
 import type { SlotPreviewGroup } from './renderers/SceneRenderer';
-import { SlotCyclerPill } from './controls/panels/SlotCyclerPill';
 
 interface ScenePageProps {
   initialSceneId?: string;
@@ -52,6 +51,9 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
   // Which option each slot previews on the canvas (cycler position). Only meaningful for the
   // selected slot; other slots resolve to their first eligible option.
   const [previewOptionIndexBySlot, setPreviewOptionIndexBySlot] = useState<Record<string, number>>({});
+  // Slot option whose texture is being edited in the EditTextureModal (parallel to editTextureIndex
+  // for base sprites, but sourced from / written back to scene data rather than the renderer).
+  const [editOptionTexture, setEditOptionTexture] = useState<{ slotId: string; optionId: string } | null>(null);
 
   const {
     canvasRef,
@@ -308,6 +310,22 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     applySlots(s => mapSlot(s, slotId, sl => ({ ...sl, options: sl.options.filter(o => o.id !== optionId) })));
   }, [applySlots]);
 
+  // Re-add the pinned empty ("none") option; no-op if the slot already has one.
+  const handleAddEmptyOption = useCallback((slotId: string) => {
+    applySlots(s => mapSlot(s, slotId, sl => (
+      sl.options.some(isNoneOption) ? sl : { ...sl, options: [...sl.options, createNoneOption()] }
+    )));
+  }, [applySlots]);
+
+  // Swap the image on a slot option's sprite(s), resetting the crop to the full image (matches the
+  // base-sprite Change Texture behavior).
+  const handleChangeOptionTexture = useCallback((slotId: string, optionId: string, textureResource: string) => {
+    applySlots(s => mapOption(s, slotId, optionId, o => ({
+      ...o,
+      sprites: o.sprites?.map(sp => ({ ...sp, textureResource, texCoordinates: [0, 1, 0, 0, 1, 1, 1, 0] })),
+    })));
+  }, [applySlots]);
+
   const handleRenameOption = useCallback((slotId: string, optionId: string, name: string) => {
     applySlots(s => mapSlot(s, slotId, sl => ({
       ...sl,
@@ -361,13 +379,18 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     rendererRef.current?.renderSlotPreview(slotPreviewGroups);
   }, [slotPreviewGroups, showSceneControls, rendererRef]);
 
-  const cycleSelectedSlot = useCallback((delta: number) => {
-    if (!selectedSlot) return;
-    const n = selectedSlot.options.length;
-    if (n === 0) return;
-    const current = resolvePreviewIndex(selectedSlot);
-    setPreviewOptionIndexBySlot(prev => ({ ...prev, [selectedSlot.id]: (current + delta + n) % n }));
-  }, [selectedSlot, resolvePreviewIndex]);
+  // Clicking an option in the layers panel selects its slot and previews that option on the canvas.
+  const handleSelectOption = useCallback((slotId: string, optionId: string) => {
+    handleSelectSlot(slotId);
+    const slot = slots.find(s => s.id === slotId);
+    const index = slot?.options.findIndex(o => o.id === optionId) ?? -1;
+    if (index >= 0) setPreviewOptionIndexBySlot(prev => ({ ...prev, [slotId]: index }));
+  }, [handleSelectSlot, slots]);
+
+  // Option id currently previewed (framed) for the selected slot, highlighted in the layers panel.
+  const previewedOptionId = selectedSlot
+    ? (selectedSlot.options[resolvePreviewIndex(selectedSlot)]?.id ?? null)
+    : null;
 
   // Drag-to-move the selected slot's framed sprite; commit shifts that option's sprites (undoable).
   const { startSlotDrag } = useSlotDrag({
@@ -615,6 +638,12 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
           isOptionEligible={isOptionEligible}
           onSelectSlot={handleSelectSlot}
           onToggleSlotExpand={handleToggleSlotExpand}
+          onSelectOption={handleSelectOption}
+          previewedOptionId={previewedOptionId}
+          onRenameOption={handleRenameOption}
+          onChangeOptionTexture={handleChangeOptionTexture}
+          onEditOptionTexture={(slotId, optionId) => setEditOptionTexture({ slotId, optionId })}
+          onDeleteOption={handleRemoveOption}
           onAddSlot={handleAddSlot}
           selectedSprite={selectedSprite}
           onXFocusChange={handleXFocusChange}
@@ -657,14 +686,6 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
                     : undefined
             }
           />
-          {selectedSlot && (
-            <SlotCyclerPill
-              slot={selectedSlot}
-              optionIndex={resolvePreviewIndex(selectedSlot)}
-              onPrev={() => cycleSelectedSlot(-1)}
-              onNext={() => cycleSelectedSlot(1)}
-            />
-          )}
         </div>
         {showSceneControls && (
           <div className="scene-page__right-rail">
@@ -676,6 +697,7 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
               onRenameSlot={handleRenameSlot}
               onDeleteSlot={handleDeleteSlot}
               onAddOption={handleAddOption}
+              onAddEmptyOption={handleAddEmptyOption}
               onRemoveOption={handleRemoveOption}
               onRenameOption={handleRenameOption}
               onSetGates={handleSetGates}
@@ -713,6 +735,30 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
               setEditTextureIndex(null);
             }}
             onClose={() => setEditTextureIndex(null)}
+          />
+        );
+      })()}
+
+      {editOptionTexture && (() => {
+        const slot = slots.find(s => s.id === editOptionTexture.slotId);
+        const option = slot?.options.find(o => o.id === editOptionTexture.optionId);
+        const sprite = option?.sprites?.[0];
+        if (!sprite) return null;
+        return (
+          <EditTextureModal
+            spriteName={option!.name}
+            textureResource={sprite.textureResource}
+            texCoordinates={sprite.texCoordinates}
+            width={sprite.width}
+            height={sprite.height}
+            onApply={(texCoords, width, height) => {
+              applySlots(s => mapOption(s, editOptionTexture.slotId, editOptionTexture.optionId, o => ({
+                ...o,
+                sprites: o.sprites?.map((sp, i) => (i === 0 ? { ...sp, texCoordinates: texCoords, width, height } : sp)),
+              })));
+              setEditOptionTexture(null);
+            }}
+            onClose={() => setEditOptionTexture(null)}
           />
         );
       })()}

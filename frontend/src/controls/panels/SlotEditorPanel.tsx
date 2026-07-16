@@ -16,6 +16,8 @@ interface SlotEditorPanelProps {
   onRenameSlot: (slotId: string, name: string) => void;
   onDeleteSlot: (slotId: string) => void;
   onAddOption: (slotId: string, textureResource: string) => void;
+  /** Re-add the pinned empty ("none") option so the slot can resolve to nothing again. */
+  onAddEmptyOption: (slotId: string) => void;
   onRemoveOption: (slotId: string, optionId: string) => void;
   onRenameOption: (slotId: string, optionId: string, name: string) => void;
   onSetGates: (slotId: string, optionId: string, showFlagIds: string[], hideFlagIds: string[]) => void;
@@ -29,6 +31,7 @@ export function SlotEditorPanel({
   onRenameSlot,
   onDeleteSlot,
   onAddOption,
+  onAddEmptyOption,
   onRemoveOption,
   onRenameOption,
   onSetGates,
@@ -126,8 +129,8 @@ export function SlotEditorPanel({
           </span>
         </div>
 
-        {/* Pinned none option */}
-        {noneOption && (
+        {/* Empty ("none") option — present by default, but removable so a slot can always be filled. */}
+        {noneOption ? (
           <div className="slot-option slot-option--none">
             <span className="slot-option__swatch slot-option__swatch--none"><ImageOff size={11} /></span>
             <div className="slot-option__body">
@@ -136,7 +139,23 @@ export function SlotEditorPanel({
               </div>
               <div className="slot-option__subtitle">always eligible · no gates</div>
             </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="slot-option__kebab" title="Remove empty option">
+                  <MoreHorizontal size={13} />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem danger onSelect={() => setConfirmDeleteOptionId(noneOption.id)}>
+                  Remove empty option
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
+        ) : (
+          <button className="slot-editor-panel__add-sprite" onClick={() => onAddEmptyOption(slot.id)}>
+            <ImageOff size={12} /> Allow empty (add “none”)
+          </button>
         )}
 
         {spriteOptions.map((option) => {
@@ -255,7 +274,7 @@ export function SlotEditorPanel({
         <AlertDialogContent>
           <AlertDialogTitle className="sprite-delete-dialog__title">Delete sprite?</AlertDialogTitle>
           <AlertDialogDescription className="sprite-delete-dialog__description">
-            Remove <strong>{spriteOptions.find(o => o.id === confirmDeleteOptionId)?.name ?? ''}</strong> from this slot? This can't be undone.
+            Remove <strong>{slot.options.find(o => o.id === confirmDeleteOptionId)?.name ?? ''}</strong> from this slot? This can't be undone.
           </AlertDialogDescription>
           <div className="sprite-delete-dialog__actions">
             <AlertDialogAction

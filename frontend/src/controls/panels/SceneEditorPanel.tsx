@@ -31,6 +31,12 @@ interface SceneEditorPanelProps {
   isOptionEligible?: (slotId: string, option: SlotOption) => boolean;
   onSelectSlot: (slotId: string) => void;
   onToggleSlotExpand: (slotId: string) => void;
+  onSelectOption: (slotId: string, optionId: string) => void;
+  previewedOptionId?: string | null;
+  onRenameOption: (slotId: string, optionId: string, name: string) => void;
+  onChangeOptionTexture: (slotId: string, optionId: string, textureResource: string) => void;
+  onEditOptionTexture: (slotId: string, optionId: string) => void;
+  onDeleteOption: (slotId: string, optionId: string) => void;
   onAddSlot: () => void;
   projectId: string;
   selectedSprite: SelectedSprite | null;
@@ -73,6 +79,12 @@ export function SceneEditorPanel({
   isOptionEligible,
   onSelectSlot,
   onToggleSlotExpand,
+  onSelectOption,
+  previewedOptionId,
+  onRenameOption,
+  onChangeOptionTexture,
+  onEditOptionTexture,
+  onDeleteOption,
   onAddSlot,
   projectId,
   selectedSprite,
@@ -128,6 +140,12 @@ export function SceneEditorPanel({
           onEditTexture={onEditTexture}
           onSelectSlot={onSelectSlot}
           onToggleSlotExpand={onToggleSlotExpand}
+          onSelectOption={onSelectOption}
+          previewedOptionId={previewedOptionId}
+          onRenameOption={onRenameOption}
+          onChangeOptionTexture={onChangeOptionTexture}
+          onEditOptionTexture={onEditOptionTexture}
+          onDeleteOption={onDeleteOption}
           onAddSlot={onAddSlot}
         />
       </div>

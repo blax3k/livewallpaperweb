@@ -25,7 +25,8 @@ function createOptionSprite(textureResource: string, name: string): Sprite {
   };
 }
 
-/** The pinned, non-removable empty option — resolves to no image, always eligible, no gates. */
+/** The empty option — resolves to no image, always eligible, no gates. Present by default so a
+ *  slot can render nothing some wakes, but removable when a slot should always be filled. */
 export function createNoneOption(): SlotOption {
   return { id: uuid(), name: 'none', sprites: [] };
 }
