@@ -79659,7 +79659,7 @@ void main(void) {
     const slotPreviewGroups = (0, import_react22.useMemo)(() => {
       const groups = [];
       for (const slot of slots) {
-        const option = slot.id === selectedSlotId ? slot.options[resolvePreviewIndex(slot)] : slot.options.find((o2) => isOptionEligible(slot.id, o2));
+        const option = slot.options[resolvePreviewIndex(slot)];
         if (option?.sprites?.length) {
           groups.push({
             sprites: option.sprites,

@@ -356,13 +356,13 @@ export function ScenePage({ initialSceneId, projectId, onBack, onSaved, onDirtyC
     return firstEligible >= 0 ? firstEligible : 0;
   }, [previewOptionIndexBySlot, isOptionEligible]);
 
-  // What each slot draws: the selected slot follows its cycler; others resolve to first eligible.
+  // What each slot draws: every slot persistently renders its previewed option (the user's explicit
+  // choice, else its first eligible) so the sprites they've selected stay visible even when another
+  // slot or a base sprite is selected. Only the frame follows the current selection.
   const slotPreviewGroups = useMemo<SlotPreviewGroup[]>(() => {
     const groups: SlotPreviewGroup[] = [];
     for (const slot of slots) {
-      const option = slot.id === selectedSlotId
-        ? slot.options[resolvePreviewIndex(slot)]
-        : slot.options.find(o => isOptionEligible(slot.id, o));
+      const option = slot.options[resolvePreviewIndex(slot)];
       if (option?.sprites?.length) {
         groups.push({
           sprites: option.sprites,
